@@ -9,7 +9,6 @@ socket.on('states', states => {
             button = document.createElement('button');
 
         button.textContent = (s.on ? '☑' : '☐') + s.name;
-        button.groupOn = s.on;
         button.groupId = s.id;
         
         li.appendChild(button);
@@ -18,5 +17,5 @@ socket.on('states', states => {
 });
 
 list.addEventListener('click', e => {
-    socket.emit('set', e.target.groupId, !e.target.groupOn);
+    socket.emit('toggle', e.target.groupId);
 });

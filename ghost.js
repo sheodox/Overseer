@@ -10,11 +10,20 @@ module.exports = function(io) {
                         socket.emit('states', state);
                     });
                 
-                socket.on('set', (id, isOn) => {
-                    harbinger[isOn ? 'on' : 'off'](id)
-                        .then(harbinger.getState.bind(harbinger))
+                socket.on('toggle', id => {
+                    harbinger.getState()
                         .then(state => {
-                            io.emit('states', state);
+                            var newState = state.reduce((done, next) => {
+                                if (next.id === id) {
+                                    done = !next.on;
+                                }
+                                return done;
+                            }, '');
+                            harbinger[newState ? 'on' : 'off'](id)
+                                .then(harbinger.getState.bind(harbinger))
+                                .then(state => {
+                                    io.emit('states', state);
+                                });
                         });
                 })
             });
