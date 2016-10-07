@@ -1,15 +1,14 @@
 * {
-    box-sizing: border-box;
-}
+  box-sizing: border-box; }
+
 body, html {
-    background: #ccc;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-    margin: 0;
-    height: 100%;
-}
+  background: #ccc;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0;
+  height: 100%; }
+
 h1 {
-    font-size: 3em;
-}
+  font-size: 3em; }
+
 li {
-    list-style: none;
-}
+  list-style: none; }

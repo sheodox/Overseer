@@ -2,10 +2,11 @@ var gulp = require("gulp"),
     babelify = require('babelify'),
     browserify = require("browserify"),
     connect = require("gulp-connect"),
+    sass = require('gulp-sass'),
     source = require("vinyl-source-stream");
 
 
-gulp.task("build", function(){
+gulp.task("build:js", function(){
     return browserify({
         entries: ["./jsx/index.js"],
         extensions: [".js", ".jsx"]
@@ -16,4 +17,10 @@ gulp.task("build", function(){
         .bundle()
         .pipe(source("bundle.js"))
         .pipe(gulp.dest("./public/javascripts"));
+});
+
+gulp.task('build:scss', function() {
+    return gulp.src('./scss/**/*.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest('./public/stylesheets'));
 });

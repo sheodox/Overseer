@@ -25,6 +25,7 @@
     "browserify": "^13.1.0",
     "gulp": "^3.9.1",
     "gulp-connect": "^5.0.0",
+    "gulp-sass": "^2.3.2",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "vinyl-source-stream": "^1.1.0"
