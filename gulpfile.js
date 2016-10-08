@@ -24,3 +24,11 @@ gulp.task('build:scss', function() {
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('./public/stylesheets'));
 });
+
+gulp.task('watch:js', function() {
+    return gulp.watch('./jsx/**/*.*', ['build:js']);
+});
+
+gulp.task('watch:scss', function() {
+    return gulp.watch('./scss/**/*.scss', ['build:scss']);
+});
