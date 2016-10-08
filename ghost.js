@@ -10,6 +10,14 @@ module.exports = function(io) {
                         socket.emit('states', state);
                     });
                 
+                function broadcastState() {
+                    return harbinger
+                        .getState()
+                        .then(state => {
+                            io.emit('states', state);
+                        });
+                }
+                
                 socket.on('toggle', id => {
                     harbinger.getState()
                         .then(state => {
@@ -20,11 +28,13 @@ module.exports = function(io) {
                                 return done;
                             }, '');
                             harbinger[newState ? 'on' : 'off'](id)
-                                .then(harbinger.getState.bind(harbinger))
-                                .then(state => {
-                                    io.emit('states', state);
-                                });
+                                .then(broadcastState);
                         });
+                });
+                
+                socket.on('brightness', (id, newBrightness) => {
+                    harbinger.setBrightness(id, newBrightness)
+                        .then(broadcastState);
                 })
             });
         }, err => {console.log(err);});

@@ -54,12 +54,16 @@ module.exports = {
                         relevantGroups.push({
                             id: group.id,
                             name: group.name,
-                            on: group.state.all_on
+                            on: group.state.all_on,
+                            brightness: group.action.bri
                         })
                     }
                 }
                 console.log(relevantGroups);
                 return relevantGroups;
+            })
+            .catch(err => {
+                console.log(err);
             });
     },
     on: id => {
@@ -69,5 +73,8 @@ module.exports = {
     off: id => {
         console.log(`off ${id}`);
         return api.setGroupLightState(id, states.off);
+    },
+    setBrightness: (id, brightness) => {
+        return api.setGroupLightState(id, lightState.create().bri(brightness));
     }
 };
