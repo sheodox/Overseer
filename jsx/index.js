@@ -1,7 +1,7 @@
 var ReactDOM = require('react-dom'),
     React = require('react'),
     list = document.querySelector('#groups'),
-    {List, LightGroup} = require('./List'),
+    List = require('./List'),
     socket = io();
 
 socket.on('reconnect', () => {location.reload();});
