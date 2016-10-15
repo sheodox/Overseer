@@ -14,8 +14,8 @@ header {
     margin: 0;
     padding-top: 2rem;
     position: relative;
-    background: #0c3447;
-    box-shadow: 0 0 3rem 0 #0c3447;
+    background: white;
+    box-shadow: 0 0 3rem 0 white;
 
     svg {
         zoom: 0.3;
@@ -25,7 +25,7 @@ header {
     h1 {
         display: inline-block;
         font-size: 3rem;
-        color: white;
+        color: $darkGray;
         position: relative;
         text-decoration: overline;
     }
@@ -99,11 +99,11 @@ li {
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
         cursor: pointer;
-        height: 2rem;
-        width: 2rem;
+        height: 1.75rem;
+        width: 1.75rem;
         background: $blue;
         border-radius: 50%;
-        margin-top: -1rem;
+        margin-top: -0.875rem;
     }
 
     &:focus {
