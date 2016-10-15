@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="47.803mm" width="104.93mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 371.78345 169.37895">
+ <metadata id="metadata7">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(-99.675 -416.03)" stroke="#000">
+  <g id="g4361" transform="matrix(1.0004 0 0 .49154 -.11493 297.6)" stroke-width=".5" fill="#51636b">
+   <path id="path4302" d="m100 241.28v114.29h51.695v-114.29h-51.695z"/>
+   <path id="path4312" d="m100 356.06v114.29h51.695v-114.29h-51.695z"/>
+   <path id="path4322" d="m100 470.85v114.29h51.695v-114.29h-51.695z"/>
+  </g>
+  <g id="g4366" transform="matrix(1.0004 0 0 .49154 -2.0193 297.53)" stroke-width=".5" fill="#38464d">
+   <path id="path4300" d="m154.07 241.44v114.29h65v-114.29h-65z"/>
+   <path id="path4310" d="m154.07 356.22v114.29h65v-114.29h-65z"/>
+   <path id="path4320" d="m154.07 471.02v114.29h65v-114.29h-65z"/>
+  </g>
+  <g stroke-width=".35062" fill="#1e292e">
+   <path id="path4298" d="m217.61 416.21v56.176h136.07v-56.176h-136.07z"/>
+   <path id="path4308" d="m217.62 472.62v56.176h136.07v-56.176h-136.07z"/>
+   <path id="path4318" d="m217.61 529.04v56.176h136.07v-56.176h-136.07z"/>
+  </g>
+  <g stroke-width=".35062">
+   <path id="path4296" d="m353.99 416.19v56.176h65.026v-56.176h-65.026z" fill="#13222a"/>
+   <path id="path4306" d="m353.99 472.61v56.176h65.026v-56.176h-65.026z" fill="#02c155"/>
+   <path id="path4316" d="m353.98 529.03v56.176h65.026v-56.176h-65.026z" fill="#13222a"/>
+  </g>
+  <g stroke-width=".35062" fill="#0a1921">
+   <path id="path4253" d="m419.34 416.19v56.176h51.718v-56.176h-51.718z"/>
+   <path id="path4253-7" d="m419.34 472.61v56.176h51.718v-56.176h-51.718z"/>
+   <path id="path4253-4" d="m419.34 529.02v56.176h51.718v-56.176h-51.718z"/>
+  </g>
+ </g>
+</svg>

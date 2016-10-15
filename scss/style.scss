@@ -1,5 +1,5 @@
 $darkGray: #444444;
-$blue: #00a8cc;
+$blue: #2d8dbb;
 
 * {
     box-sizing: border-box;
@@ -7,10 +7,28 @@ $blue: #00a8cc;
 body, html {
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     height: 100%;
-    color: $darkGray;
+    background: #224e63;
+    margin: 0;
 }
-h1 {
-    font-size: 3rem;
+header {
+    margin: 0;
+    padding-top: 2rem;
+    position: relative;
+    background: #0c3447;
+    box-shadow: 0 0 3rem 0 #0c3447;
+
+    svg {
+        zoom: 0.3;
+        transform: rotate(90deg) scaleY(0.9) scaleX(0.7);
+        position: relative;
+    }
+    h1 {
+        display: inline-block;
+        font-size: 3rem;
+        color: white;
+        position: relative;
+        text-decoration: overline;
+    }
 }
 h2 {
     font-size: 2.25rem;
@@ -40,12 +58,13 @@ li {
     }
     .lg-toggle {
         box-shadow: 0  0 0.3rem 0.3rem #ccc;
+        transition: background 0.2s;
 
         &.on {
-            background-color: $blue;
+            background-color: #02c155;
         }
         &.off {
-            background-color: #fb8200;
+            background-color: #065a83;
         }
     }
     .lg-details-toggle {
@@ -70,20 +89,21 @@ li {
 
 .lg-brightness-slide {
     -webkit-appearance: none;
+    width: 100%;
 
     &::-webkit-slider-runnable-track {
         background: $darkGray;
-        height: 0.1rem;
+        height: 0.2rem;
     }
 
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
         cursor: pointer;
-        height: 1rem;
-        width: 1rem;
+        height: 2rem;
+        width: 2rem;
         background: $blue;
         border-radius: 50%;
-        margin-top: -0.5rem;
+        margin-top: -1rem;
     }
 
     &:focus {
@@ -93,7 +113,6 @@ li {
 
 section.control-panel {
     background-color: rgb(59, 102, 123);
-    border-radius: 5px;
     margin: 0.5rem;
     padding: 0.5rem;
     display: inline-block;
