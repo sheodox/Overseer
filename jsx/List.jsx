@@ -49,10 +49,10 @@ var LightGroup = React.createClass({
 var BrightnessSlider = React.createClass({
     getInitialState: function() {
         return {
+            //if the user is currently dragging the slider
             adjusting: false,
-            updateTimeout: null,
-            //signifies we have changes in the dom we haven't received back from props (brightness has been changed but the server isn't broadcasting it yet)
-            hotChanges: false
+            //timeout for emitting updates to the server so we don't send updates for every change event (every tick sometimes)
+            updateTimeout: null
         };
     },
     changeBrightness: function(e) {
@@ -60,7 +60,6 @@ var BrightnessSlider = React.createClass({
         if (!this.state.updateTimeout) {
             e.persist();
             this.setState({
-                hotChanges: true,
                 updateTimeout: setTimeout(() => {
                     this.props.socket.emit('brightness', this.props.id, e.target.value);
 
@@ -70,27 +69,19 @@ var BrightnessSlider = React.createClass({
             });
         }
     },
-    componentWillReceiveProps: function() {
-        //we got a new state from the server, don't need to prevent setting the input value
-        this.setState({
-            hotChanges: false
-        });
-    },
     startAdjust: function() {
         this.setState({adjusting: true});
     },
     stopAdjust: function() {
         this.setState({adjusting: false});
     },
+    shouldComponentUpdate: function(nextProps) {
+        //don't try to re-render and set brightness again until the user is done messing with it and we have an update
+        //allows brightness to be updated (and synced) by other clients without jankily setting the value while they're dragging
+        return (this.props.brightness !== nextProps.brightness) && !this.state.adjusting;
+    },
     componentDidUpdate: function() {
-        //wait until we have a proper update from the server (not dragging the input and we have new props) so we don't get janky movement
-        if (!this.state.hotChanges && !this.state.adjusting) {
-            console.log(`wasn't adjusting`);
-            this.slider.value = this.props.brightness;
-        }
-        else {
-            console.log('was adjusting');
-        }
+        this.slider.value = this.props.brightness;
     },
     render: function() {
         var inputAttrs = {
@@ -98,6 +89,7 @@ var BrightnessSlider = React.createClass({
                 min: '0',
                 max: '254',
                 id: 'lg-slide-' + this.props.id,
+                className: "lg-brightness-slide",
                 defaultValue: this.props.brightness
             },
             events = {
@@ -112,7 +104,7 @@ var BrightnessSlider = React.createClass({
             <div>
                 <label htmlFor={inputAttrs.id}>Brightness</label>
                 <br/>
-                <input className="lg-brightness-slide" ref={c => this.slider = c} {...inputAttrs} {...events} />
+                <input ref={c => this.slider = c} {...inputAttrs} {...events} />
             </div>
         )
     }
