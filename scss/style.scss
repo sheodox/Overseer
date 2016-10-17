@@ -1,4 +1,5 @@
 @import 'lights';
+@import 'games';
 
 $darkGray: #444444;
 $blue: #2d8dbb;
@@ -7,7 +8,7 @@ $blue: #2d8dbb;
     box-sizing: border-box;
 }
 body, html {
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
     height: 100%;
     background: #224e63;
     margin: 0;
@@ -46,7 +47,7 @@ li {
     margin: 0.9rem;
 }
 
-section.control-panel {
+.panel {
     background-color: rgb(59, 102, 123);
     margin: 0.5rem;
     padding: 0.5rem;
@@ -56,4 +57,15 @@ section.control-panel {
         color: white;
         padding-left: 1rem;
     }
+}
+
+.sub-panel {
+    background-color: #e0e0e0;
+    border: none;
+    padding: 1.5rem;
+    color: $darkGray;
+}
+
+.centered {
+    text-align: center;
 }

@@ -6,9 +6,12 @@ var List = React.createClass({
             return <LightGroup {...s} socket={this.props.socket} key={i}/>
         });
         return (
-            <ul>
-                {groups}
-            </ul>
+            <section className="panel">
+                <h2>Lights</h2>
+                <ul>
+                    {groups}
+                </ul>
+            </section>
         );
     }
 });
@@ -33,7 +36,7 @@ var LightGroup = React.createClass({
             detailsClass = 'lg-details' + (this.state.detailsExpanded ? ' expanded' : '');
 
         return (
-            <li>
+            <li className="sub-panel">
                 <div className="light-group">
                     <button className={toggleClass} onClick={this.toggle}>{check} {this.props.name}</button>
                     <button className="lg-details-toggle" onClick={this.toggleDetails}>⚙</button>
