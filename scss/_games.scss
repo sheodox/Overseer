@@ -1,0 +1,24 @@
+#games {
+    a.download, .delete {
+        text-align: center;
+        color: white;
+        background: #51636b;
+        text-decoration: none;
+        padding: 0.2rem 0.5rem;
+        box-shadow:  0 0 0.1rem 0.1rem;
+        border-radius: 0.1rem;
+        border: none;
+
+        &:not(:first-child) {
+            margin-left: 0.5rem;
+        }
+    }
+
+    tr {
+        line-height: 2rem;
+
+        td:not(:first-child) {
+            padding-left: 2rem;
+        }
+    }
+}
