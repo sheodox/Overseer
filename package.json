@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "forever start app.js",
-    "stop": "forever stop app.js",
-    "restart": "forever stop app.js && forever start app.js"
+    "dev": "nodemon dist/app.js",
+    "start": "forever start dist/app.js",
+    "stop": "forever stop dist/app.js",
+    "restart": "forever stop dist/app.js && forever start dist/app.js"
   },
   "dependencies": {
     "axios": "^0.15.1",
@@ -24,12 +25,13 @@
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-react": "^6.16.0",
     "babelify": "^7.3.0",
-    "browserify": "^13.1.0",
     "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "gulp-connect": "^5.0.0",
     "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^2.1.1",
+    "gulp-webpack": "^1.5.0",
     "react": "^15.3.2",
-    "react-dom": "^15.3.2",
-    "vinyl-source-stream": "^1.1.0"
+    "react-dom": "^15.3.2"
   }
 }

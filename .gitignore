@@ -1,5 +1,4 @@
 .idea
 node_modules
-config.json
-public/javascripts
-public/stylesheets
+src/config.json
+dist
