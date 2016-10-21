@@ -1,15 +1,20 @@
-var React = require('react'),
-    axios = require('axios');
+import React from 'react';
+import axios from 'axios';
+import {connect} from 'react-redux';
+import actions from '../actions/echo-actions';
 
 var Games = React.createClass({
+    componentDidMount: function() {
+        this.props.load();
+    },
     render: function() {
         var games = this.props.games.map((game, index) => {
-            return <Game {...game} key={index}/>
+            return <Game {...game} key={index} delete={this.props.delete}/>
         });
 
         return (
-            <section className="panel">
-                <h2>Games</h2>
+            <section className="panel" id="games">
+                <h2>Game Echo</h2>
                 <div className="sub-panel">
                     <Uploader />
                     <table>
@@ -22,7 +27,7 @@ var Games = React.createClass({
                         </tr>
                         </thead>
                         <tbody>
-                        {games}
+                            {games}
                         </tbody>
                     </table>
                 </div>
@@ -42,7 +47,8 @@ var Uploader = React.createClass({
         var self = this;
         e.preventDefault();
         this.setState({
-            uploading: true
+            uploading: true,
+            started: Date.now()
         });
         axios.post('/game-echo/upload', new FormData(this.form), {
             headers: {
@@ -77,6 +83,9 @@ var Uploader = React.createClass({
                 </form>
                 <div style={{display: this.state.uploading ? '' : 'none'}}>
                     <progress type="progress" ref={c => this.progress = c} {...progressValues} />
+                    <span>
+                        {formatBytes(this.state.loaded)} / {formatBytes(this.state.total)}
+                    </span>
                 </div>
             </div>
         )
@@ -85,7 +94,7 @@ var Uploader = React.createClass({
 
 var Game = React.createClass({
     delete: function() {
-        axios.get('/game-echo/delete/' + this.props.game);
+        this.props.delete(this.props.game);
     },
     render: function() {
         return (
@@ -111,4 +120,24 @@ function formatDate(dateStr) {
     return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()} ${d.getHours() % 12}:${d.getMinutes()} ${d.getHours() > 12 ? 'pm' : 'am'}`;
 }
 
-module.exports = Games;
+function mapStateToProps(state) {
+    return {
+        games: state.echo.games
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        delete: (name) => {
+            dispatch(actions.delete(name))
+        },
+        load: () => {
+            dispatch(actions.requestGames())
+        }
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Games);

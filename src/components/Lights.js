@@ -1,9 +1,14 @@
-var React = require('react');
+import React from 'react';
+import {connect} from 'react-redux';
+import actions from '../actions/lights-actions';
 
-var List = React.createClass({
+var Lights = React.createClass({
+    componentDidMount: function() {
+        this.props.refresh();
+    },
     render: function() {
         var groups = this.props.states.map((s, i) => {
-            return <LightGroup {...s} socket={this.props.socket} key={i}/>
+            return <LightGroup {...s} key={i} changeBrightness={this.props.brightness} toggleGroup={this.props.toggle}/>
         });
         return (
             <section className="panel">
@@ -23,7 +28,7 @@ var LightGroup = React.createClass({
         };
     },
     toggle: function() {
-        this.props.socket.emit('toggle', this.props.id);
+        this.props.toggleGroup(this.props.id);
     },
     toggleDetails: function() {
         this.setState({
@@ -41,7 +46,7 @@ var LightGroup = React.createClass({
                     <button className={toggleClass} onClick={this.toggle}>{check} {this.props.name}</button>
                     <button className="lg-details-toggle" onClick={this.toggleDetails}>⚙</button>
                     <div className={detailsClass}>
-                        <BrightnessSlider {...this.props} />
+                        <BrightnessSlider {...this.props} changeBrightness={this.props.changeBrightness} />
                     </div>
                 </div>
             </li>
@@ -64,7 +69,7 @@ var BrightnessSlider = React.createClass({
             e.persist();
             this.setState({
                 updateTimeout: setTimeout(() => {
-                    this.props.socket.emit('brightness', this.props.id, e.target.value);
+                    this.props.changeBrightness(this.props.id, e.target.value);
 
                     //allow later updates
                     this.setState({updateTimeout: null});
@@ -113,4 +118,31 @@ var BrightnessSlider = React.createClass({
     }
 });
 
-module.exports = List;
+function mapStateToProps(state) {
+    return {
+        states: state.lights
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    socket.on('lights/refresh', states => {
+        dispatch(actions.refreshed(states));
+    });
+
+    return {
+        toggle: (id) => {
+            dispatch(actions.toggle(id));
+        },
+        brightness: (id, brightness) => {
+            dispatch(actions.brightness(id, brightness));
+        },
+        refresh: () => {
+            dispatch(actions.refresh());
+        }
+    }
+}
+
+module.exports = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Lights);

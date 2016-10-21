@@ -5,20 +5,22 @@ module.exports = function(io) {
         .init()
         .then(() => {
             io.on('connection', socket => {
-                harbinger.getState()
-                    .then(state => {
-                        socket.emit('states', state);
-                    });
-                
+                socket.on('lights/refresh', () => {
+                    harbinger.getState()
+                        .then(state => {
+                            socket.emit('lights/refresh', state);
+                        });
+                });
+
                 function broadcastState() {
                     return harbinger
                         .getState()
                         .then(state => {
-                            io.emit('states', state);
+                            io.emit('lights/refresh', state);
                         });
                 }
-                
-                socket.on('toggle', id => {
+
+                socket.on('lights/toggle', id => {
                     harbinger.getState()
                         .then(state => {
                             var newState = state.reduce((done, next) => {
@@ -32,7 +34,7 @@ module.exports = function(io) {
                         });
                 });
                 
-                socket.on('brightness', (id, newBrightness) => {
+                socket.on('lights/brightness', (id, newBrightness) => {
                     harbinger.setBrightness(id, newBrightness)
                         .then(broadcastState);
                 })

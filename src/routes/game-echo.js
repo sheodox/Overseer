@@ -6,19 +6,17 @@ var router = require('express').Router(),
 
 router.post('/upload', function(req, res) {
     var url = echoServerIP + '/upload';
-    console.log(req.headers);
     req
         .pipe(request.post({url:  url, headers: req.headers}))
-        .pipe(res)
-        .on('finish', sendGames.bind(null, io))
+        .pipe(res);
 });
 
 router.get('/delete/:game', (req, res) => {
-    request(echoServerIP + '/delete/' + req.params.game).pipe(res)
-        .on('finish', sendGames.bind(null, io))
+    request(echoServerIP + '/delete/' + req.params.game)
+        .pipe(res);
 });
 
-function sendGames(destination) {
+router.get('/list/', (req, res) => {
     if (echoServerIP) {
         console.log('requesting games list');
         request(echoServerIP + '/list', (err, response, body) => {
@@ -30,18 +28,14 @@ function sendGames(destination) {
                     g.downloadURL = echoServerIP + '/download/' + g.game;
                     return g;
                 });
-                destination.emit('games', games);
+                res.send(games);
             }
         });
     }
-}
+});
 
 module.exports = function (sio) {
     io = sio;
-    io.on('connection', socket => {
-        //get listing of available games
-        sendGames(socket);
-    });
 
     return router;
 };

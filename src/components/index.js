@@ -1,20 +1,23 @@
-var ReactDOM = require('react-dom'),
-    React = require('react'),
-    List = require('./List'),
-    Games = require('./Games'),
-    socket = io();
+import ReactDOM from 'react-dom';
+import React from 'react';
+import {Router, Route, hashHistory} from 'react-router';
+import {Provider} from 'react-redux';
+import Lights from './Lights';
+import Games from './Games';
+import Switchboard from './Switchboard';
+import store from '../reducers/reducers';
+window.socket = io();
 
 socket.on('reconnect', () => {location.reload();});
-socket.on('states', states => {
-    ReactDOM.render(
-        <List states={states} socket={socket}/>,
-        document.querySelector('#groups')
-    );
-});
 
-socket.on('games', games => {
-    ReactDOM.render(
-        <Games games={games} />,
-        document.querySelector('#games')
-    );
-});
+ReactDOM.render(
+    <Provider store={store}>
+        <Router history={hashHistory}>
+            <Route path="/" component={Switchboard} />
+            <Route path="/lights" component={Lights} />
+            <Route path="/game-echo" component={Games} />
+        </Router>
+    </Provider>,
+    document.querySelector('#react-mount')
+);
+
