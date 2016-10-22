@@ -3,11 +3,13 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     babel = require('gulp-babel'),
     webpack = require('gulp-webpack'),
+    svgmin = require('gulp-svgmin'),
     sourcemaps = require('gulp-sourcemaps'),
     jsGlob = './src/**/*.js',
     webpackEntry = './dist/components/index.js',
     sassGlob = './src/scss/**/*.scss',
-    uncompiledGlob = './src/**/*.!(js|scss)';
+    uncompiledGlob = './src/**/*.!(js|scss|svg)',
+    svgGlob = './src/**/*.svg';
 
 gulp.task('run:js', function() {
     return gulp.src(jsGlob)
@@ -39,6 +41,12 @@ gulp.task('run:uncompiled', function() {
         .pipe(gulp.dest('./dist'));
 });
 
+gulp.task('run:svgmin',  function() {
+    gulp.src(svgGlob)
+        .pipe(svgmin())
+        .pipe(gulp.dest('./dist'));
+});
+
 gulp.task('watch:js', function() {
     gulp.watch(jsGlob, ['run:js']);
 });
@@ -53,6 +61,10 @@ gulp.task('watch:uncompiled', function() {
 
 gulp.task('watch:webpack', function() {
     gulp.watch(webpackEntry, ['run:webpack']);
+});
+
+gulp.task('watch:svgmin', function() {
+    gulp.watch(svgGlob, ['run:svgmin']);
 });
 
 gulp.task('js', ['run:js', 'watch:js']);
