@@ -43,7 +43,14 @@ gulp.task('run:uncompiled', function() {
 
 gulp.task('run:svgmin',  function() {
     gulp.src(svgGlob)
-        .pipe(svgmin())
+        .pipe(svgmin(function(file) {
+                return {
+                    plugins: [{
+                        cleanupIDs: false
+                    }]
+                }
+            }
+        ))
         .pipe(gulp.dest('./dist'));
 });
 
