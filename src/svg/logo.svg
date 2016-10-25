@@ -9,10 +9,10 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="104.92554mm"
-   height="47.802502mm"
-   viewBox="0 0 371.78345 169.37895"
-   id="svg2"
+   width="100"
+   height="100"
+   viewBox="0 0 100.00002 100.00001"
+   id="logo"
    version="1.1"
    inkscape:version="0.91 r13725"
    sodipodi:docname="logo.svg">
@@ -25,11 +25,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="222.54639"
-     inkscape:cy="75.953033"
+     inkscape:zoom="4"
+     inkscape:cx="138.89246"
+     inkscape:cy="30.885308"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
@@ -40,7 +40,8 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:snap-nodes="true" />
+     inkscape:snap-nodes="true"
+     units="px" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -56,23 +57,25 @@
   <g
      inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="Layer 2">
+     inkscape:label="Layer 2"
+     transform="translate(0,-69.378951)">
     <rect
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.13758004;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4449"
-       width="371.63104"
-       height="169.54802"
-       x="0.25"
-       y="-0.41905627" />
+       width="99.862373"
+       height="47.772026"
+       x="69.447807"
+       y="-73.886871"
+       transform="matrix(0,1,-1,0,0,0)" />
   </g>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-99.675309,-416.03448)">
+     transform="translate(-99.675309,-485.41343)">
     <g
        id="g4440"
-       transform="translate(0,-0.07125688)">
+       transform="matrix(0,0.26871374,-0.28176102,0,290.68658,458.76527)">
       <path
          inkscape:connector-curvature="0"
          id="path4302"
@@ -101,7 +104,7 @@
     </g>
     <g
        id="g4433"
-       transform="translate(0,-0.07605576)">
+       transform="matrix(0,0.26871374,-0.28176102,0,290.68793,458.76527)">
       <path
          inkscape:connector-curvature="0"
          id="path4312"
@@ -130,7 +133,7 @@
     </g>
     <g
        id="g4426"
-       transform="translate(0,-0.07125688)">
+       transform="matrix(0,0.26871374,-0.28176102,0,290.68658,458.76527)">
       <path
          inkscape:connector-curvature="0"
          id="path4322"
