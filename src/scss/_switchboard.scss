@@ -1,0 +1,29 @@
+.switchboard {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.switch-panel {
+    margin: 3rem;
+    background: rgb(59, 102, 123);
+    width: 20rem;
+    height: 20rem;
+    color: white;
+    text-align: center;
+
+    a {
+        text-decoration: none;
+    }
+    h2 {
+        padding-left: 0;
+    }
+}
+
+.switch-icon {
+    transform: scale(0.75);
+    fill: #224e63;
+    margin-top: -1.75rem;
+    margin-bottom: -4rem;
+}

@@ -1,8 +1,13 @@
 @import 'lights';
 @import 'games';
+@import 'switchboard';
 
 $darkGray: #444444;
 $blue: #2d8dbb;
+
+#svg-source {
+    display: none;
+}
 
 * {
     box-sizing: border-box;
@@ -14,16 +19,16 @@ body, html {
     margin: 0;
 }
 header {
-    margin: 0;
-    padding-top: 2rem;
+    margin: 0 0 1rem 0;
+    padding: 2rem 0;
     position: relative;
     background: white;
-    box-shadow: 0 0 3rem 0 white;
+    box-shadow: 0 0 2rem 0 white;
+    text-align: center;
 
-    svg {
-        zoom: 0.3;
-        transform: rotate(90deg) scaleY(0.9) scaleX(0.7);
-        position: relative;
+    svg, h1 {
+        height: 6rem;
+        vertical-align: middle;
     }
     h1 {
         display: inline-block;
@@ -32,8 +37,21 @@ header {
         position: relative;
         text-decoration: overline;
         text-transform: lowercase;
+        margin: 0;
+        transform: translateY(25%);
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
     }
 }
+
+.content {
+    display: flex;
+    justify-content: center;
+}
+
 h2 {
     font-size: 2.25rem;
 }
@@ -53,7 +71,7 @@ li {
     padding: 0.5rem;
     display: inline-block;
 
-    h2 {
+    &:not(.switch-panel) h2 {
         color: white;
         padding-left: 1rem;
     }
