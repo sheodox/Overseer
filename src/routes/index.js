@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
+/* GET home page for / and any client side routing urls */
+router.get('/|/w/', function(req, res) {
     res.render('index', { title: 'Home' });
 });
 
