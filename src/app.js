@@ -27,9 +27,9 @@ function onListening() {
     console.log('Listening on ' + bind);
 }
 
-app.use(require('./routes/index'));
 app.use('/game-echo', require('./routes/game-echo')(io));
 require('./ghost')(io);
+app.use(require('./routes/index'));
 
 
 module.exports = app;
