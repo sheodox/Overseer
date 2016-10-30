@@ -116,8 +116,13 @@ function formatBytes(bytes) {
 }
 
 function formatDate(dateStr) {
-    var d = new Date(dateStr);
-    return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()} ${d.getHours() % 12}:${d.getMinutes()} ${d.getHours() > 12 ? 'pm' : 'am'}`;
+    let d = new Date(dateStr),
+        day = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()} `,
+        minutes =  d.getMinutes(),
+        time;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    time = `${d.getHours() % 12}:${minutes} ${d.getHours() > 12 ? 'pm' : 'am'}`;
+    return `${day} - ${time}`;
 }
 
 function mapStateToProps(state) {
