@@ -16,7 +16,7 @@ var Games = React.createClass({
             <section className="panel" id="games">
                 <h2>Game Echo</h2>
                 <div className="sub-panel">
-                    <Uploader />
+                    <Uploader storageServer={this.props.storageServer} />
                     <table>
                         <thead>
                         <tr>
@@ -50,7 +50,7 @@ var Uploader = React.createClass({
             uploading: true,
             started: Date.now()
         });
-        axios.post('/game-echo/upload', new FormData(this.form), {
+        axios.post(this.props.storageServer + '/upload', new FormData(this.form), {
             headers: {
                 'content-type': 'multipart/form-data'
             },
@@ -127,7 +127,8 @@ function formatDate(dateStr) {
 
 function mapStateToProps(state) {
     return {
-        games: state.echo.games
+        games: state.echo.games,
+        storageServer: state.echo.storageServer
     };
 }
 

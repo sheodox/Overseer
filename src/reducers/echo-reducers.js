@@ -1,5 +1,6 @@
 var gamesDefault = {
     fetching: false,
+    storageServer: '',
     status: null,
     games: []
 };
@@ -13,9 +14,10 @@ function echo(state = gamesDefault, action) {
                 fetching: true
             });
         case 'RECEIVED_GAMES':
-            return Object.assign({
+            return Object.assign(state, {
                 fetching: false,
-                games: action.games
+                games: action.games,
+                storageServer: action.storageServer
             });
         default:
             return state;

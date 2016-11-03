@@ -9,7 +9,8 @@ const actions = {
                 .then(function(response) {
                     dispatch({
                         type: 'RECEIVED_GAMES',
-                        games: response.data
+                        games: response.data.games,
+                        storageServer: response.data.storageServer
                     })
                 })
                 .catch(function(err) {

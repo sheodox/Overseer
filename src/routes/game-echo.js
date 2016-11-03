@@ -28,7 +28,10 @@ router.get('/list/', (req, res) => {
                     g.downloadURL = echoServerIP + '/download/' + g.game;
                     return g;
                 });
-                res.send(games);
+                res.send({
+                    storageServer: echoServerIP,
+                    games
+                });
             }
         });
     }
