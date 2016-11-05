@@ -1,13 +1,7 @@
 const actions = {
-    refresh: function() {
-        socket.emit('lights/refresh');
+    refresh: function(states) {
         return {
-            type: 'REQUESTED_REFRESH'
-        }
-    },
-    refreshed: function(states) {
-        return {
-            type: 'REFRESHED_LIGHTS',
+            type: 'LIGHTS_REFRESH',
             lightStates: states
         };
     },

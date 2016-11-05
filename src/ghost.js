@@ -1,43 +1,31 @@
-'use strict';
-var harbinger = require('./harbinger');
-module.exports = function(io) {
+import harbinger from './harbinger';
+import store from './reducers/reducers';
+import actions from './actions/act-lights-server';
+
+function listen(io) {
+    io.on('connection', socket => {
+        function broadcastState() {
+            const lightState = store.getState().lights;
+            io.emit('lights/refresh', lightState);
+        }
+
+        socket.on('lights/toggle', id => {
+            store.dispatch(actions.toggle(id));
+            broadcastState();
+        });
+
+        socket.on('lights/brightness', (id, newBrightness) => {
+            store.dispatch(actions.brightness(id, newBrightness));
+            broadcastState();
+        })
+    });
+}
+
+export default function(io) {
     harbinger
         .init()
         .then(() => {
-            io.on('connection', socket => {
-                socket.on('lights/refresh', () => {
-                    harbinger.getState()
-                        .then(state => {
-                            socket.emit('lights/refresh', state);
-                        });
-                });
-
-                function broadcastState() {
-                    return harbinger
-                        .getState()
-                        .then(state => {
-                            io.emit('lights/refresh', state);
-                        });
-                }
-
-                socket.on('lights/toggle', id => {
-                    harbinger.getState()
-                        .then(state => {
-                            var newState = state.reduce((done, next) => {
-                                if (next.id === id) {
-                                    done = !next.on;
-                                }
-                                return done;
-                            }, '');
-                            harbinger[newState ? 'on' : 'off'](id)
-                                .then(broadcastState);
-                        });
-                });
-                
-                socket.on('lights/brightness', (id, newBrightness) => {
-                    harbinger.setBrightness(id, newBrightness)
-                        .then(broadcastState);
-                })
-            });
+            //the rest of the code is in 'listen' to reduce indenting
+            listen(io);
         }, err => {console.log(err);});
 };

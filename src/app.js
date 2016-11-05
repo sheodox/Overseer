@@ -1,12 +1,13 @@
 'use strict';
-var express = require('express'),
+const express = require('express'),
     app = express(),
     debug = require('debug')('game-voter:server'),
     server = require('http').createServer(app),
     io = require('socket.io')(server),
     path = require('path'),
     favicon = require('serve-favicon'),
-    logger = require('morgan');
+    logger = require('morgan'),
+    ghost = require('./ghost').default;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,7 +29,7 @@ function onListening() {
 }
 
 app.use('/game-echo', require('./routes/game-echo')(io));
-require('./ghost')(io);
+ghost(io);
 app.use(require('./routes/index'));
 
 

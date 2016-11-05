@@ -1,16 +1,20 @@
-'use strict';
-var hue = require('node-hue-api'),
+import store from './reducers/reducers';
+import actions from './actions/act-lights-server';
+import hue from 'node-hue-api';
+
+const pollInterval = 30 * 1000,
     lightState = hue.lightState,
     config = require('./config'),
     states = {
         on: lightState.create().on(500, 100),
         off: lightState.create().off()
-    },
-    bridge, api, groups;
+    };
+let bridge, api, groups;
 
-
-module.exports = {
+const harbinger = {
     init: function() {
+        let self = this;
+
         return new Promise((resolve, reject) => {
             hue.nupnpSearch()
                 .then(b => {
@@ -35,6 +39,19 @@ module.exports = {
                 .then(result => {
                     groups = result;
                     console.log(JSON.stringify(result, null, 4));
+
+                    function refresh() {
+                        self.getState()
+                            .then(lightStates => {
+                                store.dispatch(actions.refresh(lightStates));
+                            });
+                    }
+
+                    //occasionally poll to verify state (to correct state if lights were adjusted without overseer)
+                    setInterval(refresh, pollInterval);
+                    //call immediately to get initial state when booting
+                    refresh();
+
                     resolve();
                 })
                 .catch(err => {
@@ -74,7 +91,18 @@ module.exports = {
         console.log(`off ${id}`);
         return api.setGroupLightState(id, states.off);
     },
+    toggle: function(id) {
+        const lightStates = store.getState().lights,
+            group = lightStates.find(l => {
+                return l.id ===  id;
+            });
+
+        this[group.on ? 'off' : 'on'](id);
+    },
     setBrightness: (id, brightness) => {
+        console.log(`brightness ${id} ${brightness}`);
         return api.setGroupLightState(id, lightState.create().bri(brightness));
     }
 };
+
+export default harbinger;

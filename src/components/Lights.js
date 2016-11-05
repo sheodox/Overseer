@@ -1,11 +1,8 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import actions from '../actions/lights-actions';
+import actions from '../actions/act-lights-client';
 
 var Lights = React.createClass({
-    componentDidMount: function() {
-        this.props.refresh();
-    },
     render: function() {
         var groups = this.props.states.map((s, i) => {
             return <LightGroup {...s} key={i} changeBrightness={this.props.brightness} toggleGroup={this.props.toggle}/>
@@ -126,7 +123,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     socket.on('lights/refresh', states => {
-        dispatch(actions.refreshed(states));
+        dispatch(actions.refresh(states));
     });
 
     return {
@@ -135,9 +132,6 @@ function mapDispatchToProps(dispatch) {
         },
         brightness: (id, brightness) => {
             dispatch(actions.brightness(id, brightness));
-        },
-        refresh: () => {
-            dispatch(actions.refresh());
         }
     }
 }
