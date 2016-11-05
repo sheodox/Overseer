@@ -15,15 +15,16 @@ function echo(state = gamesDefault, action) {
     let index;
     switch (action.type) {
         case 'GAMES_REFRESH':
-            console.log('got new games');
+            console.log('games refreshed from echo server');
             return Object.assign(state, {
                 games: action.games,
                 echoServer: action.echoServer
             });
         case 'GAMES_ADD':
+            console.log(`adding: ${action.game.name}`);
             index = findGameIndex(state.games, action.game.name);
             if (index !== -1) {
-                state.games[i] = action.game;
+                state.games[index] = action.game;
             }
             else {
                 state.games.push(action.game);
