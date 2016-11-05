@@ -6,14 +6,9 @@ import App from './App';
 import Lights from './Lights';
 import Games from './Games';
 import store from '../reducers/reducers';
-import echoActions from '../actions/act-echo-client';
 window.socket = io();
 
 socket.on('reconnect', () => {location.reload();});
-
-socket.on('games/refresh', (games) => {
-    store.dispatch(echoActions.refresh(games));
-});
 
 ReactDOM.render(
     <Provider store={store}>
