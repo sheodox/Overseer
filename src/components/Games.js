@@ -9,8 +9,6 @@ var Games = React.createClass({
             return <Game {...game} echoServer={this.props.echoServer} key={index} delete={this.props.delete}/>
         });
 
-        console.log(`s: ${this.props.echoServer}`);
-
         return (
             <section className="panel" id="games">
                 <h2>Game Echo</h2>
@@ -49,7 +47,6 @@ var Uploader = React.createClass({
             uploading: true,
             started: Date.now()
         });
-        console.log(this.props.echoServer + '/upload');
         axios.post(this.props.echoServer + '/upload', new FormData(this.form), {
             headers: {
                 'content-type': 'multipart/form-data'
@@ -132,7 +129,6 @@ function formatDate(dateStr) {
 }
 
 function mapStateToProps(state) {
-    console.log(state);
     return {
         games: state.echo.games,
         echoServer: state.echo.echoServer

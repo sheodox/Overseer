@@ -11,7 +11,6 @@ store.subscribe(function() {
     let echoStore = store.getState().echo,
         newGamesCount = echoStore.games.length;
 
-    console.log(`prev: ${previousGamesCount}, new: ${newGamesCount}`);
     if (io && newGamesCount !== previousGamesCount) {
         io.emit('games/refresh', echoStore);
     }
@@ -27,6 +26,7 @@ const clientListener = socket => {
 
 const echoListener = socket => {
     console.log('connected to echo server');
+
     echoSocket = socket;
     socket.on('new-game', gameData => {
         console.log(`new game: ${gameData.name}`);
