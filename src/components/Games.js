@@ -43,16 +43,19 @@ var Uploader = React.createClass({
     upload: function(e) {
         var self = this;
         e.preventDefault();
+
         this.setState({
             uploading: true,
             started: Date.now()
         });
-        axios.post(this.props.echoServer + '/upload', new FormData(this.form), {
-            headers: {
-                'content-type': 'multipart/form-data'
-            },
-            onUploadProgress: this.uploadProgress
-        })
+
+        axios
+            .post(this.props.echoServer + '/upload', new FormData(this.form), {
+                headers: {
+                    'content-type': 'multipart/form-data'
+                },
+                onUploadProgress: this.uploadProgress
+            })
             .then(function() {
                 self.form.reset();
                 self.setState({
@@ -71,8 +74,15 @@ var Uploader = React.createClass({
                 value: this.state.loaded,
                 max: this.state.total
             },
-            bytesPerSecond = this.state.loaded / ((Date.now() - this.state.started) / 1000),
-            megabytesPerSecond = formatBytes(bytesPerSecond, 'mb');
+            elapsedSeconds = (Date.now() - this.state.started) / 1000,
+            bytesPerSecond = this.state.loaded / elapsedSeconds,
+            megabytesPerSecond = formatBytes(bytesPerSecond, 'mb'),
+            //calculate time till completion
+            percentDone = this.state.loaded / this.state.total,
+            //remaining = percent left/percent per second
+            secondsTillDone = (1 - percentDone) / (percentDone / elapsedSeconds),
+            showMinutes = secondsTillDone > 60,
+            remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${showMinutes ? 'm' : 's'}`;
 
         return (
             <div>
@@ -83,7 +93,7 @@ var Uploader = React.createClass({
                 <div style={{display: this.state.uploading ? '' : 'none'}}>
                     <progress type="progress" ref={c => this.progress = c} {...progressValues} />
                     <span>
-                        {formatBytes(this.state.loaded, 'gb')} / {formatBytes(this.state.total, 'gb')} gb - {megabytesPerSecond} mb/s
+                        {formatBytes(this.state.loaded, 'gb')} / {formatBytes(this.state.total, 'gb')} gb - {megabytesPerSecond} mb/s ({remaining})
                     </span>
                 </div>
             </div>
@@ -102,7 +112,7 @@ var Game = React.createClass({
                 <td>{formatBytes(this.props.size, 'gb') + ' gb'}</td>
                 <td>{formatDate(this.props.modified)}</td>
                 <td className="centered">
-                    <a className="download" href={this.props.echoServer + '/download/' + this.props.name} download={this.props.name + '.zip'}>⬇</a>
+                    <a className="download" href={this.props.echoServer + '/download/' + this.props.name + '.zip'}>⬇</a>
                     <button onClick={this.delete} className="delete">🞩</button>
                 </td>
             </tr>
