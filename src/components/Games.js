@@ -70,10 +70,12 @@ var Uploader = React.createClass({
         });
     },
     render: function() {
-        var progressValues = {
-            value: this.state.loaded,
-            max: this.state.total
-        };
+        const progressValues = {
+                value: this.state.loaded,
+                max: this.state.total
+            },
+            bytesPerSecond = this.state.loaded / ((Date.now() - this.state.started) / 1000),
+            megabytesPerSecond = formatBytes(bytesPerSecond, 'mb');
 
         return (
             <div>
@@ -84,7 +86,7 @@ var Uploader = React.createClass({
                 <div style={{display: this.state.uploading ? '' : 'none'}}>
                     <progress type="progress" ref={c => this.progress = c} {...progressValues} />
                     <span>
-                        {formatBytes(this.state.loaded)} / {formatBytes(this.state.total)}
+                        {formatBytes(this.state.loaded, 'gb')} / {formatBytes(this.state.total, 'gb')} gb - {megabytesPerSecond} mb/s
                     </span>
                 </div>
             </div>
@@ -100,7 +102,7 @@ var Game = React.createClass({
         return (
             <tr>
                 <td>{this.props.name}</td>
-                <td>{formatBytes(this.props.size)}</td>
+                <td>{formatBytes(this.props.size, 'gb') + ' gb'}</td>
                 <td>{formatDate(this.props.modified)}</td>
                 <td className="centered">
                     <a className="download" href={this.props.echoServer + '/download/' + this.props.name} download={this.props.name + '.zip'}>⬇</a>
@@ -111,8 +113,12 @@ var Game = React.createClass({
     }
 });
 
-function formatBytes(bytes) {
-    return `${(bytes / 1000000000).toFixed(2)} gb`;
+function formatBytes(bytes, unit) {
+    let units = {
+        gb: 1000000000,
+        mb: 1000000
+    };
+    return (bytes / units[unit]).toFixed(2);
 }
 
 function formatDate(dateStr) {
@@ -134,6 +140,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
+    socket.on('games/refresh', (games) => {
+        dispatch(actions.refresh(games));
+    });
+
     return {
         delete: actions.delete
     }
