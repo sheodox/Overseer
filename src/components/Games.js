@@ -20,7 +20,7 @@ var Games = React.createClass({
                             <td>Game</td>
                             <td>Size</td>
                             <td>Uploaded</td>
-                            <td>Options</td>
+                            <td>Actions</td>
                         </tr>
                         </thead>
                         <tbody>
