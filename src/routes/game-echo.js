@@ -1,44 +1,59 @@
-var router = require('express').Router(),
+const router = require('express').Router(),
     config = require('../config'),
     echoServerIP = config['games-server'],
-    request = require('request'),
-    io;
+    actions = require('../actions/act-echo-server').default,
+    store = require('../reducers/reducers').default;
 
-router.post('/upload', function(req, res) {
-    var url = echoServerIP + '/upload';
-    req
-        .pipe(request.post({url:  url, headers: req.headers}))
-        .pipe(res);
-});
+let io, echoSocket,
+    previousGamesCount = -1;
 
-router.get('/delete/:game', (req, res) => {
-    request(echoServerIP + '/delete/' + req.params.game)
-        .pipe(res);
-});
+store.subscribe(function() {
+    let echoStore = store.getState().echo,
+        newGamesCount = echoStore.games.length;
 
-router.get('/list/', (req, res) => {
-    if (echoServerIP) {
-        console.log('requesting games list');
-        request(echoServerIP + '/list', (err, response, body) => {
-            if (err) {
-                console.log('games server unreachable', err);
-            }
-            else {
-                var games = JSON.parse(body).map(g => {
-                    g.downloadURL = echoServerIP + '/download/' + g.game;
-                    return g;
-                });
-                res.send({
-                    storageServer: echoServerIP,
-                    games
-                });
-            }
-        });
+    console.log(`prev: ${previousGamesCount}, new: ${newGamesCount}`);
+    if (io && newGamesCount !== previousGamesCount) {
+        io.emit('games/refresh', echoStore);
     }
+    previousGamesCount = newGamesCount;
 });
+
+const clientListener = socket => {
+    socket.on('games/delete', name => {
+        echoSocket.emit('delete', name);
+    });
+
+};
+
+const echoListener = socket => {
+    console.log('connected to echo server');
+    echoSocket = socket;
+    socket.on('new-game', gameData => {
+        console.log(`new game: ${gameData.name}`);
+        store.dispatch(actions.newGame(gameData));
+    });
+    socket.on('delete-game', name => {
+        store.dispatch(actions.deleteGame(name));
+    });
+    //on connection events make sure we're always up to date
+    socket.on('refresh', gameData => {
+        store.dispatch(actions.refreshGames({
+            games: gameData,
+            echoServer: echoServerIP
+        }));
+    })
+};
 
 module.exports = function (sio) {
     io = sio;
+    io.on('connection', socket => {
+        clientListener(socket);
+    });
 
+    io
+        .of('/echo-server')
+        .on('connection', socket => {
+            echoListener(socket);
+        });
     return router;
 };

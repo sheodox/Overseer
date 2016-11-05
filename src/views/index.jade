@@ -1,4 +1,6 @@
 extends layout
 block content
     div#react-mount
+    script.
+        window.__PRELOADED_STATE__ = !{preloadedState};
     script(src="/js/main.js")

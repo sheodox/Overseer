@@ -1,22 +1,21 @@
 import React from 'react';
 import axios from 'axios';
 import {connect} from 'react-redux';
-import actions from '../actions/echo-actions';
+import actions from '../actions/act-echo-client';
 
 var Games = React.createClass({
-    componentDidMount: function() {
-        this.props.load();
-    },
     render: function() {
         var games = this.props.games.map((game, index) => {
-            return <Game {...game} key={index} delete={this.props.delete}/>
+            return <Game {...game} echoServer={this.props.echoServer} key={index} delete={this.props.delete}/>
         });
+
+        console.log(`s: ${this.props.echoServer}`);
 
         return (
             <section className="panel" id="games">
                 <h2>Game Echo</h2>
                 <div className="sub-panel">
-                    <Uploader storageServer={this.props.storageServer} />
+                    <Uploader echoServer={this.props.echoServer} />
                     <table>
                         <thead>
                         <tr>
@@ -50,7 +49,8 @@ var Uploader = React.createClass({
             uploading: true,
             started: Date.now()
         });
-        axios.post(this.props.storageServer + '/upload', new FormData(this.form), {
+        console.log(this.props.echoServer + '/upload');
+        axios.post(this.props.echoServer + '/upload', new FormData(this.form), {
             headers: {
                 'content-type': 'multipart/form-data'
             },
@@ -94,16 +94,16 @@ var Uploader = React.createClass({
 
 var Game = React.createClass({
     delete: function() {
-        this.props.delete(this.props.game);
+        this.props.delete(this.props.name);
     },
     render: function() {
         return (
             <tr>
-                <td>{this.props.game}</td>
+                <td>{this.props.name}</td>
                 <td>{formatBytes(this.props.size)}</td>
                 <td>{formatDate(this.props.modified)}</td>
                 <td className="centered">
-                    <a className="download" href={this.props.downloadURL} download={this.props.game + '.zip'}>⬇</a>
+                    <a className="download" href={this.props.echoServer + '/download/' + this.props.name} download={this.props.name + '.zip'}>⬇</a>
                     <button onClick={this.delete} className="delete">🞩</button>
                 </td>
             </tr>
@@ -126,20 +126,16 @@ function formatDate(dateStr) {
 }
 
 function mapStateToProps(state) {
+    console.log(state);
     return {
         games: state.echo.games,
-        storageServer: state.echo.storageServer
+        echoServer: state.echo.echoServer
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        delete: (name) => {
-            dispatch(actions.delete(name))
-        },
-        load: () => {
-            dispatch(actions.requestGames())
-        }
+        delete: actions.delete
     }
 }
 

@@ -1,24 +1,42 @@
 var gamesDefault = {
-    fetching: false,
-    storageServer: '',
-    status: null,
+    echoServer: '',
     games: []
 };
+
+function findGameIndex(games, name) {
+    return games.findIndex(g => {
+        return g.name === name;
+    })
+}
 
 function echo(state = gamesDefault, action) {
     state = JSON.parse(JSON.stringify(state));
 
+    let index;
     switch (action.type) {
-        case 'REQUEST_GAMES':
+        case 'GAMES_REFRESH':
+            console.log('got new games');
             return Object.assign(state, {
-                fetching: true
-            });
-        case 'RECEIVED_GAMES':
-            return Object.assign(state, {
-                fetching: false,
                 games: action.games,
-                storageServer: action.storageServer
+                echoServer: action.echoServer
             });
+        case 'GAMES_ADD':
+            index = findGameIndex(state.games, action.game.name);
+            if (index !== -1) {
+                state.games[i] = action.game;
+            }
+            else {
+                state.games.push(action.game);
+            }
+            return state;
+        case 'GAMES_REMOVE':
+            console.log(`removing: ${action.name}`);
+            index = findGameIndex(state.games, action.name);
+
+            if (index !== -1) {
+                state.games.splice(index, 1);
+            }
+            return state;
         default:
             return state;
     }
