@@ -112,8 +112,8 @@ var Game = React.createClass({
                 <td>{formatBytes(this.props.size, 'gb') + ' gb'}</td>
                 <td>{formatDate(this.props.modified)}</td>
                 <td className="centered">
-                    <a className="download" href={this.props.echoServer + '/download/' + this.props.name + '.zip'}>⬇</a>
-                    <button onClick={this.delete} className="delete">🞩</button>
+                    <a className="download" href={this.props.echoServer + '/download/' + this.props.name + '.zip'} title="download">⬇</a>
+                    <button onClick={this.delete} className="delete" title="delete">🞩</button>
                 </td>
             </tr>
         )
