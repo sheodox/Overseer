@@ -2,9 +2,9 @@ import store from './reducers/reducers';
 import actions from './actions/act-lights-server';
 import hue from 'node-hue-api';
 
-const pollInterval = 30 * 1000,
+const config = require('./config'),
+    pollInterval = config['lights-poll-interval'],
     lightState = hue.lightState,
-    config = require('./config'),
     states = {
         on: lightState.create().on(500, 100),
         off: lightState.create().off()
@@ -76,7 +76,6 @@ const harbinger = {
                         })
                     }
                 }
-                console.log(relevantGroups);
                 return relevantGroups;
             })
             .catch(err => {
