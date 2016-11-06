@@ -25,6 +25,7 @@ $onAccentColor: $defaultAccent;
         transition: border 0.2s, background 0.2s;
         width: 80%;
         text-align: left;
+        border-radius: 2px 0 0 2px;
 
         &.on {
             border-color: $onAccentColor;
@@ -40,6 +41,7 @@ $onAccentColor: $defaultAccent;
         @include dark-bg();
         width: 20%;
         float: right;
+        border-radius: 0 2px 2px 0;
 
         svg {
             transition: 0.2s;
