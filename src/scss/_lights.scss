@@ -3,32 +3,40 @@
 $onAccentColor: $defaultAccent;
 
 .light-group {
+    min-width: 20rem;
+
     button {
         cursor: pointer;
         padding: 0.5rem 1rem 0.5rem 1rem;
         color: white;
         border: none;
-        border-radius: 2px;
         font-size: 1.5rem;
+        transition: background 0.2s;
+
+        &:hover {
+            background: lighten(material-color('grey', '700'), 5%);
+        }
+
     }
     .lg-toggle {
-        @include faint-shadow();
         @include dark-bg();
         border-left: 1rem solid;
-        transition: border 0.2s;
-
+        transition: border 0.2s, background 0.2s;
+        width: 80%;
         &.on {
             border-color: $onAccentColor;
+            &:hover {
+                background: lighten($onAccentColor, 5%);
+            }
         }
         &.off {
             border-color: material-color('grey', '700');
         }
     }
     .lg-details-toggle {
-        margin-left: 1rem;
-        background: none;
+        @include dark-bg();
+        width: 20%;
         float: right;
-        color: material-color('grey', '800');
     }
 }
 
