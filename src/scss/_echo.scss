@@ -1,11 +1,13 @@
+@import 'colors';
+
 #games {
     a.download, .delete {
+        @include faint-shadow();
         text-align: center;
-        color: white;
-        background: #51636b;
+        color: material-color('grey', '800');
+        background: $defaultAccent;
         text-decoration: none;
         padding: 0.2rem 0.5rem;
-        box-shadow:  0 0 0.1rem 0.1rem;
         border-radius: 0.1rem;
         border: none;
 

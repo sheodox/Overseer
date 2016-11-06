@@ -1,9 +1,7 @@
 @import 'lights';
-@import 'games';
+@import 'echo';
 @import 'switchboard';
-
-$darkGray: #444444;
-$blue: #2d8dbb;
+@import 'colors';
 
 #svg-source {
     display: none;
@@ -15,7 +13,7 @@ $blue: #2d8dbb;
 body, html {
     font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
     height: 100%;
-    background: #224e63;
+    background: material-color('grey', '100');
     margin: 0;
 }
 button {
@@ -23,15 +21,15 @@ button {
 }
 header {
     $boxShadowSettings: 0 0 2rem 0;
+    $background: material-color($defaultTheme, '500');
     margin: 0 0 1rem 0;
     padding: 2rem 0;
     position: relative;
-    background: white;
-    box-shadow: #{$boxShadowSettings} white;
+    background: $background;
+    box-shadow: #{$boxShadowSettings} material-color('grey', '700');
     text-align: center;
 
     &.disconnected {
-        box-shadow: #{$boxShadowSettings} red;
         background: red;
 
         h1 {
@@ -46,7 +44,7 @@ header {
     h1 {
         display: inline-block;
         font-size: 3rem;
-        color: $darkGray;
+        color: material-color('grey', '200');
         position: relative;
         text-decoration: overline;
         text-transform: lowercase;
@@ -72,29 +70,29 @@ ul {
     display: flex;
     flex-direction: column;
     padding: 0;
+    margin: 0;
 }
 li {
     list-style: none;
-    margin: 0.9rem;
 }
 
 .panel {
-    background-color: rgb(59, 102, 123);
+    @include faint-shadow();
+    background-color: material-color('grey', '300');
     margin: 0.5rem;
-    padding: 0.5rem;
     display: inline-block;
 
     &:not(.switch-panel) h2 {
-        color: white;
+        color: material-color('grey', '800');
         padding-left: 1rem;
     }
 }
 
 .sub-panel {
-    background-color: #e0e0e0;
+    background-color: material-color('grey', '200');
     border: none;
     padding: 1.5rem;
-    color: $darkGray;
+    color: material-color('grey', '800');
 }
 
 .centered {

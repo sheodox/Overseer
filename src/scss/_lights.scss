@@ -1,5 +1,6 @@
-$darkGray: #444444;
-$blue: #2d8dbb;
+@import 'colors';
+
+$onAccentColor: $defaultAccent;
 
 .light-group {
     button {
@@ -11,21 +12,23 @@ $blue: #2d8dbb;
         font-size: 1.5rem;
     }
     .lg-toggle {
-        box-shadow: 0  0 0.3rem 0.3rem #ccc;
+        @include faint-shadow();
+
         transition: background 0.2s;
 
         &.on {
-            background-color: #02c155;
+            background-color: $onAccentColor;
+            color: material-color('grey', '800');
         }
         &.off {
-            background-color: #065a83;
+            background-color: material-color('grey', '700');
         }
     }
     .lg-details-toggle {
         margin-left: 1rem;
         background: none;
         float: right;
-        color: $darkGray;
+        color: material-color('grey', '800');
     }
 }
 
@@ -46,7 +49,7 @@ $blue: #2d8dbb;
     width: 100%;
 
     &::-webkit-slider-runnable-track {
-        background: $darkGray;
+        background: material-color('grey', '800');
         height: 0.2rem;
     }
 
@@ -55,7 +58,7 @@ $blue: #2d8dbb;
         cursor: pointer;
         height: 1.75rem;
         width: 1.75rem;
-        background: $blue;
+        background: $onAccentColor;
         border-radius: 50%;
         margin-top: -0.875rem;
     }

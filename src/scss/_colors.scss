@@ -1,0 +1,8 @@
+@import '../../node_modules/sass-material-colors/sass/sass-material-colors';
+
+$defaultTheme: 'cyan';
+$defaultAccent: material-color('cyan', '500');
+
+@mixin faint-shadow {
+    box-shadow: 0 0 0.1rem 0.1rem material-color('grey', '400');
+}
