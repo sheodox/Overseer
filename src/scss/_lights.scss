@@ -12,6 +12,7 @@ $onAccentColor: $defaultAccent;
         border: none;
         font-size: 1.5rem;
         transition: background 0.2s;
+        height: 3rem;
 
         &:hover {
             background: lighten(material-color('grey', '700'), 5%);
@@ -23,6 +24,8 @@ $onAccentColor: $defaultAccent;
         border-left: 1rem solid;
         transition: border 0.2s, background 0.2s;
         width: 80%;
+        text-align: left;
+
         &.on {
             border-color: $onAccentColor;
             &:hover {
@@ -37,6 +40,14 @@ $onAccentColor: $defaultAccent;
         @include dark-bg();
         width: 20%;
         float: right;
+
+        svg {
+            transition: 0.2s;
+            fill: white;
+        }
+        &.expanded svg {
+            transform: scaleY(-1);
+        }
     }
 }
 
