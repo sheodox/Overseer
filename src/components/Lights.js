@@ -37,8 +37,7 @@ var LightGroup = React.createClass({
         });
     },
     render: function() {
-        let check = this.props.on ? '☑' : '☐',
-            toggleClass = 'lg-toggle ' + (this.props.on ? 'on' : 'off'),
+        let toggleClass = 'lg-toggle ' + (this.props.on ? 'on' : 'off'),
             expandedClass = this.state.detailsExpanded ? ' expanded' : '',
             detailsClass = 'lg-details' + expandedClass,
             expandButtonClass = 'lg-details-toggle' + expandedClass;
@@ -46,7 +45,9 @@ var LightGroup = React.createClass({
         return (
             <li className="sub-panel">
                 <div className="light-group">
-                    <button className={toggleClass} onClick={this.toggle}>{check} {this.props.name}</button>
+                    <button className={toggleClass} onClick={this.toggle}>
+                        {this.props.name}
+                    </button>
                     <button className={expandButtonClass} onClick={this.toggleDetails}>
                         <SVG id="chevron-icon" />
                     </button>
