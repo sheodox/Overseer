@@ -13,15 +13,16 @@ $onAccentColor: $defaultAccent;
     }
     .lg-toggle {
         @include faint-shadow();
-
-        transition: background 0.2s;
+        border-left: 1rem solid;
+        background: material-color('grey', '800');
+        color: material-color('grey', '200');
+        transition: border 0.2s;
 
         &.on {
-            background-color: $onAccentColor;
-            color: material-color('grey', '800');
+            border-color: $onAccentColor;
         }
         &.off {
-            background-color: material-color('grey', '700');
+            border-color: material-color('grey', '700');
         }
     }
     .lg-details-toggle {
