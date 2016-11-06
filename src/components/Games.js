@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import {connect} from 'react-redux';
 import actions from '../actions/act-echo-client';
+import SVG from './SVG';
 
 var Games = React.createClass({
     render: function() {
@@ -11,7 +12,10 @@ var Games = React.createClass({
 
         return (
             <section className="panel" id="games">
-                <h2>Game Echo</h2>
+                <div className="panel-title">
+                    <h2>Game Echo</h2>
+                    <SVG id="echo-icon" />
+                </div>
                 <div className="sub-panel">
                     <Uploader echoServer={this.props.echoServer} />
                     <table>

@@ -1,4 +1,5 @@
 import React from 'react';
+import SVG from './SVG';
 import {connect} from 'react-redux';
 import actions from '../actions/act-lights-client';
 
@@ -9,7 +10,10 @@ var Lights = React.createClass({
         });
         return (
             <section className="panel">
-                <h2>Lights</h2>
+                <div className="panel-title">
+                    <h2>Lights</h2>
+                    <SVG id="light-icon" />
+                </div>
                 <ul>
                     {groups}
                 </ul>
