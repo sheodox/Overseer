@@ -3,9 +3,8 @@
 #games {
     a.download, .delete {
         @include faint-shadow();
+        @include dark-bg();
         text-align: center;
-        color: material-color('grey', '800');
-        background: $defaultAccent;
         text-decoration: none;
         padding: 0.2rem 0.5rem;
         border-radius: 0.1rem;
