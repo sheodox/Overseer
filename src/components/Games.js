@@ -92,7 +92,7 @@ var Uploader = React.createClass({
             <div>
                 <form ref={c => this.form = c} onSubmit={this.upload}>
                     <input type="file" accept=".zip" name="zippedGame"/>
-                    <input type="submit" value="Upload" />
+                    <input type="submit" value="Upload" className="upload-submit" />
                 </form>
                 <div style={{display: this.state.uploading ? '' : 'none'}}>
                     <progress type="progress" ref={c => this.progress = c} {...progressValues} />
