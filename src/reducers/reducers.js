@@ -2,10 +2,13 @@ import {combineReducers, createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import echoReducers from './echo-reducers';
 import lightsReducers from './lights-reducers';
+import appReducers from './app-reducers';
+
 let args = [
     combineReducers({
         ...lightsReducers,
-        ...echoReducers
+        ...echoReducers,
+        ...appReducers
     })];
 
 try {

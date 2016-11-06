@@ -22,12 +22,22 @@ button {
     cursor: pointer;
 }
 header {
+    $boxShadowSettings: 0 0 2rem 0;
     margin: 0 0 1rem 0;
     padding: 2rem 0;
     position: relative;
     background: white;
-    box-shadow: 0 0 2rem 0 white;
+    box-shadow: #{$boxShadowSettings} white;
     text-align: center;
+
+    &.disconnected {
+        box-shadow: #{$boxShadowSettings} red;
+        background: red;
+
+        h1 {
+            color: white;
+        }
+    }
 
     svg, h1 {
         height: 6rem;

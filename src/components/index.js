@@ -6,9 +6,18 @@ import App from './App';
 import Lights from './Lights';
 import Games from './Games';
 import store from '../reducers/reducers';
+import appActions from '../actions/act-app-client';
+
 window.socket = io();
 
-socket.on('reconnect', () => {location.reload();});
+// socket.on('reconnect', () => {location.reload();});
+
+socket.on('disconnect', () => {
+    store.dispatch(appActions.socketDisconnected());
+});
+socket.on('connect', () => {
+    store.dispatch(appActions.socketConnected());
+});
 
 ReactDOM.render(
     <Provider store={store}>

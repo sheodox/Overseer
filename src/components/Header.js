@@ -5,7 +5,7 @@ import SVG from './SVG';
 export default React.createClass({
     render: function() {
         return (
-            <header>
+            <header className={this.props.socketConnected ? '' : 'disconnected'}>
                 <SVG id="logo" />
                 <h1>
                     <Link to="/">Overseer</Link>
