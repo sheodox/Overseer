@@ -88,6 +88,23 @@ li {
     }
 }
 
+.panel-title {
+    padding: 1rem;
+    overflow: hidden;
+    height: 5rem;
+
+    h2 {
+        margin: 0;
+        display: inline-block;
+    }
+    svg {
+        fill: material-color('grey', '800');
+        margin-top: -4rem;
+        width: 10rem;
+        float: right;
+    }
+}
+
 .sub-panel {
     background-color: material-color('grey', '200');
     border: none;
