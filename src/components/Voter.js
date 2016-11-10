@@ -218,7 +218,8 @@ const Candidate = React.createClass({
             voteButtonProps = {
                 className: 'vote-button illuminated-target ' + (this.props.voted ? 'on' : 'off'),
                 onClick: this.props.toggleVote,
-                disabled: disabledState
+                disabled: disabledState,
+                title: voters
             };
         return (
             <div className="candidate">
