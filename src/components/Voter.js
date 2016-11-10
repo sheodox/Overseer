@@ -140,12 +140,12 @@ const CandidateList = React.createClass({
             candidates: this.getSortedCandidates(props)
         });
     },
-    mouseEnter: function() {
+    lockSorting: function() {
         this.setState({
             canSort: false
         });
     },
-    mouseLeave: function() {
+    unlockSorting: function() {
         if (this.state.sortQueued) {
             this.sortAndSetState();
         }
@@ -173,7 +173,7 @@ const CandidateList = React.createClass({
         }
 
         return (
-            <div className="candidate-list" onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
+            <div className="candidate-list" onMouseEnter={this.lockSorting} onMouseMove={this.lockSorting} onMouseLeave={this.unlockSorting}>
                 <h3>{this.props.name}</h3>
                 <NewCandidate newCandidate={newCandidate} />
                 {candidates}
@@ -214,11 +214,16 @@ const Candidate = React.createClass({
     },
     render: function() {
         const voters = this.props.voters.join(', '),
-            disabledState = this.props.removed;
+            disabledState = this.props.removed,
+            voteButtonProps = {
+                className: 'vote-button illuminated-target ' + (this.props.voted ? 'on' : 'off'),
+                onClick: this.props.toggleVote,
+                disabled: disabledState
+            };
         return (
             <div className="candidate">
                 <div className="candidate-buttons">
-                    <button className={'vote-button illuminated-target ' + (this.props.voted ? 'on' : 'off')} onClick={this.props.toggleVote} disabled={disabledState}>
+                    <button {...voteButtonProps}>
                         {this.props.voters.length} - {this.props.name}
                     </button>
                     <button className="candidate-remove" onClick={this.props.removeCandidate} disabled={disabledState}>
