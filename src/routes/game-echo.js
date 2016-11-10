@@ -1,5 +1,4 @@
-const router = require('express').Router(),
-    config = require('../config'),
+const config = require('../config'),
     echoServerIP = config['games-server'],
     actions = require('../actions/act-echo-server').default,
     store = require('../reducers/reducers').default;
@@ -55,5 +54,4 @@ module.exports = function (sio) {
         .on('connection', socket => {
             echoListener(socket);
         });
-    return router;
 };
