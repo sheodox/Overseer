@@ -1,7 +1,11 @@
+@import 'controls';
 @import 'lights';
 @import 'echo';
 @import 'switchboard';
 @import 'colors';
+@import 'settings';
+@import 'voter';
+
 
 #svg-source {
     display: none;
@@ -10,15 +14,16 @@
 * {
     box-sizing: border-box;
 }
+.hidden {
+    display: none;
+}
 body, html {
-    font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     height: 100%;
     background: material-color('grey', '100');
     margin: 0;
 }
-button {
-    cursor: pointer;
-}
+
 header {
     $boxShadowSettings: 0 0 2rem 0;
     $background: material-color($defaultTheme, '500');
