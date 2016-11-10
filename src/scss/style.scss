@@ -115,6 +115,10 @@ li {
     border: none;
     padding: 1.5rem;
     color: material-color('grey', '800');
+
+    &:not(:first-of-type) {
+        padding-top: 0;
+    }
 }
 
 .centered {
