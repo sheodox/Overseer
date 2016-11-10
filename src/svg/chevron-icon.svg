@@ -34,8 +34,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4"
-     inkscape:cx="11.555852"
-     inkscape:cy="24.91874"
+     inkscape:cx="8.5429874"
+     inkscape:cy="43.205996"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -53,7 +53,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -62,21 +62,25 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-952.36223)">
-    <rect
-       style="fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4182"
-       width="64.650902"
-       height="3.7836404"
-       x="691.13367"
-       y="680.84271"
-       transform="matrix(0.70140014,0.71276774,-0.70140014,0.71276774,0,0)" />
-    <rect
-       style="fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4182-2"
-       width="63.859108"
-       height="3.7373011"
-       x="630.00958"
-       y="-764.17755"
-       transform="matrix(-0.7100969,0.70410396,-0.7100969,-0.70410396,0,0)" />
+    <g
+       id="g4136"
+       transform="matrix(1.0019018,0,0,0.99973836,-2.5131778,0.27192548)">
+      <rect
+         transform="matrix(0.70140014,0.71276774,-0.70140014,0.71276774,0,0)"
+         y="684.95551"
+         x="618.80084"
+         height="8.5347891"
+         width="145.83357"
+         id="rect4182"
+         style="fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         transform="matrix(-0.7100969,0.70410396,-0.7100969,-0.70410396,0,0)"
+         y="-773.09467"
+         x="558.72437"
+         height="8.4302607"
+         width="144.04752"
+         id="rect4182-2"
+         style="fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
   </g>
 </svg>
