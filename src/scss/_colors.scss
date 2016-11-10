@@ -2,12 +2,4 @@
 
 $defaultTheme: 'cyan';
 $defaultAccent: material-color('cyan', '500');
-
-@mixin faint-shadow {
-    box-shadow: 0 0 0.1rem 0.1rem material-color('grey', '400');
-}
-
-@mixin dark-bg {
-    background: material-color('grey', '800');
-    color: material-color('grey', '200');
-}
+$darkGray: material-color('grey', '800');
