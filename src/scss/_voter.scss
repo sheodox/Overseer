@@ -1,0 +1,51 @@
+@import 'colors';
+
+.candidate-list {
+    @include faint-shadow();
+    margin-top: 1rem;
+    padding: 1rem;
+    background: material-color('grey', '100');
+
+    h3 {
+        margin: 0;
+    }
+}
+
+.candidate {
+    margin-bottom: 0.5rem;
+    min-width: 30rem;
+
+    .candidate-top-bar {
+        $height: 2rem;
+        font-size: 1.4rem;
+
+        > * {
+            line-height: $height;
+            height: $height;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+
+    svg {
+        fill: $darkGray;
+    }
+
+    .candidate-buttons {
+        @include illuminated-toggle-buttons();
+    }
+
+    button {
+        &.vote-button {
+            width: 86%;
+        }
+        &.candidate-remove {
+            width: 14%;
+        }
+    }
+
+    .candidate-voters {
+        text-overflow: ellipsis;
+        font-size: 0.8rem;
+    }
+}
