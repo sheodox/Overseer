@@ -1,0 +1,55 @@
+@import 'colors';
+@import 'mixins';
+
+//container for a label + input/select
+.control {
+    $baseHeight: 2.5rem;
+    $padding: 0.3rem;
+    $innerHeight: $baseHeight - (2 * $padding);
+    $focusBorderColor: material-color('light-blue', '600');
+
+    height: $baseHeight;
+    vertical-align: middle;
+    margin-bottom: 0.5rem;
+
+    > * {
+        line-height: $innerHeight;
+        height: 100%;
+        transition: border 0.2s;
+    }
+
+    label {
+        width: 25%;
+        float: left;
+        text-align: right;
+        font-size: 1.1rem;
+        padding-right: 0.5rem;
+        border-radius: 0.2rem 0 0 0.2rem;
+    }
+    input, select {
+        width: 75%;
+        float: right;
+        color: $darkGray;
+        font-size: 1.4rem;
+        border: none;
+        border-bottom: 0.2rem solid material-color('grey', '400');
+        background: none;
+        padding-left: 0.5rem;
+        &:focus {
+            border-color: $focusBorderColor;
+            outline: none;
+        }
+        &.dirty {
+            border-color: material-color('amber', '500');
+        }
+        &.invalid {
+            border-color: material-color('red', '500');
+        }
+        &.valid {
+            border-color: material-color('green', '500');
+        }
+    }
+}
+button, input[type=submit] {
+    @include button();
+}
