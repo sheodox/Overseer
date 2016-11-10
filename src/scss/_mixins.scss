@@ -1,0 +1,92 @@
+@import 'colors';
+
+@mixin faint-shadow {
+    box-shadow: 0 0 0.05rem 0.05rem material-color('grey', '400');
+}
+
+@mixin dark-bg {
+    background: material-color('grey', '800');
+    color: material-color('grey', '200');
+}
+
+@mixin button {
+    @include faint-shadow();
+    display: inline-block;
+    color: white;
+    background: material-color('light-blue', '500');
+    cursor: pointer;
+    transition: border 0.2s, background 0.2s;
+    padding: 0.2rem 1rem 0.2rem 1rem;
+    border: none;
+    border-radius: 0.1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    height: 3rem;
+    vertical-align: top;
+
+    svg {
+        fill: white;
+        width: 1.5rem;
+        vertical-align: middle;
+    }
+}
+
+@mixin illuminated-toggle-buttons {
+    @include faint-shadow();
+    $backgroundColor: white;
+    $backgroundColorDisabled: material-color('grey', '300');
+    $textColor: material-color('light-blue', '600');
+    $textColorDisabled: material-color('grey', '500');
+
+    button {
+        $illuminateColor: $textColor;
+        color: $textColor;
+        background: white;
+        text-align: left;
+
+        &:first-of-type {
+            border-radius: 2px 0 0 2px;
+        }
+        &:last-of-type {
+            border-radius: 0 2px 2px 0;
+        }
+
+        &:hover {
+            background: lighten(material-color('grey', '300'), 5%);
+            color: darken($textColor, 10%);
+        }
+
+        &:disabled {
+            cursor: default;
+            background: $backgroundColorDisabled;
+            border-color: $backgroundColorDisabled !important;
+            color: $textColorDisabled;
+            svg {
+                fill: $textColorDisabled;
+            }
+        }
+
+        &.illuminated-target {
+            border-left: 1rem solid;
+            &.on {
+                border-color: $illuminateColor;
+                &:hover {
+                    background: darken($backgroundColor, 5%);
+                }
+            }
+            &.off {
+                border-color: material-color('grey', '300');
+            }
+        }
+
+        svg {
+            transition: 0.2s;
+            fill: $textColor;
+        }
+    }
+}
+
+@mixin dark-button {
+
+}
