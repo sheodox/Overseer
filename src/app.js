@@ -49,6 +49,4 @@ voter(io);
 settings(io);
 app.use(require('./routes/index'));
 
-
-
 module.exports = app;
