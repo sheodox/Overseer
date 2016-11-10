@@ -2,3 +2,6 @@
 node_modules
 src/config.json
 dist
+userdata.json
+racedata.json
+npm-debug.log
