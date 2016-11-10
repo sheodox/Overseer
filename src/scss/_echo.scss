@@ -1,26 +1,15 @@
 @import 'colors';
+@import 'mixins';
 
 #games {
     $padding: 0.2rem 0.5rem;
 
     a.download, .delete {
-        @include faint-shadow();
-        @include dark-bg();
-        text-align: center;
-        text-decoration: none;
-        padding: $padding;
-        border-radius: 0.1rem;
-        border: none;
+        @include button();
 
         &:not(:first-child) {
             margin-left: 0.5rem;
         }
-    }
-
-    .upload-submit {
-        @include dark-bg();
-        border: none;
-        padding: $padding;
     }
 
     tr {
