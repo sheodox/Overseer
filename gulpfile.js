@@ -16,16 +16,18 @@ gulp.task('run:js', function() {
         .pipe(sourcemaps.init())
         .pipe(babel({
             presets: ['react', 'es2015'],
-            plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread', 'syntax-object-rest-spread']
+            plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread', 'syntax-object-rest-spread'],
+            sourceMap: true
         }))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('run:webpack', function() {
+gulp.task('run:webpack', ['run:js'], function() {
     gulp.src(webpackEntry)
         .pipe(webpack({
-            output: {filename: '[name].js'}
+            output: {filename: '[name].js'},
+            devtool: 'source-map'
         }))
         .pipe(gulp.dest('./dist/public/js'));
 });
@@ -78,4 +80,5 @@ gulp.task('js', ['run:js', 'watch:js']);
 gulp.task('sass', ['run:scss', 'watch:scss']);
 gulp.task('uncompiled', ['run:uncompiled', 'watch:uncompiled']);
 gulp.task('webpack', ['run:webpack', 'watch:webpack']);
-gulp.task('run-all', ['js', 'webpack', 'sass', 'uncompiled']);
+gulp.task('svgmin', ['run:svgmin', 'watch:svgmin']);
+gulp.task('run-all', ['js', 'webpack', 'sass', 'uncompiled', 'svgmin']);
