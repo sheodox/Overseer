@@ -1,4 +1,5 @@
 @import 'colors';
+@import 'mixins';
 
 $onAccentColor: $defaultAccent;
 
@@ -6,47 +7,23 @@ $onAccentColor: $defaultAccent;
     min-width: 20rem;
 
     button {
-        cursor: pointer;
-        padding: 0.5rem 1rem 0.5rem 1rem;
-        color: white;
-        border: none;
-        font-size: 1.5rem;
-        transition: background 0.2s;
-        height: 3rem;
 
         &:hover {
             background: lighten(material-color('grey', '700'), 5%);
         }
 
     }
-    .lg-toggle {
-        @include dark-bg();
-        border-left: 1rem solid;
-        transition: border 0.2s, background 0.2s;
-        width: 80%;
-        text-align: left;
-        border-radius: 2px 0 0 2px;
 
-        &.on {
-            border-color: $onAccentColor;
-            &:hover {
-                background: lighten($onAccentColor, 5%);
-            }
-        }
-        &.off {
-            border-color: material-color('grey', '700');
-        }
+    .lg-button-group {
+        @include illuminated-toggle-buttons();
+    }
+    .lg-toggle {
+        width: 80%;
     }
     .lg-details-toggle {
-        @include dark-bg();
         width: 20%;
         float: right;
-        border-radius: 0 2px 2px 0;
 
-        svg {
-            transition: 0.2s;
-            fill: white;
-        }
         &.expanded svg {
             transform: scaleY(-1);
         }
