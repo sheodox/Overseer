@@ -1,4 +1,20 @@
 @import 'colors';
+@import 'mixins';
+
+.voter-panel {
+    min-width: 34rem;
+}
+.race-list {
+    select {
+        width: 62%;
+        float: none;
+    }
+    .race-remove {
+        @include light-button();
+        float: right;
+        margin-left: 0.5rem;
+    }
+}
 
 .candidate-list {
     @include faint-shadow();

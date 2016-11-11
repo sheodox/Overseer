@@ -32,16 +32,42 @@
     }
 }
 
-@mixin illuminated-toggle-buttons {
-    @include faint-shadow();
+@mixin light-button {
     $backgroundColor: white;
     $backgroundColorDisabled: material-color('grey', '300');
     $textColor: material-color('light-blue', '600');
     $textColorDisabled: material-color('grey', '500');
+    color: $textColor;
+    background: $backgroundColor;
+
+    &:hover {
+        background: lighten(material-color('grey', '300'), 5%);
+        color: darken($textColor, 10%);
+    }
+
+    &:disabled {
+        cursor: default;
+        background: $backgroundColorDisabled;
+        border-color: $backgroundColorDisabled !important;
+        color: $textColorDisabled;
+        svg {
+            fill: $textColorDisabled;
+        }
+    }
+
+    svg {
+        transition: 0.2s;
+        fill: $textColor;
+    }
+}
+
+@mixin illuminated-toggle-buttons {
+    @include faint-shadow();
+    $illuminateColor: material-color('light-blue', '600');
+    $backgroundColor: white;
 
     button {
-        $illuminateColor: $textColor;
-        color: $textColor;
+        @include light-button();
         background: white;
         text-align: left;
 
@@ -52,20 +78,7 @@
             border-radius: 0 2px 2px 0;
         }
 
-        &:hover {
-            background: lighten(material-color('grey', '300'), 5%);
-            color: darken($textColor, 10%);
-        }
 
-        &:disabled {
-            cursor: default;
-            background: $backgroundColorDisabled;
-            border-color: $backgroundColorDisabled !important;
-            color: $textColorDisabled;
-            svg {
-                fill: $textColorDisabled;
-            }
-        }
 
         &.illuminated-target {
             border-left: 1rem solid;
@@ -78,11 +91,6 @@
             &.off {
                 border-color: material-color('grey', '300');
             }
-        }
-
-        svg {
-            transition: 0.2s;
-            fill: $textColor;
         }
     }
 }
