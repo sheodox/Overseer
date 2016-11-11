@@ -59,6 +59,11 @@ export default function(io) {
             console.log(`remove candidate ${candidateId} from ${raceId}`);
             store.dispatch(actions.removeCandidate(raceId, candidateId));
             broadcast();
-        })
+        });
+        socket.on('voter/removeRace', raceId => {
+            console.log(`remove race ${raceId}`);
+            store.dispatch(actions.removeRace(raceId));
+            broadcast();
+        });
     });
 }

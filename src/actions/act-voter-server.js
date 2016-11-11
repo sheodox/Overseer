@@ -11,6 +11,12 @@ const actions = {
             name
         };
     },
+    removeRace: raceId => {
+        return {
+            type: 'VOTER_REMOVE_RACE',
+            raceId
+        }
+    },
     newCandidate: (raceId, name) => {
         return {
             type: 'VOTER_NEW_CANDIDATE',

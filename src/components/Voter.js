@@ -6,8 +6,15 @@ import {Link} from 'react-router';
 
 const Voter = React.createClass({
     render: function() {
+        const raceListProps = {
+            activeRace: this.props.activeRace,
+            races: this.props.races,
+            newRace: this.props.newRace,
+            switchRace: this.props.switchRace,
+            removeRace: this.props.removeRace
+        };
         return (
-            <section className="panel">
+            <section className="panel voter-panel">
                 <div className="panel-title">
                     <h2>Voter</h2>
                     <SVG id="voter-icon" />
@@ -17,7 +24,7 @@ const Voter = React.createClass({
                         <Link to="/w/settings">Please set your username first!</Link>
                     </div>
                     <div className={this.props.username ? '' : 'hidden'}>
-                        <RaceList activeRace={this.props.activeRace} races={this.props.races} newRace={this.props.newRace} switchRace={this.props.switchRace} />
+                        <RaceList {...raceListProps} />
                         {this.props.activeRace ?
                             <CandidateList {...this.props} {...this.props.activeRace} />
                             : null}
@@ -35,6 +42,12 @@ const RaceList = React.createClass({
         }
     },
     componentDidMount: function() {
+        this.updateRaceSelection();
+    },
+    componentDidUpdate: function() {
+        this.updateRaceSelection();
+    },
+    updateRaceSelection: function() {
         if (this.props.activeRace) {
             this.select.value = this.props.activeRace.id;
         }
@@ -53,6 +66,11 @@ const RaceList = React.createClass({
     switchRace: function() {
         this.props.switchRace(this.select.value)
     },
+    removeRace: function() {
+        if (confirm(`Really remove ${this.props.activeRace.name}?`)) {
+            this.props.removeRace(this.props.activeRace.id);
+        }
+    },
     render: function() {
         const races = this.props.races.map((race, index) => {
                 return <option value={race.id} key={index}>{race.name}</option>
@@ -61,7 +79,7 @@ const RaceList = React.createClass({
             raceInputId = 'voter-new-race';
 
         return (
-            <div>
+            <div className="race-list">
                 <div className="control">
                     <label htmlFor={raceInputId}>New race</label>
                     <input id={raceInputId} onKeyDown={this.newRaceKeyDown} type="text" maxLength="20"/>
@@ -71,6 +89,9 @@ const RaceList = React.createClass({
                     <select ref={c => this.select = c} id={raceSwitcherId} onChange={this.switchRace}>
                         {races}
                     </select>
+                    <button className="race-remove" onClick={this.removeRace}>
+                        <SVG id="x-icon" />
+                    </button>
                 </div>
             </div>
         );
@@ -243,7 +264,7 @@ function mapStateToProps(state) {
     return {
         username: settings.username,
         sessionId: settings.sessionId,
-        activeRace: voter.races.find(r => {return r.id ===  voter.activeRace}),
+        activeRace: voter.races.find(r => {return r.id ===  voter.activeRace}) || (voter.races.length ? voter.races[0] : null),
         races: voter.races
     };
 }
@@ -256,6 +277,9 @@ function mapDispatchToProps(dispatch) {
         },
         newCandidate: (raceId, name) => {
             socket.emit('voter/newCandidate', raceId, name)
+        },
+        removeRace: raceId => {
+            socket.emit('voter/removeRace', raceId)
         },
         switchRace: (raceId) => {
             dispatch(actions.switchRace(raceId));

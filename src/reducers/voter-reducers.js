@@ -48,6 +48,15 @@ const voter = function(state = defaultState,  action) {
                 candidates: []
             });
             return state;
+        case 'VOTER_REMOVE_RACE':
+            const raceIndex = state.races.findIndex(r => {
+                return r.id === action.raceId;
+            });
+
+            if (raceIndex !== -1) {
+                state.races.splice(raceIndex, 1);
+            }
+            return state;
         case 'VOTER_NEW_CANDIDATE':
             race = getRace(state.races, action.raceId);
             race.candidates.push({
