@@ -51,4 +51,5 @@
 }
 button, input[type=submit] {
     @include button();
+    @include light-button();
 }
