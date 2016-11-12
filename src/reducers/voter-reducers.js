@@ -6,7 +6,7 @@ const defaultState = {
 function newId(races) {
     //highest existing id + 1
     return String(1 + races.reduce((a, b) => {
-        return a.id > b.id ? a.id : b.id;
+        return parseInt(a.id > b.id ? a.id : b.id, 10);
     }, -1));
 }
 
@@ -33,7 +33,7 @@ const voter = function(state = defaultState,  action) {
     let race;
     switch(action.type) {
         case 'VOTER_REFRESH':
-            let activeRace = state.activeRace === null ? (action.data.length ? action.data[0].id : null) : state.activeRace;
+            let activeRace = String(state.activeRace === null ? (action.data.length ? action.data[0].id : null) : state.activeRace);
             return Object.assign(state, {
                 races: action.data,
                 activeRace
