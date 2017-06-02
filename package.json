@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "nodemon --watch dist --ignore dist/public/js/main.js dist/app.js",
     "inspect": "node --inspect dist/app.js",
-    "start": "forever start dist/app.js",
-    "stop": "forever stop dist/app.js",
-    "restart": "forever stop dist/app.js && forever start dist/app.js",
+    "start": "sudo forever start dist/app.js",
+    "stop": "sudo forever stop dist/app.js",
     "test": "jest"
   },
   "dependencies": {

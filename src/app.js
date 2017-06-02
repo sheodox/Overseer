@@ -32,7 +32,7 @@ app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-server.listen(3000);
+server.listen(80);
 server.on('listening', onListening);
 
 function onListening() {
