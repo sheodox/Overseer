@@ -1,12 +1,29 @@
 import React from 'react';
 import SVG from './SVG';
-import {connect} from 'react-redux';
-import actions from '../actions/act-lights-client';
+const Conduit = require('../util/conduit');
+const lightsConduit = new Conduit(socket, 'lights');
 
-var Lights = React.createClass({
+let cachedStates = [];
+
+const Lights = React.createClass({
+    getInitialState: function() {
+        return {states: cachedStates};
+    },
+    componentWillMount: function() {
+        lightsConduit.on({
+            refresh: states => {
+                cachedStates = states;
+                this.setState({states: states});
+            }
+        });
+        lightsConduit.emit('init');
+    },
+    componentWillUnmount: function() {
+        lightsConduit.destroy();
+    },
     render: function() {
-        var groups = this.props.states.map((s, i) => {
-            return <LightGroup {...s} key={i} changeBrightness={this.props.brightness} toggleGroup={this.props.toggle}/>
+        const groups = this.state.states.map((s, i) => {
+            return <LightGroup {...s} key={i} />
         });
         return (
             <section className="panel">
@@ -22,14 +39,14 @@ var Lights = React.createClass({
     }
 });
 
-var LightGroup = React.createClass({
+const LightGroup = React.createClass({
     getInitialState: function() {
         return {
             detailsExpanded: false
         };
     },
     toggle: function() {
-        this.props.toggleGroup(this.props.id);
+        lightsConduit.emit('toggle', this.props.id);
     },
     toggleDetails: function() {
         this.setState({
@@ -54,7 +71,7 @@ var LightGroup = React.createClass({
                         </button>
                     </div>
                     <div className={detailsClass}>
-                        <BrightnessSlider {...this.props} changeBrightness={this.props.changeBrightness} />
+                        <BrightnessSlider {...this.props} />
                     </div>
                 </div>
             </li>
@@ -77,7 +94,7 @@ var BrightnessSlider = React.createClass({
             e.persist();
             this.setState({
                 updateTimeout: setTimeout(() => {
-                    this.props.changeBrightness(this.props.id, e.target.value);
+                    lightsConduit.emit('brightness', this.props.id, e.target.value);
 
                     //allow later updates
                     this.setState({updateTimeout: null});
@@ -126,28 +143,4 @@ var BrightnessSlider = React.createClass({
     }
 });
 
-function mapStateToProps(state) {
-    return {
-        states: state.lights
-    }
-}
-
-function mapDispatchToProps(dispatch) {
-    socket.on('lights/refresh', states => {
-        dispatch(actions.refresh(states));
-    });
-
-    return {
-        toggle: (id) => {
-            dispatch(actions.toggle(id));
-        },
-        brightness: (id, brightness) => {
-            dispatch(actions.brightness(id, brightness));
-        }
-    }
-}
-
-module.exports = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Lights);
+module.exports = Lights;
