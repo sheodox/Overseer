@@ -1,6 +1,13 @@
 'use strict';
+function inArgv(name) {
+    return process.argv.some(arg => {
+        return arg === name;
+    })
+}
+
 const express = require('express'),
     app = express(),
+    port = inArgv('dev') ? 3000 : 80,
     debug = require('debug')('game-voter:server'),
     server = require('http').createServer(app),
     cookieParser = require('cookie-parser'),
@@ -32,14 +39,14 @@ app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-server.listen(80);
+server.listen(port);
 server.on('listening', onListening);
 
 function onListening() {
     var addr = server.address();
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
-        : 'port ' + addr.port;
+        : 'port ' + port;
     console.log('Listening on ' + bind);
 }
 
