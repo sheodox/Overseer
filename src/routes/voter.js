@@ -1,14 +1,12 @@
-import store from '../reducers/reducers';
-import actions from '../actions/act-voter-server';
 import valid from '../util/validator';
 import FlatFile from '../util/flatfile';
 import maskRaceSessions from '../util/maskVoterSessions';
+const Conduit = require('../util/conduit');
 
-const raceData = new FlatFile('./racedata.json', []);
-store.dispatch(actions.refresh(raceData.data));
+const raceFile = new FlatFile('./racedata.json', []);
 
 function raceExists(name) {
-    return raceData.data.some(r => {
+    return raceFile.data.some(r => {
         return r.name === name;
     })
 }
@@ -20,50 +18,104 @@ function candidateExists(race, name) {
 }
 
 function getRace(id) {
-    return raceData.data.find(r => {
+    return raceFile.data.find(r => {
         return r.id === id;
     })
 }
 
+function newId(races) {
+    //highest existing id + 1
+    return String(1 + races.reduce((a, b) => {
+            return parseInt(a.id > b.id ? a.id : b.id, 10);
+        }, -1));
+}
+
+function getCandidate(raceId, candidateName) {
+    const race = getRace(raceId);
+
+    if(race) {
+        return race.candidates.find(c => {
+            return c.name === candidateName;
+        });
+    }
+}
 
 export default function(io) {
+    const ioConduit = new Conduit(io, 'voter');
     function broadcast() {
-        let races = store.getState().voter.races;
-        raceData.data = races;
-        raceData.save();
-        io.emit('voter/refresh', maskRaceSessions(races));
+        ioConduit.emit('refresh', maskRaceSessions(raceFile.data));
     }
 
     io.on('connection', socket => {
-        socket.on('voter/newRace', name => {
-            console.log(`new race ${name}`);
-            if (valid.name(name, true) && !raceExists(name)) {
-                store.dispatch(actions.newRace(name));
+        const socketConduit = new Conduit(socket, 'voter');
+        socketConduit.on({
+            init: () => {
+                socketConduit.emit('refresh', maskRaceSessions(raceFile.data));
+                broadcast();
+            },
+            newRace: name => {
+                console.log(`new race ${name}`);
+                if (valid.name(name, true) && !raceExists(name)) {
+                    raceFile.data.push({
+                        id: newId(raceFile.data),
+                        name: String(name).trim(),
+                        candidates: []
+                    });
+                    raceFile.save();
+                    broadcast();
+                }
+            },
+            newCandidate: (raceId, name) => {
+                console.log(`new candidate ${name} in ${raceId}`);
+                let race = getRace(raceId);
+                if (valid.name(name, true) && !candidateExists(race, name)) {
+                    race.push({
+                        name: String(name).trim(),
+                        voters: []
+                    });
+                    raceFile.save();
+                    broadcast();
+                }
+            },
+            toggleVote: (raceId, candidateId, sessionId) => {
+                console.log(`toggle vote for ${sessionId} on ${raceId}'s ${candidateId}`);
+                const candidate = getCandidate(raceId, candidateId),
+                    voterIndex = candidate.voters.indexOf(sessionId),
+                    voted = voterIndex !== -1;
+
+                if (voted) {
+                    //unvote
+                    candidate.voters.splice(voterIndex, 1);
+                }
+                else {
+                    //vote
+                    candidate.voters.push(sessionId);
+                }
+                raceFile.save();
+                broadcast();
+            },
+            removeCandidate: (raceId, candidateId) => {
+                console.log(`remove candidate ${candidateId} from ${raceId}`);
+                const race = getRace(raceId),
+                    candidateIndex = race.candidates.findIndex(c => {
+                        return c.name === candidateId;
+                    });
+                race.candidates.splice(candidateIndex, 1);
+                raceFile.save();
+                broadcast();
+            },
+            removeRace: raceId => {
+                console.log(`remove race ${raceId}`);
+                const raceIndex = raceFile.data.findIndex(r => {
+                    return r.id === raceId;
+                });
+
+                if (raceIndex !== -1) {
+                    raceFile.data.splice(raceIndex, 1);
+                }
+                raceFile.save();
                 broadcast();
             }
-        });
-        socket.on('voter/newCandidate', (raceId, name) => {
-            console.log(`new candidate ${name} in ${raceId}`);
-            let race = getRace(raceId);
-            if (valid.name(name, true) && !candidateExists(race, name)) {
-                store.dispatch(actions.newCandidate(raceId, name));
-                broadcast();
-            }
-        });
-        socket.on('voter/toggleVote', (raceId, candidateId, sessionId) => {
-            console.log(`toggle vote for ${sessionId} on ${raceId}'s ${candidateId}`);
-            store.dispatch(actions.toggleVote(raceId, candidateId, sessionId));
-            broadcast();
-        });
-        socket.on('voter/removeCandidate', (raceId, candidateId) => {
-            console.log(`remove candidate ${candidateId} from ${raceId}`);
-            store.dispatch(actions.removeCandidate(raceId, candidateId));
-            broadcast();
-        });
-        socket.on('voter/removeRace', raceId => {
-            console.log(`remove race ${raceId}`);
-            store.dispatch(actions.removeRace(raceId));
-            broadcast();
         });
     });
 }
