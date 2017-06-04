@@ -6,7 +6,7 @@
     "dev": "nodemon --watch dist --ignore dist/public/js/main.js dist/app.js dev",
     "inspect": "node --inspect dist/app.js",
     "start": "sudo forever start dist/app.js",
-    "stop": "sudo forever stop dist/app.js",
+    "stop": "sudo forever stop dist/app.js"
   },
   "dependencies": {
     "axios": "^0.15.1",
