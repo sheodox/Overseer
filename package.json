@@ -7,7 +7,6 @@
     "inspect": "node --inspect dist/app.js",
     "start": "sudo forever start dist/app.js",
     "stop": "sudo forever stop dist/app.js",
-    "test": "jest"
   },
   "dependencies": {
     "axios": "^0.15.1",
@@ -38,15 +37,9 @@
     "gulp-sourcemaps": "^2.1.1",
     "gulp-svgmin": "^1.2.3",
     "gulp-webpack": "^1.5.0",
-    "jest-cli": "^17.0.0",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "sass-material-colors": "0.0.5",
     "source-map-loader": "^0.1.5"
-  },
-  "jest": {
-    "testPathDirs": [
-      "dist/__test__"
-    ]
   }
 }
