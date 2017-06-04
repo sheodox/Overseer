@@ -2,7 +2,8 @@ const Conduit = require('../util/conduit'),
     config = require('../config'),
     echoServerIP = config['games-server'];
 
-let ioConduit, echoSocket, gamesList;
+let gamesList = [],
+    ioConduit, echoSocket;
 
 function prepareData() {
     return {
