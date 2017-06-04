@@ -1,5 +1,3 @@
-import store from './reducers/reducers';
-import actions from './actions/act-lights-server';
 import hue from 'node-hue-api';
 
 const config = require('./config'),
@@ -11,10 +9,11 @@ const config = require('./config'),
     };
 let bridge, api, groups;
 
-const harbinger = {
+function Harbinger() {
+    this.stateCache = [];
+}
+Harbinger.prototype = {
     init: function() {
-        let self = this;
-
         return new Promise((resolve, reject) => {
             hue.nupnpSearch()
                 .then(b => {
@@ -40,17 +39,33 @@ const harbinger = {
                     groups = result;
                     console.log(JSON.stringify(result, null, 4));
 
-                    function refresh() {
-                        self.getState()
-                            .then(lightStates => {
-                                store.dispatch(actions.refresh(lightStates));
+                    const poll = () => {
+                        return api
+                            .groups()
+                            .then(groups => {
+                                var relevantGroups = [];
+                                for (let i in groups) {
+                                    let group = groups[i];
+                                    if (group.lights) {
+                                        relevantGroups.push({
+                                            id: group.id,
+                                            name: group.name,
+                                            on: group.state.all_on,
+                                            brightness: group.action.bri
+                                        })
+                                    }
+                                }
+                                this.stateCache = relevantGroups;
+                                return relevantGroups;
+                            })
+                            .catch(err => {
+                                console.log(err);
                             });
-                    }
-
-                    //occasionally poll to verify state (to correct state if lights were adjusted without overseer)
-                    setInterval(refresh, pollInterval);
+                    };
                     //call immediately to get initial state when booting
-                    refresh();
+                    poll();
+                    //occasionally poll to verify state (to correct state if lights were adjusted without overseer)
+                    setInterval(poll, pollInterval);
 
                     resolve();
                 })
@@ -60,48 +75,27 @@ const harbinger = {
                 });
         })
     },
-    getState: () => {
-        return api
-            .groups()
-            .then(groups => {
-                var relevantGroups = [];
-                for (let i in groups) {
-                    let group = groups[i];
-                    if (group.lights) {
-                        relevantGroups.push({
-                            id: group.id,
-                            name: group.name,
-                            on: group.state.all_on,
-                            brightness: group.action.bri
-                        })
-                    }
-                }
-                return relevantGroups;
-            })
-            .catch(err => {
-                console.log(err);
-            });
+    getState: function() {
+        return this.stateCache;
     },
-    on: id => {
-        console.log(`on ${id}`);
-        return api.setGroupLightState(id, states.on);
-    },
-    off: id => {
-        console.log(`off ${id}`);
-        return api.setGroupLightState(id, states.off);
-    },
-    toggle: function(id) {
-        const lightStates = store.getState().lights,
-            group = lightStates.find(l => {
+    findGroup: function(states, id) {
+        return states.find(l => {
                 return l.id ===  id;
             });
-
-        this[group.on ? 'off' : 'on'](id);
     },
-    setBrightness: (id, brightness) => {
+    toggle: function(id) {
+        const group = this.findGroup(this.stateCache, id),
+            nextState = group.on ? 'off' : 'on';
+        console.log(`${nextState} ${group.name}`);
+        group.on = !group.on;
+        return api.setGroupLightState(id, states[nextState]);
+    },
+    setBrightness: function(id, brightness) {
         console.log(`brightness ${id} ${brightness}`);
+        const group = this.findGroup(this.stateCache, id);
+        group.brightness = brightness;
         return api.setGroupLightState(id, lightState.create().bri(brightness));
     }
 };
 
-export default harbinger;
+module.exports = new Harbinger();

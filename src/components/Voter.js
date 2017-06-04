@@ -1,18 +1,46 @@
 import React from 'react';
 import SVG from './SVG';
-import {connect} from 'react-redux';
-import actions from '../actions/act-voter-client';
 import {Link} from 'react-router';
+const Conduit = require('../util/conduit'),
+    voterConduit = new Conduit(socket, 'voter');
 
+let cachedState = {
+    activeRace: null,
+    races: []
+};
 const Voter = React.createClass({
+    getInitialState: function() {
+        return cachedState;
+    },
+    componentWillMount: function() {
+        voterConduit.on({
+            refresh: races => {
+                cachedState.races = races;
+                if (races.length) {
+                    const updatedRace = races.find(r => {
+                        return r.id === (cachedState.activeRace || {}).id;
+                    });
+                    cachedState.activeRace = updatedRace || races[0];
+                }
+                this.setState(cachedState);
+            }
+        });
+        voterConduit.emit('init');
+    },
+    componentWillUnmount: function() {
+        voterConduit.destroy();
+    },
+    switchRace: function(id) {
+        const race = this.state.races.find(race => {
+            return race.id === id;
+        });
+        cachedState.activeRace = race;
+        this.setState({
+            activeRace: race
+        });
+    },
     render: function() {
-        const raceListProps = {
-            activeRace: this.props.activeRace,
-            races: this.props.races,
-            newRace: this.props.newRace,
-            switchRace: this.props.switchRace,
-            removeRace: this.props.removeRace
-        };
+        const username = localStorage.getItem('username');
         return (
             <section className="panel voter-panel">
                 <div className="panel-title">
@@ -20,13 +48,13 @@ const Voter = React.createClass({
                     <SVG id="voter-icon" />
                 </div>
                 <div className="sub-panel voter">
-                    <div className={this.props.username ? 'hidden' : ''}>
+                    <div className={username ? 'hidden' : ''}>
                         <Link to="/w/settings">Please set your username first!</Link>
                     </div>
-                    <div className={this.props.username ? '' : 'hidden'}>
-                        <RaceList {...raceListProps} />
-                        {this.props.activeRace ?
-                            <CandidateList {...this.props} {...this.props.activeRace} />
+                    <div className={username ? '' : 'hidden'}>
+                        <RaceList {...this.state} switchRace={this.switchRace} />
+                        {this.state.activeRace ?
+                            <CandidateList {...this.state.activeRace} />
                             : null}
                     </div>
                 </div>
@@ -36,11 +64,6 @@ const Voter = React.createClass({
 });
 
 const RaceList = React.createClass({
-    getInitialState: function() {
-        return {
-            creatingRace: !this.props.races.length,
-        }
-    },
     componentDidMount: function() {
         this.updateRaceSelection();
     },
@@ -52,23 +75,18 @@ const RaceList = React.createClass({
             this.select.value = this.props.activeRace.id;
         }
     },
-    toggleCreate: function() {
-        this.setState({
-            creatingRace: !this.state.creatingRace
-        });
-    },
     newRaceKeyDown: function(e) {
         if (e.which === 13) {
-            this.props.newRace(e.target.value);
+            voterConduit.emit('newRace', e.target.value);
             e.target.value = '';
         }
     },
     switchRace: function() {
-        this.props.switchRace(this.select.value)
+        this.props.switchRace(this.select.value);
     },
     removeRace: function() {
         if (confirm(`Really remove ${this.props.activeRace.name}?`)) {
-            this.props.removeRace(this.props.activeRace.id);
+            voterConduit.emit('removeRace', this.props.activeRace.id);
         }
     },
     render: function() {
@@ -177,20 +195,22 @@ const CandidateList = React.createClass({
     },
     render: function() {
         const self = this,
+            sessionId = localStorage.getItem('sessionId'),
+            username = localStorage.getItem('username'),
             candidates = this.state.candidates.map((c, index) => {
                 const toggleVote = () => {
-                        this.props.toggleVote(this.props.id, c.name, this.props.sessionId);
+                        voterConduit.emit('toggleVote', this.props.id, c.name, sessionId);
                     },
                     removeCandidate = () => {
-                        this.props.removeCandidate(this.props.id, c.name);
+                        voterConduit.emit('removeCandidate', this.props.id, c.name);
                     },
-                    voted = c.voters.includes(this.props.username);
+                    voted = c.voters.includes(username);
 
                 return <Candidate voted={voted} removeCandidate={removeCandidate} toggleVote={toggleVote} {...c} key={index} />
             });
 
         function newCandidate(name) {
-            self.props.newCandidate(self.props.id, name);
+            voterConduit.emit('newCandidate', self.props.id, name);
         }
 
         return (
@@ -258,42 +278,4 @@ const Candidate = React.createClass({
     }
 });
 
-function mapStateToProps(state) {
-    let voter = state.voter;
-    let settings = state.settings;
-    return {
-        username: settings.username,
-        sessionId: settings.sessionId,
-        activeRace: voter.races.find(r => {return r.id ===  voter.activeRace}) || (voter.races.length ? voter.races[0] : null),
-        races: voter.races
-    };
-}
-
-
-function mapDispatchToProps(dispatch) {
-    return {
-        newRace: (name) => {
-            socket.emit('voter/newRace', name);
-        },
-        newCandidate: (raceId, name) => {
-            socket.emit('voter/newCandidate', raceId, name)
-        },
-        removeRace: raceId => {
-            socket.emit('voter/removeRace', raceId)
-        },
-        switchRace: (raceId) => {
-            dispatch(actions.switchRace(raceId));
-        },
-        toggleVote: (raceId, candidateId, sessionId) => {
-            socket.emit('voter/toggleVote', raceId, candidateId, sessionId);
-        },
-        removeCandidate: (raceId, candidateId) => {
-            socket.emit('voter/removeCandidate', raceId, candidateId);
-        }
-    };
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Voter);
+module.exports = Voter;

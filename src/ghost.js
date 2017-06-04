@@ -1,23 +1,28 @@
-import harbinger from './harbinger';
-import store from './reducers/reducers';
-import actions from './actions/act-lights-server';
+const harbinger = require('./harbinger'),
+    Conduit = require('./util/conduit');
 
 function listen(io) {
     io.on('connection', socket => {
+        const socketConduit = new Conduit(socket, 'lights');
+        const ioConduit = new Conduit(io, 'lights');
         function broadcastState() {
-            const lightState = store.getState().lights;
-            io.emit('lights/refresh', lightState);
+            const lightState = harbinger.getState();
+            ioConduit.emit('refresh', lightState);
         }
 
-        socket.on('lights/toggle', id => {
-            store.dispatch(actions.toggle(id));
-            broadcastState();
+        socketConduit.on({
+            init: () => {
+                socketConduit.emit('refresh', harbinger.getState());
+            },
+            toggle: id => {
+                harbinger.toggle(id);
+                broadcastState();
+            },
+            brightness: (id, newBrightness) => {
+                harbinger.setBrightness(id, newBrightness);
+                broadcastState();
+            }
         });
-
-        socket.on('lights/brightness', (id, newBrightness) => {
-            store.dispatch(actions.brightness(id, newBrightness));
-            broadcastState();
-        })
     });
 }
 

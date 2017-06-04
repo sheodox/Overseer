@@ -1,17 +1,10 @@
 import React from 'react';
 import SVG from './SVG';
-import {connect} from 'react-redux';
-import actions from '../actions/act-settings-client';
+const Conduit = require('../util/conduit'),
+    settingsConduit = new Conduit(socket, 'settings');
 
 const Settings = React.createClass({
     render: function() {
-        const unSettingsProps = {
-            sessionId: this.props.sessionId,
-            username: this.props.username,
-            propose: this.props.propose,
-            usernameValid: this.props.usernameValid
-        };
-
         return (
             <section className="panel">
                 <div className="panel-title">
@@ -19,7 +12,7 @@ const Settings = React.createClass({
                     <SVG id="settings-icon" />
                 </div>
                 <div className="sub-panel">
-                    <UserNameSettings {...unSettingsProps} />
+                    <UserNameSettings />
                 </div>
             </section>
         )
@@ -29,26 +22,33 @@ const Settings = React.createClass({
 const UserNameSettings = React.createClass({
     getInitialState: function() {
         return {
-            dirty: false
+            dirty: false,
+            usernameValid: null,
+            username: localStorage.getItem('username') || '',
+            sessionId: localStorage.getItem('sessionId') || /sessionId=(\w*)/.exec(document.cookie)[1]
         }
     },
-    onKeyDown: function(e) {
+    onKeyUp: function(e) {
         this.setState({
-            dirty: this.props.username !== e.target.value
+            dirty: this.state.username !== e.target.value
         });
 
         if (e.which === 13) {
-            this.props.propose(this.props.sessionId, e.target.value);
+            settingsConduit.emit('propose', this.state.sessionId, e.target.value, username => {
+                //if we got a username back it was valid
+                if (username) {
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('sessionId', this.state.sessionId);
+                }
+                this.setState({
+                    username: username,
+                    usernameValid: !!username
+                });
+            });
 
             this.setState({
                 dirty: false
             });
-        }
-    },
-    componentDidUpdate: function(prevProps) {
-        //only reset the value if it's changed in the props
-        if (prevProps.username !== this.props.username) {
-            this.input.value = this.props.username;
         }
     },
     render: function() {
@@ -56,13 +56,13 @@ const UserNameSettings = React.createClass({
         if (this.state.dirty) {
             inputClass = 'dirty';
         }
-        else if (this.props.usernameValid !== null) {
-            inputClass = this.props.usernameValid ? 'valid' : 'invalid';
+        else if (this.state.usernameValid !== null) {
+            inputClass = this.state.usernameValid ? 'valid' : 'invalid';
         }
         const inputProps = {
             id: 'settings-username-input',
-            onKeyDown: this.onKeyDown,
-            defaultValue: this.props.username,
+            onKeyUp: this.onKeyUp,
+            defaultValue: this.state.username,
             className: inputClass,
             type: 'text',
             title: 'at least three alphanumeric characters',
@@ -77,25 +77,4 @@ const UserNameSettings = React.createClass({
     }
 });
 
-function mapStateToProps(state) {
-    let settings = state.settings;
-
-    return {
-        username: settings.username,
-        sessionId: settings.sessionId,
-        usernameValid: settings.usernameValid
-    }
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        propose: (id, name) => {
-            actions.propose(id, name);
-        }
-    }
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Settings);
+module.exports = Settings;
