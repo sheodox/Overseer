@@ -69,7 +69,7 @@ export default function(io) {
                 console.log(`new candidate ${name} in ${raceId}`);
                 let race = getRace(raceId);
                 if (valid.name(name, true) && !candidateExists(race, name)) {
-                    race.push({
+                    race.candidates.push({
                         name: String(name).trim(),
                         voters: []
                     });
