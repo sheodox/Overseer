@@ -1,13 +1,31 @@
 import React from 'react';
 import axios from 'axios';
-import {connect} from 'react-redux';
-import actions from '../actions/act-echo-client';
 import SVG from './SVG';
+const Conduit = require('../util/conduit'),
+    echoConduit = new Conduit(socket, 'echo');
 
-var Games = React.createClass({
+//cache the state so we can use this state every time we re-mount to prevent jitter as it does a proper refresh of the list
+let cachedState = {games: [], echoServer: ''};
+
+const Games = React.createClass({
+    getInitialState: function() {
+        return cachedState;
+    },
+    componentWillMount: function() {
+        echoConduit.on({
+            refresh: data => {
+                cachedState = data;
+                this.setState(data);
+            }
+        });
+        echoConduit.emit('init');
+    },
+    componentWillUnmount: function() {
+        echoConduit.destroy();
+    },
     render: function() {
-        var games = this.props.games.map((game, index) => {
-            return <Game {...game} echoServer={this.props.echoServer} key={index} delete={this.props.delete}/>
+        const games = this.state.games.map((game, index) => {
+            return <Game {...game} echoServer={this.state.echoServer} key={index} />
         });
 
         return (
@@ -17,7 +35,7 @@ var Games = React.createClass({
                     <SVG id="echo-icon" />
                 </div>
                 <div className="sub-panel">
-                    <Uploader echoServer={this.props.echoServer} />
+                    <Uploader echoServer={this.state.echoServer} />
                     <table>
                         <thead>
                         <tr>
@@ -37,7 +55,7 @@ var Games = React.createClass({
     }
 });
 
-var Uploader = React.createClass({
+const Uploader = React.createClass({
     getInitialState: function() {
         return {
             loaded: 0,
@@ -105,9 +123,9 @@ var Uploader = React.createClass({
     }
 });
 
-var Game = React.createClass({
+const Game = React.createClass({
     delete: function() {
-        this.props.delete(this.props.name);
+        echoConduit.emit('delete', this.props.name);
     },
     render: function() {
         return (
@@ -145,25 +163,4 @@ function formatDate(dateStr) {
     time = `${d.getHours() % 12}:${minutes} ${d.getHours() > 12 ? 'pm' : 'am'}`;
     return `${day} - ${time}`;
 }
-
-function mapStateToProps(state) {
-    return {
-        games: state.echo.games,
-        echoServer: state.echo.echoServer
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    socket.on('games/refresh', (games) => {
-        dispatch(actions.refresh(games));
-    });
-
-    return {
-        delete: actions.delete
-    }
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Games);
+module.exports = Games;

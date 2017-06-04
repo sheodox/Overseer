@@ -1,26 +1,36 @@
-const config = require('../config'),
-    echoServerIP = config['games-server'],
-    actions = require('../actions/act-echo-server').default,
-    store = require('../reducers/reducers').default;
+const Conduit = require('../util/conduit'),
+    config = require('../config'),
+    echoServerIP = config['games-server'];
 
-let io, echoSocket,
-    previousGamesCount = -1;
+let ioConduit, echoSocket, gamesList;
 
-store.subscribe(function() {
-    let echoStore = store.getState().echo,
-        newGamesCount = echoStore.games.length;
-
-    if (io && newGamesCount !== previousGamesCount) {
-        io.emit('games/refresh', echoStore);
-    }
-    previousGamesCount = newGamesCount;
-});
-
-const clientListener = socket => {
-    socket.on('games/delete', name => {
-        echoSocket.emit('delete', name);
+function prepareData() {
+    return {
+        echoServer: echoServerIP,
+        games: gamesList
+    };
+}
+function alphabetizeGames() {
+    gamesList.sort((a, b) => {
+        if (a.name < b.name) {
+            return -1;
+        }
+        else if (a.name > b.name) {
+            return 1;
+        }
+        return 0;
     });
-
+}
+const clientListener = socket => {
+    const socketConduit = new Conduit(socket, 'echo');
+    socketConduit.on({
+        delete: name => {
+            echoSocket.emit('delete', name);
+        },
+        init: () => {
+            socketConduit.emit('refresh', prepareData());
+        }
+    });
 };
 
 const echoListener = socket => {
@@ -29,28 +39,35 @@ const echoListener = socket => {
     echoSocket = socket;
     socket.on('new-game', gameData => {
         console.log(`new game: ${gameData.name}`);
-        store.dispatch(actions.newGame(gameData));
+        gamesList.push(gameData);
+        alphabetizeGames();
+        ioConduit.emit('refresh', prepareData());
     });
     socket.on('delete-game', name => {
-        store.dispatch(actions.deleteGame(name));
+        console.log(`deleted game: ${name}`);
+        const gameIndex = gamesList.findIndex(game => {
+            return game.name === name;
+        });
+        if (gameIndex !== -1) {
+            gamesList.splice(gameIndex, 1);
+        }
+        ioConduit.emit('refresh', prepareData());
     });
     //on connection events make sure we're always up to date
     socket.on('refresh', gameData => {
-        store.dispatch(actions.refreshGames({
-            games: gameData,
-            echoServer: echoServerIP
-        }));
+        gamesList = gameData;
+        alphabetizeGames();
+        ioConduit.emit('refresh', prepareData());
     })
 };
 
-module.exports = function (sio) {
-    io = sio;
+module.exports = function (io) {
     io.on('connection', socket => {
         clientListener(socket);
     });
+    ioConduit = new Conduit(io, 'echo');
 
-    io
-        .of('/echo-server')
+    io .of('/echo-server')
         .on('connection', socket => {
             echoListener(socket);
         });
