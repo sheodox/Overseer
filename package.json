@@ -23,7 +23,6 @@
     "react-router": "^2.8.1",
     "request": "^2.75.0",
     "serve-favicon": "~2.3.0",
-    "shortid": "^2.2.6",
     "socket.io": "^1.4.6"
   },
   "devDependencies": {
