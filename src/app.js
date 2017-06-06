@@ -1,15 +1,11 @@
 'use strict';
-function inArgv(name) {
-    return process.argv.some(arg => {
-        return arg === name;
-    })
-}
 
-const express = require('express'),
+const isProd = process.env.NODE_ENV === 'production',
+    express = require('express'),
     passport = require('passport'),
     config = require('./config.json'),
     app = express(),
-    port = inArgv('dev') ? 3000 : 80,
+    port = isProd ? 80 : 3000,
     debug = require('debug')('game-voter:server'),
     server = require('http').createServer(app),
     cookieParser = require('cookie-parser'),
