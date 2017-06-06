@@ -47,7 +47,9 @@ app.use(/^\/(auth){0}/, (req, res, next) => {
         console.log('user not authenticated, redirecting');
         res.redirect('/auth/google');
     }
-    next();
+    else {
+        next();
+    }
 });
 
 
