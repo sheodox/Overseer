@@ -43,7 +43,11 @@ function getCandidate(raceId, candidateName) {
 export default function(io) {
     const ioConduit = new Conduit(io, 'voter');
     function broadcast() {
-        ioConduit.emit('refresh', maskRaceSessions(raceFile.data));
+        for (let socketId in io.sockets.sockets) {
+            const socket = io.sockets.sockets[socketId],
+                userId = socket.handshake.session.passport.user.profile.id;
+            socket.emit('voter:refresh', maskRaceSessions(raceFile.data, userId));
+        }
     }
 
     io.on('connection', socket => {
@@ -77,11 +81,12 @@ export default function(io) {
                     broadcast();
                 }
             },
-            toggleVote: (raceId, candidateId, sessionId) => {
-                console.log(`toggle vote for ${sessionId} on ${raceId}'s ${candidateId}`);
-                const candidate = getCandidate(raceId, candidateId),
-                    voterIndex = candidate.voters.indexOf(sessionId),
+            toggleVote: (raceId, candidateId) => {
+                const userId = socket.handshake.session.passport.user.profile.id,
+                    candidate = getCandidate(raceId, candidateId),
+                    voterIndex = candidate.voters.indexOf(userId),
                     voted = voterIndex !== -1;
+                console.log(`toggle vote for ${userId} on ${raceId}'s ${candidateId}`);
 
                 if (voted) {
                     //unvote
@@ -89,7 +94,7 @@ export default function(io) {
                 }
                 else {
                     //vote
-                    candidate.voters.push(sessionId);
+                    candidate.voters.push(userId);
                 }
                 raceFile.save();
                 broadcast();

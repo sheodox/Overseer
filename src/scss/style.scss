@@ -5,6 +5,7 @@
 @import 'colors';
 @import 'settings';
 @import 'voter';
+@import 'footer';
 
 
 #svg-source {
@@ -17,9 +18,13 @@
 .hidden {
     display: none;
 }
-body, html {
-    font-family: 'Roboto', sans-serif;
+html {
     height: 100%;
+    background: material-color('grey', '100');
+    margin: 0;
+}
+body {
+    font-family: 'Roboto', sans-serif;
     background: material-color('grey', '100');
     margin: 0;
 }

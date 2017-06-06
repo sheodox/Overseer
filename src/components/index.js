@@ -9,21 +9,7 @@ import Settings from './Settings';
 const Conduit = require('../util/conduit');
 
 // socket.on('reconnect', () => {location.reload();});
-
-
 const settingsConduit = new Conduit(socket, 'settings');
-
-const storedUsername = localStorage.getItem('username');
-if (storedUsername) {
-    const sessionId = localStorage.getItem('sessionId') || /sessionId=(\w*)/.exec(document.cookie)[1];
-    settingsConduit.emit('propose', sessionId, storedUsername, function(username) {
-        //if we got a username back it was valid
-        if (username) {
-            localStorage.setItem('username', username);
-            localStorage.setItem('sessionId', sessionId);
-        }
-    });
-}
 
 ReactDOM.render(
     <Router history={browserHistory}>
