@@ -1,63 +1,41 @@
 import FlatFile from './util/flatfile';
-import valid from './util/validator';
 
-const users = new FlatFile('./userdata.json', []);
+const users = new FlatFile('./userdata.json', {});
 
 const User = {
-    register: function(sessionId, username) {
-        username = String(username).trim();
-
+    register: function(gProfile, done) {
         //let them through if it's already valid
-        if (this.registered(sessionId, username)) {
-            console.log(`already registered ${sessionId} ${username}`);
-            return username;
+        const registeredUser = this.registered(gProfile.id);
+        let u;
+        if (registeredUser) {
+            console.log(`already registered ${gProfile.displayName} ${gProfile.id}`);
+            u = registeredUser;
+            //update profile data
+            u.profile = gProfile;
         }
         //else validate and register
-        else if (valid.name(sessionId) && valid.name(username) && !this.nameTaken(username)) {
-            let existingSession = users.data.find(u => {
-                return u.sessionId === sessionId;
-            });
-            if (existingSession) {
-                existingSession.username = username;
-            }
-            else {
-                users.data.push({
-                    sessionId,
-                    username
-                });
-            }
-            console.log(`registered ${sessionId} ${username}`);
-            this.save();
-            return username;
+        else {
+            u = {
+                overseer: {},
+                profile: gProfile
+            };
+            users.data[gProfile.id] = u;
+            console.log(`registered ${gProfile.displayName} ${gProfile.id}`);
         }
-        //else it's invalid
-        console.log(`invalid ${username}`);
-        return false;
+        this.save();
+        done(null, u);
     },
     save: function() {
         users.save();
     },
-    registered: function(sessionId, username) {
-        return users.data.some(u => {
-            return u.sessionId === sessionId && u.username === username;
-        });
+    registered: function(id) {
+        return users.data[id];
     },
-    nameTaken: function(name) {
-        return users.data.some(u => {
-            return u.username === name;
-        });
-    },
-    /**
-     * Turns sessionIds into their equivalent usernames
-     * @param sessions - array of sessionIDs
-     */
     maskSessions: function(sessions) {
         return sessions.map(id => {
-            return users.data.find(u => {
-                return u.sessionId === id;
-            }).username;
+            return this.registered(id).profile.displayName;
         });
     }
 };
 
-export default User;
+module.exports = User;

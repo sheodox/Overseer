@@ -40,7 +40,6 @@ const Voter = React.createClass({
         });
     },
     render: function() {
-        const username = localStorage.getItem('username');
         return (
             <section className="panel voter-panel">
                 <div className="panel-title">
@@ -48,15 +47,10 @@ const Voter = React.createClass({
                     <SVG id="voter-icon" />
                 </div>
                 <div className="sub-panel voter">
-                    <div className={username ? 'hidden' : ''}>
-                        <Link to="/w/settings">Please set your username first!</Link>
-                    </div>
-                    <div className={username ? '' : 'hidden'}>
-                        <RaceList {...this.state} switchRace={this.switchRace} />
-                        {this.state.activeRace ?
-                            <CandidateList {...this.state.activeRace} />
-                            : null}
-                    </div>
+                    <RaceList {...this.state} switchRace={this.switchRace} />
+                    {this.state.activeRace ?
+                        <CandidateList {...this.state.activeRace} />
+                        : null}
                 </div>
             </section>
         );
@@ -146,6 +140,7 @@ const CandidateList = React.createClass({
                 let matchingCandidate = findCandidate(c);
                 if (matchingCandidate) {
                     c.voters = matchingCandidate.voters;
+                    c.voted = matchingCandidate.voted;
                 }
                 else {
                     c.removed = true;
@@ -195,18 +190,16 @@ const CandidateList = React.createClass({
     },
     render: function() {
         const self = this,
-            sessionId = localStorage.getItem('sessionId'),
             username = localStorage.getItem('username'),
             candidates = this.state.candidates.map((c, index) => {
                 const toggleVote = () => {
-                        voterConduit.emit('toggleVote', this.props.id, c.name, sessionId);
+                        voterConduit.emit('toggleVote', this.props.id, c.name);
                     },
                     removeCandidate = () => {
                         voterConduit.emit('removeCandidate', this.props.id, c.name);
-                    },
-                    voted = c.voters.includes(username);
+                    };
 
-                return <Candidate voted={voted} removeCandidate={removeCandidate} toggleVote={toggleVote} {...c} key={index} />
+                return <Candidate removeCandidate={removeCandidate} toggleVote={toggleVote} {...c} key={index} />
             });
 
         function newCandidate(name) {
