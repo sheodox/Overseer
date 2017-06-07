@@ -3,12 +3,18 @@ const Conduit = require('../util/conduit'),
     echoServerIP = config['games-server'];
 
 let gamesList = [],
+    echoConnected = false,
     ioConduit, echoSocket;
+
+function broadcast() {
+    ioConduit.emit('refresh', prepareData());
+}
 
 function prepareData() {
     return {
         echoServer: echoServerIP,
-        games: gamesList
+        games: gamesList,
+        echoConnected
     };
 }
 function alphabetizeGames() {
@@ -36,13 +42,20 @@ const clientListener = socket => {
 
 const echoListener = socket => {
     console.log('connected to echo server');
+    echoConnected = true;
+    broadcast();
+
+    socket.on('disconnect', () => {
+        echoConnected = false;
+        broadcast();
+    });
 
     echoSocket = socket;
     socket.on('new-game', gameData => {
         console.log(`new game: ${gameData.name}`);
         gamesList.push(gameData);
         alphabetizeGames();
-        ioConduit.emit('refresh', prepareData());
+        broadcast();
     });
     socket.on('delete-game', name => {
         console.log(`deleted game: ${name}`);
@@ -52,13 +65,13 @@ const echoListener = socket => {
         if (gameIndex !== -1) {
             gamesList.splice(gameIndex, 1);
         }
-        ioConduit.emit('refresh', prepareData());
+        broadcast();
     });
     //on connection events make sure we're always up to date
     socket.on('refresh', gameData => {
         gamesList = gameData;
         alphabetizeGames();
-        ioConduit.emit('refresh', prepareData());
+        broadcast();
     })
 };
 

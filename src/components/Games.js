@@ -5,7 +5,7 @@ const Conduit = require('../util/conduit'),
     echoConduit = new Conduit(socket, 'echo');
 
 //cache the state so we can use this state every time we re-mount to prevent jitter as it does a proper refresh of the list
-let cachedState = {games: [], echoServer: ''};
+let cachedState = {echoConnected: false, games: [], echoServer: ''};
 
 const Games = React.createClass({
     getInitialState: function() {
@@ -25,17 +25,23 @@ const Games = React.createClass({
     },
     render: function() {
         const games = this.state.games.map((game, index) => {
-            return <Game {...game} echoServer={this.state.echoServer} key={index} />
-        });
+                return <Game {...game} echoServer={this.state.echoServer} key={index} />
+            }),
+            connection = this.state.echoConnected ? 'online' : 'offline';
 
         return (
             <section className="panel" id="games">
                 <div className="panel-title">
                     <h2>Game Echo</h2>
+                    <div className={"pulse " + connection} title={"echo server is " + connection}> </div>
                     <SVG id="echo-icon" />
                 </div>
                 <div className="sub-panel">
-                    <Uploader echoServer={this.state.echoServer} />
+                    <div className={this.state.echoConnected ? '' : 'hidden'}>
+                        <Uploader echoServer={this.state.echoServer} />
+                    </div>
+                    <div className={this.state.echoConnected ? 'hidden' : ''}>
+                    </div>
                     <table>
                         <thead>
                         <tr>

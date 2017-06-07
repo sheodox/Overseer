@@ -21,3 +21,30 @@
         }
     }
 }
+
+@keyframes pulse {
+    from {
+        box-shadow: 0 0 0.05rem 0.05rem
+    }
+    to {
+        box-shadow: 0 0 0.1rem 0.1rem;
+    }
+}
+
+.pulse {
+    display: inline-block;
+    border-radius: 100%;
+    border-width: 0.5rem;
+    border-style: solid;
+    margin: 0 0.5rem;
+    animation: pulse 0.5s infinite alternate;
+    &.online {
+        $green: #02c155;
+        border-color: $green;
+        color: $green;
+    }
+    &.offline {
+        border-color: red;
+        color: red;
+    }
+}
