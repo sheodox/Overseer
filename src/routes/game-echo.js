@@ -4,7 +4,7 @@ const Conduit = require('../util/conduit'),
     tracker = require('../util/GameTracker');
 
 let echoConnected = false,
-    ioConduit, echoSocket;
+    ioConduit, echoSocket, diskUsage;
 
 function broadcast() {
     ioConduit.emit('refresh', prepareData());
@@ -14,6 +14,7 @@ function prepareData() {
     return {
         echoServer: echoServerIP,
         games: tracker.list(),
+        diskUsage,
         echoConnected
     };
 }
@@ -62,9 +63,10 @@ const echoListener = socket => {
         broadcast();
     });
     //on connection events make sure we're always up to date
-    socket.on('refresh', gameData => {
+    socket.on('refresh', data => {
+        diskUsage = data.diskUsage;
         //add or update all games so we are always up to date
-        gameData.forEach(game => {
+        data.games.forEach(game => {
             tracker.addGame(game);
         });
         broadcast();

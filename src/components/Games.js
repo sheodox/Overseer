@@ -7,7 +7,7 @@ const formatters = require('../util/formatters'),
     echoConduit = new Conduit(socket, 'echo');
 
 //cache the state so we can use this state every time we re-mount to prevent jitter as it does a proper refresh of the list
-let cachedState = {echoConnected: false, games: [], echoServer: ''};
+let cachedState = {diskUsage: {total: 0, used: 0}, echoConnected: false, games: [], echoServer: ''};
 
 const Games = React.createClass({
     getInitialState: function() {
@@ -40,11 +40,18 @@ const Games = React.createClass({
                 </div>
                 <div className="sub-panel">
                     <div>
-                        <Link to="/w/game-echo/upload">
-                            <button className={this.state.echoConnected ? '' : 'hidden'}>
-                                Upload a game
-                            </button>
-                        </Link>
+                        <div className="columns">
+                            <div className="one-half">
+                                <DiskUsage {...this.state.diskUsage} />
+                            </div>
+                            <div className="one-half">
+                                <Link to="/w/game-echo/upload">
+                                    <button className={this.state.echoConnected ? '' : 'hidden'}>
+                                        Upload a game
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
                         <table>
                             <thead>
                             <tr>
@@ -65,6 +72,17 @@ const Games = React.createClass({
     }
 });
 
+const DiskUsage = React.createClass({
+    render: function() {
+        return (
+            <div>
+                <span>Used Disk: {formatters.bytes(this.props.used, 'gb')} / {formatters.bytes(this.props.total, 'gb')} gb</span>
+                <br />
+                <progress id="disk-usage-bar" type="progress" max={this.props.total} value={this.props.used} title={formatters.bytes(this.props.free, 'gb') + ' gb free'} />
+            </div>
+        );
+    }
+});
 
 const Game = React.createClass({
     render: function() {

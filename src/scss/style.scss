@@ -132,3 +132,29 @@ li {
 .centered {
     text-align: center;
 }
+
+progress[value] {
+    -webkit-appearance: none;
+
+    &::-webkit-progress-bar {
+        background: material-color('grey', '300');
+        border-radius: 0.1rem;
+    }
+    &::-webkit-progress-value {
+        background: material-color($defaultTheme, '500');
+        border-radius: 0.1rem;
+        background-size: 35px 20px, 100% 100%, 100% 100%;
+    }
+}
+
+.columns {
+    > .one-half:first-child {
+        float: left;
+    }
+    > .one-half:last-child {
+        float: right;
+    }
+    & + * {
+        clear: both;
+    }
+}
