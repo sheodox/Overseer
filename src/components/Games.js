@@ -67,9 +67,6 @@ const Games = React.createClass({
 
 
 const Game = React.createClass({
-    delete: function() {
-        echoConduit.emit('delete', this.props.name);
-    },
     render: function() {
         return (
             <tr>
@@ -80,9 +77,11 @@ const Game = React.createClass({
                     <a className="download" href={this.props.echoServer + '/download/' + this.props.name + '.zip'} title="download">
                         <SVG id="down-icon" />
                     </a>
-                    <button onClick={this.delete} className="delete" title="delete">
-                        <SVG id="x-icon" />
-                    </button>
+                    <Link to={"/w/game-echo/details/" + this.props.name}>
+                        <button className="details" title="details">
+                            <SVG id="details-icon" />
+                        </button>
+                    </Link>
                 </td>
             </tr>
         )

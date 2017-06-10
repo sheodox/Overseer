@@ -25,14 +25,26 @@ class GameTracker extends FlatFile{
     }
     addGame(newData) {
         const oldData = this.find(newData.name) || {};
-        this.data[newData.name] = Object.assign(newData, {
-            downloads: oldData.downloads || 0
-        });
+        this.data[newData.name] = Object.assign({
+            downloads: oldData.downloads || 0,
+            details: oldData.details || ''
+        }, newData);
         this.save();
     }
     deleteGame(name) {
         delete this.data[name];
         this.save();
+    }
+    updateDetails(name, details) {
+        this.find(name).details = details;
+        this.save();
+    }
+    downloaded(name) {
+        const game = this.find(name);
+        if(game) {
+            game.downloads++;
+            this.save();
+        }
     }
     find(name) {
         return this.data[name];

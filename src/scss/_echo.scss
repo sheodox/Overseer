@@ -4,13 +4,12 @@
 #games {
     $padding: 0.2rem 0.5rem;
 
-    a.download, .delete {
+    a.download {
         @include button();
         @include light-button();
-
-        &:not(:first-child) {
-            margin-left: 0.5rem;
-        }
+    }
+    .details {
+        margin-left: 0.5rem;
     }
 
     tr {
@@ -32,6 +31,39 @@
     }
     form button[type=submit] {
         margin-right: 1rem;
+    }
+}
+
+#echo-details {
+    label {
+        display: block;
+    }
+    textarea {
+        width: 100%;
+        min-width: 30rem;
+        height: 15rem;
+    }
+    table {
+        td:first-child {
+            font-weight: bold;
+        }
+    }
+    button {
+        margin-right: 1rem;
+    }
+    .action-buttons {
+        margin-top: 1rem;
+        float: right;
+        > *:not(:last-child) {
+            margin-right: 0.5rem;
+        }
+        > *:last-child {
+            margin-right: 0;
+        }
+    }
+    a.download{
+        @include button();
+        @include light-button();
     }
 }
 

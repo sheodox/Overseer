@@ -26,6 +26,10 @@ const clientListener = socket => {
         },
         init: () => {
             socketConduit.emit('refresh', prepareData());
+        },
+        updateDetails: (name, details) => {
+            tracker.updateDetails(name, details);
+            broadcast();
         }
     });
 };
@@ -50,6 +54,11 @@ const echoListener = socket => {
     socket.on('delete-game', name => {
         console.log(`deleted game: ${name}`);
         tracker.deleteGame(name);
+        broadcast();
+    });
+    socket.on('downloaded', name => {
+        console.log(`downloaded game: ${name}`);
+        tracker.downloaded(name);
         broadcast();
     });
     //on connection events make sure we're always up to date
