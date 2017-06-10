@@ -20,6 +20,10 @@
             padding-left: 2rem;
         }
     }
+
+    form button[type=submit] {
+        margin-right: 1rem;
+    }
 }
 
 @keyframes pulse {
