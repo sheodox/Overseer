@@ -9,7 +9,9 @@ let cachedState = {echoConnected: false, games: [], echoServer: ''};
 
 const Games = React.createClass({
     getInitialState: function() {
-        return cachedState;
+        return Object.assign({
+            isUploading: false
+        }, cachedState);
     },
     componentWillMount: function() {
         echoConduit.on({
@@ -22,6 +24,16 @@ const Games = React.createClass({
     },
     componentWillUnmount: function() {
         echoConduit.destroy();
+    },
+    uploadStart: function() {
+        this.setState({
+            isUploading: true
+        });
+    },
+    uploadFinish: function() {
+        this.setState({
+            isUploading: false
+        });
     },
     render: function() {
         const games = this.state.games.map((game, index) => {
@@ -37,24 +49,25 @@ const Games = React.createClass({
                     <SVG id="echo-icon" />
                 </div>
                 <div className="sub-panel">
-                    <div className={this.state.echoConnected ? '' : 'hidden'}>
-                        <Uploader echoServer={this.state.echoServer} />
+                    <div className={this.state.isUploading ? '' : 'hidden'}>
+                        <Uploader uploadFinish={this.uploadFinish} echoServer={this.state.echoServer} />
                     </div>
-                    <div className={this.state.echoConnected ? 'hidden' : ''}>
-                    </div>
-                    <table>
-                        <thead>
-                        <tr>
-                            <td>Game</td>
-                            <td>Size</td>
-                            <td>Uploaded</td>
-                            <td>Actions</td>
-                        </tr>
-                        </thead>
-                        <tbody>
+                    <div className={this.state.isUploading ? 'hidden' : ''}>
+                        <button className={this.state.echoConnected ? '' : 'hidden'} onClick={this.uploadStart}>Upload a game</button>
+                        <table>
+                            <thead>
+                            <tr>
+                                <td>Game</td>
+                                <td>Size</td>
+                                <td>Uploaded</td>
+                                <td>Actions</td>
+                            </tr>
+                            </thead>
+                            <tbody>
                             {games}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
         );
@@ -64,12 +77,12 @@ const Games = React.createClass({
 const Uploader = React.createClass({
     getInitialState: function() {
         return {
+            fileSelected: false,
             loaded: 0,
             total: 100
         };
     },
     upload: function(e) {
-        var self = this;
         e.preventDefault();
 
         this.setState({
@@ -84,17 +97,26 @@ const Uploader = React.createClass({
                 },
                 onUploadProgress: this.uploadProgress
             })
-            .then(function() {
-                self.form.reset();
-                self.setState({
+            .then(() => {
+                this.form.reset();
+                this.setState({
+                    fileSelected: false,
                     uploading: false
                 });
+                this.audio.volume = 0.4;
+                this.audio.play();
+                this.props.uploadFinish();
             });
     },
     uploadProgress: function(e) {
         this.setState({
             loaded: e.loaded,
             total: e.total
+        });
+    },
+    onFileSelect: function(e) {
+        this.setState({
+            fileSelected: !!e.target.value
         });
     },
     render: function() {
@@ -114,9 +136,12 @@ const Uploader = React.createClass({
 
         return (
             <div>
+                <audio src="/beeps.wav" ref={c => this.audio = c} />
                 <form ref={c => this.form = c} onSubmit={this.upload}>
-                    <input type="file" accept=".zip" name="zippedGame"/>
-                    <input type="submit" value="Upload" className="upload-submit" />
+                    <input onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame"/>
+                    <br />
+                    <button type="submit" disabled={!this.state.fileSelected} className="upload-submit">Upload</button>
+                    <button type="button" onClick={this.props.uploadFinish}>Cancel</button>
                 </form>
                 <div style={{display: this.state.uploading ? '' : 'none'}}>
                     <progress type="progress" ref={c => this.progress = c} {...progressValues} />
