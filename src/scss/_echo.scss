@@ -1,6 +1,10 @@
 @import 'colors';
 @import 'mixins';
 
+th {
+    font-weight: bold;
+}
+
 #games {
     $padding: 0.2rem 0.5rem;
 
