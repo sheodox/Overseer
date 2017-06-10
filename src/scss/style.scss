@@ -28,6 +28,9 @@ body {
     background: material-color('grey', '100');
     margin: 0;
 }
+textarea {
+    font-family: 'Roboto', sans-serif;
+}
 
 header {
     $boxShadowSettings: 0 0 2rem 0;
@@ -128,4 +131,46 @@ li {
 
 .centered {
     text-align: center;
+}
+
+@keyframes backandforth {
+    from {
+        padding-left: 0;
+    }
+    to {
+        padding-left: calc(100% - 3rem);
+    }
+}
+progress {
+    -webkit-appearance: none;
+    background: material-color('grey', '300');
+    border-radius: 0.1rem;
+
+    &::-webkit-progress-bar {
+        background: material-color('grey', '300');
+    }
+    &::-webkit-progress-value {
+        background: material-color($defaultTheme, '500');
+        border-radius: 0.1rem;
+        background-size: 35px 20px, 100% 100%, 100% 100%;
+    }
+    &:not([value]) {
+        margin: 0;
+        animation: backandforth 1s ease-in-out infinite alternate;
+        &::-webkit-progress-value {
+            width: 3rem !important;
+        }
+    }
+}
+
+.columns {
+    > .one-half:first-child {
+        float: left;
+    }
+    > .one-half:last-child {
+        float: right;
+    }
+    & + * {
+        clear: both;
+    }
 }

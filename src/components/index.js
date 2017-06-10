@@ -6,16 +6,17 @@ import Lights from './Lights';
 import Games from './Games';
 import Voter from './Voter';
 import Settings from './Settings';
-const Conduit = require('../util/conduit');
-
-// socket.on('reconnect', () => {location.reload();});
-const settingsConduit = new Conduit(socket, 'settings');
+const EchoUploader = require('./EchoUploader'),
+    GameDetails = require('./GameDetails'),
+    Conduit = require('../util/conduit');
 
 ReactDOM.render(
     <Router history={browserHistory}>
         <Route path="/" component={App}>
             <Route path="w/lights" component={Lights} />
             <Route path="w/game-echo" component={Games} />
+            <Route path="w/game-echo/upload" component={EchoUploader} />
+            <Route path="w/game-echo/details/:name" component={GameDetails} />
             <Route path="w/voter" component={Voter} />
             <Route path="w/settings" component={Settings} />
         </Route>

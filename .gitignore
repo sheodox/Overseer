@@ -4,4 +4,5 @@ src/config.json
 dist
 userdata.json
 racedata.json
+gamedata.json
 npm-debug.log
