@@ -55,10 +55,10 @@ const Games = React.createClass({
                         <table>
                             <thead>
                             <tr>
-                                <td>Game</td>
-                                <td>Size</td>
-                                <td>Uploaded</td>
-                                <td>Actions</td>
+                                <th>Game</th>
+                                <th>Size</th>
+                                <th>Uploaded</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
