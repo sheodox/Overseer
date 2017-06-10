@@ -133,17 +133,33 @@ li {
     text-align: center;
 }
 
-progress[value] {
+@keyframes backandforth {
+    from {
+        padding-left: 0;
+    }
+    to {
+        padding-left: calc(100% - 3rem);
+    }
+}
+progress {
     -webkit-appearance: none;
+    background: material-color('grey', '300');
+    border-radius: 0.1rem;
 
     &::-webkit-progress-bar {
         background: material-color('grey', '300');
-        border-radius: 0.1rem;
     }
     &::-webkit-progress-value {
         background: material-color($defaultTheme, '500');
         border-radius: 0.1rem;
         background-size: 35px 20px, 100% 100%, 100% 100%;
+    }
+    &:not([value]) {
+        margin: 0;
+        animation: backandforth 1s ease-in-out infinite alternate;
+        &::-webkit-progress-value {
+            width: 3rem !important;
+        }
     }
 }
 
