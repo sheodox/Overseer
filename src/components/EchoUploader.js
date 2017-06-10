@@ -78,7 +78,8 @@ module.exports = React.createClass({
             //remaining = percent left/percent per second
             secondsTillDone = (1 - percentDone) / (percentDone / elapsedSeconds),
             showMinutes = secondsTillDone > 60,
-            remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${showMinutes ? 'm' : 's'}`;
+            remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${showMinutes ? 'm' : 's'}`,
+            disabled = this.state.uploading;
 
         return (
             <section className="panel" id="echo-uploader">
@@ -90,14 +91,14 @@ module.exports = React.createClass({
                     <audio src="/beeps.wav" ref={c => this.audio = c} />
                     <form ref={c => this.form = c} onSubmit={this.upload}>
                         <label htmlFor="file">Select a zip:</label>
-                        <input onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file"/>
+                        <input onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file" disabled={disabled}/>
                         <br />
                         <label htmlFor="details">Game details:</label>
-                        <textarea id="details" name="details" placeholder="patch information, included mods, description, etc." />
+                        <textarea id="details" name="details" placeholder="patch information, included mods, description, etc." disabled={disabled}/>
                         <br />
-                        <button type="submit" disabled={!this.state.fileSelected} className="upload-submit">Upload</button>
+                        <button type="submit" disabled={!this.state.fileSelected || disabled} className="upload-submit">Upload</button>
                         <Link to="/w/game-echo">
-                            <button type="button">Cancel</button>
+                            <button type="button" disabled={disabled}>Cancel</button>
                         </Link>
                     </form>
                     <div style={{display: this.state.uploading ? '' : 'none'}}>
