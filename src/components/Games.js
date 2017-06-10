@@ -86,21 +86,24 @@ const DiskUsage = React.createClass({
 
 const Game = React.createClass({
     render: function() {
+        const size = this.props.inProgress ? '??' : formatters.bytes(this.props.size, 'gb') + ' gb';
         return (
             <tr>
                 <td>{this.props.name}</td>
-                <td>{formatters.bytes(this.props.size, 'gb') + ' gb'}</td>
-                <td>{formatters.date(this.props.modified)}</td>
-                <td className="centered">
-                    <a className="download" href={this.props.echoServer + '/download/' + this.props.name + '.zip'} title="download">
-                        <SVG id="down-icon" />
-                    </a>
-                    <Link to={"/w/game-echo/details/" + this.props.name}>
-                        <button className="details" title="details">
-                            <SVG id="details-icon" />
-                        </button>
-                    </Link>
-                </td>
+                <td>{size}</td>
+                <td>{this.props.inProgress ? 'uploading now...' : formatters.date(this.props.modified)}</td>
+                {this.props.inProgress ? (<td><progress /></td>) : (
+                    <td className="centered">
+                        <a className="download" href={this.props.echoServer + '/download/' + this.props.name + '.zip'} title="download">
+                            <SVG id="down-icon" />
+                        </a>
+                        <Link to={"/w/game-echo/details/" + this.props.name}>
+                            <button className="details" title="details">
+                                <SVG id="details-icon" />
+                            </button>
+                        </Link>
+                    </td>
+                )}
             </tr>
         )
     }

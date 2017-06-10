@@ -22,6 +22,10 @@ th {
         td:not(:first-child) {
             padding-left: 2rem;
         }
+        height: 50px;
+    }
+    progress {
+        width: 8rem;
     }
 }
 

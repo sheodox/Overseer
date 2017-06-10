@@ -3,6 +3,13 @@ const FlatFile = require("./flatfile").default;
 class GameTracker extends FlatFile{
     constructor() {
         super('gamedata.json', {});
+        //prune anything that's stuck in progress, assume it's not actually uploading anymore
+        const inProgressGames = this.list().filter(game => {
+            return game.inProgress;
+        });
+        inProgressGames.forEach(game => {
+            delete this.data[game.name];
+        })
     }
     list() {
         const games = [];
