@@ -45,8 +45,11 @@ export default function(io) {
     function broadcast() {
         for (let socketId in io.sockets.sockets) {
             const socket = io.sockets.sockets[socketId],
-                userId = socket.handshake.session.passport.user.profile.id;
-            socket.emit('voter:refresh', maskRaceSessions(raceFile.data, userId));
+                session = socket.handshake.session;
+            if (session.passport) {
+                const userId = session.passport.user.profile.id;
+                socket.emit('voter:refresh', maskRaceSessions(raceFile.data, userId));
+            }
         }
     }
 
