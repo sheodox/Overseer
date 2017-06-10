@@ -28,6 +28,9 @@ body {
     background: material-color('grey', '100');
     margin: 0;
 }
+textarea {
+    font-family: 'Roboto', sans-serif;
+}
 
 header {
     $boxShadowSettings: 0 0 2rem 0;

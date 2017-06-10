@@ -135,10 +135,14 @@ const Uploader = React.createClass({
             remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${showMinutes ? 'm' : 's'}`;
 
         return (
-            <div>
+            <div id="echo-uploader">
                 <audio src="/beeps.wav" ref={c => this.audio = c} />
                 <form ref={c => this.form = c} onSubmit={this.upload}>
-                    <input onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame"/>
+                    <label htmlFor="file">Select a zip:</label>
+                    <input onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file"/>
+                    <br />
+                    <label htmlFor="details">Game details:</label>
+                    <textarea id="details" name="details" placeholder="patch information, included mods, description, etc." />
                     <br />
                     <button type="submit" disabled={!this.state.fileSelected} className="upload-submit">Upload</button>
                     <button type="button" onClick={this.props.uploadFinish}>Cancel</button>
