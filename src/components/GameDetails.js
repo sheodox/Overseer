@@ -1,7 +1,6 @@
 const React = require('react'),
     reactRouter = require('react-router-dom'),
     Link = reactRouter.Link,
-    browserHistory = reactRouter.browserHistory,
     SVG = require('./SVG').default,
     formatters = require('../util/formatters'),
     Conduit = require('../util/conduit'),
@@ -10,12 +9,12 @@ const React = require('react'),
 module.exports = React.createClass({
     getInitialState: function () {
         return {
-            name: this.props.params.name,
+            name: this.props.match.params.name,
             detailsChanged: false
         };
     },
     redirectToEcho: function() {
-        browserHistory.push('/w/game-echo');
+        this.props.history.push('/w/game-echo');
     },
     componentWillMount: function () {
         echoConduit.on({

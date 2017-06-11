@@ -1,7 +1,6 @@
 const React = require('react'),
     reactRouter = require('react-router-dom'),
     Link = reactRouter.Link,
-    browserHistory = reactRouter.browserHistory,
     SVG = require('./SVG').default,
     formatters = require('../util/formatters'),
     axios = require('axios'),
@@ -51,7 +50,7 @@ module.exports = React.createClass({
                 });
                 this.audio.volume = 0.4;
                 this.audio.play();
-                browserHistory.push('/w/game-echo');
+                this.props.history.push('/w/game-echo');
             });
     },
     uploadProgress: function(e) {
