@@ -19,7 +19,10 @@ module.exports = React.createClass({
     componentWillMount: function() {
         echoConduit.on({
             refresh: data => {
-                this.setState({echoServer: data.echoServer});
+                this.setState({
+                    games: data.games,
+                    echoServer: data.echoServer
+                });
             }
         });
         echoConduit.emit('init');
@@ -60,6 +63,12 @@ module.exports = React.createClass({
         });
     },
     onFileSelect: function(e) {
+        //file selections will give a value of C:\fakepath\Game Name.zip, trim the non-name bits
+        const selectedGame = e.target.value.replace(/^C\:\\fakepath\\|.zip$/g, ''),
+            existingGame = this.state.games.find(g => g.name === selectedGame);
+        if (existingGame) {
+            this.details.value = existingGame.details;
+        }
         this.setState({
             fileSelected: !!e.target.value
         });
@@ -93,7 +102,7 @@ module.exports = React.createClass({
                         <input onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file" disabled={disabled}/>
                         <br />
                         <label htmlFor="details">Game details:</label>
-                        <textarea id="details" name="details" placeholder="patch information, included mods, description, etc." disabled={disabled}/>
+                        <textarea ref={c => this.details = c} id="details" name="details" placeholder="patch information, included mods, description, etc." disabled={disabled}/>
                         <br />
                         <button type="submit" disabled={!this.state.fileSelected || disabled} className="upload-submit">Upload</button>
                         <Link to="/w/game-echo">
