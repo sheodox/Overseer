@@ -1,8 +1,8 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import SVG from './SVG';
 
-export default React.createClass({
+module.exports = React.createClass({
     getInitialState: function() {
         return {
             //don't want to flash red immediately, pretend it's connected

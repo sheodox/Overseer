@@ -1,5 +1,5 @@
 const React = require('react'),
-    reactRouter = require('react-router'),
+    reactRouter = require('react-router-dom'),
     Link = reactRouter.Link,
     browserHistory = reactRouter.browserHistory,
     SVG = require('./SVG').default,

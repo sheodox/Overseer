@@ -1,7 +1,7 @@
 import React from 'react';
 import SVG from './SVG';
 const formatters = require('../util/formatters'),
-    reactRouter =require('react-router'),
+    reactRouter =require('react-router-dom'),
     Link = reactRouter.Link,
     Conduit = require('../util/conduit'),
     echoConduit = new Conduit(socket, 'echo');
