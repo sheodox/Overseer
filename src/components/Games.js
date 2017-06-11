@@ -74,6 +74,9 @@ const Games = React.createClass({
 
 const DiskUsage = React.createClass({
     render: function() {
+        if (this.props.total === 0) {
+            return <div />
+        }
         return (
             <div>
                 <span>Used Disk: {formatters.bytes(this.props.used, 'gb')} / {formatters.bytes(this.props.total, 'gb')} gb</span>
