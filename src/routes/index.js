@@ -14,7 +14,9 @@ router.get('/|/w/', function(req, res) {
         });
     }
     else {
-        res.redirect('/auth/google');
+        res.render('index', {
+            user: serialize(false)
+        });
     }
 });
 

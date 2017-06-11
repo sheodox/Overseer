@@ -41,18 +41,6 @@ app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 
-//make sure they log in
-app.use(/^\/(auth){0}/, (req, res, next) => {
-    if (!req.user) {
-        console.log('user not authenticated, redirecting');
-        res.redirect('/auth/google');
-    }
-    else {
-        next();
-    }
-});
-
-
 server.listen(port);
 server.on('listening', onListening);
 
