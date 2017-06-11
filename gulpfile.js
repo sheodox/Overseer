@@ -82,3 +82,4 @@ gulp.task('uncompiled', ['run:uncompiled', 'watch:uncompiled']);
 gulp.task('webpack', ['run:webpack', 'watch:webpack']);
 gulp.task('svgmin', ['run:svgmin', 'watch:svgmin']);
 gulp.task('run-all', ['js', 'webpack', 'sass', 'uncompiled', 'svgmin']);
+gulp.task('build', ['run:js', 'run:webpack', 'run:scss', 'run:uncompiled', 'run:svgmin']);

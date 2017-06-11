@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build": "gulp build",
     "dev": "SET NODE_ENV=development && nodemon --watch dist --ignore dist/public/js/main.js dist/app.js",
     "inspect": "node --inspect dist/app.js",
     "start": "export NODE_ENV=production && sudo -E forever start dist/app.js",
     "stop": "sudo forever stop dist/app.js",
-    "deploy": "npm stop && git pull && npm start"
+    "deploy": "npm stop && git pull && npm run build && npm start"
   },
   "dependencies": {
     "axios": "^0.15.1",
