@@ -1,6 +1,6 @@
 import React from 'react';
 import SVG from './SVG';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 const Conduit = require('../util/conduit'),
     voterConduit = new Conduit(socket, 'voter');
 

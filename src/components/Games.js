@@ -1,7 +1,7 @@
 import React from 'react';
 import SVG from './SVG';
 const formatters = require('../util/formatters'),
-    reactRouter =require('react-router'),
+    reactRouter =require('react-router-dom'),
     Link = reactRouter.Link,
     Conduit = require('../util/conduit'),
     echoConduit = new Conduit(socket, 'echo');
@@ -74,6 +74,9 @@ const Games = React.createClass({
 
 const DiskUsage = React.createClass({
     render: function() {
+        if (!this.props.total) {
+            return <div />
+        }
         return (
             <div>
                 <span>Used Disk: {formatters.bytes(this.props.used, 'gb')} / {formatters.bytes(this.props.total, 'gb')} gb</span>

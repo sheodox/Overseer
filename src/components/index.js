@@ -1,26 +1,9 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import {Router, Route, browserHistory} from 'react-router';
-import App from './App';
-import Lights from './Lights';
-import Games from './Games';
-import Voter from './Voter';
-import Settings from './Settings';
-const EchoUploader = require('./EchoUploader'),
-    GameDetails = require('./GameDetails'),
-    Conduit = require('../util/conduit');
+const App = require('./App');
+
 
 ReactDOM.render(
-    <Router history={browserHistory}>
-        <Route path="/" component={App}>
-            <Route path="w/lights" component={Lights} />
-            <Route path="w/game-echo" component={Games} />
-            <Route path="w/game-echo/upload" component={EchoUploader} />
-            <Route path="w/game-echo/details/:name" component={GameDetails} />
-            <Route path="w/voter" component={Voter} />
-            <Route path="w/settings" component={Settings} />
-        </Route>
-    </Router>,
+    <App />,
     document.querySelector('#react-mount')
 );
-

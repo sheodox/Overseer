@@ -57,8 +57,8 @@ export default function(io) {
         const socketConduit = new Conduit(socket, 'voter');
         socketConduit.on({
             init: () => {
-                socketConduit.emit('refresh', maskRaceSessions(raceFile.data));
-                broadcast();
+                const userId = socket.handshake.session.passport.user.profile.id;
+                socketConduit.emit('refresh', maskRaceSessions(raceFile.data, userId));
             },
             newRace: name => {
                 console.log(`new race ${name}`);
