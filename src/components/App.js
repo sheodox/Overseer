@@ -28,9 +28,9 @@ const App = React.createClass({
                             return <Switchboard />
                         }} />
                         <Route path="/w/lights" component={Lights} />
-                        <Route path="/w/game-echo" component={Games} />
-                        <Route path="/w/game-echo/upload" component={EchoUploader} />
-                        <Route path="/w/game-echo/details/:name" component={GameDetails} />
+                        <Route exact path="/w/game-echo" component={Games} />
+                        <Route exact path="/w/game-echo/upload" component={EchoUploader} />
+                        <Route exact path="/w/game-echo/details/:name" component={GameDetails} />
                         <Route path="/w/voter" render={() => (
                             <LoginRequired>
                                 <Voter />
