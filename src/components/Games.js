@@ -74,7 +74,7 @@ const Games = React.createClass({
 
 const DiskUsage = React.createClass({
     render: function() {
-        if (this.props.total === 0) {
+        if (!this.props.total) {
             return <div />
         }
         return (
