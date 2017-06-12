@@ -53,7 +53,9 @@ module.exports = React.createClass({
                 });
                 this.audio.volume = 0.4;
                 this.audio.play();
-                this.props.history.push('/w/game-echo');
+                setTimeout(() => {
+                    this.props.history.push('/w/game-echo');
+                }, this.audio.duration * 1000);
             });
     },
     uploadProgress: function(e) {
@@ -96,7 +98,7 @@ module.exports = React.createClass({
                     <SVG id="echo-icon" />
                 </div>
                 <div className="sub-panel">
-                    <audio src="/beeps.wav" ref={c => this.audio = c} />
+                    <audio src="/beeps.wav" preload="auto" ref={c => this.audio = c} />
                     <form ref={c => this.form = c} onSubmit={this.upload}>
                         <label htmlFor="file">Select a zip:</label>
                         <input onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file" disabled={disabled}/>
