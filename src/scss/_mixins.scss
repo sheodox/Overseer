@@ -45,7 +45,7 @@
         color: darken($textColor, 10%);
     }
 
-    &:disabled {
+    &:disabled, &.disabled {
         cursor: default;
         background: $backgroundColorDisabled;
         border-color: $backgroundColorDisabled !important;
