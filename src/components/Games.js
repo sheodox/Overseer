@@ -27,7 +27,7 @@ const Games = React.createClass({
     },
     render: function() {
         const games = this.state.games.map((game, index) => {
-                return <Game {...game} echoServer={this.state.echoServer} key={index} />
+                return <Game {...game} echoConnected={this.state.echoConnected} echoServer={this.state.echoServer} key={index} />
             }),
             connection = this.state.echoConnected ? 'online' : 'offline';
 
@@ -97,7 +97,7 @@ const Game = React.createClass({
                 <td>{this.props.inProgress ? 'uploading now...' : formatters.date(this.props.modified)}</td>
                 {this.props.inProgress ? (<td><progress /></td>) : (
                     <td className="centered">
-                        <a className="download" href={this.props.echoServer + '/download/' + this.props.name + '.zip'} title="download">
+                        <a className={"download " + (this.props.echoConnected ? '' : 'disabled')} href={this.props.echoConnected ? this.props.echoServer + '/download/' + this.props.name + '.zip' : null} title="download">
                             <SVG id="down-icon" />
                         </a>
                         <Link to={"/w/game-echo/details/" + this.props.name}>

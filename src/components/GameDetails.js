@@ -32,6 +32,7 @@ module.exports = React.createClass({
                         this.details.value = thisGame.details;
                     }
                     this.setState(Object.assign(thisGame, {
+                        echoConnected: data.echoConnected,
                         downloadHref: data.echoServer + '/download/' + this.state.name + '.zip'
                     }));
                 }
@@ -67,10 +68,10 @@ module.exports = React.createClass({
                 </div>
                 <div className="sub-panel">
                     <div className="action-buttons">
-                        <a className="download" href={this.state.downloadHref} title="download">
+                        <a className={"download " + (this.state.echoConnected ? '' : 'disabled')} href={this.state.echoConnected ? this.state.downloadHref : null} title="download">
                             <SVG id="down-icon" />
                         </a>
-                        <button title="delete game" className="delete-game" onClick={this.delete}><SVG id="x-icon" /></button>
+                        <button title="delete game" disabled={!this.state.echoConnected} className="delete-game" onClick={this.delete}><SVG id="x-icon" /></button>
                     </div>
                     <table>
                         <tbody>
