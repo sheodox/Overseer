@@ -8,7 +8,8 @@
     "inspect": "node --inspect dist/app.js",
     "start": "export NODE_ENV=production && sudo -E forever start dist/app.js",
     "stop": "sudo forever stop dist/app.js",
-    "deploy": "npm stop && git pull && npm run build && npm start"
+    "deploy": "npm stop && git pull && npm run build && npm start",
+    "test": "export NODE_ENV=production && sudo -E node dist/app.js"
   },
   "dependencies": {
     "axios": "^0.15.1",
