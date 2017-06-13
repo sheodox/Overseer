@@ -47,14 +47,16 @@ const echoListener = socket => {
     });
 
     echoSocket = socket;
-    socket.on('new-game', gameData => {
-        console.log(`new game: ${gameData.name}`);
-        tracker.addGame(gameData);
+    socket.on('new-game', data => {
+        console.log(`new game: ${data.game.name}`);
+        tracker.addGame(data.game);
+        diskUsage = data.diskUsage;
         broadcast();
     });
-    socket.on('delete-game', name => {
-        console.log(`deleted game: ${name}`);
-        tracker.deleteGame(name);
+    socket.on('delete-game', data => {
+        console.log(`deleted game: ${data.name}`);
+        tracker.deleteGame(data.name);
+        diskUsage = data.diskUsage;
         broadcast();
     });
     socket.on('downloaded', name => {
