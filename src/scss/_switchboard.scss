@@ -7,7 +7,7 @@
     justify-content: center;
 }
 
-@keyframes background-float {
+@keyframes pop {
     from {
         transform: scale(1);
     }
@@ -32,7 +32,7 @@
     text-align: center;
 
     &:hover {
-        animation: background-float 0.1s ease-in-out forwards,
+        animation: pop 0.1s ease-out forwards,
             glow 1s ease-out infinite alternate;
     }
 
