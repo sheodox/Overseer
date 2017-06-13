@@ -6,7 +6,7 @@
     $baseHeight: 2.5rem;
     $padding: 0.3rem;
     $innerHeight: $baseHeight - (2 * $padding);
-    $focusBorderColor: material-color('light-blue', '600');
+    $focusBorderColor: $accent2;
 
     height: $baseHeight;
     vertical-align: middle;
@@ -28,10 +28,10 @@
     }
     input, select {
         width: 75%;
-        color: $darkGray;
+        color: white;
         font-size: 1.4rem;
         border: none;
-        border-bottom: 0.2rem solid material-color('grey', '400');
+        border-bottom: 0.2rem solid white;
         background: none;
         padding-left: 0.5rem;
         &:focus {
@@ -52,4 +52,34 @@
 button, input[type=submit] {
     @include button();
     @include light-button();
+}
+
+@keyframes backandforth {
+    from {
+        padding-left: 0;
+    }
+    to {
+        padding-left: calc(100% - 3rem);
+    }
+}
+progress {
+    -webkit-appearance: none;
+    background: $background;
+    border-radius: 0.1rem;
+
+    &::-webkit-progress-bar {
+        background: $background;
+    }
+    &::-webkit-progress-value {
+        background: $accent;
+        border-radius: 0.1rem;
+        background-size: 35px 20px, 100% 100%, 100% 100%;
+    }
+    &:not([value]) {
+        margin: 0;
+        animation: backandforth 1s ease-in-out infinite alternate;
+        &::-webkit-progress-value {
+            width: 3rem !important;
+        }
+    }
 }

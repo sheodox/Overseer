@@ -5,6 +5,8 @@
 @import 'colors';
 @import 'settings';
 @import 'voter';
+@import 'login';
+@import 'header';
 @import 'footer';
 
 
@@ -20,56 +22,21 @@
 }
 html {
     height: 100%;
-    background: material-color('grey', '100');
+    background: $background;
     margin: 0;
 }
 body {
     font-family: 'Roboto', sans-serif;
-    background: material-color('grey', '100');
+    background: $background;
     margin: 0;
 }
 textarea {
     font-family: 'Roboto', sans-serif;
-}
-
-header {
-    $boxShadowSettings: 0 0 2rem 0;
-    $background: material-color($defaultTheme, '500');
-    margin: 0 0 1rem 0;
-    padding: 2rem 0;
-    position: relative;
     background: $background;
-    box-shadow: #{$boxShadowSettings} material-color('grey', '700');
-    text-align: center;
-
-    &.disconnected {
-        background: red;
-
-        h1 {
-            color: white;
-        }
-    }
-
-    svg, h1 {
-        height: 6rem;
-        vertical-align: middle;
-    }
-    h1 {
-        display: inline-block;
-        font-size: 3rem;
-        color: material-color('grey', '200');
-        position: relative;
-        text-decoration: overline;
-        text-transform: lowercase;
-        margin: 0;
-        transform: translateY(25%);
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-    }
+    border: none;
+    color: white;
 }
+
 
 .content {
     display: flex;
@@ -91,12 +58,15 @@ li {
 
 .panel {
     @include faint-shadow();
-    background-color: material-color('grey', '300');
     margin: 0.5rem;
     display: inline-block;
+    color: $background;
+    background: $neon2;
+    background-position: 0 0;
+    background-attachment: fixed;
 
     &:not(.switch-panel) h2 {
-        color: material-color('grey', '800');
+        color: $background;
         padding-left: 1rem;
     }
 }
@@ -111,7 +81,7 @@ li {
         display: inline-block;
     }
     svg {
-        fill: material-color('grey', '800');
+        fill: $background;
         margin-top: -4rem;
         width: 10rem;
         float: right;
@@ -119,48 +89,18 @@ li {
 }
 
 .sub-panel {
-    background-color: material-color('grey', '200');
+    background-color: darken($background, 5%);
     border: none;
     padding: 1.5rem;
-    color: material-color('grey', '800');
+    color: white;
 
-    &:not(:first-of-type) {
+    + .sub-panel {
         padding-top: 0;
     }
 }
 
 .centered {
     text-align: center;
-}
-
-@keyframes backandforth {
-    from {
-        padding-left: 0;
-    }
-    to {
-        padding-left: calc(100% - 3rem);
-    }
-}
-progress {
-    -webkit-appearance: none;
-    background: material-color('grey', '300');
-    border-radius: 0.1rem;
-
-    &::-webkit-progress-bar {
-        background: material-color('grey', '300');
-    }
-    &::-webkit-progress-value {
-        background: material-color($defaultTheme, '500');
-        border-radius: 0.1rem;
-        background-size: 35px 20px, 100% 100%, 100% 100%;
-    }
-    &:not([value]) {
-        margin: 0;
-        animation: backandforth 1s ease-in-out infinite alternate;
-        &::-webkit-progress-value {
-            width: 3rem !important;
-        }
-    }
 }
 
 .columns {

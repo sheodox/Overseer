@@ -1,7 +1,7 @@
 @import 'colors';
 
 @mixin faint-shadow {
-    box-shadow: 0 0 0.05rem 0.05rem material-color('grey', '400');
+    box-shadow: 0 0 0.05rem 0.05rem material-color('grey', '900');
 }
 
 @mixin dark-bg {
@@ -10,10 +10,9 @@
 }
 
 @mixin button {
-    @include faint-shadow();
     display: inline-block;
     color: white;
-    background: material-color('light-blue', '500');
+    background: $background;
     cursor: pointer;
     transition: border 0.2s, background 0.2s;
     padding: 0.3rem 1rem 0.2rem 1rem;
@@ -33,16 +32,13 @@
 }
 
 @mixin light-button {
-    $backgroundColor: white;
-    $backgroundColorDisabled: material-color('grey', '300');
-    $textColor: material-color('light-blue', '600');
-    $textColorDisabled: material-color('grey', '500');
+    $backgroundColorDisabled: darken($background, 2%);
+    $textColor: $accent;
+    $textColorDisabled: $background;
     color: $textColor;
-    background: $backgroundColor;
 
     &:hover {
-        background: lighten(material-color('grey', '300'), 5%);
-        color: darken($textColor, 10%);
+        background: lighten($background, 10%);
     }
 
     &:disabled, &.disabled {
@@ -61,14 +57,20 @@
     }
 }
 
+@keyframes left-glow {
+    from {
+
+    }
+    to {
+        box-shadow: -0.25rem 0 0.2rem -0.1rem $accent;
+    }
+}
+
 @mixin illuminated-toggle-buttons {
-    @include faint-shadow();
-    $illuminateColor: material-color('light-blue', '600');
-    $backgroundColor: white;
+    $illuminateColor: $accent2;
 
     button {
         @include light-button();
-        background: white;
         text-align: left;
 
         &:first-of-type {
@@ -83,13 +85,11 @@
         &.illuminated-target {
             border-left: 1rem solid;
             &.on {
+                animation: left-glow 1s infinite alternate;
                 border-color: $illuminateColor;
-                &:hover {
-                    background: darken($backgroundColor, 5%);
-                }
             }
             &.off {
-                border-color: material-color('grey', '300');
+                border-color: $background;
             }
         }
     }

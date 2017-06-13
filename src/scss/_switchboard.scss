@@ -7,12 +7,34 @@
     justify-content: center;
 }
 
+@keyframes background-float {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes glow {
+    from {
+
+    }
+    to {
+        box-shadow: 0 1rem 1rem -0.9rem $accent;
+    }
+}
+
 .panel.switch-panel {
     margin: 1rem;
     width: 20rem;
     height: 20rem;
-    color: material-color('grey', '800');
     text-align: center;
+
+    &:hover {
+        animation: background-float 0.1s ease-in-out forwards,
+            glow 1s ease-out infinite alternate;
+    }
 
     a {
         text-decoration: none;
@@ -24,7 +46,7 @@
 
 .switch-icon {
     transform: scale(0.75);
-    fill: material-color($defaultTheme, '500');
+    fill: $background;
     margin-top: -1.75rem;
     margin-bottom: -4rem;
 }

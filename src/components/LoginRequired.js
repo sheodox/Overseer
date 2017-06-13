@@ -10,7 +10,7 @@ const LoginRequired = React.createClass({
             return this.props.children;
         }
         return (
-            <section className="panel">
+            <section className="panel login-required">
                 <div className="panel-title">
                     <h2>Login Required</h2>
                     <SVG id="login-icon" />

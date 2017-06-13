@@ -20,7 +20,7 @@
     @include faint-shadow();
     margin-top: 1rem;
     padding: 1rem;
-    background: material-color('grey', '100');
+    background: lighten($background, 5%);
 
     h3 {
         margin: 0;

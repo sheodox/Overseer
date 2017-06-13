@@ -1,0 +1,39 @@
+@import 'mixins';
+@import 'colors';
+
+header {
+    @include faint-shadow();
+    margin: 0 0 1rem 0;
+    padding: 2rem 0;
+    position: relative;
+    background: $neon;
+    text-align: center;
+
+    &.disconnected {
+        background: red;
+
+        h1 {
+            color: white;
+        }
+    }
+
+    svg, h1 {
+        height: 6rem;
+        vertical-align: middle;
+    }
+    h1 {
+        display: inline-block;
+        font-size: 3rem;
+        color: material-color('grey', '200');
+        position: relative;
+        text-decoration: overline;
+        text-transform: lowercase;
+        margin: 0;
+        transform: translateY(25%);
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    }
+}

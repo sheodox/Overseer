@@ -1,0 +1,10 @@
+@import 'colors';
+
+.login-required {
+    a {
+        color: $accent2;
+        &:hover {
+            color: $accent;
+        }
+    }
+}

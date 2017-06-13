@@ -1,5 +1,18 @@
 @import '../../node_modules/sass-material-colors/sass/sass-material-colors';
 
-$defaultTheme: 'light-blue';
-$defaultAccent: material-color('light-blue', '500');
+$neon: linear-gradient(
+                120deg,
+                material-color('purple', '600') 20%,
+                material-color('pink', '600') 80%
+);
+$neon2: linear-gradient(
+                120deg,
+                material-color('cyan', '500') 20%,
+                material-color('blue', '800') 80%
+);
+//$accent: material-color('pink', '600');
+//$accent2: material-color('purple', '600');
+$accent2: material-color('cyan', '500');
+$accent: material-color('blue', '600');
 $darkGray: material-color('grey', '800');
+$background: darken(#474954, 10%);

@@ -1,7 +1,7 @@
 @import 'colors';
 @import 'mixins';
 
-$onAccentColor: $defaultAccent;
+$onAccentColor: $accent;
 
 .light-group {
     min-width: 20rem;
@@ -31,11 +31,9 @@ $onAccentColor: $defaultAccent;
 }
 
 .lg-details {
-    box-shadow: inset 0 0 0.3rem 0.3rem #ccc;
     padding: 0.5rem;
     display: none;
-    margin-top: 1rem;
-    background: #ddd;
+    background: $background;
 
     &.expanded {
         display: block;
