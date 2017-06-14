@@ -16,19 +16,36 @@ header {
         }
     }
 
+    .content-container {
+        display: inline-block;
+    }
+
     svg, h1 {
         height: 6rem;
         vertical-align: middle;
+        fill: white;
+    }
+    .logo-container {
+        width: 0;
+        position: relative;
+    }
+    svg {
+        position: absolute;
+    }
+    //shadow svg
+    svg:first-of-type {
+        fill: $accent-pink;
+        margin: -0.2rem 0 0 0.2rem;
     }
     h1 {
         display: inline-block;
         font-size: 3rem;
-        color: material-color('grey', '200');
+        color: white;
         position: relative;
-        text-decoration: overline;
         text-transform: lowercase;
-        margin: 0;
+        margin: 0 0 0 6rem;
         transform: translateY(25%);
+        text-shadow: 0.2rem -0.2rem 0 $accent-purple;
 
         a {
             text-decoration: none;
