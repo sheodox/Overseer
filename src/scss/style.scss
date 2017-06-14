@@ -79,7 +79,7 @@ li {
         display: inline-block;
     }
     svg {
-        fill: $neon-background;
+        fill: darken($background, 5%);
         margin-top: -4rem;
         width: 10rem;
         float: right;

@@ -59,7 +59,7 @@ $shading: 0 0 0.05rem 0.05rem material-color('grey', '900'),
 
 .switch-icon {
     transform: scale(0.75);
-    fill: $background;
+    fill: darken($background, 5%);
     margin-top: -1.75rem;
     margin-bottom: -4rem;
 }
