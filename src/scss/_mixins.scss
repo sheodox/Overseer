@@ -25,15 +25,21 @@
     vertical-align: top;
 
     svg {
-        fill: white;
         width: 1.5rem;
         vertical-align: middle;
+    }
+    &:hover {
+        color: $accent-mint;
+        svg {
+            fill: $accent-mint;
+        }
     }
 }
 
 @mixin light-button {
+    @include button();
     $backgroundColorDisabled: darken($background, 2%);
-    $textColor: $accent;
+    $textColor: $accent-blue;
     $textColorDisabled: $background;
     color: $textColor;
 
@@ -62,12 +68,12 @@
 
     }
     to {
-        box-shadow: -0.25rem 0 0.2rem -0.1rem $accent;
+        box-shadow: -0.25rem 0 0.2rem -0.2rem $accent-blue;
     }
 }
 
 @mixin illuminated-toggle-buttons {
-    $illuminateColor: $accent2;
+    $illuminateColor: $accent-cyan;
 
     button {
         @include light-button();

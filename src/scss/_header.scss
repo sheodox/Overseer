@@ -2,11 +2,10 @@
 @import 'colors';
 
 header {
-    @include faint-shadow();
     margin: 0 0 1rem 0;
     padding: 2rem 0;
     position: relative;
-    background: $neon;
+    background: $neon2;
     text-align: center;
 
     &.disconnected {

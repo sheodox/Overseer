@@ -6,7 +6,7 @@
     $baseHeight: 2.5rem;
     $padding: 0.3rem;
     $innerHeight: $baseHeight - (2 * $padding);
-    $focusBorderColor: $accent2;
+    $focusBorderColor: $accent-cyan;
 
     height: $baseHeight;
     vertical-align: middle;
@@ -71,7 +71,7 @@ progress {
         background: $background;
     }
     &::-webkit-progress-value {
-        background: $accent;
+        background: $accent-blue;
         border-radius: 0.1rem;
         background-size: 35px 20px, 100% 100%, 100% 100%;
     }

@@ -57,16 +57,14 @@ li {
 }
 
 .panel {
+    color: white;
     @include faint-shadow();
     margin: 0.5rem;
     display: inline-block;
-    color: $background;
-    background: $neon2;
-    background-position: 0 0;
-    background-attachment: fixed;
+    background: $lateNeon;
 
     &:not(.switch-panel) h2 {
-        color: $background;
+        color: white;
         padding-left: 1rem;
     }
 }
@@ -81,7 +79,7 @@ li {
         display: inline-block;
     }
     svg {
-        fill: $background;
+        fill: $neon-background;
         margin-top: -4rem;
         width: 10rem;
         float: right;

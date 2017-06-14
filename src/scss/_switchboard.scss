@@ -16,24 +16,37 @@
     }
 }
 
+$shading: 0 0 0.05rem 0.05rem material-color('grey', '900'),
+            inset 0 0.2rem 0.2rem 0 lighten($background, 15%);
 @keyframes glow {
-    from {
-
+    0% {
+        //box-shadow: 0 0 0 -0.9rem $accent-blue, #{$shading};
+        box-shadow: 0 0.7rem 1.6rem -0.9rem $accent-pink, #{$shading};
     }
-    to {
-        box-shadow: 0 1rem 1rem -0.9rem $accent;
+    50% {
+        box-shadow: 0 0.7rem 1rem -0.9rem $accent-purple, #{$shading};
+    }
+    100% {
+        box-shadow: 0 0.7rem 1.6rem -0.9rem $accent-pink, #{$shading};
     }
 }
 
 .panel.switch-panel {
+    color: white;
+    background: lighten($background, 5%);
+    //background-position: 0 0;
+    //background-attachment: fixed;
     margin: 1rem;
     width: 20rem;
     height: 20rem;
     text-align: center;
+    border-top: 1px solid material-color('cyan', '200');
+    border-bottom: 1px solid black;
+    box-shadow: #{$shading};
 
     &:hover {
         animation: pop 0.1s ease-out forwards,
-            glow 1s ease-out infinite alternate;
+            glow 2s ease-in-out infinite alternate;
     }
 
     a {

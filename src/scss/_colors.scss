@@ -10,9 +10,14 @@ $neon2: linear-gradient(
                 material-color('cyan', '500') 20%,
                 material-color('blue', '800') 80%
 );
-//$accent: material-color('pink', '600');
-//$accent2: material-color('purple', '600');
-$accent2: material-color('cyan', '500');
-$accent: material-color('blue', '600');
+$accent-blue: material-color('blue', '600');
+$accent-cyan: material-color('cyan', '500');
+$accent-pink: material-color('pink', '600');
+$accent-purple: material-color('purple', '600');
+$accent-mint: rgb(2, 253, 138);
+$accent-red: rgb(220, 64, 99);
 $darkGray: material-color('grey', '800');
 $background: darken(#474954, 10%);
+$neon-background: lighten($background, 5%);
+$earlyNeon: linear-gradient( 90deg, $accent-mint 50%, $neon-background);
+$lateNeon: linear-gradient( 90deg, $neon-background 50%, $accent-mint);
