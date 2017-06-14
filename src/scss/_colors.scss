@@ -20,4 +20,4 @@ $darkGray: material-color('grey', '800');
 $background: darken(#474954, 10%);
 $neon-background: lighten($background, 5%);
 $earlyNeon: linear-gradient( 90deg, $accent-mint 50%, $neon-background);
-$lateNeon: linear-gradient( 90deg, $neon-background 50%, $accent-pink);
+$lateNeon: linear-gradient( 90deg, darken($background, 5%) 50%, $accent-pink);
