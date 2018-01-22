@@ -70,11 +70,6 @@ module.exports = React.createClass({
             fieldsUpdated: false
         });
     },
-    detailKeyUp: function() {
-        this.setState({
-            fieldsUpdated: this.details.value !== this.state.details
-        });
-    },
     delete: function() {
         if(confirm(`Are you sure you want to delete ${this.state.name}?`)) {
             echoConduit.emit('delete', this.state.fileName);
@@ -118,7 +113,7 @@ module.exports = React.createClass({
                     <TagCloud tagInput={this.tags} tags={this.state.tagCloud} tagClicked={this.checkForChanges}/>
                     <br />
                     <label htmlFor="details">Game details:</label>
-                    <textarea ref={c => this.details = c} onKeyUp={this.detailKeyUp} id="details" name="details" placeholder="patch information, included mods, description, etc." defaultValue={this.state.details} />
+                    <textarea ref={c => this.details = c} onKeyUp={this.checkForChanges} id="details" name="details" placeholder="patch information, included mods, description, etc." defaultValue={this.state.details} />
                     <br />
                     <button disabled={!this.state.fieldsUpdated} onClick={this.saveChanges}>Save Changes</button>
                     <button type="button" onClick={this.redirectToEcho}>Cancel</button>
