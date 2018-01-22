@@ -101,3 +101,26 @@ th {
         color: red;
     }
 }
+.g-size, .g-date, .g-actions .download, .to-upload {
+    display: none !important;
+}
+
+@media screen and (min-device-width: 900px) {
+    .g-size, .g-date, .g-actions .download, .to-upload {
+        display: inline-block !important;
+    }
+}
+
+.tag-suggestion {
+    background: $accent-pink;
+    margin-right: 1rem;
+    cursor: pointer;
+    &:hover {
+        background: $accent-cyan;
+        color: $darkGray;
+    }
+}
+.tag-cloud {
+    max-width: 40rem;
+    line-height: 1.8rem;
+}

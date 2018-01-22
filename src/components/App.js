@@ -30,7 +30,7 @@ const App = React.createClass({
                         <Route path="/w/lights" component={Lights} />
                         <Route exact path="/w/game-echo" component={Games} />
                         <Route exact path="/w/game-echo/upload" component={EchoUploader} />
-                        <Route exact path="/w/game-echo/details/:name" component={GameDetails} />
+                        <Route exact path="/w/game-echo/details/:fileName" component={GameDetails} />
                         <Route path="/w/voter" render={() => (
                             <LoginRequired>
                                 <Voter />

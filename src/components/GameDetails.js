@@ -2,15 +2,17 @@ const React = require('react'),
     reactRouter = require('react-router-dom'),
     Link = reactRouter.Link,
     SVG = require('./SVG').default,
+    TagCloud = require('./TagCloud'),
     formatters = require('../util/formatters'),
     Conduit = require('../util/conduit'),
     echoConduit = new Conduit(socket, 'echo');
 
 module.exports = React.createClass({
     getInitialState: function () {
+        console.log(this.props);
         return {
-            name: this.props.match.params.name,
-            detailsChanged: false
+            fileName: this.props.match.params.fileName,
+            fieldsUpdated: false
         };
     },
     redirectToEcho: function() {
@@ -19,8 +21,9 @@ module.exports = React.createClass({
     componentWillMount: function () {
         echoConduit.on({
             refresh: data => {
+                console.log(data);
                 const thisGame = data.games.find(game => {
-                    return game.name === this.state.name
+                    return game.fileName === this.state.fileName
                 });
                 //if the game was deleted go back to the list
                 if (!thisGame) {
@@ -28,12 +31,17 @@ module.exports = React.createClass({
                 }
                 else {
                     //force an update if details have changed but only here and not in render() or they can't type
-                    if (thisGame.details !== this.state.details) {
-                        this.details.value = thisGame.details;
-                    }
+                    ['details', 'name', 'tags'].forEach(type => {
+                        const newVal = thisGame[type],
+                            formattedVal = Array.isArray(newVal) ? newVal.join(', ') : newVal;
+                        if (this[type].value !== formattedVal) {
+                            this[type].value = formattedVal;
+                        }
+                    });
                     this.setState(Object.assign(thisGame, {
+                        tagCloud: data.tagCloud,
                         echoConnected: data.echoConnected,
-                        downloadHref: data.echoServer + '/download/' + this.state.name + '.zip'
+                        downloadHref: data.echoServer + '/download/' + this.state.fileName + '.zip'
                     }));
                 }
             }
@@ -43,20 +51,33 @@ module.exports = React.createClass({
     componentWillUnmount: function () {
         echoConduit.destroy();
     },
-    updateDetails: function() {
-        echoConduit.emit('updateDetails', this.state.name, this.details.value);
+    checkForChanges: function() {
+        const somethingChanged = ['details', 'tags', 'name'].some(type => {
+            if (!this[type]) {
+                return false;
+            }
+            return this.state[type] !== this[type].value;
+        });
         this.setState({
-            detailsChanged: false
+            fieldsUpdated: somethingChanged
+        });
+    },
+    saveChanges: function() {
+        ['details', 'tags', 'name'].forEach(type => {
+            echoConduit.emit('update', this.state.fileName, type, this[type].value);
+        });
+        this.setState({
+            fieldsUpdated: false
         });
     },
     detailKeyUp: function() {
         this.setState({
-            detailsChanged: this.details.value !== this.state.details
+            fieldsUpdated: this.details.value !== this.state.details
         });
     },
     delete: function() {
         if(confirm(`Are you sure you want to delete ${this.state.name}?`)) {
-            echoConduit.emit('delete', this.state.name);
+            echoConduit.emit('delete', this.state.fileName);
         }
     },
     render: function() {
@@ -86,10 +107,20 @@ module.exports = React.createClass({
                         </tr>
                         </tbody>
                     </table>
+                    <div className="control">
+                        <label htmlFor="name">Game Name:</label>
+                        <input ref={c => this.name = c} onKeyUp={this.checkForChanges} type="text" id="name"/>
+                    </div>
+                    <div className="control">
+                        <label htmlFor="tags">Tags:</label>
+                        <input onKeyUp={this.checkForChanges} ref={c => this.tags = c} type="text" id="tags"/>
+                    </div>
+                    <TagCloud tagInput={this.tags} tags={this.state.tagCloud} tagClicked={this.checkForChanges}/>
+                    <br />
                     <label htmlFor="details">Game details:</label>
                     <textarea ref={c => this.details = c} onKeyUp={this.detailKeyUp} id="details" name="details" placeholder="patch information, included mods, description, etc." defaultValue={this.state.details} />
                     <br />
-                    <button disabled={!this.state.detailsChanged} onClick={this.updateDetails}>Update Details</button>
+                    <button disabled={!this.state.fieldsUpdated} onClick={this.saveChanges}>Save Changes</button>
                     <button type="button" onClick={this.redirectToEcho}>Cancel</button>
                 </div>
             </section>

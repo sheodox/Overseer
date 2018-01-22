@@ -1,4 +1,5 @@
-const FlatFile = require("./flatfile").default;
+const FlatFile = require("./flatfile").default,
+    formatTags = require('./formatters').tags;
 
 class GameTracker extends FlatFile{
     constructor() {
@@ -8,14 +9,14 @@ class GameTracker extends FlatFile{
             return game.inProgress;
         });
         inProgressGames.forEach(game => {
-            delete this.data[game.name];
+            delete this.data[game.fileName];
         })
     }
     list() {
         const games = [];
-        for (let name in this.data) {
-            if (this.data.hasOwnProperty(name)) {
-                games.push(this.data[name]);
+        for (let fileName in this.data) {
+            if (this.data.hasOwnProperty(fileName)) {
+                games.push(this.data[fileName]);
             }
         }
         //sort games alphabetically
@@ -31,30 +32,40 @@ class GameTracker extends FlatFile{
         return games;
     }
     addGame(newData) {
-        const oldData = this.find(newData.name) || {};
-        this.data[newData.name] = Object.assign({
+        //make sure tags are an array of trimmed strings, will convert it if it's comma separated just like it'd come directly from the upload form
+        const oldData = this.find(newData.fileName) || {};
+        if (newData.tags) {
+            newData.tags = formatTags(newData.tags);
+        }
+
+        this.data[newData.fileName] = Object.assign({
             downloads: oldData.downloads || 0,
-            details: oldData.details || ''
+            details: oldData.details || '',
+            tags: formatTags(oldData.tags),
+            name: oldData.name || oldData.fileName || 'nameless game!'
         }, newData);
         this.save();
     }
-    deleteGame(name) {
-        delete this.data[name];
+    deleteGame(fileName) {
+        delete this.data[fileName];
         this.save();
     }
-    updateDetails(name, details) {
-        this.find(name).details = details;
+    update(fileName, infoName, infoVal) {
+        if (infoName === 'tags') {
+            infoVal = formatTags(infoVal);
+        }
+        this.find(fileName)[infoName] = infoVal;
         this.save();
     }
-    downloaded(name) {
-        const game = this.find(name);
+    downloaded(fileName) {
+        const game = this.find(fileName);
         if(game) {
             game.downloads++;
             this.save();
         }
     }
-    find(name) {
-        return this.data[name];
+    find(fileName) {
+        return this.data[fileName];
     }
 }
 

@@ -11,9 +11,24 @@ function broadcast() {
 }
 
 function prepareData() {
+    const allTags = {},
+        games = tracker.list();
+    games.forEach(game => {
+        (game.tags || []).forEach(tag => {
+            allTags[tag] = (allTags[tag] || 0) + 1;
+        })
+    });
+    const sortableTags = [];
+    Object
+        .keys(allTags)
+        .forEach(tag => {
+            sortableTags.push({tag, count: allTags[tag]});
+        });
+    sortableTags.sort((a, b) => b.count - a.count);
     return {
         echoServer: echoServerIP,
-        games: tracker.list(),
+        tagCloud: sortableTags.map(countInfo => countInfo.tag),
+        games,
         diskUsage,
         echoConnected
     };
@@ -28,8 +43,8 @@ const clientListener = socket => {
         init: () => {
             socketConduit.emit('refresh', prepareData());
         },
-        updateDetails: (name, details) => {
-            tracker.updateDetails(name, details);
+        update: (fileName, attr, val) => {
+            tracker.update(fileName, attr, val);
             broadcast();
         }
     });
@@ -48,20 +63,21 @@ const echoListener = socket => {
 
     echoSocket = socket;
     socket.on('new-game', data => {
-        console.log(`new game: ${data.game.name}`);
+        console.log(`new game: ${data.game.fileName}`);
+        console.log(data.game);
         tracker.addGame(data.game);
         diskUsage = data.diskUsage;
         broadcast();
     });
     socket.on('delete-game', data => {
-        console.log(`deleted game: ${data.name}`);
-        tracker.deleteGame(data.name);
+        console.log(`deleted game: ${data.fileName}`);
+        tracker.deleteGame(data.fileName);
         diskUsage = data.diskUsage;
         broadcast();
     });
-    socket.on('downloaded', name => {
-        console.log(`downloaded game: ${name}`);
-        tracker.downloaded(name);
+    socket.on('downloaded', fileName => {
+        console.log(`downloaded game: ${fileName}`);
+        tracker.downloaded(fileName);
         broadcast();
     });
     //on connection events make sure we're always up to date

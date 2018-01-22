@@ -2,6 +2,7 @@ const React = require('react'),
     reactRouter = require('react-router-dom'),
     Link = reactRouter.Link,
     SVG = require('./SVG').default,
+    TagCloud = require('./TagCloud'),
     formatters = require('../util/formatters'),
     axios = require('axios'),
     Conduit = require('../util/conduit'),
@@ -11,18 +12,16 @@ module.exports = React.createClass({
     getInitialState: function() {
         return {
             echoServer: '',
-            fileSelected: false,
+            uploadAllowed: false,
             loaded: 0,
-            total: 100
+            total: 100,
+            tagCloud: []
         };
     },
     componentWillMount: function() {
         echoConduit.on({
             refresh: data => {
-                this.setState({
-                    games: data.games,
-                    echoServer: data.echoServer
-                });
+                this.setState(data);
             }
         });
         echoConduit.emit('init');
@@ -48,7 +47,7 @@ module.exports = React.createClass({
             .then(() => {
                 this.form.reset();
                 this.setState({
-                    fileSelected: false,
+                    uploadAllowed: false,
                     uploading: false
                 });
                 this.audio.volume = 0.4;
@@ -64,16 +63,24 @@ module.exports = React.createClass({
             total: e.total
         });
     },
+    checkUploadAllowed: function() {
+         this.setState({
+             uploadAllowed: this.fileSelect.value && this.name.value
+         })
+    },
     onFileSelect: function(e) {
         //file selections will give a value of C:\fakepath\Game Name.zip, trim the non-name bits
         const selectedGame = e.target.value.replace(/^C\:\\fakepath\\|.zip$/g, ''),
             existingGame = this.state.games.find(g => g.name === selectedGame);
         if (existingGame) {
             this.details.value = existingGame.details;
+            this.tags.value = (existingGame.tags || []).join(', ');
+            this.name.value = existingGame.name || selectedGame;
         }
-        this.setState({
-            fileSelected: !!e.target.value
-        });
+        else {
+            this.name.value = selectedGame;
+        }
+        this.checkUploadAllowed();
     },
     render: function() {
         const progressValues = {
@@ -101,12 +108,22 @@ module.exports = React.createClass({
                     <audio src="/beeps.wav" preload="auto" ref={c => this.audio = c} />
                     <form ref={c => this.form = c} onSubmit={this.upload}>
                         <label htmlFor="file">Select a zip:</label>
-                        <input onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file" disabled={disabled}/>
+                        <input ref={c => this.fileSelect = c} onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file" disabled={disabled}/>
+                        <br />
+                        <div className="control">
+                            <label htmlFor="name">Game name:</label>
+                            <input ref={c => this.name = c} id="name" name="name" />
+                        </div>
+                        <div className="control">
+                            <label htmlFor="tags">Tags:</label>
+                            <input ref={c => this.tags = c} id="tags" name="tags" placeholder="tags separated by commas" />
+                        </div>
+                        <TagCloud tagInput={this.tags} tags={this.state.tagCloud} tagClicked={tag => console.log(tag)}/>
                         <br />
                         <label htmlFor="details">Game details:</label>
                         <textarea ref={c => this.details = c} id="details" name="details" placeholder="patch information, included mods, description, etc." disabled={disabled}/>
                         <br />
-                        <button type="submit" disabled={!this.state.fileSelected || disabled} className="upload-submit">Upload</button>
+                        <button type="submit" disabled={!this.state.uploadAllowed || disabled} className="upload-submit">Upload</button>
                         <Link to="/w/game-echo">
                             <button type="button" disabled={disabled}>Cancel</button>
                         </Link>

@@ -27,12 +27,12 @@
         border-radius: 0.2rem 0 0 0.2rem;
     }
     input, select {
+        background: $background;
         width: 75%;
         color: white;
         font-size: 1.4rem;
         border: none;
         border-bottom: 0.2rem solid white;
-        background: none;
         padding-left: 0.5rem;
         &:focus {
             border-color: $focusBorderColor;
