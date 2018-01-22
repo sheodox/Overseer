@@ -24,7 +24,9 @@ const formatters = {
         }
         const noDuplicatesObject = {};
         tags.forEach(tag => {
-            noDuplicatesObject[tag.trim().toLowerCase()] = 1;
+            noDuplicatesObject[
+                tag.trim().toLowerCase().substring(0, 50)
+                ] = 1;
         });
         //don't allow blanks
         delete noDuplicatesObject[''];
