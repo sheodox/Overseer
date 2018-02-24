@@ -38,6 +38,8 @@ class GameTracker extends FlatFile{
             newData.tags = formatTags(newData.tags);
         }
 
+        let isNewUpload = oldData.inProgress && !newData.inProgress;
+
         this.data[newData.fileName] = Object.assign({
             downloads: oldData.downloads || 0,
             details: oldData.details || '',
@@ -45,6 +47,7 @@ class GameTracker extends FlatFile{
             name: oldData.name || oldData.fileName || 'nameless game!'
         }, newData);
         this.save();
+        return isNewUpload;
     }
     deleteGame(fileName) {
         delete this.data[fileName];

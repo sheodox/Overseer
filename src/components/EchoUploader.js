@@ -15,7 +15,8 @@ module.exports = React.createClass({
             uploadAllowed: false,
             loaded: 0,
             total: 100,
-            tagCloud: []
+            tagCloud: [],
+            toast: null
         };
     },
     componentWillMount: function() {
@@ -37,31 +38,48 @@ module.exports = React.createClass({
             started: Date.now()
         });
 
+        const toast = Toaster.add({
+            title: `Uploading ${this.name.value.trim()}`,
+            type: 'progress'
+        });
+
+        const startTime = Date.now();
         axios
             .post(this.state.echoServer + '/upload', new FormData(this.form), {
                 headers: {
                     'content-type': 'multipart/form-data'
                 },
-                onUploadProgress: this.uploadProgress
+                onUploadProgress: (e) => {
+                    const elapsedSeconds = (Date.now() - startTime) / 1000,
+                        //calculate time till completion
+                        percentDone = e.loaded / e.total,
+                        bytesPerSecond = e.loaded / elapsedSeconds,
+                        //remaining = percent left/percent per second
+                        secondsTillDone = (1 - percentDone) / (percentDone / elapsedSeconds),
+                        showMinutes = secondsTillDone > 60,
+                        megabytesPerSecond = formatters.bytes(bytesPerSecond, 'mb'),
+                        remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${showMinutes ? 'm' : 's'}`;
+
+                    toast({
+                        value: e.loaded,
+                        max: e.total,
+                        text: `${formatters.bytes(e.loaded, 'gb')} / ${formatters.bytes(e.total, 'gb')} gb - ${megabytesPerSecond} mb/s (${remaining})`
+                    });
+                }
             })
             .then(() => {
-                this.form.reset();
-                this.setState({
-                    uploadAllowed: false,
-                    uploading: false
+                toast({
+                    type: 'text',
+                    text: 'Upload complete!'
                 });
-                this.audio.volume = 0.4;
-                this.audio.play();
-                setTimeout(() => {
-                    this.props.history.push('/w/game-echo');
-                }, this.audio.duration * 1000);
             });
-    },
-    uploadProgress: function(e) {
+
+        this.form.reset();
         this.setState({
-            loaded: e.loaded,
-            total: e.total
+            uploadAllowed: false,
+            uploading: false
         });
+        this.props.history.push('/w/game-echo');
     },
     checkUploadAllowed: function() {
          this.setState({
@@ -71,7 +89,7 @@ module.exports = React.createClass({
     onFileSelect: function(e) {
         //file selections will give a value of C:\fakepath\Game Name.zip, trim the non-name bits
         const selectedGame = e.target.value.replace(/^C\:\\fakepath\\|.zip$/g, ''),
-            existingGame = this.state.games.find(g => g.name === selectedGame);
+            existingGame = this.state.games.find(g => g.fileName === selectedGame);
         if (existingGame) {
             this.details.value = existingGame.details;
             this.tags.value = (existingGame.tags || []).join(', ');
@@ -87,15 +105,6 @@ module.exports = React.createClass({
                 value: this.state.loaded,
                 max: this.state.total
             },
-            elapsedSeconds = (Date.now() - this.state.started) / 1000,
-            bytesPerSecond = this.state.loaded / elapsedSeconds,
-            megabytesPerSecond = formatters.bytes(bytesPerSecond, 'mb'),
-            //calculate time till completion
-            percentDone = this.state.loaded / this.state.total,
-            //remaining = percent left/percent per second
-            secondsTillDone = (1 - percentDone) / (percentDone / elapsedSeconds),
-            showMinutes = secondsTillDone > 60,
-            remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${showMinutes ? 'm' : 's'}`,
             disabled = this.state.uploading;
 
         return (
@@ -128,12 +137,6 @@ module.exports = React.createClass({
                             <button type="button" disabled={disabled}>Cancel</button>
                         </Link>
                     </form>
-                    <div style={{display: this.state.uploading ? '' : 'none'}}>
-                        <progress type="progress" ref={c => this.progress = c} {...progressValues} />
-                        <span>
-                        {formatters.bytes(this.state.loaded, 'gb')} / {formatters.bytes(this.state.total, 'gb')} gb - {megabytesPerSecond} mb/s ({remaining})
-                    </span>
-                    </div>
                 </div>
             </section>
         )

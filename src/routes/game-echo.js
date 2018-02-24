@@ -4,7 +4,7 @@ const Conduit = require('../util/conduit'),
     tracker = require('../util/GameTracker');
 
 let echoConnected = false,
-    ioConduit, echoSocket, diskUsage;
+    ioConduit, notificationConduit, echoSocket, diskUsage;
 
 function broadcast() {
     ioConduit.emit('refresh', prepareData());
@@ -65,7 +65,15 @@ const echoListener = socket => {
     socket.on('new-game', data => {
         console.log(`new game: ${data.game.fileName}`);
         console.log(data.game);
-        tracker.addGame(data.game);
+        //if it's a brand new game send a notification to everyone
+        if (tracker.addGame(data.game)) {
+            notificationConduit.emit('notification', {
+                type: 'link',
+                title: 'New game!',
+                text: data.game.name,
+                href: `/w/game-echo/details/${data.game.fileName}`
+            });
+        }
         diskUsage = data.diskUsage;
         broadcast();
     });
@@ -96,6 +104,7 @@ module.exports = function (io) {
         clientListener(socket);
     });
     ioConduit = new Conduit(io, 'echo');
+    notificationConduit = new Conduit(io, 'notifications');
 
     io .of('/echo-server')
         .on('connection', socket => {

@@ -1,6 +1,7 @@
 import {BrowserRouter, Route, Redirect} from 'react-router-dom';
 const React = require('react'),
     Header = require('./Header'),
+    Toaster = require('./Toaster'),
     Footer = require('./Footer'),
     Switchboard = require('./Switchboard'),
     Games = require('./Games'),
@@ -17,6 +18,7 @@ const App = React.createClass({
             <BrowserRouter>
                 <div>
                     <Header />
+                    <Toaster />
                     <main className="content">
                         <Route exact path="/" render={() => {
                             const returnUrlKey = 'auth-return-url',
