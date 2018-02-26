@@ -76,7 +76,7 @@ module.exports = React.createClass({
         }
     },
     download: function () {
-        echoConduit.emit('downloaded', this.props.fileName);
+        echoConduit.emit('downloaded', this.state.fileName);
     },
     render: function() {
         return (
