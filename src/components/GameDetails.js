@@ -41,7 +41,7 @@ module.exports = React.createClass({
                     this.setState(Object.assign(thisGame, {
                         tagCloud: data.tagCloud,
                         echoConnected: data.echoConnected,
-                        downloadHref: data.echoServer + '/download/' + this.state.fileName + '.zip'
+                        downloadHref: data.echoServer + '/' + this.state.fileName + '.zip'
                     }));
                 }
             }
@@ -75,6 +75,9 @@ module.exports = React.createClass({
             echoConduit.emit('delete', this.state.fileName);
         }
     },
+    download: function () {
+        echoConduit.emit('downloaded', this.props.fileName);
+    },
     render: function() {
         return (
             <section className="panel" id="echo-details">
@@ -84,7 +87,7 @@ module.exports = React.createClass({
                 </div>
                 <div className="sub-panel">
                     <div className="action-buttons">
-                        <a className={"download " + (this.state.echoConnected ? '' : 'disabled')} href={this.state.echoConnected ? this.state.downloadHref : null} title="download">
+                        <a onClick={this.download} className={"download " + (this.state.echoConnected ? '' : 'disabled')} href={this.state.echoConnected ? this.state.downloadHref : null} title="download">
                             <SVG id="down-icon" />
                         </a>
                         <button title="delete game" disabled={!this.state.echoConnected} className="delete-game" onClick={this.delete}><SVG id="x-icon" /></button>
