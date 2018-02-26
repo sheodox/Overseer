@@ -46,6 +46,10 @@ const clientListener = socket => {
         update: (fileName, attr, val) => {
             tracker.update(fileName, attr, val);
             broadcast();
+        },
+        downloaded: fileName => {
+            tracker.downloaded(fileName);
+            broadcast();
         }
     });
 };
@@ -81,11 +85,6 @@ const echoListener = socket => {
         console.log(`deleted game: ${data.fileName}`);
         tracker.deleteGame(data.fileName);
         diskUsage = data.diskUsage;
-        broadcast();
-    });
-    socket.on('downloaded', fileName => {
-        console.log(`downloaded game: ${fileName}`);
-        tracker.downloaded(fileName);
         broadcast();
     });
     //on connection events make sure we're always up to date
