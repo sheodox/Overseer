@@ -17,8 +17,8 @@ const App = React.createClass({
         return (
             <BrowserRouter>
                 <div>
-                    <Header />
                     <Toaster />
+                    <Header />
                     <main className="content">
                         <Route exact path="/" render={() => {
                             const returnUrlKey = 'auth-return-url',
