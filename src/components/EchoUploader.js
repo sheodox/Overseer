@@ -6,7 +6,8 @@ const React = require('react'),
     formatters = require('../util/formatters'),
     axios = require('axios'),
     Conduit = require('../util/conduit'),
-    echoConduit = new Conduit(socket, 'echo');
+    echoConduit = new Conduit(socket, 'echo'),
+    beep = '/beeps.wav';
 
 module.exports = React.createClass({
     getInitialState: function() {
@@ -26,6 +27,7 @@ module.exports = React.createClass({
             }
         });
         echoConduit.emit('init');
+        Banshee.load(beep);
     },
     componentWillUnmount: function() {
         echoConduit.destroy();
@@ -68,6 +70,7 @@ module.exports = React.createClass({
                 }
             })
             .then(() => {
+                Banshee.play(beep, 0.4);
                 toast({
                     type: 'text',
                     text: 'Upload complete!'

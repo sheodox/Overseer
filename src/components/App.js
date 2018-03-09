@@ -1,6 +1,7 @@
 import {BrowserRouter, Route, Redirect} from 'react-router-dom';
 const React = require('react'),
     Header = require('./Header'),
+    Banshee = require('./Banshee'),
     Toaster = require('./Toaster'),
     Footer = require('./Footer'),
     Switchboard = require('./Switchboard'),
@@ -17,6 +18,7 @@ const App = React.createClass({
         return (
             <BrowserRouter>
                 <div>
+                    <Banshee />
                     <Toaster />
                     <Header />
                     <main className="content">
