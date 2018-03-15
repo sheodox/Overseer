@@ -193,7 +193,6 @@ const CandidateList = React.createClass({
     },
     render: function() {
         const self = this,
-            username = localStorage.getItem('username'),
             candidates = this.state.candidates.map((c, index) => {
                 const toggleVote = () => {
                         voterConduit.emit('toggleVote', this.props.id, c.name);
