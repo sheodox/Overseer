@@ -83,3 +83,12 @@ progress {
         }
     }
 }
+
+.button-dock {
+    position: relative;
+}
+.docked-buttons {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

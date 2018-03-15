@@ -123,6 +123,19 @@ export default function(io) {
                 }
                 raceFile.save();
                 broadcast();
+            },
+            resetVotes: raceId => {
+                const race = raceFile.data.find(r => {
+                    return r.id === raceId;
+                });
+                if (race) {
+                    console.log(`clearing votes for ${race.name}`);
+                    race.candidates.forEach(candidate => {
+                        candidate.voters = [];
+                    });
+                    raceFile.save();
+                    broadcast();
+                }
             }
         });
     });

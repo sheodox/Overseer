@@ -188,6 +188,9 @@ const CandidateList = React.createClass({
             sortQueued: false
         });
     },
+    resetVotes: function() {
+        voterConduit.emit('resetVotes', this.props.id);
+    },
     render: function() {
         const self = this,
             username = localStorage.getItem('username'),
@@ -207,8 +210,12 @@ const CandidateList = React.createClass({
         }
 
         return (
-            <div className="candidate-list" onMouseEnter={this.lockSorting} onMouseMove={this.lockSorting} onMouseLeave={this.unlockSorting}>
+            <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseMove={this.lockSorting} onMouseLeave={this.unlockSorting}>
+                <div className="docked-buttons">
+                    <button onClick={this.resetVotes} title="Reset Votes"><SVG id="reset-icon" /></button>
+                </div>
                 <h3>{this.props.name}</h3>
+                <br />
                 <NewCandidate newCandidate={newCandidate} />
                 {candidates}
             </div>
