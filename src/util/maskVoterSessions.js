@@ -5,9 +5,16 @@ export default (races, userId) => {
 
     races.forEach(race => {
         race.candidates.forEach(candidate => {
-            candidate.voted = candidate.voters.indexOf(userId) !== -1;
-            console.log(`voted: ${candidate.voted}, ${userId}`);
-            candidate.voters = User.maskSessions(candidate.voters);
+            let voted = false;
+            if (candidate.votedUp.includes(userId)) {
+                voted = 'up'
+            }
+            else if (candidate.votedDown.includes(userId)) {
+                voted = 'down'
+            }
+            candidate.voted = voted;
+            candidate.votedUp = User.maskSessions(candidate.votedUp);
+            candidate.votedDown = User.maskSessions(candidate.votedDown);
         })
     });
 

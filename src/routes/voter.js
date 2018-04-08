@@ -78,27 +78,39 @@ export default function(io) {
                 if (valid.name(name, true) && !candidateExists(race, name)) {
                     race.candidates.push({
                         name: String(name).trim(),
-                        voters: []
+                        votedUp: [],
+                        votedDown: []
                     });
                     raceFile.save();
                     broadcast();
                 }
             },
-            toggleVote: (raceId, candidateId) => {
+            toggleVote: (raceId, candidateId, direction) => {
                 const userId = socket.handshake.session.passport.user.profile.id,
                     candidate = getCandidate(raceId, candidateId),
-                    voterIndex = candidate.voters.indexOf(userId),
-                    voted = voterIndex !== -1;
-                console.log(`toggle vote for ${userId} on ${raceId}'s ${candidateId}`);
+                    [to, from] = direction === 'up'
+                        ? [candidate.votedUp, candidate.votedDown]
+                        : [candidate.votedDown, candidate.votedUp];
 
-                if (voted) {
-                    //unvote
-                    candidate.voters.splice(voterIndex, 1);
+                console.log(`voting ${direction} for ${userId} on ${raceId}'s ${candidateId}`);
+
+                //ensure the vote isn't in the array
+                const toIndex = to.indexOf(userId),
+                    fromIndex = from.indexOf(userId);
+                //if they voted for the other direction before remove their vote
+                if (fromIndex !== -1) {
+                    from.splice(fromIndex, 1);
                 }
+
+                // if they vote 'up' but have already voted 'up', take their vote out, treat it as a toggle instead of complicating logic with a third 'clear' direction
+                if (toIndex !== -1) {
+                    to.splice(toIndex, 1);
+                }
+                //just vote
                 else {
-                    //vote
-                    candidate.voters.push(userId);
+                    to.push(userId);
                 }
+
                 raceFile.save();
                 broadcast();
             },
@@ -131,7 +143,8 @@ export default function(io) {
                 if (race) {
                     console.log(`clearing votes for ${race.name}`);
                     race.candidates.forEach(candidate => {
-                        candidate.voters = [];
+                        candidate.votedUp = [];
+                        candidate.votedDown = [];
                     });
                     raceFile.save();
                     broadcast();

@@ -120,7 +120,7 @@ const CandidateList = React.createClass({
     },
     getSortedCandidates: function(props) {
         return props.candidates.sort((a, b) => {
-            return b.voters.length - a.voters.length;
+            return (b.votedUp.length  - b.votedDown.length) - (a.votedUp.length - a.votedDown.length);
         })
     },
     componentWillReceiveProps: function(nextProps) {
@@ -139,7 +139,8 @@ const CandidateList = React.createClass({
             let updatedCandidates = this.state.candidates.map(c => {
                 let matchingCandidate = findCandidate(c);
                 if (matchingCandidate) {
-                    c.voters = matchingCandidate.voters;
+                    c.votedUp = matchingCandidate.votedUp;
+                    c.votedDown = matchingCandidate.votedDown;
                     c.voted = matchingCandidate.voted;
                 }
                 else {
@@ -193,15 +194,25 @@ const CandidateList = React.createClass({
     },
     render: function() {
         const self = this,
+            maxVotes = this.state.candidates.reduce((prev, two) => {
+                const sum = a => a.votedUp.length + a.votedDown.length;
+                return Math.max(prev, sum(two));
+            }, 1), // min of one so we don't divide by zero
             candidates = this.state.candidates.map((c, index) => {
-                const toggleVote = () => {
-                        voterConduit.emit('toggleVote', this.props.id, c.name);
+                const toggleVote = (direction) => {
+                        voterConduit.emit('toggleVote', this.props.id, c.name, direction);
+                    },
+                    toggleVoteUp = () => {
+                        toggleVote('up');
+                    },
+                    toggleVoteDown = () => {
+                        toggleVote('down')
                     },
                     removeCandidate = () => {
                         voterConduit.emit('removeCandidate', this.props.id, c.name);
                     };
 
-                return <Candidate removeCandidate={removeCandidate} toggleVote={toggleVote} {...c} key={index} />
+                return <Candidate removeCandidate={removeCandidate} toggleVoteUp={toggleVoteUp} toggleVoteDown={toggleVoteDown} {...c} maxVotes={maxVotes} key={index} />
             });
 
         function newCandidate(name) {
@@ -242,36 +253,41 @@ const NewCandidate = React.createClass({
 });
 
 const Candidate = React.createClass({
-    getInitialState: function() {
-        return {
-            expanded: false
-        }
+    voteUp: function() {
+        this.props.toggleVoteUp();
     },
-    toggleExpand: function() {
-        this.setState({
-            expanded: !this.state.expanded
-        });
+    voteDown: function() {
+        this.props.toggleVoteDown();
     },
     render: function() {
-        const voters = this.props.voters.join(', '),
+        const voters = `Up: ${this.props.votedUp.join(', ')}\nDown: ${this.props.votedDown.join(', ')}`,
+            getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
+            votedUp = this.props.votedUp.length,
+            votedDown = this.props.votedDown.length,
             disabledState = this.props.removed,
             voteButtonProps = {
-                className: 'vote-button illuminated-target ' + (this.props.voted ? 'on' : 'off'),
-                onClick: this.props.toggleVote,
+                className: 'candidate-name',
                 disabled: disabledState,
                 title: voters
             };
         return (
             <div className="candidate">
                 <div className="candidate-buttons">
-                    <button {...voteButtonProps}>
-                        {this.props.voters.length} - {this.props.name}
-                    </button>
+                    <div className="up-down">
+                        <button className="up" onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} />{votedUp}</button>
+                        <button className="down" onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} />{votedDown}</button>
+                    </div>
+                    <div {...voteButtonProps}>
+                        <div className="vote-bars">
+                            <div className="up-bar vote-bar" style={{width: getWidthPercent(votedUp)}}/>
+                            <div className="down-bar vote-bar" style={{width: getWidthPercent(votedDown)}}/>
+                        </div>
+                        <span className="candidate-text">{(votedUp - votedDown) + ' - ' + this.props.name}</span>
+                    </div>
                     <button className="candidate-remove" onClick={this.props.removeCandidate} disabled={disabledState}>
                         <SVG id="x-icon" />
                     </button>
                 </div>
-                <div className={'candidate-voters ' + (this.state.expanded ? '' : 'hidden')} title={voters}>{voters}</div>
             </div>
         )
     }
