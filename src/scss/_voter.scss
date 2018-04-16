@@ -94,11 +94,14 @@
         line-height: 2.1;
         position: relative;
         padding: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .candidate-text {
         position: relative;
         color: white;
         padding: 0.3rem 1rem 0.2rem 1rem;
+        white-space: nowrap;
     }
     button.candidate-remove {
         width: 14%;
