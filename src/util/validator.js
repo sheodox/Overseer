@@ -1,12 +1,12 @@
 const validNameMinLength = 3,
-    validNameMaxLength = 20;
+    validNameMaxLength = 50;
 
 export default {
-    name: (name, allowSpaces) => {
+    name: (name) => {
         if (name && typeof name === 'string') {
-            //at least a minimum number of non-space characters, alphanumeric
-            const reg = allowSpaces ? /^[\w ]*$/ : /^\w*$/,
-                actualCharacters = name.replace(/\W/, '');
+            //at least a minimum number of non-space characters, alphanumeric with some symbols
+            const reg = /^[\w .:|'"-+&?()<>!*{}$\[\]]*$/,
+                actualCharacters = name.replace(/\s{2,}/g, ''); //get rid of superfluous spacing
             return actualCharacters.length >= validNameMinLength
                 && actualCharacters.length <= validNameMaxLength
                 && reg.test(name);
