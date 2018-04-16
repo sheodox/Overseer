@@ -282,7 +282,7 @@ const Candidate = React.createClass({
                             <div className="up-bar vote-bar" style={{width: getWidthPercent(votedUp)}}/>
                             <div className="down-bar vote-bar" style={{width: getWidthPercent(votedDown)}}/>
                         </div>
-                        <span className="candidate-text">{(votedUp - votedDown) + ' - ' + this.props.name}</span>
+                        <span className="candidate-text">{(votedUp - votedDown) + ' • ' + this.props.name}</span>
                     </div>
                     <button className="candidate-remove" onClick={this.props.removeCandidate} disabled={disabledState}>
                         <SVG id="x-icon" />
