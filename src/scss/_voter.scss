@@ -96,6 +96,7 @@
         padding: 0;
         overflow: hidden;
         text-overflow: ellipsis;
+        text-transform: capitalize;
     }
     .candidate-text {
         position: relative;
