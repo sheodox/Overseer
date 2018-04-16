@@ -43,13 +43,18 @@
     .up-down {
         display: inline-block;
         width: 14%;
+        .vote-count {
+            float: right;
+        }
         .up svg {
             transform: scaleY(-1);
         }
+        svg {
+            float: left;
+        }
         button {
             height: $height / 2;
-            padding-top: 0;
-            padding-bottom: 0;
+            padding: 0 0.6rem;
             width: 100%;
             display: block;
             text-align: center;

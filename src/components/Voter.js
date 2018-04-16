@@ -274,8 +274,8 @@ const Candidate = React.createClass({
             <div className="candidate">
                 <div className="candidate-buttons">
                     <div className="up-down">
-                        <button className="up" onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} />{votedUp}</button>
-                        <button className="down" onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} />{votedDown}</button>
+                        <button className="up" onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /><span className="vote-count">{votedUp}</span></button>
+                        <button className="down" onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} /><span className="vote-count">{votedDown}</span></button>
                     </div>
                     <div {...voteButtonProps}>
                         <div className="vote-bars">
