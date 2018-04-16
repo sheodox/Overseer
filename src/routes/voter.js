@@ -40,6 +40,11 @@ function getCandidate(raceId, candidateName) {
     }
 }
 
+//trim and remove all unnecessary spaces
+function cleanString(str) {
+    return String(str).trim().replace(/\s{2,}/g, ' ');
+}
+
 export default function(io) {
     const ioConduit = new Conduit(io, 'voter');
     function broadcast() {
@@ -61,11 +66,12 @@ export default function(io) {
                 socketConduit.emit('refresh', maskRaceSessions(raceFile.data, userId));
             },
             newRace: name => {
+                name = cleanString(name);
                 console.log(`new race ${name}`);
-                if (valid.name(name, true) && !raceExists(name)) {
+                if (valid.name(name) && !raceExists(name)) {
                     raceFile.data.push({
                         id: newId(raceFile.data),
-                        name: String(name).trim(),
+                        name: name,
                         candidates: []
                     });
                     raceFile.save();
@@ -73,11 +79,12 @@ export default function(io) {
                 }
             },
             newCandidate: (raceId, name) => {
+                name = cleanString(name);
                 console.log(`new candidate ${name} in ${raceId}`);
                 let race = getRace(raceId);
-                if (valid.name(name, true) && !candidateExists(race, name)) {
+                if (valid.name(name) && !candidateExists(race, name)) {
                     race.candidates.push({
-                        name: String(name).trim(),
+                        name: name,
                         votedUp: [],
                         votedDown: []
                     });

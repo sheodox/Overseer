@@ -246,7 +246,7 @@ const NewCandidate = React.createClass({
         return (
             <div className="control">
                 <label htmlFor={inputId}>New </label>
-                <input id={inputId} ref={c => this.input = c} onKeyDown={this.onKeyDown} type="text" maxLength="20" />
+                <input id={inputId} ref={c => this.input = c} onKeyDown={this.onKeyDown} type="text" maxLength="50" />
             </div>
         );
     }
@@ -260,7 +260,7 @@ const Candidate = React.createClass({
         this.props.toggleVoteDown();
     },
     render: function() {
-        const voters = `Up: ${this.props.votedUp.join(', ')}\nDown: ${this.props.votedDown.join(', ')}`,
+        const voters = `${this.props.name}\nUp: ${this.props.votedUp.join(', ')}\nDown: ${this.props.votedDown.join(', ')}`,
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
             votedUp = this.props.votedUp.length,
             votedDown = this.props.votedDown.length,
