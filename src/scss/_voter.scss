@@ -80,13 +80,6 @@
         }
     }
 
-    .voted-up-number {
-        color: #02c155;
-    }
-    .voted-down-number {
-        color: red;
-    }
-
     .candidate-name {
         @include light-button();
         width: 72%;
