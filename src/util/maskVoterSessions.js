@@ -16,9 +16,7 @@ export default (races, userId) => {
                 originalVotedDown = candidate.votedDown.slice();
             candidate.voted = voted;
             candidate.votedUp = User.maskSessions(originalVotedUp);
-            candidate.votedUpImages = User.getImages(originalVotedUp);
             candidate.votedDown = User.maskSessions(originalVotedDown);
-            candidate.votedDownImages = User.getImages(originalVotedDown);
         })
     });
 

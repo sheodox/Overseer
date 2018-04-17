@@ -33,14 +33,13 @@ const User = {
     },
     maskSessions: function(sessions) {
         return sessions.map(id => {
-            return this.registered(id).profile.displayName;
+            const profile = this.registered(id).profile;
+            return {
+                name: profile.displayName,
+                photo: profile.photos[0].value
+            };
         });
     },
-    getImages: function(sessions) {
-        return sessions.map(id => {
-            return this.registered(id).profile.photos[0].value;
-        })
-    }
 };
 
 module.exports = User;

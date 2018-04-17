@@ -260,14 +260,17 @@ const Candidate = React.createClass({
     voteDown: function() {
         this.props.toggleVoteDown();
     },
-    getImages: function(urls) {
-        return urls
-            .map((url, i) => {
-                return <img className="voter-profile-image" src={url} key={i} />
+    getImages: function(voters) {
+        return voters
+            .map((voter, i) => {
+                return <img className="voter-profile-image" src={voter.photo} title={voter.name} key={i} />
             });
     },
+    getNames: function(voters) {
+        return voters.map(voter => voter.name);
+    },
     render: function() {
-        const voters = `${this.props.name}\nUp: ${this.props.votedUp.join(', ')}\nDown: ${this.props.votedDown.join(', ')}`,
+        const voters = `${this.props.name}\nUp: ${this.getNames(this.props.votedUp).join(', ')}\nDown: ${this.getNames(this.props.votedDown).join(', ')}`,
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
             votedUp = this.props.votedUp.length,
             votedDown = this.props.votedDown.length,
@@ -286,8 +289,8 @@ const Candidate = React.createClass({
                     </div>
                     <div {...voteButtonProps}>
                         <div className="vote-bars">
-                            <div className="up-bar vote-bar" style={{width: getWidthPercent(votedUp)}}><div className="voter-profile-images">{this.getImages(this.props.votedUpImages)}</div></div>
-                            <div className="down-bar vote-bar" style={{width: getWidthPercent(votedDown)}}><div className="voter-profile-images">{this.getImages(this.props.votedDownImages)}</div></div>
+                            <div className="up-bar vote-bar" style={{width: getWidthPercent(votedUp)}}><div className="voter-profile-images">{this.getImages(this.props.votedUp)}</div></div>
+                            <div className="down-bar vote-bar" style={{width: getWidthPercent(votedDown)}}><div className="voter-profile-images">{this.getImages(this.props.votedDown)}</div></div>
                         </div>
                         <span className="candidate-text">{(votedUp - votedDown) + ' • ' + this.props.name}</span>
                     </div>
