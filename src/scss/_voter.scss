@@ -61,6 +61,15 @@
         }
     }
 
+    .voter-profile-images {
+        position: absolute;
+        bottom: 0;
+    }
+    .voter-profile-image {
+        width: 1.3rem;
+        border-radius: 100%;
+        bottom: 0;
+    }
     .vote-bars {
         width: 100%;
         height: 100%;
@@ -71,6 +80,9 @@
             height: 100%;
             transition: width 0.2s ease-in;
             float: left;
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
         }
         .up-bar {
             background: $accent-cyan;
@@ -84,7 +96,6 @@
         @include light-button();
         width: 72%;
         height: $height;
-        line-height: 2.1;
         position: relative;
         padding: 0;
         overflow: hidden;

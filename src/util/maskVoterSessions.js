@@ -12,9 +12,13 @@ export default (races, userId) => {
             else if (candidate.votedDown.includes(userId)) {
                 voted = 'down'
             }
+            const originalVotedUp = candidate.votedUp.slice(),
+                originalVotedDown = candidate.votedDown.slice();
             candidate.voted = voted;
-            candidate.votedUp = User.maskSessions(candidate.votedUp);
-            candidate.votedDown = User.maskSessions(candidate.votedDown);
+            candidate.votedUp = User.maskSessions(originalVotedUp);
+            candidate.votedUpImages = User.getImages(originalVotedUp);
+            candidate.votedDown = User.maskSessions(originalVotedDown);
+            candidate.votedDownImages = User.getImages(originalVotedDown);
         })
     });
 

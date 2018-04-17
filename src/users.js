@@ -35,6 +35,11 @@ const User = {
         return sessions.map(id => {
             return this.registered(id).profile.displayName;
         });
+    },
+    getImages: function(sessions) {
+        return sessions.map(id => {
+            return this.registered(id).profile.photos[0].value;
+        })
     }
 };
 
