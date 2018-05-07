@@ -13,12 +13,8 @@ const isProd = process.env.NODE_ENV === 'production',
     io = require('socket.io')(server),
     path = require('path'),
     favicon = require('serve-favicon'),
-    session = require('express-session')({
-        secret: config.sessionSecret,
-        resave: true,
-        saveUninitialized: true,
-        secure: false
-    }),
+    session = require('express-session'),
+    SessionEmitter = require('./util/sessionstore')(session),
     sharedSession = require('express-socket.io-session'),
     auth = require('./routes/auth'),
     logger = require('morgan'),
@@ -30,7 +26,14 @@ const isProd = process.env.NODE_ENV === 'production',
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(bodyParser());
-app.use(session);
+const s = session({
+    store: new SessionEmitter(),
+    secret: config.sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    secure: false
+});
+app.use(s);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -52,7 +55,7 @@ function onListening() {
     console.log('Listening on ' + bind);
 }
 
-io.use(sharedSession(session));
+io.use(sharedSession(s));
 
 ghost(io);
 echo(io);
