@@ -46,6 +46,7 @@ const Games = React.createClass({
                             return tag.indexOf(term) >= 0;
                         });
                     }).length;
+                    game.relevancy = matches / terms.length;
                     return {game, matches};
                 });
             filteredGames = relevancy
@@ -56,6 +57,13 @@ const Games = React.createClass({
                 .map(hit => {
                     return hit.game;
                 })
+        }
+        else {
+            const games = this.state.games.map(g => {
+                delete g.relevancy;
+                return g;
+            });
+            this.setState({games});
         }
         this.setState({
             filteredGames
@@ -136,9 +144,12 @@ const Game = React.createClass({
     },
     render: function() {
         const size = this.props.inProgress ? '??' : formatters.bytes(this.props.size, 'gb') + ' gb',
-            tags = (this.props.tags && this.props.tags.length) ? this.props.tags.join(', ') : 'none!';
+            tags = (this.props.tags && this.props.tags.length) ? this.props.tags.join(', ') : 'none!',
+            relevancy = this.props.relevancy * 100,
+            rColor = '#1e88e5',
+            relevancyIndicator = this.props.relevancy ? `linear-gradient(to right, ${rColor} 0%,  #24252b ${relevancy}%)` : '';
         return (
-            <tr>
+            <tr style={{background: relevancyIndicator}}>
                 <td className="g-name" title={"Tags: " + tags}>{this.props.name}</td>
                 <td className="g-size">{size}</td>
                 <td className="g-date">{this.props.inProgress ? 'uploading now...' : formatters.date(this.props.modified)}</td>

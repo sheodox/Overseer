@@ -8,6 +8,10 @@ th {
 #games {
     $padding: 0.2rem 0.5rem;
 
+    table {
+        border-collapse: collapse;
+    }
+
     a.download, .details {
         height: 2rem !important;
 
