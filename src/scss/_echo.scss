@@ -114,7 +114,16 @@ th {
 .tag-suggestion {
     background: $accent-pink;
     margin-right: 1rem;
+    margin-bottom: 0.2rem;
     cursor: pointer;
+    white-space: nowrap;
+    float: left;
+    padding: 0.1rem 0.2rem;
+
+    .plus-character {
+      color: #808080;
+      font-weight: bold;
+    }
     &:hover {
         background: $accent-cyan;
         color: $darkGray;
@@ -122,5 +131,8 @@ th {
 }
 .tag-cloud {
     max-width: 40rem;
-    line-height: 1.8rem;
+
+    + * {
+        clear: both;
+    }
 }

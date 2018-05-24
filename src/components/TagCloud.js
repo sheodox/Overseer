@@ -16,7 +16,7 @@ const TagCloud = React.createClass({
     },
     render: function() {
         const tags = (this.props.tags || []).map((tag, index) => {
-            return <a data-tag={tag} key={index} className="tag-suggestion" onClick={() => this.tagClicked(tag)}>+{tag}</a>;
+            return <a data-tag={tag} key={index} className="tag-suggestion" onClick={() => this.tagClicked(tag)}><span className="plus-character">+</span>{tag}</a>;
         });
         return (
             <div className="tag-cloud">
