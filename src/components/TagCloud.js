@@ -3,7 +3,6 @@ const formatTags = require('../util/formatters').tags;
 
 const TagCloud = React.createClass({
     tagClicked: function(tag) {
-        console.log(tag);
         const inputValue = this.props.tagInput.value.trim();
         let existingTags = inputValue ? inputValue.split(',').map(tag => tag.trim()) : [];
 
