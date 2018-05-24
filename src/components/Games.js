@@ -2,6 +2,7 @@ import React from 'react';
 import SVG from './SVG';
 const formatters = require('../util/formatters'),
     reactRouter =require('react-router-dom'),
+    TagCloud = require('./TagCloud'),
     Link = reactRouter.Link,
     Conduit = require('../util/conduit'),
     echoConduit = new Conduit(socket, 'echo');
@@ -24,6 +25,10 @@ const Games = React.createClass({
     },
     componentWillUnmount: function() {
         echoConduit.destroy();
+    },
+    clearSearch() {
+        this.searchField.value = '';
+        this.search();
     },
     search: function() {
         let filteredGames = null;
@@ -87,7 +92,9 @@ const Games = React.createClass({
                         <div className="g-search control">
                             <label htmlFor="g-search">Search:</label>
                             <input onKeyUp={this.search} ref={c => this.searchField = c} type="text" id="g-search"/>
+                            <button title="reset search" onClick={this.clearSearch}><SVG id="x-icon" /></button>
                         </div>
+                        <TagCloud tagInput={this.searchField} tagClicked={this.search} tags={this.state.tagCloud}/>
                         <table>
                             <thead>
                             <tr>
