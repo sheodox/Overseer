@@ -8,6 +8,14 @@ th {
 #games {
     $padding: 0.2rem 0.5rem;
 
+    a.download, .details {
+        height: 2rem !important;
+
+        svg {
+            vertical-align: top !important;
+        }
+    }
+
     a.download {
         @include button();
         @include light-button();
@@ -22,7 +30,6 @@ th {
         td:not(:first-child) {
             padding-left: 2rem;
         }
-        height: 50px;
     }
     progress {
         width: 8rem;
