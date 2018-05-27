@@ -2,7 +2,11 @@ import React from 'react';
 import SVG from './SVG';
 import {Link} from 'react-router-dom';
 const Conduit = require('../util/conduit'),
-    voterConduit = new Conduit(socket, 'voter');
+    voterConduit = new Conduit(socket, 'voter'),
+    voteWeights = {
+        up: 1,
+        down: 1.1
+    };
 
 let cachedState = {
     activeRace: null,
@@ -119,8 +123,13 @@ const CandidateList = React.createClass({
         }
     },
     getSortedCandidates: function(props) {
+        function weightedVotes(up, down) {
+            up = up.length;
+            down = down.length;
+            return (up * voteWeights.up) - (down * voteWeights.down);
+        }
         return props.candidates.sort((a, b) => {
-            return (b.votedUp.length  - b.votedDown.length) - (a.votedUp.length - a.votedDown.length);
+            return weightedVotes(b.votedUp, b.votedDown) - weightedVotes(a.votedUp, a.votedDown);
         })
     },
     componentWillReceiveProps: function(nextProps) {
