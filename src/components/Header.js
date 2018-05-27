@@ -24,15 +24,17 @@ module.exports = React.createClass({
     render: function() {
         return (
             <header className={this.state.socketConnected ? '' : 'disconnected'}>
-                <div className="content-container">
-                    <div className="logo-container">
-                        <SVG id="logo" />
-                        <SVG id="logo" />
+                <Link to="/">
+                    <div className="content-container">
+                        <div className="logo-container">
+                            <SVG id="logo" />
+                            <SVG id="logo" />
+                        </div>
+                        <h1>
+                            Overseer
+                        </h1>
                     </div>
-                    <h1>
-                        <Link to="/">Overseer</Link>
-                    </h1>
-                </div>
+                </Link>
             </header>
         );
     }
