@@ -94,18 +94,23 @@ const RaceList = React.createClass({
             raceSwitcherId = 'voter-race-switcher',
             raceInputId = 'voter-new-race';
 
+        let addCandidate;
+        if (Booker.voter.add_race) {
+            addCandidate = <div className="control">
+                <label htmlFor={raceInputId}>New race</label>
+                <input id={raceInputId} onKeyDown={this.newRaceKeyDown} type="text" maxLength="20"/>
+            </div>
+        }
+
         return (
             <div className="race-list">
-                <div className="control">
-                    <label htmlFor={raceInputId}>New race</label>
-                    <input id={raceInputId} onKeyDown={this.newRaceKeyDown} type="text" maxLength="20"/>
-                </div>
+                {addCandidate}
                 <div className="control">
                     <label htmlFor={raceSwitcherId}>View</label>
                     <select ref={c => this.select = c} id={raceSwitcherId} onChange={this.switchRace}>
                         {races}
                     </select>
-                    <button className="race-remove" onClick={this.removeRace}>
+                    <button disabled={!Booker.voter.remove_race} title="remove race" className="race-remove" onClick={this.removeRace}>
                         <SVG id="x-icon" />
                     </button>
                 </div>
@@ -232,7 +237,7 @@ const CandidateList = React.createClass({
         return (
             <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseMove={this.lockSorting} onMouseLeave={this.unlockSorting}>
                 <div className="docked-buttons">
-                    <button onClick={this.resetVotes} title="Reset Votes"><SVG id="reset-icon" /></button>
+                    <button disabled={!Booker.voter.reset_votes} onClick={this.resetVotes} title="reset votes"><SVG id="reset-icon" /></button>
                 </div>
                 <h3>{this.props.name}</h3>
                 <br />
@@ -252,6 +257,10 @@ const NewCandidate = React.createClass({
     },
     render: function() {
         const inputId = 'voter-new-candidate';
+
+        if (!Booker.voter.add_candidate) {
+            return null;
+        }
 
         return (
             <div className="control">
@@ -283,7 +292,7 @@ const Candidate = React.createClass({
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
             votedUp = this.props.votedUp.length,
             votedDown = this.props.votedDown.length,
-            disabledState = this.props.removed,
+            disabledState = this.props.removed || !Booker.voter.remove_candidate,
             voteButtonProps = {
                 className: 'candidate-name',
                 disabled: disabledState,
@@ -293,15 +302,19 @@ const Candidate = React.createClass({
             <div className="candidate">
                 <div className="candidate-buttons">
                     <div className="up-down">
-                        <button className="up" onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /><span className="vote-count">{votedUp}</span></button>
-                        <button className="down" onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} /><span className="vote-count">{votedDown}</span></button>
+                        <button disabled={!Booker.voter.vote} className="up" onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /></button>
+                        <button disabled={!Booker.voter.vote} className="down" onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} /></button>
                     </div>
                     <div {...voteButtonProps}>
                         <div className="vote-bars">
-                            <div className="up-bar vote-bar" style={{width: getWidthPercent(votedUp)}}><div className="voter-profile-images">{this.getImages(this.props.votedUp)}</div></div>
-                            <div className="down-bar vote-bar" style={{width: getWidthPercent(votedDown)}}><div className="voter-profile-images">{this.getImages(this.props.votedDown)}</div></div>
+                            <div className="up-bar vote-bar" style={{width: getWidthPercent(votedUp)}}>
+                                <div className="voter-profile-images"><span className="vote-count">{votedUp}</span> {this.getImages(this.props.votedUp)}</div>
+                            </div>
+                            <div className="down-bar vote-bar" style={{width: getWidthPercent(votedDown)}}>
+                                <div className="voter-profile-images"><span className="vote-count">{votedDown}</span>{this.getImages(this.props.votedDown)}</div>
+                            </div>
                         </div>
-                        <span className="candidate-text">{(votedUp - votedDown) + ' • ' + this.props.name}</span>
+                        <span className="candidate-text">{this.props.name}</span>
                     </div>
                     <button className="candidate-remove" onClick={this.props.removeCandidate} disabled={disabledState}>
                         <SVG id="x-icon" />
