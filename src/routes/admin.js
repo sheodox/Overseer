@@ -8,7 +8,7 @@ const router = require('express').Router(),
 let io;
 
 function isReqSuperuser(req) {
-     return req.user && config['super-users'].includes(req.user.profile.id);
+     return req.user && (config['super-users'] || []).includes(req.user.profile.id);
 }
 
 router.use('/admin', (req, res, next) => {
