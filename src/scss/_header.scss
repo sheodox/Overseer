@@ -39,13 +39,14 @@ header {
     }
     h1 {
         display: inline-block;
-        font-size: 3rem;
+        font-size: 4rem;
         color: white;
         position: relative;
         text-transform: lowercase;
         margin: 0 0 0 6rem;
         transform: translateY(25%);
         text-shadow: 0.2rem -0.2rem 0 $accent-purple;
+        font-family: 'Ceviche One';
 
         a {
             text-decoration: none;
