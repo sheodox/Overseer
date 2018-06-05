@@ -21,7 +21,9 @@ const isProd = process.env.NODE_ENV === 'production',
     ghost = require('./ghost').default,
     echo = require('./routes/game-echo'),
     settings = require('./routes/settings').default,
-    voter = require('./routes/voter').default;
+    voter = require('./routes/voter').default,
+    admin = require('./routes/admin');
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
@@ -61,6 +63,7 @@ ghost(io);
 echo(io);
 voter(io);
 settings(io);
+app.use(admin(io));
 app.use(require('./routes/index'));
 
 module.exports = app;

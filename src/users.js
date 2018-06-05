@@ -31,6 +31,13 @@ const User = {
     registered: function(id) {
         return users.data[id];
     },
+    getAll: function() {
+        const ids = Object.keys(users.data);
+        return ids.map(id => {
+            const userData = this.registered(id).profile;
+            return {id, displayName: userData.displayName, photo: userData.photos[0].value}
+        })
+    },
     maskSessions: function(sessions) {
         return sessions.map(id => {
             const profile = this.registered(id).profile;

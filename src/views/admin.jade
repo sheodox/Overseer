@@ -1,0 +1,20 @@
+doctype html
+html
+    head
+        title= "Overseer"
+        style.
+            td {
+                border: 1px solid gray;
+            }
+            * {
+                font-family: 'Roboto', sans-serif;
+            }
+            th {
+                padding-right: 1rem;
+            }
+        link(rel='icon', href='/favicon.png')
+        script(src="/socket.io/socket.io.js")
+        link(href='//fonts.googleapis.com/css?family=Roboto', rel="stylesheet")
+    body
+        div#react-mount
+        script(src='/admin/main.js')
