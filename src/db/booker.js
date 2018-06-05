@@ -40,12 +40,8 @@ class Booker extends StockPile {
      */
     async getAllUserPermissions(userId) {
         //if the user's assigned role exists in the specified action table they have permission for that action, otherwise give the fallback
-        let permissions = (await this.get(`SELECT permissions FROM role_registry WHERE role_id=(SELECT role_id FROM role_assignment WHERE user_id=?)`, userId)).permissions;
-        //default to no permissions
-        if (typeof permissions !== 'number') {
-            permissions = 0;
-        }
-        console.log(this.buildPermissionsMap(permissions));
+        const data = await this.get(`SELECT permissions FROM role_registry WHERE role_id=(SELECT role_id FROM role_assignment WHERE user_id=?)`, userId),
+            permissions = data ? data.permissions : 0;
         return this.buildPermissionsMap(permissions);
     }
 
@@ -54,7 +50,6 @@ class Booker extends StockPile {
      * @param permissions
      */
     buildPermissionsMap(permissions) {
-        console.log(permissions);
         const map = {};
         this.actions.forEach(action => {
             const bitmask = this.getPermissionBitmask(action);
