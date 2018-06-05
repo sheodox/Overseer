@@ -3,7 +3,7 @@ const sqlite3 = require('sqlite3');
 class Stockpile {
     constructor(options) {
         this.options = options;
-        this.db = new sqlite3.Database(`./data/${options.db}.sqlite3`, err => {
+        this._db = new sqlite3.Database(`./data/${options.db}.sqlite3`, err => {
             if (err) {
                 throw err;
             }
@@ -11,15 +11,16 @@ class Stockpile {
                 const columns = Object.keys(table.columns).map(column => {
                     return column + ' ' + table.columns[column];
                 }).join(',');
-                this.db.run(`CREATE TABLE IF NOT EXISTS ${table.name} (${columns});`);
+                this.run(`CREATE TABLE IF NOT EXISTS ${table.name} (${columns});`);
 
                 //todo add columns
             });
         });
     }
     _callSql(type, sql, params) {
+        // console.log(sql, params);
         return new Promise((resolve, reject) => {
-            this.db[type](sql, ...params, (err, row) => {
+            this._db[type](sql, ...params, (err, row) => {
                 err ? reject(err) : resolve(row);
             })
         })
