@@ -9,7 +9,6 @@ const React = require('react'),
 
 module.exports = React.createClass({
     getInitialState: function () {
-        console.log(this.props);
         return {
             fileName: this.props.match.params.fileName,
             fieldsUpdated: false
@@ -21,7 +20,6 @@ module.exports = React.createClass({
     componentWillMount: function () {
         echoConduit.on({
             refresh: data => {
-                console.log(data);
                 const thisGame = data.games.find(game => {
                     return game.fileName === this.state.fileName
                 });
