@@ -3,6 +3,7 @@
 
 th {
     font-weight: bold;
+    text-align: center;
 }
 
 #games {
@@ -31,8 +32,10 @@ th {
     tr {
         line-height: 2rem;
 
-        td:not(:first-child) {
-            padding-left: 2rem;
+        td, tr{
+            &:not(:first-child) {
+                padding-left: 2rem;
+            }
         }
 
         &:hover {
@@ -120,13 +123,10 @@ th {
 .g-name a {
     color: $accent-blue;
 }
-.g-size, .g-date, .g-actions .download, .to-upload {
-    display: none !important;
-}
 
-@media screen and (min-device-width: 900px) {
-    .g-size, .g-date, .g-actions .download, .to-upload {
-        display: inline-block !important;
+@media (max-width: 900px) {
+    .g-size, .g-date, .g-actions, .to-upload {
+        display: none !important;
     }
 }
 
