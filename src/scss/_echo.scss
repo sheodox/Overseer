@@ -138,14 +138,23 @@ th {
     white-space: nowrap;
     float: left;
     padding: 0.1rem 0.2rem;
+    border-radius: 0.1rem;
 
     .plus-character {
         color: rgba(255, 255, 255, 0.3);
+        display: inline-block;
         font-weight: bold;
+        width: 0.5rem;
+        text-align: center;
+    }
+    &.selected {
+        background: $neon-background;
+        &:hover {
+            background: lighten($neon-background, 10%);
+        }
     }
     &:hover {
-        background: $accent-cyan;
-        color: $darkGray;
+        background: lighten($accent-pink, 10%);
     }
 }
 .tag-cloud {
