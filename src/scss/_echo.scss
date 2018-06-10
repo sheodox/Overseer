@@ -87,6 +87,7 @@ th {
     a.download{
         @include button();
         @include light-button();
+        padding-top: 0.6rem;
     }
 }
 
