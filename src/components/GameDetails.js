@@ -29,12 +29,16 @@ module.exports = React.createClass({
                     this.redirectToEcho();
                 }
                 else {
+                    const formattedGameInfo = {};
                     //force an update if details have changed but only here and not in render() or they can't type
                     ['details', 'name', 'tags'].forEach(type => {
                         const newVal = thisGame[type],
                             oldVal = this.state.oldInfo[type],
                             fieldVal = this[type].value,
+                            //tags are stored as an array, stringify for comparisons
                             formattedVal = Array.isArray(newVal) ? newVal.join(', ') : newVal;
+                        formattedGameInfo[type] = formattedVal;
+
                         //compare to old value and typed value, don't want to overwrite changes if something as trivial as download count has changed
                         //make sure the field has something in it too otherwise it won't fill in a blank field on first render
                         if (oldVal !== formattedVal && oldVal === fieldVal || !fieldVal) {
@@ -43,11 +47,13 @@ module.exports = React.createClass({
                     });
 
                     this.setState(Object.assign(thisGame, {
-                        oldInfo: thisGame,
+                        oldInfo: formattedGameInfo,
                         tagCloud: data.tagCloud,
                         echoConnected: data.echoConnected,
                         downloadHref: data.echoServer + '/' + this.state.fileName + '.zip'
                     }));
+
+                    this.cloud.captureUsedTags();
                 }
             }
         });
@@ -57,6 +63,9 @@ module.exports = React.createClass({
         echoConduit.destroy();
     },
     checkForChanges: function() {
+        if (this.cloud) {
+            this.cloud.captureUsedTags();
+        }
         const somethingChanged = ['details', 'tags', 'name'].some(type => {
             if (!this[type]) {
                 return false;
@@ -116,9 +125,9 @@ module.exports = React.createClass({
                     </div>
                     <div className="control">
                         <label htmlFor="tags">Tags:</label>
-                        <input onKeyUp={this.checkForChanges} ref={c => this.tags = c} type="text" id="tags"/>
+                        <input onKeyUp={this.checkForChanges} ref={c => this.tags = c} type="text" id="tags" autoComplete="off" />
                     </div>
-                    <TagCloud tagInput={this.tags} tags={this.state.tagCloud} tagClicked={this.checkForChanges}/>
+                    <TagCloud ref={c => this.cloud = c} tagInput={this.tags} tags={this.state.tagCloud} tagClicked={this.checkForChanges}/>
                     <br />
                     <label htmlFor="details">Game details:</label>
                     <textarea ref={c => this.details = c} onKeyUp={this.checkForChanges} id="details" name="details" placeholder="patch information, included mods, description, etc." defaultValue={this.state.details} />
