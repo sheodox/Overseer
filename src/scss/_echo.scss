@@ -45,6 +45,14 @@ th {
     progress {
         width: 8rem;
     }
+    .relevancy-indicator {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 0.1rem;
+        margin-right: 0.5rem;
+        margin-left: 0.5rem;
+    }
 }
 
 #echo-uploader {

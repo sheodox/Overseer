@@ -145,13 +145,19 @@ const Game = React.createClass({
     render: function() {
         const size = this.props.inProgress ? '??' : formatters.bytes(this.props.size, 'gb') + ' gb',
             tags = (this.props.tags && this.props.tags.length) ? this.props.tags.join(', ') : 'none!',
-            relevancy = this.props.relevancy * 100,
-            rColor = '#1e88e5',
-            detailsHref = `/w/game-echo/details/${this.props.fileName}`,
-            relevancyIndicator = this.props.relevancy ? `linear-gradient(to right, ${rColor} 0%,  #24252b ${relevancy}%)` : '';
+            relevancyPercent = (this.props.relevancy * 100).toFixed(0),
+            relevantColorRGBBase = [0, 188, 212],
+            bg = relevantColorRGBBase.map(c => c * this.props.relevancy),
+            detailsHref = `/w/game-echo/details/${this.props.fileName}`;
         return (
-            <tr style={{background: relevancyIndicator}}>
-                <td className="g-name" title={"Tags: " + tags}><Link to={detailsHref}>{this.props.name}</Link></td>
+            <tr>
+                <td className="g-name" title={"Tags: " + tags}>
+                    {this.props.relevancy
+                        ? <span title={`${relevancyPercent}% relevant`} className="relevancy-indicator" style={{background: `rgb(${bg.join(',')})`}}> </span>
+                        : null
+                    }
+                    <Link to={detailsHref}>{this.props.name}</Link>
+                </td>
                 <td className="g-size">{size}</td>
                 <td className="g-date">{this.props.inProgress ? 'uploading now...' : formatters.date(this.props.modified)}</td>
                 {this.props.inProgress ? (<td><progress /></td>) : (
