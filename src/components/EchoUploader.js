@@ -103,6 +103,11 @@ module.exports = React.createClass({
         }
         this.checkUploadAllowed();
     },
+    updateTags: function() {
+        if (this.cloud) {
+            this.cloud.captureUsedTags();
+        }
+    },
     render: function() {
         const progressValues = {
                 value: this.state.loaded,
@@ -117,7 +122,6 @@ module.exports = React.createClass({
                     <SVG id="echo-icon" />
                 </div>
                 <div className="sub-panel">
-                    <audio src="/beeps.wav" preload="auto" ref={c => this.audio = c} />
                     <form ref={c => this.form = c} onSubmit={this.upload}>
                         <label htmlFor="file">Select a zip:</label>
                         <input ref={c => this.fileSelect = c} onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file" disabled={disabled}/>
@@ -128,9 +132,9 @@ module.exports = React.createClass({
                         </div>
                         <div className="control">
                             <label htmlFor="tags">Tags:</label>
-                            <input ref={c => this.tags = c} id="tags" name="tags" placeholder="tags separated by commas" />
+                            <input ref={c => this.tags = c} id="tags" name="tags" onKeyUp={this.updateTags} onChange={this.updateTags} placeholder="tags separated by commas" autoComplete="off"/>
                         </div>
-                        <TagCloud tagInput={this.tags} tags={this.state.tagCloud} tagClicked={tag => console.log(tag)}/>
+                        <TagCloud ref={c => this.cloud = c} tagInput={this.tags} tags={this.state.tagCloud} />
                         <br />
                         <label htmlFor="details">Game details:</label>
                         <textarea ref={c => this.details = c} id="details" name="details" placeholder="patch information, included mods, description, etc." disabled={disabled}/>
