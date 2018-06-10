@@ -109,11 +109,7 @@ module.exports = React.createClass({
         }
     },
     render: function() {
-        const progressValues = {
-                value: this.state.loaded,
-                max: this.state.total
-            },
-            disabled = this.state.uploading;
+        const disabled = this.state.uploading;
 
         return (
             <section className="panel" id="echo-uploader">
