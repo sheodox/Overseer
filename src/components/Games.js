@@ -147,10 +147,11 @@ const Game = React.createClass({
             tags = (this.props.tags && this.props.tags.length) ? this.props.tags.join(', ') : 'none!',
             relevancy = this.props.relevancy * 100,
             rColor = '#1e88e5',
+            detailsHref = `/w/game-echo/details/${this.props.fileName}`,
             relevancyIndicator = this.props.relevancy ? `linear-gradient(to right, ${rColor} 0%,  #24252b ${relevancy}%)` : '';
         return (
             <tr style={{background: relevancyIndicator}}>
-                <td className="g-name" title={"Tags: " + tags}>{this.props.name}</td>
+                <td className="g-name" title={"Tags: " + tags}><Link to={detailsHref}>{this.props.name}</Link></td>
                 <td className="g-size">{size}</td>
                 <td className="g-date">{this.props.inProgress ? 'uploading now...' : formatters.date(this.props.modified)}</td>
                 {this.props.inProgress ? (<td><progress /></td>) : (
@@ -158,11 +159,6 @@ const Game = React.createClass({
                         <a onClick={this.download} className={"download " + (this.props.echoConnected ? '' : 'disabled')} href={this.props.echoConnected ? this.props.echoServer + '/' + this.props.fileName + '.zip' : null} title="download">
                             <SVG id="down-icon" />
                         </a>
-                        <Link to={"/w/game-echo/details/" + this.props.fileName}>
-                            <button className="details" title="details">
-                                <SVG id="details-icon" />
-                            </button>
-                        </Link>
                     </td>
                 )}
             </tr>

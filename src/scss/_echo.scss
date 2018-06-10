@@ -34,6 +34,10 @@ th {
         td:not(:first-child) {
             padding-left: 2rem;
         }
+
+        &:hover {
+            background-color: $neon-background;
+        }
     }
     progress {
         width: 8rem;
@@ -111,6 +115,9 @@ th {
         border-color: red;
         color: red;
     }
+}
+.g-name a {
+    color: $accent-blue;
 }
 .g-size, .g-date, .g-actions .download, .to-upload {
     display: none !important;
