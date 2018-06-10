@@ -11,7 +11,8 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {
             fileName: this.props.match.params.fileName,
-            fieldsUpdated: false
+            fieldsUpdated: false,
+            oldInfo: {}
         };
     },
     redirectToEcho: function() {
@@ -31,12 +32,18 @@ module.exports = React.createClass({
                     //force an update if details have changed but only here and not in render() or they can't type
                     ['details', 'name', 'tags'].forEach(type => {
                         const newVal = thisGame[type],
+                            oldVal = this.state.oldInfo[type],
+                            fieldVal = this[type].value,
                             formattedVal = Array.isArray(newVal) ? newVal.join(', ') : newVal;
-                        if (this[type].value !== formattedVal) {
+                        //compare to old value and typed value, don't want to overwrite changes if something as trivial as download count has changed
+                        //make sure the field has something in it too otherwise it won't fill in a blank field on first render
+                        if (oldVal !== formattedVal && oldVal === fieldVal || !fieldVal) {
                             this[type].value = formattedVal;
                         }
                     });
+
                     this.setState(Object.assign(thisGame, {
+                        oldInfo: thisGame,
                         tagCloud: data.tagCloud,
                         echoConnected: data.echoConnected,
                         downloadHref: data.echoServer + '/' + this.state.fileName + '.zip'
