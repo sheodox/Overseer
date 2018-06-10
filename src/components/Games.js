@@ -31,6 +31,7 @@ const Games = React.createClass({
         this.search();
     },
     search: function() {
+        this.cloud.captureUsedTags();
         let filteredGames = null;
         //if the search field is empty stop searching
         if (this.searchField.value.trim()) {
@@ -102,7 +103,7 @@ const Games = React.createClass({
                             <input onKeyUp={this.search} ref={c => this.searchField = c} type="text" id="g-search"/>
                             <button title="reset search" onClick={this.clearSearch}><SVG id="x-icon" /></button>
                         </div>
-                        <TagCloud tagInput={this.searchField} tagClicked={this.search} tags={this.state.tagCloud}/>
+                        <TagCloud ref={c => this.cloud = c} tagInput={this.searchField} tagClicked={this.search} tags={this.state.tagCloud}/>
                         <table>
                             <thead>
                             <tr>
