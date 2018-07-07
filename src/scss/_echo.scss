@@ -142,7 +142,6 @@ th {
     background: $accent-pink;
     margin-right: 1rem;
     margin-bottom: 0.2rem;
-    cursor: pointer;
     white-space: nowrap;
     float: left;
     padding: 0.1rem 0.2rem;
@@ -157,12 +156,18 @@ th {
     }
     &.selected {
         background: $neon-background;
-        &:hover {
-            background: lighten($neon-background, 10%);
+
+        .tag-cloud:not(.readonly) & {
+            &:hover {
+                background: lighten($neon-background, 10%);
+            }
         }
     }
-    &:hover {
-        background: lighten($accent-pink, 10%);
+    .tag-cloud:not(.readonly) & {
+        cursor: pointer;
+        &:hover {
+            background: lighten($accent-pink, 10%);
+        }
     }
 }
 .tag-cloud {

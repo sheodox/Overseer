@@ -15,6 +15,10 @@ const TagCloud = React.createClass({
         });
     },
     tagClicked: function(tag) {
+        if (this.props.readOnly) {
+            return;
+        }
+
         let existingTags = this.state.used;
 
         if (!existingTags.includes(tag)) {
@@ -34,12 +38,16 @@ const TagCloud = React.createClass({
         const existing = this.state.used,
             tags = (this.props.tags || []).map((tag, index) => {
                 const selected = existing.includes(tag);
-                return <a data-tag={tag} key={index} className={'tag-suggestion' + (selected ? ' selected' : '')} onClick={() => this.tagClicked(tag)}>
-                    <span className="plus-character">{selected ? '-' : '+'}</span>{tag}
+                if (!this.props.readOnly || selected) {
+                    return <a data-tag={tag} key={index} className={'tag-suggestion' + (selected ? ' selected' : '')}
+                              onClick={() => this.tagClicked(tag)}>
+                        <span className={"plus-character" + (this.props.readOnly ? ' hidden' : '')} >{selected ? '-' : '+'}</span>{tag}
                     </a>;
+                }
+                return null;
             });
         return (
-            <div className="tag-cloud">
+            <div className={"tag-cloud" + (this.props.readOnly ? ' readonly' : '')}>
                 {tags}
             </div>
         )
