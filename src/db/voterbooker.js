@@ -1,8 +1,7 @@
-import voter from "../routes/voter";
+const Booker = require('./booker');
 
-const Booker = require('../db/booker');
-
-const voterBooker = new Booker('voter', ['vote',
+const voterBooker = new Booker('voter', [
+    'vote',
     'remove_candidate',
     'remove_race',
     'reset_votes',
