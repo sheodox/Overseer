@@ -1,6 +1,6 @@
 import React from 'react';
 import SVG from './SVG';
-import {Link} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 const Conduit = require('../util/conduit'),
     voterConduit = new Conduit(socket, 'voter'),
     voteWeights = {
@@ -44,6 +44,10 @@ const Voter = React.createClass({
         });
     },
     render: function() {
+        if (!Booker.voter.view) {
+            return <Redirect to="/" />;
+        }
+
         return (
             <section className="panel voter-panel">
                 <div className="panel-title">

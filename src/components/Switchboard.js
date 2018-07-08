@@ -8,7 +8,7 @@ module.exports = React.createClass({
             <section className="switchboard">
                 {Booker.lights.use && <Panel route="/w/lights" name="Lights" svgID="light-icon" />}
                 {Booker.echo.view && <Panel route="/w/game-echo" name="Game Echo" svgID="echo-icon" />}
-                <Panel route="/w/voter" name="Voter" svgID="voter-icon" />
+                {Booker.voter.view && <Panel route="/w/voter" name="Voter" svgID="voter-icon" />}
                 <Panel route="/w/settings/" name="Settings" svgID="settings-icon" />
             </section>
         );

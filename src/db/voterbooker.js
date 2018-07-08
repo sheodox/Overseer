@@ -6,7 +6,8 @@ const voterBooker = new Booker('voter', [
     'remove_race',
     'reset_votes',
     'add_race',
-    'add_candidate'
+    'add_candidate',
+    'view'
 ]);
 
 module.exports = voterBooker;
