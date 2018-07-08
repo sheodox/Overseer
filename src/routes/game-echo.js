@@ -69,7 +69,7 @@ const clientListener = socket => {
             }
         },
         downloaded: async fileName => {
-            if (await echoBooker.check(userId, 'download`')) {
+            if (await echoBooker.check(userId, 'download')) {
                 tracker.downloaded(fileName);
                 broadcast();
             }
