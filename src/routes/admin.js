@@ -4,7 +4,8 @@ const router = require('express').Router(),
     Conduit = require('../util/conduit'),
     bookers = {
         echo: require('../db/echobooker'),
-        voter: require('../db/voterbooker')
+        voter: require('../db/voterbooker'),
+        lights: require('../db/lightsbooker')
     };
 let io;
 

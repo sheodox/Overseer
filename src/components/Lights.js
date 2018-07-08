@@ -2,6 +2,7 @@ import React from 'react';
 import SVG from './SVG';
 const Conduit = require('../util/conduit');
 const lightsConduit = new Conduit(socket, 'lights');
+const {Redirect} = require('react-router-dom');
 
 let cachedStates = [];
 
@@ -22,6 +23,10 @@ const Lights = React.createClass({
         lightsConduit.destroy();
     },
     render: function() {
+        if (!Booker.lights.use) {
+            return <Redirect to="/" />;
+        }
+
         const groups = this.state.states.map((s, i) => {
             return <LightGroup {...s} key={i} />
         });

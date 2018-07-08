@@ -2,7 +2,8 @@ import express from 'express';
 const serialize = require('serialize-javascript'),
     su = require('../util/superuser'),
     voterBooker = require('../db/voterbooker'),
-    echoBooker = require('../db/echobooker');
+    echoBooker = require('../db/echobooker'),
+    lightsBooker = require('../db/lightsbooker');
 
 const router = express.Router();
 
@@ -11,7 +12,8 @@ router.get('/|/w/', async function(req, res) {
     const id = req.user ? req.user.profile.id : null,
         permissions = serialize({
             voter: await voterBooker.getAllUserPermissions(id),
-            echo: await echoBooker.getAllUserPermissions(id)
+            echo: await echoBooker.getAllUserPermissions(id),
+            lights: await lightsBooker.getAllUserPermissions(id)
         }),
         links = [
             {href: '/auth/logout', text: 'Logout'}

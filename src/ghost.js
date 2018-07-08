@@ -1,26 +1,37 @@
 const harbinger = require('./harbinger'),
-    Conduit = require('./util/conduit');
+    SilverConduit = require('./util/SilverConduit'),
+    lightsBooker = require('./db/lightsbooker');
 
 function listen(io) {
+    const ioConduit = new SilverConduit(io, 'lights');
     io.on('connection', socket => {
-        const socketConduit = new Conduit(socket, 'lights');
-        const ioConduit = new Conduit(io, 'lights');
+        const socketConduit = new SilverConduit(socket, 'lights');
+        const userId = SilverConduit.getUserId(socketConduit.socket);
         function broadcastState() {
-            const lightState = harbinger.getState();
-            ioConduit.emit('refresh', lightState);
+            ioConduit.filteredBroadcast('refresh', async userId => {
+                if (await lightsBooker.check(userId, 'use')) {
+                    return harbinger.getState();
+                }
+            });
         }
 
         socketConduit.on({
-            init: () => {
-                socketConduit.emit('refresh', harbinger.getState());
+            init: async () => {
+                if (await lightsBooker.check(userId, 'use')) {
+                    socketConduit.emit('refresh', harbinger.getState());
+                }
             },
-            toggle: id => {
-                harbinger.toggle(id);
-                broadcastState();
+            toggle: async id => {
+                if (await lightsBooker.check(userId, 'use')) {
+                    harbinger.toggle(id);
+                    broadcastState();
+                }
             },
-            brightness: (id, newBrightness) => {
-                harbinger.setBrightness(id, newBrightness);
-                broadcastState();
+            brightness: async (id, newBrightness) => {
+                if (await lightsBooker.check(userId, 'use')) {
+                    harbinger.setBrightness(id, newBrightness);
+                    broadcastState();
+                }
             }
         });
     });
