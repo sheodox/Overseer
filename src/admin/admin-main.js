@@ -23,7 +23,7 @@ const Admin = React.createClass({
             if (this.state.hasOwnProperty(bookerModule)) {
                 bookers.push(
                     <BookerConfig key={bookerModule} module={bookerModule} {...this.state[bookerModule]} />
-            );
+                );
             }
         }
         return (
@@ -86,6 +86,7 @@ const BookerConfig = React.createClass({
                         {assignments}
                     </tbody>
                 </table>
+                <hr />
             </div>
         )
     }
