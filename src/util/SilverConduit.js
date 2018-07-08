@@ -37,12 +37,10 @@ class SilverConduit extends Conduit {
                     .then(() => {
                         return filterFn(userId);
                     })
-                    .then(data => {
+                    .then((...data) => {
                         //we don't necessarily need to send data to every socket, like if the data needs authentication but they don't have it
                         //so if we don't get anything just assume they shouldn't get any data
-                        if (data !== undefined) {
-                            //normalize to array, in case we're emitting with multiple arguments
-                            data = Array.isArray(data) ? data : [data];
+                        if (data.length) {
                             this._send(socket, eventName, ...data);
                         }
                     })
