@@ -39,7 +39,7 @@ const App = React.createClass({
                         <Route path={`${match.url}/details/:fileName`} component={GameDetails} />
                     </div>;
                 }} />
-                <Route path="/w/voter" compontent={Voter} />
+                <Route path="/w/voter" component={Voter} />
                 <Route path="/w/settings" component={Settings} />
             </main>
         }
