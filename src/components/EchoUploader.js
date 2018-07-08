@@ -1,6 +1,7 @@
 const React = require('react'),
     reactRouter = require('react-router-dom'),
     Link = reactRouter.Link,
+    Redirect = reactRouter.Redirect,
     SVG = require('./SVG').default,
     TagCloud = require('./TagCloud'),
     formatters = require('../util/formatters'),
@@ -109,6 +110,9 @@ module.exports = React.createClass({
         }
     },
     render: function() {
+        if (!Booker.echo.upload) {
+            return <Redirect to="/w/game-echo" />
+        }
         const disabled = this.state.uploading;
 
         return (
