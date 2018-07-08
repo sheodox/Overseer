@@ -141,7 +141,9 @@ const DiskUsage = React.createClass({
 
 const Game = React.createClass({
     download: function () {
-        echoConduit.emit('downloaded', this.props.fileName);
+        if (Booker.echo.download) {
+            echoConduit.emit('downloaded', this.props.fileName);
+        }
     },
     render: function() {
         const size = this.props.inProgress ? '??' : formatters.bytes(this.props.size, 'gb') + ' gb',
@@ -163,7 +165,7 @@ const Game = React.createClass({
                 <td className="g-date">{this.props.inProgress ? 'uploading now...' : formatters.date(this.props.modified)}</td>
                 {this.props.inProgress ? (<td><progress /></td>) : (
                     <td className="centered g-actions">
-                        <a onClick={this.download} className={"download " + (this.props.echoConnected ? '' : 'disabled')} href={this.props.echoConnected ? this.props.echoServer + '/' + this.props.fileName + '.zip' : null} title="download">
+                        <a onClick={this.download} className={"download " + (this.props.echoConnected && Booker.echo.download ? '' : 'disabled')} href={this.props.echoConnected && Booker.echo.download ? this.props.echoServer + '/' + this.props.fileName + '.zip' : null} title="download">
                             <SVG id="down-icon" />
                         </a>
                     </td>

@@ -93,6 +93,35 @@ module.exports = React.createClass({
         echoConduit.emit('downloaded', this.state.fileName);
     },
     render: function() {
+        const canEdit = Booker.echo.update,
+            inputClass = 'control' + (!canEdit ? ' hidden' : ''),
+            readonlyState = {readOnly: !canEdit},
+            downloadAttrs = {
+                onClick: this.download,
+                className: "download " + (this.state.echoConnected && Booker.echo.download ? '' : 'disabled hidden'),
+                href: this.state.echoConnected && Booker.echo.download ? this.state.downloadHref : null,
+                title: "download"
+            },
+            deleteAttrs = {
+                title: "delete game",
+                disabled: !this.state.echoConnected || !Booker.echo.delete,
+                className: "delete-game",
+                onClick: this.delete
+            },
+            detailsAttrs = {
+                ref: c => this.details = c,
+                onKeyUp: this.checkForChanges,
+                id: "details",
+                name: "details",
+                placeholder: "patch information, included mods, description, etc.",
+                defaultValue: this.state.details,
+                ...readonlyState
+            },
+            saveAttrs = {
+                disabled: !this.state.fieldsUpdated || !canEdit,
+                onClick: this.saveChanges,
+                className: canEdit ? '' : 'hidden'
+            };
         return (
             <section className="panel" id="echo-details">
                 <div className="panel-title">
@@ -101,10 +130,10 @@ module.exports = React.createClass({
                 </div>
                 <div className="sub-panel">
                     <div className="action-buttons">
-                        <a onClick={this.download} className={"download " + (this.state.echoConnected ? '' : 'disabled')} href={this.state.echoConnected ? this.state.downloadHref : null} title="download">
+                        <a {...downloadAttrs}>
                             <SVG id="down-icon" />
                         </a>
-                        <button title="delete game" disabled={!this.state.echoConnected} className="delete-game" onClick={this.delete}><SVG id="x-icon" /></button>
+                        <button {...deleteAttrs}><SVG id="x-icon" /></button>
                     </div>
                     <table>
                         <tbody>
@@ -119,21 +148,21 @@ module.exports = React.createClass({
                         </tr>
                         </tbody>
                     </table>
-                    <div className="control">
+                    <div className={inputClass}>
                         <label htmlFor="name">Game Name:</label>
-                        <input ref={c => this.name = c} onKeyUp={this.checkForChanges} type="text" id="name"/>
+                        <input ref={c => this.name = c} onKeyUp={this.checkForChanges} type="text" id="name" {...readonlyState} />
                     </div>
-                    <div className="control">
+                    <div className={inputClass}>
                         <label htmlFor="tags">Tags:</label>
-                        <input onKeyUp={this.checkForChanges} ref={c => this.tags = c} type="text" id="tags" autoComplete="off" />
+                        <input onKeyUp={this.checkForChanges} ref={c => this.tags = c} type="text" id="tags" autoComplete="off" {...readonlyState} />
                     </div>
-                    <TagCloud ref={c => this.cloud = c} tagInput={this.tags} tags={this.state.tagCloud} tagClicked={this.checkForChanges}/>
+                    <TagCloud ref={c => this.cloud = c} tagInput={this.tags} tags={this.state.tagCloud} tagClicked={this.checkForChanges} {...readonlyState} />
                     <br />
                     <label htmlFor="details">Game details:</label>
-                    <textarea ref={c => this.details = c} onKeyUp={this.checkForChanges} id="details" name="details" placeholder="patch information, included mods, description, etc." defaultValue={this.state.details} />
+                    <textarea {...detailsAttrs} />
                     <br />
-                    <button disabled={!this.state.fieldsUpdated} onClick={this.saveChanges}>Save Changes</button>
-                    <button type="button" onClick={this.redirectToEcho}>Cancel</button>
+                    <button {...saveAttrs}>Save Changes</button>
+                    <button type="button" onClick={this.redirectToEcho}>{canEdit ? 'Cancel' : 'Back'}</button>
                 </div>
             </section>
         )

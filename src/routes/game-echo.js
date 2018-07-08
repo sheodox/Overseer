@@ -1,13 +1,27 @@
-const Conduit = require('../util/conduit'),
+const SilverConduit = require('../util/SilverConduit'),
     config = require('../config'),
     echoServerIP = config['games-server'],
-    tracker = require('../util/GameTracker');
+    tracker = require('../util/GameTracker'),
+    echoBooker = require('../db/echobooker');
 
 let echoConnected = false,
     ioConduit, notificationConduit, echoSocket, diskUsage;
 
+/**
+ * Emit data about all games to all connected authorized clients
+ */
 function broadcast() {
-    ioConduit.emit('refresh', prepareData());
+    const data = prepareData();
+    ioConduit.filteredBroadcast('refresh', async userId => {
+        //if they're not logged in, don't even check permissions
+        if (!userId) {
+            return;
+        }
+        const allowed = await echoBooker.check(userId, 'view');
+        if (allowed) {
+            return data;
+        }
+    });
 }
 
 function prepareData() {
@@ -35,21 +49,30 @@ function prepareData() {
 }
 //connection to overseer clients
 const clientListener = socket => {
-    const socketConduit = new Conduit(socket, 'echo');
+    const socketConduit = new SilverConduit(socket, 'echo'),
+        userId = SilverConduit.getUserId(socket);
     socketConduit.on({
-        delete: name => {
-            echoSocket.emit('delete', name);
+        delete: async name => {
+            if (echoBooker.check(userId, 'delete')) {
+                echoSocket.emit('delete', name);
+            }
         },
-        init: () => {
-            socketConduit.emit('refresh', prepareData());
+        init: async () => {
+            if (await echoBooker.check(userId, 'view')) {
+                socketConduit.emit('refresh', prepareData());
+            }
         },
-        update: (fileName, attr, val) => {
-            tracker.update(fileName, attr, val);
-            broadcast();
+        update: async (fileName, attr, val) => {
+            if (await echoBooker.check(userId, 'update')) {
+                tracker.update(fileName, attr, val);
+                broadcast();
+            }
         },
-        downloaded: fileName => {
-            tracker.downloaded(fileName);
-            broadcast();
+        downloaded: async fileName => {
+            if (await echoBooker.check(userId, 'download`')) {
+                tracker.downloaded(fileName);
+                broadcast();
+            }
         }
     });
 };
@@ -102,8 +125,8 @@ module.exports = function (io) {
     io.on('connection', socket => {
         clientListener(socket);
     });
-    ioConduit = new Conduit(io, 'echo');
-    notificationConduit = new Conduit(io, 'notifications');
+    ioConduit = new SilverConduit(io, 'echo');
+    notificationConduit = new SilverConduit(io, 'notifications');
 
     io .of('/echo-server')
         .on('connection', socket => {

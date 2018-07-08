@@ -32,9 +32,18 @@ const App = React.createClass({
                             return <Switchboard />
                         }} />
                         <Route path="/w/lights" component={Lights} />
-                        <Route exact path="/w/game-echo" component={Games} />
-                        <Route exact path="/w/game-echo/upload" component={EchoUploader} />
-                        <Route exact path="/w/game-echo/details/:fileName" component={GameDetails} />
+                        <Route path="/w/game-echo" render={({match}) => {
+                            if (!Booker.echo.view) {
+                                return <Redirect to="/" />
+                            }
+                            return <LoginRequired>
+                                <div>
+                                    <Route exact path={`${match.url}`} component={Games} />
+                                    <Route path={`${match.url}/upload`} component={EchoUploader} />
+                                    <Route path={`${match.url}/details/:fileName`} component={GameDetails} />
+                                </div>
+                            </LoginRequired>
+                        }} />
                         <Route path="/w/voter" render={() => (
                             <LoginRequired>
                                 <Voter />

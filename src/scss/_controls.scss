@@ -47,6 +47,10 @@
         &.valid {
             border-color: material-color('green', '500');
         }
+        &[readonly] {
+            border-bottom: none;
+            background-color: transparent;
+        }
     }
 }
 button, input[type=submit] {

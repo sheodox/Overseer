@@ -36,8 +36,12 @@ textarea {
     background: $background;
     border: none;
     color: white;
-}
 
+    &[readonly] {
+        background: transparent;
+        outline: none;
+    }
+}
 
 .content {
     display: flex;
