@@ -53,7 +53,7 @@ const clientListener = socket => {
         userId = SilverConduit.getUserId(socket);
     socketConduit.on({
         delete: async name => {
-            if (echoBooker.check(userId, 'delete')) {
+            if (await echoBooker.check(userId, 'delete')) {
                 echoSocket.emit('delete', name);
             }
         },
