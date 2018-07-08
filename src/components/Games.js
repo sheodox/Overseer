@@ -91,7 +91,7 @@ const Games = React.createClass({
                             </div>
                             <div className="one-half to-upload">
                                 <Link to="/w/game-echo/upload">
-                                    <button className={this.state.echoConnected ? '' : 'hidden'}>
+                                    <button className={this.state.echoConnected && Booker.echo.upload ? '' : 'hidden'}>
                                         Upload a game
                                     </button>
                                 </Link>
