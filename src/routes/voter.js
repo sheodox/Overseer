@@ -1,7 +1,7 @@
 import valid from '../util/validator';
 import FlatFile from '../util/flatfile';
 import maskRaceSessions from '../util/maskVoterSessions';
-const Conduit = require('../util/conduit');
+const SilverConduit = require('../util/SilverConduit');
 const voterBooker = require('../db/voterbooker');
 
 const raceFile = new FlatFile('./racedata.json', []);
@@ -47,20 +47,17 @@ function cleanString(str) {
 }
 
 export default function(io) {
-    const ioConduit = new Conduit(io, 'voter');
+    const ioConduit = new SilverConduit(io, 'voter');
     function broadcast() {
-        for (let socketId in io.sockets.sockets) {
-            const socket = io.sockets.sockets[socketId],
-                session = socket.handshake.session;
-            if (session.passport) {
-                const userId = session.passport.user.profile.id;
-                socket.emit('voter:refresh', maskRaceSessions(raceFile.data, userId));
+        ioConduit.filteredBroadcast('refresh', async userId => {
+            if (await voterBooker.check(userId, 'view')) {
+                return maskRaceSessions(raceFile.data, userId);
             }
-        }
+        });
     }
 
     io.on('connection', socket => {
-        const socketConduit = new Conduit(socket, 'voter');
+        const socketConduit = new SilverConduit(socket, 'voter');
         let userId;
 
         socketConduit.on({
