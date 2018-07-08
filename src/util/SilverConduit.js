@@ -38,9 +38,10 @@ class SilverConduit extends Conduit {
                         return filterFn(userId);
                     })
                     .then((...data) => {
+                        const isEmpty = data.length === 0 || data[0] === undefined;
                         //we don't necessarily need to send data to every socket, like if the data needs authentication but they don't have it
                         //so if we don't get anything just assume they shouldn't get any data
-                        if (data.length) {
+                        if (!isEmpty) {
                             this._send(socket, eventName, ...data);
                         }
                     })
