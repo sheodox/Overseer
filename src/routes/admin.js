@@ -1,6 +1,6 @@
 const router = require('express').Router(),
     path = require('path'),
-    config = require('../config'),
+    su = require('../util/superuser'),
     Conduit = require('../util/conduit'),
     bookers = {
         echo: require('../db/echobooker'),
@@ -8,12 +8,8 @@ const router = require('express').Router(),
     };
 let io;
 
-function isReqSuperuser(req) {
-     return req.user && (config['super-users'] || []).includes(req.user.profile.id);
-}
-
 router.use('/admin', (req, res, next) => {
-    if (isReqSuperuser(req)) {
+    if (su.isReqSuperUser(req)) {
         next();
     }
     else {
@@ -66,7 +62,7 @@ module.exports = function(i) {
         const passport = socket.handshake.session.passport,
             userId = passport && passport.user ? passport.user.profile.id : null;
 
-        if (userId && config['super-users'].includes(userId)) {
+        if (userId && su.isUserSuperUser(userId)) {
             bindAdminSocketListeners(socket);
         }
     });

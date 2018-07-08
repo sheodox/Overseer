@@ -15,13 +15,19 @@ const UserData = React.createClass({
         if (!user) {
             return (<section />);
         }
+        const links = (user.links || []).map((link, i) => (
+            <li key={i}><a href={link.href}>{link.text}</a></li>
+        ));
+
         return (
             <section className="user">
                 {user.photoUrl ? <img src={user.photoUrl} /> : ''}
                 <div>
                     <span className="user-display-name">{user.displayName}</span>
                     <br />
-                    <a href="/auth/logout">Logout</a>
+                    <ul>
+                        {links}
+                    </ul>
                 </div>
             </section>
         );
