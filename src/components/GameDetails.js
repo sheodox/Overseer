@@ -105,7 +105,7 @@ module.exports = React.createClass({
             deleteAttrs = {
                 title: "delete game",
                 disabled: !this.state.echoConnected || !Booker.echo.delete,
-                className: "delete-game",
+                className: 'delete-game' + (!Booker.echo.delete ? ' hidden': ''),
                 onClick: this.delete
             },
             detailsAttrs = {
