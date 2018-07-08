@@ -6,10 +6,10 @@
     "build": "gulp build",
     "dev": "SET NODE_ENV=development && nodemon --watch dist --ignore dist/public/js/main.js --inspect dist/app.js",
     "inspect": "node --inspect dist/app.js",
-    "start": "export NODE_ENV=production && sudo -E forever start dist/app.js",
-    "stop": "sudo forever stop dist/app.js",
+    "start": "export NODE_ENV=production && forever start dist/app.js",
+    "stop": "forever stop dist/app.js",
     "deploy": "npm stop && git pull && npm run build && npm start",
-    "test": "export NODE_ENV=production && sudo -E node dist/app.js"
+    "test": "export NODE_ENV=production && node dist/app.js"
   },
   "dependencies": {
     "axios": "^0.15.1",

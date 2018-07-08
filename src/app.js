@@ -5,7 +5,7 @@ const isProd = process.env.NODE_ENV === 'production',
     passport = require('passport'),
     config = require('./config.json'),
     app = express(),
-    port = isProd ? 80 : 3000,
+    port = 3000,
     debug = require('debug')('game-voter:server'),
     server = require('http').createServer(app),
     cookieParser = require('cookie-parser'),
@@ -50,6 +50,12 @@ server.listen(port);
 server.on('listening', onListening);
 
 function onListening() {
+    console.log(`
+ __        ___  __   __   ___  ___  __  
+/  \\ \\  / |__  |__) /__\` |__  |__  |__) 
+\\__/  \\/  |___ |  \\ .__/ |___ |___ |  \\ 
+                                        
+`);
     var addr = server.address();
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
