@@ -8,13 +8,13 @@ const raceFile = new FlatFile('./racedata.json', []);
 
 function raceExists(name) {
     return raceFile.data.some(r => {
-        return r.name === name;
+        return r.name.toLowerCase() === name.toLowerCase();
     })
 }
 
 function candidateExists(race, name) {
     return race.candidates.some(r => {
-        return r.name === name;
+        return r.name.toLowerCase() === name.toLowerCase();
     })
 }
 
