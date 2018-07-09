@@ -18,6 +18,7 @@ const Lights = React.createClass({
             }
         });
         lightsConduit.emit('init');
+        App.title('Lights');
     },
     componentWillUnmount: function() {
         lightsConduit.destroy();

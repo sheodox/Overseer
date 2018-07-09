@@ -13,6 +13,19 @@ const React = require('react'),
     Settings = require('./Settings'),
     LoginRequired = require('./LoginRequired');
 
+class AppControl {
+    constructor() {}
+
+    /**
+     * Sets the document title, if nothing is passed it resets it.
+     * @param newTitle
+     */
+    title(newTitle) {
+        document.title = (newTitle ? newTitle + ' - ' : '') + 'Overseer';
+    }
+}
+window.App = new AppControl();
+
 const App = React.createClass({
     render: function() {
         let content = <main className="content"><LoginRequired /></main>;

@@ -30,6 +30,7 @@ const Voter = React.createClass({
             }
         });
         voterConduit.emit('init');
+        App.title('Voter');
     },
     componentWillUnmount: function() {
         voterConduit.destroy();

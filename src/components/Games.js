@@ -22,6 +22,7 @@ const Games = React.createClass({
             }
         });
         echoConduit.emit('init');
+        App.title('Game Echo');
     },
     componentWillUnmount: function() {
         echoConduit.destroy();

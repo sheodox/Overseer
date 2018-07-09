@@ -16,6 +16,9 @@ module.exports = React.createClass({
 });
 
 const Panel = React.createClass({
+    componentDidMount() {
+        App.title();
+    },
     render: function() {
         return (
             <Link to={this.props.route}>

@@ -46,6 +46,7 @@ module.exports = React.createClass({
                         }
                     });
 
+                    App.title(thisGame.name + ' - Echo');
                     this.setState(Object.assign(thisGame, {
                         oldInfo: formattedGameInfo,
                         tagCloud: data.tagCloud,

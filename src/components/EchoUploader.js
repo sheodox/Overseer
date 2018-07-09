@@ -21,6 +21,9 @@ module.exports = React.createClass({
             toast: null
         };
     },
+    componentDidMount: function() {
+        App.title('Echo Uploader');
+    },
     componentWillMount: function() {
         echoConduit.on({
             refresh: data => {
