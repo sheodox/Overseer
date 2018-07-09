@@ -23,7 +23,15 @@ passport.deserializeUser(function(user, done) {
     done(null, user);
 });
 
-router.get('/google', passport.authenticate('google', {scope: ['https://www.googleapis.com/auth/plus.login']}));
+router.get('/google', (req, res, next) => {
+    const callbackURL = gAuth.redirect_uris.find(uri => {
+        return uri.includes(req.hostname);
+    });
+    passport.authenticate('google', {
+        callbackURL,
+        scope: ['https://www.googleapis.com/auth/plus.login']
+    })(req, res, next);
+});
 router.get('/google/callback',
     passport.authenticate('google', {failureRedirect: '/auth/google'}),
     (req, res) => {
