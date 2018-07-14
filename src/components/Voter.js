@@ -293,7 +293,7 @@ const Candidate = React.createClass({
         return voters.map(voter => voter.name);
     },
     render: function() {
-        const voters = `${this.props.name}\nAdded by: ${this.props.creator}\nUp: ${this.getNames(this.props.votedUp).join(', ')}\nDown: ${this.getNames(this.props.votedDown).join(', ')}`,
+        const voters = `${this.props.name}\nAdded by: ${this.props.creator}`,
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
             votedUp = this.props.votedUp.length,
             votedDown = this.props.votedDown.length,
