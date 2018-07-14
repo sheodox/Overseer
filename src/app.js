@@ -33,7 +33,10 @@ const s = session({
     secret: config.sessionSecret,
     resave: false,
     saveUninitialized: false,
-    secure: false
+    secure: false,
+    cookie: {
+        expires: new Date(253402300000000)
+    }
 });
 app.use(s);
 app.use(passport.initialize());
