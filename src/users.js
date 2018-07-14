@@ -31,11 +31,14 @@ const User = {
     registered: function(id) {
         return users.data[id];
     },
+    getUser: function(id) {
+        const userData = this.registered(id).profile;
+        return {id, displayName: userData.displayName, photo: userData.photos[0].value}
+    },
     getAll: function() {
         const ids = Object.keys(users.data);
         return ids.map(id => {
-            const userData = this.registered(id).profile;
-            return {id, displayName: userData.displayName, photo: userData.photos[0].value}
+            return this.getUser(id);
         })
     },
     maskSessions: function(sessions) {

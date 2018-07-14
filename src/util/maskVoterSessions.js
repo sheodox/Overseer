@@ -13,7 +13,11 @@ export default (races, userId) => {
                 voted = 'down'
             }
             const originalVotedUp = candidate.votedUp.slice(),
-                originalVotedDown = candidate.votedDown.slice();
+                originalVotedDown = candidate.votedDown.slice(),
+                creator = candidate.creator;
+
+            candidate.creator = (creator ? User.getUser(creator).displayName : '???');
+            candidate.created = creator === userId;
             candidate.voted = voted;
             candidate.votedUp = User.maskSessions(originalVotedUp);
             candidate.votedDown = User.maskSessions(originalVotedDown);

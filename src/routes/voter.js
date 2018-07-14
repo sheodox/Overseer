@@ -84,9 +84,11 @@ export default function(io) {
                 if (await voterBooker.check(userId, 'add_candidate')) {
                     name = cleanString(name);
                     console.log(`new candidate ${name} in ${raceId}`);
+
                     let race = getRace(raceId);
                     if (valid.name(name) && !candidateExists(race, name)) {
                         race.candidates.push({
+                            creator: userId,
                             name: name,
                             votedUp: [],
                             votedDown: []
@@ -128,12 +130,15 @@ export default function(io) {
                 }
             },
             removeCandidate: async (raceId, candidateId) => {
-                if (await voterBooker.check(userId, 'remove_candidate')) {
+                const race = getRace(raceId),
+                    candidateIndex = race.candidates.findIndex(c => {
+                        return c.name === candidateId;
+                    }),
+                    candidate = race.candidates[candidateIndex];
+
+                //allow users to delete their own candidates
+                if (candidate.creator === userId || await voterBooker.check(userId, 'remove_candidate')) {
                     console.log(`remove candidate ${candidateId} from ${raceId}`);
-                    const race = getRace(raceId),
-                        candidateIndex = race.candidates.findIndex(c => {
-                            return c.name === candidateId;
-                        });
                     race.candidates.splice(candidateIndex, 1);
                     raceFile.save();
                     broadcast();
