@@ -77,17 +77,25 @@ li {
 .panel-title {
     padding: 1rem;
     overflow: hidden;
-    height: 5rem;
+    position: relative;
 
     h2 {
         margin: 0;
         display: inline-block;
     }
+    //anything that isn't an svg should show over the top of the svg
+    *:not(svg) {
+        position: relative;
+        z-index: 2;
+    }
+
     svg {
         fill: darken($background, 5%);
         margin-top: -4rem;
         width: 10rem;
-        float: right;
+        right: 0.5rem;
+        position: absolute;
+        z-index: 1;
     }
 }
 
