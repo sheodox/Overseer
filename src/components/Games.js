@@ -49,9 +49,9 @@ const Games = React.createClass({
                     searchable.push(game.name);
                     searchable = formatters.tags(searchable);
 
-                    let matches = searchable.filter(tag => {
-                        return !!terms.find(term => {
-                            return tag.indexOf(term) >= 0;
+                    let matches = terms.filter(term => {
+                        return !!searchable.find(item => {
+                            return item.indexOf(term) >= 0;
                         });
                     }).length;
                     game.relevancy = matches / terms.length;
