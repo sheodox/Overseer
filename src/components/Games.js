@@ -8,7 +8,7 @@ const formatters = require('../util/formatters'),
     echoConduit = new Conduit(socket, 'echo');
 
 //cache the state so we can use this state every time we re-mount to prevent jitter as it does a proper refresh of the list
-let cachedState = {filteredGames: null, diskUsage: {total: 0, used: 0}, echoConnected: false, games: [], echoServer: ''};
+let cachedState = {filteredGames: null, diskUsage: {total: 0, used: 0}, echoConnected: false, games: [], echoServer: '', search: ''};
 
 const Games = React.createClass({
     getInitialState: function() {
@@ -26,16 +26,22 @@ const Games = React.createClass({
     },
     componentWillUnmount: function() {
         echoConduit.destroy();
+        cachedState = this.state;
+    },
+    componentDidMount: function() {
+        this.searchField.value = this.state.search;
+        this.cloud.captureUsedTags(this.state.search);
     },
     clearSearch() {
         this.searchField.value = '';
         this.search();
     },
     search: function() {
+        const text = this.searchField.value.trim();
         this.cloud.captureUsedTags();
         let filteredGames = null;
         //if the search field is empty stop searching
-        if (this.searchField.value.trim()) {
+        if (text) {
             const terms = formatters.tags(this.searchField.value),
                 relevancy = this.state.games.map(game => {
                     //add the game name to the tags and format that array as tags so everything is normalized
@@ -68,6 +74,7 @@ const Games = React.createClass({
             this.setState({games});
         }
         this.setState({
+            search: text,
             filteredGames
         })
     },

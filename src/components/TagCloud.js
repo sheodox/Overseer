@@ -7,9 +7,9 @@ const TagCloud = React.createClass({
             used: []
         }
     },
-    captureUsedTags () {
+    captureUsedTags (fallbackValue) {
         //safety for when we render before other components might be initialized
-        const inputValue = (this.props.tagInput || {value: ''}).value.trim();
+        const inputValue = (this.props.tagInput || {value: (fallbackValue || '')}).value.trim();
         this.setState({
             used: inputValue ? inputValue.split(',').map(tag => tag.trim()) : []
         });
