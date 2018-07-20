@@ -1,10 +1,10 @@
-import User from '../users';
+const Users = require('../users');
 
-export default (races, userId) => {
+export default async (races, userId) => {
     races = JSON.parse(JSON.stringify(races));
 
-    races.forEach(race => {
-        race.candidates.forEach(candidate => {
+    for (let race of races) {
+        for (let candidate of race.candidates) {
             let voted = false;
             if (candidate.votedUp.includes(userId)) {
                 voted = 'up'
@@ -16,13 +16,17 @@ export default (races, userId) => {
                 originalVotedDown = candidate.votedDown.slice(),
                 creator = candidate.creator;
 
-            candidate.creator = (creator ? User.getUser(creator).displayName : '???');
+            let creatorName = '???';
+            if (creator) {
+                creatorName = (await Users.getUser(creator)).display_name;
+            }
+
+            candidate.creator = creatorName;
             candidate.created = creator === userId;
             candidate.voted = voted;
-            candidate.votedUp = User.maskSessions(originalVotedUp);
-            candidate.votedDown = User.maskSessions(originalVotedDown);
-        })
-    });
-
+            candidate.votedUp = await Users.getMasked(originalVotedUp);
+            candidate.votedDown = await Users.getMasked(originalVotedDown);
+        }
+    }
     return races;
 }

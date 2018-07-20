@@ -54,7 +54,7 @@ const BookerConfig = React.createClass({
             });
             assignments = this.props.users.map((userData, index) => {
                 const assignment = this.props.assignments.find(assignment => {
-                    return assignment.user_id === userData.id;
+                    return assignment.user_id === userData.user_id;
                 });
                 return <RoleAssignments assignment={assignment} module={this.props.module} {...userData} roles={this.props.roles} key={index}/>
             });
@@ -100,7 +100,7 @@ const RoleAssignments = React.createClass({
     },
     assignRole: function(e) {
         const newRole = this.roleSelect.value;
-        adminConduit.emit('assign-role', this.props.module, this.props.id, newRole);
+        adminConduit.emit('assign-role', this.props.module, this.props.user_id, newRole);
     },
     render: function() {
         const options = [{name: '', role_id: ''}, ...this.props.roles].map((role, i) => {
@@ -108,7 +108,7 @@ const RoleAssignments = React.createClass({
         });
         return (
             <tr>
-                <td><img src={this.props.photo} style={{width: '20px', height: '20px'}}/>{this.props.displayName}</td>
+                <td><img src={this.props.profile_image} style={{width: '20px', height: '20px'}}/>{this.props.display_name}</td>
                 <td><select ref={c=>this.roleSelect=c} onChange={this.assignRole}>{options}</select></td>
             </tr>
         );

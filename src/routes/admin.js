@@ -61,7 +61,7 @@ module.exports = function(i) {
     io = i;
     io.on('connection', socket => {
         const passport = socket.handshake.session.passport,
-            userId = passport && passport.user ? passport.user.profile.id : null;
+            userId = passport && passport.user ? passport.user.user_id : null;
 
         if (userId && su.isUserSuperUser(userId)) {
             bindAdminSocketListeners(socket);

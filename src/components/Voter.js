@@ -286,11 +286,8 @@ const Candidate = React.createClass({
     getImages: function(voters) {
         return voters
             .map((voter, i) => {
-                return <img className="voter-profile-image" src={voter.photo} title={voter.name} key={i} />
+                return <img className="voter-profile-image" src={voter.profile_image} title={voter.display_name} key={i} />
             });
-    },
-    getNames: function(voters) {
-        return voters.map(voter => voter.name);
     },
     render: function() {
         const voters = `${this.props.name}\nAdded by: ${this.props.creator}`,

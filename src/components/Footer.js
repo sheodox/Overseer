@@ -21,9 +21,9 @@ const UserData = React.createClass({
 
         return (
             <section className="user">
-                {user.photoUrl ? <img src={user.photoUrl} /> : ''}
+                {user.profile_image ? <img src={user.profile_image} /> : ''}
                 <div>
-                    <span className="user-display-name">{user.displayName}</span>
+                    <span className="user-display-name">{user.display_name}</span>
                     <br />
                     <ul>
                         {links}

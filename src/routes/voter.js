@@ -48,10 +48,10 @@ function cleanString(str) {
 
 export default function(io) {
     const ioConduit = new SilverConduit(io, 'voter');
-    function broadcast() {
+    async function broadcast() {
         ioConduit.filteredBroadcast('refresh', async userId => {
             if (await voterBooker.check(userId, 'view')) {
-                return maskRaceSessions(raceFile.data, userId);
+                return await maskRaceSessions(raceFile.data, userId);
             }
         });
     }
@@ -61,9 +61,11 @@ export default function(io) {
         let userId;
 
         socketConduit.on({
-            init: () => {
-                userId = socket.handshake.session.passport.user.profile.id;
-                socketConduit.emit('refresh', maskRaceSessions(raceFile.data, userId));
+            init: async () => {
+                userId = socket.handshake.session.passport.user.user_id;
+                if (await voterBooker.check(userId, 'view')) {
+                    socketConduit.emit('refresh', await maskRaceSessions(raceFile.data, userId));
+                }
             },
             newRace: async name => {
                 if (await voterBooker.check(userId, 'add_race')) {
@@ -100,8 +102,7 @@ export default function(io) {
             },
             toggleVote: async (raceId, candidateId, direction) => {
                 if (await voterBooker.check(userId, 'vote')) {
-                    const userId = socket.handshake.session.passport.user.profile.id,
-                        candidate = getCandidate(raceId, candidateId),
+                    const candidate = getCandidate(raceId, candidateId),
                         [to, from] = direction === 'up'
                             ? [candidate.votedUp, candidate.votedDown]
                             : [candidate.votedDown, candidate.votedUp];

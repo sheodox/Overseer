@@ -15,7 +15,7 @@ class SilverConduit extends Conduit {
      */
     static getUserId(socket) {
         try {
-            return socket.handshake.session.passport.user.profile.id;
+            return socket.handshake.session.passport.user.user_id;
         }
         catch(e) {
             return null;
