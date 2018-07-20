@@ -1,8 +1,13 @@
 const sqlite3 = require('sqlite3'),
-    debug = require('debug')('stockpile');
+    debug = require('debug');
 
 class Stockpile {
     constructor(options) {
+        if (!options.db) {
+            throw new Error('Stockpile - missing database name!');
+        }
+
+        this.debug = debug(`stockpile:${options.db}`);
         this.options = options;
         this._db = new sqlite3.Database(`./data/${options.db}.sqlite3`, err => {
             if (err) {
@@ -19,7 +24,7 @@ class Stockpile {
         });
     }
     _callSql(type, sql, params) {
-        debug(sql, params);
+        this.debug(sql, params);
         const startTime = Date.now();
         return new Promise((resolve, reject) => {
             this._db[type](sql, ...params, (err, row) => {
@@ -29,7 +34,7 @@ class Stockpile {
                 }
                 else if (row) {
                     const count = Array.isArray(row) ? row.length : 1;
-                    debug(`${count} results in ${Date.now() - startTime}ms`);
+                    this.debug(`${count} results in ${Date.now() - startTime}ms`);
                 }
                 resolve(row);
             })
