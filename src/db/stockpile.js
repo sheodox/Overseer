@@ -1,4 +1,5 @@
-const sqlite3 = require('sqlite3');
+const sqlite3 = require('sqlite3'),
+    debug = require('debug')('stockpile');
 
 class Stockpile {
     constructor(options) {
@@ -13,15 +14,24 @@ class Stockpile {
                 }).join(',');
                 this.run(`CREATE TABLE IF NOT EXISTS ${table.name} (${columns});`);
 
-                //todo add columns
+                //todo add missing columns
             });
         });
     }
     _callSql(type, sql, params) {
-        // console.log(sql, params);
+        debug(sql, params);
+        const startTime = Date.now();
         return new Promise((resolve, reject) => {
             this._db[type](sql, ...params, (err, row) => {
-                err ? reject(err) : resolve(row);
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                else if (row) {
+                    const count = Array.isArray(row) ? row.length : 1;
+                    debug(`${count} results in ${Date.now() - startTime}ms`);
+                }
+                resolve(row);
             })
         })
     }
