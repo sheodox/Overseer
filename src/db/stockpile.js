@@ -9,21 +9,37 @@ class Stockpile {
 
         this.debug = debug(`stockpile:${options.db}`);
         this.options = options;
-        this._db = new sqlite3.Database(`./data/${options.db}.sqlite3`, err => {
-            if (err) {
-                throw err;
-            }
-            this.options.tables.forEach(table => {
-                const columns = Object.keys(table.columns).map(column => {
-                    return column + ' ' + table.columns[column];
-                }).join(',');
-                this.run(`CREATE TABLE IF NOT EXISTS ${table.name} (${columns});`);
 
-                //todo add missing columns
+        this.ready = false;
+        this._databaseCreation = new Promise((resolve, reject) => {
+            this._db = new sqlite3.Database(`./data/${options.db}.sqlite3`, async err => {
+                if (err) {
+                    throw err;
+                }
+                for (let table of this.options.tables) {
+                    const columns = Object.keys(table.columns).map(column => {
+                        return column + ' ' + table.columns[column];
+                    }).join(',');
+                    //skip the queue, this needs to run first
+                    await this._callSql('run', `CREATE TABLE IF NOT EXISTS ${table.name} (${columns});`);
+                    //todo add missing columns
+                }
+
+                this.ready = true;
+                resolve();
             });
         });
     }
-    _callSql(type, sql, params) {
+    _queue(...args) {
+        //if queries are called before the database has been created, queue them up in promises, otherwise run them normally
+        if (!this.ready) {
+            return this._databaseCreation = this._databaseCreation.then(() => {
+                this._callSql(...args);
+            })
+        }
+        return this._callSql(...args);
+    }
+    _callSql(type, sql, params=[]) {
         this.debug(sql, params);
         const startTime = Date.now();
         return new Promise((resolve, reject) => {
@@ -41,13 +57,13 @@ class Stockpile {
         })
     }
     get (sql, ...params) {
-        return this._callSql('get', sql, params);
+        return this._queue('get', sql, params);
     }
     all (sql, ...params) {
-        return this._callSql('all', sql, params);
+        return this._queue('all', sql, params);
     }
     run (sql, ...params) {
-        return this._callSql('run', sql, params);
+        return this._queue('run', sql, params);
     }
     buildInsertMap(data) {
         const columns = [],
