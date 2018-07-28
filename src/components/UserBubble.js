@@ -2,7 +2,6 @@ const React = require('react');
 
 const UserBubble = React.createClass({
     render: function() {
-        console.log(this.props.user);
         if (!this.props.user) {
             return null;
         }
