@@ -17,8 +17,9 @@ export default async (races, userId) => {
                 creator = candidate.creator;
 
             let creatorName = '???';
-            if (creator) {
-                creatorName = (await Users.getUser(creator)).display_name;
+            const matchingUser = await Users.getUser(creator);
+            if (matchingUser) {
+                creatorName = matchingUser.display_name;
             }
 
             candidate.creator = creatorName;
