@@ -62,6 +62,8 @@ class Users extends StockPile{
      * @returns {Promise<*>}
      */
     async getMasked(ids) {
+        ids = Array.isArray(ids) ? ids : [ids];
+
         const masked = [];
         for (let i of ids) {
             const user = await this.getUser(i);

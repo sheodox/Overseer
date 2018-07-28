@@ -3,6 +3,7 @@ const React = require('react'),
     Link = reactRouter.Link,
     SVG = require('./SVG').default,
     TagCloud = require('./TagCloud'),
+    UserBubble = require('./UserBubble'),
     formatters = require('../util/formatters'),
     Conduit = require('../util/conduit'),
     echoConduit = new Conduit(socket, 'echo');
@@ -143,13 +144,17 @@ module.exports = React.createClass({
                             <td>Size</td><td>{formatters.bytes(this.state.size, 'gb')}gb</td>
                         </tr>
                         <tr>
-                            <td>Uploaded</td><td>{formatters.date(this.state.modified)}</td>
+                            <td>Downloads</td><td>{this.state.downloads}</td>
                         </tr>
                         <tr>
-                            <td>Downloads</td><td>{this.state.downloads}</td>
+                            <td>Last Upload</td><td><UserBubble user={this.state.last_uploader} />{formatters.date(this.state.modified)}</td>
+                        </tr>
+                        <tr>
+                            <td>Initial Upload</td><td><UserBubble user={this.state.initial_uploader} />{formatters.date(this.state.created)}</td>
                         </tr>
                         </tbody>
                     </table>
+
                     <div className={inputClass}>
                         <label htmlFor="name">Game Name:</label>
                         <input ref={c => this.name = c} onKeyUp={this.checkForChanges} type="text" id="name" {...readonlyState} />

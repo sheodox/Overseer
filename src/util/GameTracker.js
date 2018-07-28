@@ -1,4 +1,5 @@
 const Stockpile = require('../db/stockpile'),
+    Users = require('../users'),
     formatTags = require('./formatters').tags,
     debug = require('debug')('echo:tracker');
 
@@ -34,9 +35,16 @@ class GameTracker extends Stockpile {
     async list() {
         const list = await this.all(`SELECT * FROM echo ORDER BY name COLLATE NOCASE`);
         //need to turn the tags from a string back into an array
-        list.map(game => {
-            return this._prepareForUI(game);
-        });
+        const userProperties = ['initial_uploader', 'last_uploader'];
+        for (let game of list) {
+            this._deserialize(game);
+
+            for (let prop of userProperties) {
+                if (game[prop] !== '???') {
+                    game[prop] = ((await Users.getMasked(game[prop]))[0] || '???');
+                }
+            }
+        }
         return list;
     }
     async addGame(newData, userId) {
@@ -116,23 +124,37 @@ class GameTracker extends Stockpile {
      * @private
      */
     async _save(game) {
-        this._prepareForDB(game);
+        this._serialize(game);
         const insertData = this.buildInsertMap(game);
         await this.run(`INSERT OR REPLACE INTO echo ${insertData.sql}`, insertData.values);
         return game;
     }
-    _prepareForUI(gameData) {
+
+    /**
+     * Convert data structures from strings to non-primitives if needed.
+     * @param gameData
+     * @returns {*}
+     * @private
+     */
+    _deserialize(gameData) {
         gameData.tags = formatTags(gameData.tags);
         return gameData;
     }
-    _prepareForDB(gameData) {
+
+    /**
+     * Convert data structures to only db usable types
+     * @param gameData
+     * @returns {*}
+     * @private
+     */
+    _serialize(gameData) {
         gameData.tags = formatTags(gameData.tags).join(', ');
         return gameData;
     }
     async find(fileName) {
         const data = await this.get('SELECT * FROM echo WHERE file=?', fileName);
         if (data) {
-            return this._prepareForUI(data);
+            return this._deserialize(data);
         }
     }
 }
