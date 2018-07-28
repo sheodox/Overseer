@@ -10,8 +10,8 @@ let echoConnected = false,
 /**
  * Emit data about all games to all connected authorized clients
  */
-function broadcast() {
-    const data = prepareData();
+async function broadcast() {
+    const data = await prepareData();
     ioConduit.filteredBroadcast('refresh', async userId => {
         //if they're not logged in, don't even check permissions
         if (!userId) {
@@ -24,9 +24,9 @@ function broadcast() {
     });
 }
 
-function prepareData() {
+async function prepareData() {
     const allTags = {},
-        games = tracker.list();
+        games = await tracker.list();
     games.forEach(game => {
         (game.tags || []).forEach(tag => {
             allTags[tag] = (allTags[tag] || 0) + 1;
@@ -59,19 +59,25 @@ const clientListener = socket => {
         },
         init: async () => {
             if (await echoBooker.check(userId, 'view')) {
-                socketConduit.emit('refresh', prepareData());
+                socketConduit.emit('refresh', await prepareData());
             }
         },
-        update: async (fileName, attr, val) => {
+        update: async (file, attr, val) => {
             if (await echoBooker.check(userId, 'update')) {
-                tracker.update(fileName, attr, val);
+                await tracker.update(file, attr, val);
                 broadcast();
             }
         },
-        downloaded: async fileName => {
+        downloaded: async file => {
             if (await echoBooker.check(userId, 'download')) {
-                tracker.downloaded(fileName);
+                await tracker.downloaded(file);
                 broadcast();
+            }
+        },
+        'new-game': async (data, done) => {
+            if (await echoBooker.check(userId, 'upload')) {
+                await tracker.addGame(data, userId);
+                done();
             }
         }
     });
@@ -83,35 +89,35 @@ const echoListener = socket => {
     echoConnected = true;
     broadcast();
 
-    socket.on('disconnect', () => {
+    echoSocket = socket;
+    echoSocket.on('disconnect', () => {
         echoConnected = false;
         broadcast();
     });
-
-    echoSocket = socket;
-    socket.on('new-game', data => {
-        console.log(`new game: ${data.game.fileName}`);
+    echoSocket.on('new-game', async data => {
+        console.log(`new game: ${data.game.file}`);
         console.log(data.game);
         //if it's a brand new game send a notification to everyone
-        if (tracker.addGame(data.game)) {
+        const addedGame = await tracker.addGame(data.game);
+        if (addedGame) {
             notificationConduit.emit('notification', {
                 type: 'link',
                 title: 'New game!',
-                text: data.game.name,
-                href: `/w/game-echo/details/${data.game.fileName}`
+                text: addedGame.name,
+                href: `/w/game-echo/details/${addedGame.file}`
             });
         }
         diskUsage = data.diskUsage;
         broadcast();
     });
-    socket.on('delete-game', data => {
-        console.log(`deleted game: ${data.fileName}`);
-        tracker.deleteGame(data.fileName);
+    echoSocket.on('delete-game', async data => {
+        console.log(`deleted game: ${data.file}`);
+        await tracker.deleteGame(data.file);
         diskUsage = data.diskUsage;
         broadcast();
     });
     //on connection events make sure we're always up to date
-    socket.on('refresh', data => {
+    echoSocket.on('refresh', data => {
         diskUsage = data.diskUsage;
         //add or update all games so we are always up to date
         data.games.forEach(game => {

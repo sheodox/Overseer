@@ -10,7 +10,7 @@ const React = require('react'),
 module.exports = React.createClass({
     getInitialState: function () {
         return {
-            fileName: this.props.match.params.fileName,
+            file: this.props.match.params.file,
             fieldsUpdated: false,
             oldInfo: {}
         };
@@ -22,7 +22,7 @@ module.exports = React.createClass({
         echoConduit.on({
             refresh: data => {
                 const thisGame = data.games.find(game => {
-                    return game.fileName === this.state.fileName
+                    return game.file === this.state.file
                 });
                 //if the game was deleted go back to the list
                 if (!thisGame) {
@@ -51,7 +51,7 @@ module.exports = React.createClass({
                         oldInfo: formattedGameInfo,
                         tagCloud: data.tagCloud,
                         echoConnected: data.echoConnected,
-                        downloadHref: data.echoServer + '/' + this.state.fileName + '.zip'
+                        downloadHref: data.echoServer + '/' + this.state.file + '.zip'
                     }));
 
                     this.cloud.captureUsedTags();
@@ -78,20 +78,21 @@ module.exports = React.createClass({
         });
     },
     saveChanges: function() {
-        ['details', 'tags', 'name'].forEach(type => {
-            echoConduit.emit('update', this.state.fileName, type, this[type].value);
+        const changes = ['details', 'tags', 'name'].map(type => {
+            return {field: type, value: this[type].value};
         });
+        echoConduit.emit('update', this.state.file, changes);
         this.setState({
             fieldsUpdated: false
         });
     },
     delete: function() {
         if(confirm(`Are you sure you want to delete ${this.state.name}?`)) {
-            echoConduit.emit('delete', this.state.fileName);
+            echoConduit.emit('delete', this.state.file);
         }
     },
     download: function () {
-        echoConduit.emit('downloaded', this.state.fileName);
+        echoConduit.emit('downloaded', this.state.file);
     },
     render: function() {
         const canEdit = Booker.echo.update,

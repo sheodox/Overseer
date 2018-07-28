@@ -150,16 +150,16 @@ const DiskUsage = React.createClass({
 const Game = React.createClass({
     download: function () {
         if (Booker.echo.download) {
-            echoConduit.emit('downloaded', this.props.fileName);
+            echoConduit.emit('downloaded', this.props.file);
         }
     },
     render: function() {
-        const size = this.props.inProgress ? '??' : formatters.bytes(this.props.size, 'gb') + ' gb',
+        const size = this.props.in_progress ? '??' : formatters.bytes(this.props.size, 'gb') + ' gb',
             tags = (this.props.tags && this.props.tags.length) ? this.props.tags.join(', ') : 'none!',
             relevancyPercent = (this.props.relevancy * 100).toFixed(0),
             relevantColorRGBBase = [0, 188, 212],
             bg = relevantColorRGBBase.map(c => c * this.props.relevancy),
-            detailsHref = `/w/game-echo/details/${this.props.fileName}`;
+            detailsHref = `/w/game-echo/details/${this.props.file}`;
         return (
             <tr>
                 <td className="g-name" title={"Tags: " + tags}>
@@ -170,10 +170,10 @@ const Game = React.createClass({
                     <Link to={detailsHref}>{this.props.name}</Link>
                 </td>
                 <td className="g-size">{size}</td>
-                <td className="g-date">{this.props.inProgress ? 'uploading now...' : formatters.date(this.props.modified)}</td>
-                {this.props.inProgress ? (<td><progress /></td>) : (
+                <td className="g-date">{this.props.in_progress ? 'uploading now...' : formatters.date(this.props.modified)}</td>
+                {this.props.in_progress ? (<td><progress /></td>) : (
                     <td className="centered g-actions">
-                        <a onClick={this.download} className={"download " + (this.props.echoConnected && Booker.echo.download ? '' : 'disabled')} href={this.props.echoConnected && Booker.echo.download ? this.props.echoServer + '/' + this.props.fileName + '.zip' : null} title="download">
+                        <a onClick={this.download} className={"download " + (this.props.echoConnected && Booker.echo.download ? '' : 'disabled')} href={this.props.echoConnected && Booker.echo.download ? this.props.echoServer + '/' + this.props.file + '.zip' : null} title="download">
                             <SVG id="down-icon" />
                         </a>
                     </td>

@@ -18,7 +18,8 @@ module.exports = React.createClass({
             loaded: 0,
             total: 100,
             tagCloud: [],
-            toast: null
+            toast: null,
+            file: ''
         };
     },
     componentDidMount: function() {
@@ -49,44 +50,57 @@ module.exports = React.createClass({
             type: 'progress'
         });
 
-        const startTime = Date.now();
-        axios
-            .post(this.state.echoServer + '/upload', new FormData(this.form), {
-                headers: {
-                    'content-type': 'multipart/form-data'
-                },
-                onUploadProgress: (e) => {
-                    const elapsedSeconds = (Date.now() - startTime) / 1000,
-                        //calculate time till completion
-                        percentDone = e.loaded / e.total,
-                        bytesPerSecond = e.loaded / elapsedSeconds,
-                        //remaining = percent left/percent per second
-                        secondsTillDone = (1 - percentDone) / (percentDone / elapsedSeconds),
-                        showMinutes = secondsTillDone > 60,
-                        megabytesPerSecond = formatters.bytes(bytesPerSecond, 'mb'),
-                        remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${showMinutes ? 'm' : 's'}`;
+        //must be made synchronously or the post will not include the file
+        const formData = new FormData(this.form);
 
+        echoConduit.emit('new-game', {
+            in_progress: true,
+            file: this.state.file,
+            name: this.name.value,
+            tags: this.tags.value,
+            details: this.details.value
+        }, () => {
+            const startTime = Date.now();
+            axios
+                .post(this.state.echoServer + '/upload', formData, {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    },
+                    onUploadProgress: (e) => {
+                        const elapsedSeconds = (Date.now() - startTime) / 1000,
+                            //calculate time till completion
+                            percentDone = e.loaded / e.total,
+                            bytesPerSecond = e.loaded / elapsedSeconds,
+                            //remaining = percent left/percent per second
+                            secondsTillDone = (1 - percentDone) / (percentDone / elapsedSeconds),
+                            showMinutes = secondsTillDone > 60,
+                            megabytesPerSecond = formatters.bytes(bytesPerSecond, 'mb'),
+                            remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${showMinutes ? 'm' : 's'}`;
+
+                        toast({
+                            value: e.loaded,
+                            max: e.total,
+                            text: `${formatters.bytes(e.loaded, 'gb')} / ${formatters.bytes(e.total, 'gb')} gb - ${megabytesPerSecond} mb/s (${remaining})`
+                        });
+                    }
+                })
+                .then(() => {
+                    Banshee.play(beep, 0.4);
                     toast({
-                        value: e.loaded,
-                        max: e.total,
-                        text: `${formatters.bytes(e.loaded, 'gb')} / ${formatters.bytes(e.total, 'gb')} gb - ${megabytesPerSecond} mb/s (${remaining})`
+                        type: 'text',
+                        text: 'Upload complete!'
                     });
-                }
-            })
-            .then(() => {
-                Banshee.play(beep, 0.4);
-                toast({
-                    type: 'text',
-                    text: 'Upload complete!'
                 });
+            this.form.reset();
+            this.setState({
+                uploadAllowed: false,
+                uploading: false
             });
 
-        this.form.reset();
-        this.setState({
-            uploadAllowed: false,
-            uploading: false
-        });
-        this.props.history.push('/w/game-echo');
+            this.props.history.push('/w/game-echo');
+            }
+        );
+
     },
     checkUploadAllowed: function() {
          this.setState({
@@ -96,11 +110,16 @@ module.exports = React.createClass({
     onFileSelect: function(e) {
         //file selections will give a value of C:\fakepath\Game Name.zip, trim the non-name bits
         const selectedGame = e.target.value.replace(/^C\:\\fakepath\\|.zip$/g, ''),
-            existingGame = this.state.games.find(g => g.fileName === selectedGame);
+            existingGame = this.state.games.find(g => g.file === selectedGame);
+        this.setState({
+            file: selectedGame
+        });
+
         if (existingGame) {
             this.details.value = existingGame.details;
             this.tags.value = (existingGame.tags || []).join(', ');
             this.name.value = existingGame.name || selectedGame;
+            this.cloud.captureUsedTags();
         }
         else {
             this.name.value = selectedGame;
