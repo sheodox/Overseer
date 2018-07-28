@@ -2,6 +2,7 @@ import React from 'react';
 import SVG from './SVG';
 import {Redirect} from 'react-router-dom';
 const Conduit = require('../util/conduit'),
+    UserBubble = require('./UserBubble'),
     voterConduit = new Conduit(socket, 'voter'),
     voteWeights = {
         up: 1,
@@ -286,7 +287,7 @@ const Candidate = React.createClass({
     getImages: function(voters) {
         return voters
             .map((voter, i) => {
-                return <img className="voter-profile-image" src={voter.profile_image} title={voter.display_name} key={i} />
+                return <UserBubble key={i} user={voter} />
             });
     },
     render: function() {
