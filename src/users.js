@@ -65,10 +65,12 @@ class Users extends StockPile{
         const masked = [];
         for (let i of ids) {
             const user = await this.getUser(i);
-            masked.push({
-                display_name: user.display_name,
-                profile_image: user.profile_image
-            });
+            if (user) {
+                masked.push({
+                    display_name: user.display_name,
+                    profile_image: user.profile_image
+                });
+            }
         }
         return masked;
     }
