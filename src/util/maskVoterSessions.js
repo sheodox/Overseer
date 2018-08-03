@@ -3,18 +3,23 @@ const Users = require('../users');
 export default async (races, userId) => {
     races = JSON.parse(JSON.stringify(races));
 
+    function getUserFromCandidate(candidate) {
+        return candidate.user_id;
+    }
+
     for (let race of races) {
         for (let candidate of race.candidates) {
+            const originalVotedUp = candidate.votedUp.map(getUserFromCandidate),
+                originalVotedDown = candidate.votedDown.map(getUserFromCandidate),
+                creator = candidate.creator;
+
             let voted = false;
-            if (candidate.votedUp.includes(userId)) {
+            if (originalVotedUp.includes(userId)) {
                 voted = 'up'
             }
-            else if (candidate.votedDown.includes(userId)) {
+            else if (originalVotedDown.includes(userId)) {
                 voted = 'down'
             }
-            const originalVotedUp = candidate.votedUp.slice(),
-                originalVotedDown = candidate.votedDown.slice(),
-                creator = candidate.creator;
 
             let creatorName = '???';
             const matchingUser = await Users.getUser(creator);

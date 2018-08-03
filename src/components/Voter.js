@@ -23,9 +23,13 @@ const Voter = React.createClass({
                 cachedState.races = races;
                 if (races.length) {
                     const updatedRace = races.find(r => {
-                        return r.id === (cachedState.activeRace || {}).id;
+                        return r.race_id === (cachedState.activeRace || {}).race_id;
                     });
                     cachedState.activeRace = updatedRace || races[0];
+                }
+                else {
+                    //blank ou the candidate list if all races are gone
+                    cachedState.activeRace = null;
                 }
                 this.setState(cachedState);
             }
@@ -38,7 +42,7 @@ const Voter = React.createClass({
     },
     switchRace: function(id) {
         const race = this.state.races.find(race => {
-            return race.id === id;
+            return race.race_id === id;
         });
         cachedState.activeRace = race;
         this.setState({
@@ -76,7 +80,7 @@ const RaceList = React.createClass({
     },
     updateRaceSelection: function() {
         if (this.props.activeRace) {
-            this.select.value = this.props.activeRace.id;
+            this.select.value = this.props.activeRace.race_id;
         }
     },
     newRaceKeyDown: function(e) {
@@ -86,16 +90,16 @@ const RaceList = React.createClass({
         }
     },
     switchRace: function() {
-        this.props.switchRace(this.select.value);
+        this.props.switchRace(parseInt(this.select.value, 10));
     },
     removeRace: function() {
-        if (confirm(`Really remove ${this.props.activeRace.name}?`)) {
-            voterConduit.emit('removeRace', this.props.activeRace.id);
+        if (confirm(`Really remove ${this.props.activeRace.race_name}?`)) {
+            voterConduit.emit('removeRace', this.props.activeRace.race_id);
         }
     },
     render: function() {
         const races = this.props.races.map((race, index) => {
-                return <option value={race.id} key={index}>{race.name}</option>
+                return <option value={race.race_id} key={index}>{race.race_name}</option>
             }),
             raceSwitcherId = 'voter-race-switcher',
             raceInputId = 'voter-new-race';
@@ -151,7 +155,7 @@ const CandidateList = React.createClass({
         else {
             const findCandidate = (candidate) => {
                 return nextProps.candidates.find(updatedCandidate => {
-                    return updatedCandidate.name === candidate.name;
+                    return updatedCandidate.candidate_id === candidate.candidate_id;
                 });
             };
 
@@ -175,7 +179,7 @@ const CandidateList = React.createClass({
             if (updatedCandidates.length !== nextProps.candidates) {
                 newCandidates = nextProps.candidates.reduce((done, updatedCandidate) => {
                     let missing = !updatedCandidates.find(existingCandidate => {
-                        return existingCandidate.name === updatedCandidate.name;
+                        return existingCandidate.candidate_name === updatedCandidate.candidate_name;
                     });
                     if (missing) {
                         done.push(updatedCandidate);
@@ -211,7 +215,7 @@ const CandidateList = React.createClass({
         });
     },
     resetVotes: function() {
-        voterConduit.emit('resetVotes', this.props.id);
+        voterConduit.emit('resetVotes', this.props.race_id);
     },
     render: function() {
         const self = this,
@@ -221,7 +225,7 @@ const CandidateList = React.createClass({
             }, 1), // min of one so we don't divide by zero
             candidates = this.state.candidates.map((c, index) => {
                 const toggleVote = (direction) => {
-                        voterConduit.emit('toggleVote', this.props.id, c.name, direction);
+                        voterConduit.emit('toggleVote', this.props.race_id, c.candidate_id, direction);
                     },
                     toggleVoteUp = () => {
                         toggleVote('up');
@@ -230,14 +234,14 @@ const CandidateList = React.createClass({
                         toggleVote('down')
                     },
                     removeCandidate = () => {
-                        voterConduit.emit('removeCandidate', this.props.id, c.name);
+                        voterConduit.emit('removeCandidate', this.props.race_id, c.candidate_id);
                     };
 
                 return <Candidate removeCandidate={removeCandidate} toggleVoteUp={toggleVoteUp} toggleVoteDown={toggleVoteDown} {...c} maxVotes={maxVotes} key={index} />
             });
 
         function newCandidate(name) {
-            voterConduit.emit('newCandidate', self.props.id, name);
+            voterConduit.emit('newCandidate', self.props.race_id, name);
         }
 
         return (
@@ -245,7 +249,7 @@ const CandidateList = React.createClass({
                 <div className="docked-buttons">
                     <button disabled={!Booker.voter.reset_votes} onClick={this.resetVotes} title="reset votes"><SVG id="reset-icon" /></button>
                 </div>
-                <h3>{this.props.name}</h3>
+                <h3>{this.props.race_name}</h3>
                 <br />
                 <NewCandidate newCandidate={newCandidate} />
                 {candidates}
@@ -291,7 +295,7 @@ const Candidate = React.createClass({
             });
     },
     render: function() {
-        const voters = `${this.props.name}\nAdded by: ${this.props.creator}`,
+        const voters = `${this.props.candidate_name}\nAdded by: ${this.props.creator}`,
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
             votedUp = this.props.votedUp.length,
             votedDown = this.props.votedDown.length,
@@ -317,7 +321,7 @@ const Candidate = React.createClass({
                                 <div className="voter-profile-images"><span className="vote-count">{votedDown}</span>{this.getImages(this.props.votedDown)}</div>
                             </div>
                         </div>
-                        <span className="candidate-text">{this.props.name}</span>
+                        <span className="candidate-text">{this.props.candidate_name}</span>
                     </div>
                     <button className="candidate-remove" onClick={this.props.removeCandidate} disabled={disabledState}>
                         <SVG id="x-icon" />
