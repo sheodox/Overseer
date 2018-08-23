@@ -37,7 +37,7 @@ function listen(io) {
     });
 }
 
-export default function(io) {
+module.exports = function(io) {
     harbinger
         .init()
         .then(() => {

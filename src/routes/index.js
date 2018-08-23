@@ -1,5 +1,5 @@
-import express from 'express';
-const serialize = require('serialize-javascript'),
+const express = require('express'),
+    serialize = require('serialize-javascript'),
     su = require('../util/superuser'),
     voterBooker = require('../db/voterbooker'),
     echoBooker = require('../db/echobooker'),

@@ -1,9 +1,9 @@
-import maskRaceSessions from '../util/maskVoterSessions';
-const SilverConduit = require('../util/SilverConduit'),
+const maskRaceSessions = require('../util/maskVoterSessions'),
+    SilverConduit = require('../util/SilverConduit'),
     voterBooker = require('../db/voterbooker'),
     voterTracker = require('../util/VoterTracker');
 
-export default function(io) {
+module.exports = function(io) {
     const ioConduit = new SilverConduit(io, 'voter');
 
     async function broadcast() {

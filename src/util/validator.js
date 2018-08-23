@@ -1,7 +1,7 @@
 const validNameMinLength = 3,
     validNameMaxLength = 50;
 
-export default {
+module.exports = {
     name: (name) => {
         if (name && typeof name === 'string') {
             //at least a minimum number of non-space characters, alphanumeric with some symbols
@@ -13,4 +13,4 @@ export default {
         }
         return false;
     }
-}
+};

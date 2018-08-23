@@ -18,10 +18,10 @@ const isProd = process.env.NODE_ENV === 'production',
     sharedSession = require('express-socket.io-session'),
     auth = require('./routes/auth'),
     logger = require('morgan'),
-    ghost = require('./ghost').default,
+    ghost = require('./ghost'),
     echo = require('./routes/game-echo'),
-    settings = require('./routes/settings').default,
-    voter = require('./routes/voter').default,
+    settings = require('./routes/settings'),
+    voter = require('./routes/voter'),
     admin = require('./routes/admin');
 
 app.disable('x-powered-by');
@@ -45,7 +45,7 @@ app.use(passport.session());
 app.use('/auth', auth);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 

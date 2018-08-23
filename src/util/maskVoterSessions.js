@@ -1,6 +1,6 @@
 const Users = require('../users');
 
-export default async (races, userId) => {
+module.exports = async (races, userId) => {
     races = JSON.parse(JSON.stringify(races));
 
     function getUserFromCandidate(candidate) {
