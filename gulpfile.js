@@ -14,11 +14,9 @@ var gulp = require('gulp'),
 
 gulp.task('run:js', function() {
     return gulp.src(jsGlob)
-        .pipe(sourcemaps.init())
         .pipe(babel({
-            presets: ['react', 'es2015'],
-            plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread', 'syntax-object-rest-spread'],
-            sourceMap: true
+            presets: ['react'],
+            plugins: ['transform-object-rest-spread', 'syntax-object-rest-spread', 'transform-class-properties']
         }))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist'));
