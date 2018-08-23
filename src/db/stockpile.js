@@ -65,17 +65,32 @@ class Stockpile {
     run (sql, ...params) {
         return this._queue('run', sql, params);
     }
-    buildInsertMap(data) {
+
+    /**
+     * Validates data and builds sql and an array to insert an arbitrary object into a database.
+     * @param data - object of column: values to be inserted in the database
+     * @param tableName - table name to validate all column names against
+     * @returns {{sql: string, values: Array}}
+     */
+    buildInsertMap(data, tableName) {
+        if (!tableName) {
+            throw new Error('must specify a table name for buildInsertMap to validate column names');
+        }
+        const validColumnNames = Object.keys(this.options.tables.find(t => t.name === tableName).columns);
         const columns = [],
             values = [];
         let valuePlaceholders = [];
         let index = 1;
         for (let i in data) {
-            if (data.hasOwnProperty(i)) {
+            const validColumn = validColumnNames.includes(i);
+            if (data.hasOwnProperty(i) && validColumn) {
                 columns.push(i);
                 values.push(data[i]);
                 valuePlaceholders.push('?');
                 index++;
+            }
+            else if (!validColumn) {
+                this.debug(`invalid column detected in buildInsertMap: "${i}", ignoring`);
             }
         }
         valuePlaceholders = valuePlaceholders.join(',');

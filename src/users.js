@@ -30,7 +30,7 @@ class Users extends StockPile{
                 profile_image: gProfile.photos[0].value,
                 raw: JSON.stringify(gProfile)
             },
-            prepared = this.buildInsertMap(data);
+            prepared = this.buildInsertMap(data, 'users');
 
         debug(`registering user "${data.display_name}" (${data.user_id}`);
 

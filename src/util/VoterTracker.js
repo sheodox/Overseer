@@ -1,5 +1,5 @@
 const Stockpile = require('../db/stockpile'),
-    valid = require('./validator').default;
+    valid = require('./validator');
 
 class VoterTracker extends Stockpile {
     constructor() {
@@ -53,7 +53,7 @@ class VoterTracker extends Stockpile {
     async addRace(race_name) {
         race_name = VoterTracker.cleanString(race_name);
         if (valid.name(race_name)) {
-            const insertMap = this.buildInsertMap({race_name});
+            const insertMap = this.buildInsertMap({race_name}, 'races');
             await this.run(`INSERT INTO races ${insertMap.sql}`, insertMap.values);
         }
     }
@@ -70,9 +70,9 @@ class VoterTracker extends Stockpile {
         candidate_name = VoterTracker.cleanString(candidate_name);
 
         //ensure we're not adding duplicates for this race
-        const existing = await this.get(`SELECT * FROM candidates WHERE race_id=? AND candidate_name=?`, race_id, candidate_name);
+        const existing = await this.get(`SELECT * FROM candidates WHERE race_id=? AND lower(candidate_name)=lower(?)`, race_id, candidate_name);
         if (valid.name(candidate_name) && !existing) {
-            const insertMap = this.buildInsertMap({ race_id, candidate_name, creator: user_id});
+            const insertMap = this.buildInsertMap({ race_id, candidate_name, creator: user_id}, 'candidates');
             await this.run(`INSERT INTO candidates ${insertMap.sql}`, insertMap.values);
         }
     }
@@ -90,7 +90,7 @@ class VoterTracker extends Stockpile {
         if (existingVote && existingVote.direction === direction) {
             return;
         }
-        const insertMap = this.buildInsertMap({ race_id, candidate_id, user_id, direction });
+        const insertMap = this.buildInsertMap({ race_id, candidate_id, user_id, direction }, 'votes');
         await this.run(`INSERT INTO votes ${insertMap.sql}`, insertMap.values);
     }
     async resetVotes(race_id) {

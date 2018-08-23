@@ -125,7 +125,7 @@ class GameTracker extends Stockpile {
      */
     async _save(game) {
         this._serialize(game);
-        const insertData = this.buildInsertMap(game);
+        const insertData = this.buildInsertMap(game, 'echo');
         await this.run(`INSERT OR REPLACE INTO echo ${insertData.sql}`, insertData.values);
         return game;
     }

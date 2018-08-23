@@ -23,7 +23,7 @@ module.exports = function(session) {
                     session: JSON.stringify(session),
                     accessed: Date.now()
                 },
-                insertData = this.buildInsertMap(data);
+                insertData = this.buildInsertMap(data, 'sessions');
             await this.run(`INSERT OR REPLACE INTO sessions ${insertData.sql}`, insertData.values);
         }
         async getSession(sid) {

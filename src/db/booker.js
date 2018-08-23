@@ -78,7 +78,7 @@ class Booker extends StockPile {
     }
     async assignRole(user_id, role_id) {
         if (role_id !== '') {
-            const data = this.buildInsertMap({role_id, user_id});
+            const data = this.buildInsertMap({role_id, user_id}, 'role_assignment');
             await this.run(`INSERT OR REPLACE INTO role_assignment ${data.sql}`, data.values);
         }
         //clear assignment
