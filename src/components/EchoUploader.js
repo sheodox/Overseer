@@ -2,7 +2,7 @@ const React = require('react'),
     reactRouter = require('react-router-dom'),
     Link = reactRouter.Link,
     Redirect = reactRouter.Redirect,
-    SVG = require('./SVG').default,
+    SVG = require('./SVG'),
     TagCloud = require('./TagCloud'),
     formatters = require('../util/formatters'),
     axios = require('axios'),
@@ -10,9 +10,10 @@ const React = require('react'),
     echoConduit = new Conduit(socket, 'echo'),
     beep = '/beeps.wav';
 
-module.exports = React.createClass({
-    getInitialState: function() {
-        return {
+class EchoUploader extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             echoServer: '',
             uploadAllowed: false,
             loaded: 0,
@@ -21,11 +22,11 @@ module.exports = React.createClass({
             toast: null,
             file: ''
         };
-    },
-    componentDidMount: function() {
+    }
+    componentDidMount() {
         App.title('Echo Uploader');
-    },
-    componentWillMount: function() {
+    }
+    componentWillMount() {
         echoConduit.on({
             refresh: data => {
                 this.setState(data);
@@ -33,11 +34,11 @@ module.exports = React.createClass({
         });
         echoConduit.emit('init');
         Banshee.load(beep);
-    },
-    componentWillUnmount: function() {
+    }
+    componentWillUnmount() {
         echoConduit.destroy();
-    },
-    upload: function(e) {
+    }
+    upload = (e) => {
         e.preventDefault();
 
         this.setState({
@@ -101,13 +102,13 @@ module.exports = React.createClass({
             }
         );
 
-    },
-    checkUploadAllowed: function() {
+    };
+    checkUploadAllowed () {
          this.setState({
              uploadAllowed: this.fileSelect.value && this.name.value
          })
-    },
-    onFileSelect: function(e) {
+    }
+    onFileSelect = (e) => {
         //file selections will give a value of C:\fakepath\Game Name.zip, trim the non-name bits
         const selectedGame = e.target.value.replace(/^C\:\\fakepath\\|.zip$/g, ''),
             existingGame = this.state.games.find(g => g.file === selectedGame);
@@ -125,13 +126,13 @@ module.exports = React.createClass({
             this.name.value = selectedGame;
         }
         this.checkUploadAllowed();
-    },
-    updateTags: function() {
+    };
+    updateTags = () => {
         if (this.cloud) {
             this.cloud.captureUsedTags();
         }
-    },
-    render: function() {
+    };
+    render() {
         if (!Booker.echo.upload) {
             return <Redirect to="/w/game-echo" />
         }
@@ -170,4 +171,6 @@ module.exports = React.createClass({
             </section>
         )
     }
-});
+}
+
+module.exports = EchoUploader;

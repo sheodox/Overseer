@@ -1,5 +1,5 @@
-import {BrowserRouter, Route, Redirect} from 'react-router-dom';
 const React = require('react'),
+    {BrowserRouter, Route, Redirect} = require('react-router-dom'),
     Header = require('./Header'),
     Banshee = require('./Banshee'),
     Toaster = require('./Toaster'),
@@ -26,8 +26,8 @@ class AppControl {
 }
 window.App = new AppControl();
 
-const App = React.createClass({
-    render: function() {
+class App extends React.Component {
+    render() {
         let content = <main className="content"><LoginRequired /></main>;
 
         if (user) {
@@ -69,7 +69,7 @@ const App = React.createClass({
             </BrowserRouter>
         )
     }
-});
+}
 
 
 module.exports = App;

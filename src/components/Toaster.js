@@ -1,28 +1,29 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import SVG from './SVG';
-const Conduit = require('../util/conduit');
+const React = require('react'),
+    {Link} = require('react-router-dom'),
+    SVG = require('./SVG'),
+    Conduit = require('../util/conduit');
 
 const notifyConduit = new Conduit(socket, 'notifications');
 
 const STALE_TOAST_CULL_MS = 5000;
 let toastGUID = 0;
 
-const Toaster = React.createClass({
-    getInitialState: function() {
-        return {
+class Toaster extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             messages: [],
             staleTimeouts: {}
         }
-    },
-    cullToast: function(id) {
+    }
+    cullToast(id) {
         const messages = this.state.messages
             .slice();
         messages.splice(messages.findIndex(o => o.id === id), 1);
 
         this.setState({messages});
-    },
-    componentDidMount: function() {
+    }
+    componentDidMount() {
         window.Toaster = {
             add: (props) => {
                 const queueCull = () => {
@@ -54,18 +55,18 @@ const Toaster = React.createClass({
             notification: (args) => {
                 window.Toaster.add(args);
             }})
-    },
-    render: function() {
+    }
+    render() {
         return (
             <div id="toaster">
                 {this.state.messages.map((p, i) => <Toast key={i} {...p} />)}
             </div>
         );
     }
-});
+}
 
-const Toast = React.createClass({
-    getDetailDom: function() {
+class Toast extends React.Component {
+    getDetailDom() {
         switch (this.props.type) {
             case 'text':
                 return (<p>{this.props.text}</p>);
@@ -80,8 +81,8 @@ const Toast = React.createClass({
                     <Link to={this.props.href}>{this.props.text}</Link>
                 );
         }
-    },
-    render: function() {
+    }
+    render() {
         return (
             <div className="toast">
                 <h1>{this.props.title}</h1>
@@ -89,6 +90,6 @@ const Toast = React.createClass({
             </div>
         );
     }
-});
+}
 
 module.exports = Toaster;

@@ -1,15 +1,16 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import SVG from './SVG';
+const React = require('react'),
+    {Link} = require('react-router-dom'),
+    SVG = require('./SVG');
 
-module.exports = React.createClass({
-    getInitialState: function() {
-        return {
+class Header extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             //don't want to flash red immediately, pretend it's connected
             socketConnected: true
         }
-    },
-    componentDidMount: function() {
+    }
+    componentDidMount() {
         socket.on('disconnect', () => {
             this.setState({
                 socketConnected: false
@@ -20,8 +21,8 @@ module.exports = React.createClass({
                 socketConnected: true
             });
         });
-    },
-    render: function() {
+    }
+    render() {
         return (
             <header className={this.state.socketConnected ? '' : 'disconnected'}>
                 <Link to="/">
@@ -39,4 +40,6 @@ module.exports = React.createClass({
         );
     }
 
-})
+}
+
+module.exports = Header;

@@ -1,9 +1,9 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import SVG from './SVG';
+const React = require('react'),
+    {Link} = require('react-router-dom'),
+    SVG = require('./SVG');
 
-module.exports = React.createClass({
-    render: function() {
+class Switchboard extends React.Component {
+    render() {
         return (
             <section className="switchboard">
                 {Booker.lights.use && <Panel route="/w/lights" name="Lights" svgID="light-icon" />}
@@ -13,13 +13,13 @@ module.exports = React.createClass({
             </section>
         );
     }
-});
+}
 
-const Panel = React.createClass({
+class Panel extends React.Component {
     componentDidMount() {
         App.title();
-    },
-    render: function() {
+    }
+    render() {
         return (
             <Link to={this.props.route}>
                 <section className="switch-panel panel">
@@ -29,4 +29,6 @@ const Panel = React.createClass({
             </Link>
         );
     }
-});
+}
+
+module.exports = Switchboard;

@@ -1,11 +1,11 @@
-import React from 'react';
-import SVG from './SVG';
+const React = require('react'),
+    SVG = require('./SVG');
 
-const LoginRequired = React.createClass({
-    storeReturnUrl: function() {
+class LoginRequired extends React.Component {
+    storeReturnUrl() {
         sessionStorage.setItem('auth-return-url', location.pathname);
-    },
-    render: function() {
+    }
+    render() {
         if (user) {
             return this.props.children;
         }
@@ -23,6 +23,6 @@ const LoginRequired = React.createClass({
             </section>
         )
     }
-});
+}
 
 module.exports = LoginRequired;

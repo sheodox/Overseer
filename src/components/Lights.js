@@ -1,16 +1,17 @@
-import React from 'react';
-import SVG from './SVG';
-const Conduit = require('../util/conduit');
-const lightsConduit = new Conduit(socket, 'lights');
-const {Redirect} = require('react-router-dom');
+const React = require('react'),
+    SVG = require('./SVG'),
+    Conduit = require('../util/conduit'),
+    lightsConduit = new Conduit(socket, 'lights'),
+    {Redirect} = require('react-router-dom');
 
 let cachedStates = [];
 
-const Lights = React.createClass({
-    getInitialState: function() {
-        return {states: cachedStates};
-    },
-    componentWillMount: function() {
+class Lights extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {states: cachedStates};
+    }
+    componentWillMount() {
         lightsConduit.on({
             refresh: states => {
                 cachedStates = states;
@@ -19,11 +20,11 @@ const Lights = React.createClass({
         });
         lightsConduit.emit('init');
         App.title('Lights');
-    },
-    componentWillUnmount: function() {
+    }
+    componentWillUnmount() {
         lightsConduit.destroy();
-    },
-    render: function() {
+    }
+    render() {
         if (!Booker.lights.use) {
             return <Redirect to="/" />;
         }
@@ -43,23 +44,24 @@ const Lights = React.createClass({
             </section>
         );
     }
-});
+}
 
-const LightGroup = React.createClass({
-    getInitialState: function() {
-        return {
+class LightGroup extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             detailsExpanded: false
         };
-    },
-    toggle: function() {
+    }
+    toggle = () => {
         lightsConduit.emit('toggle', this.props.id);
-    },
-    toggleDetails: function() {
+    };
+    toggleDetails = () => {
         this.setState({
             detailsExpanded: !this.state.detailsExpanded
         });
-    },
-    render: function() {
+    };
+    render() {
         let toggleClass = 'lg-toggle illuminated-target ' + (this.props.on ? 'on' : 'off'),
             expandedClass = this.state.detailsExpanded ? ' expanded' : '',
             detailsClass = 'lg-details' + expandedClass,
@@ -83,18 +85,19 @@ const LightGroup = React.createClass({
             </li>
         )
     }
-});
+}
 
-var BrightnessSlider = React.createClass({
-    getInitialState: function() {
-        return {
+class BrightnessSlider extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             //if the user is currently dragging the slider
             adjusting: false,
             //timeout for emitting updates to the server so we don't send updates for every change event (every tick sometimes)
             updateTimeout: null
         };
-    },
-    changeBrightness: function(e) {
+    }
+    changeBrightness = (e) => {
         //don't want to try to adjust the brightness on every increment
         if (!this.state.updateTimeout) {
             e.persist();
@@ -107,22 +110,22 @@ var BrightnessSlider = React.createClass({
                 }, 500)
             });
         }
-    },
-    startAdjust: function() {
+    };
+    startAdjust = () => {
         this.setState({adjusting: true});
-    },
-    stopAdjust: function() {
+    };
+    stopAdjust = () => {
         this.setState({adjusting: false});
-    },
-    shouldComponentUpdate: function(nextProps) {
+    };
+    shouldComponentUpdate(nextProps) {
         //don't try to re-render and set brightness again until the user is done messing with it and we have an update
         //allows brightness to be updated (and synced) by other clients without jankily setting the value while they're dragging
         return (this.props.brightness !== nextProps.brightness) && !this.state.adjusting;
-    },
-    componentDidUpdate: function() {
+    }
+    componentDidUpdate() {
         this.slider.value = this.props.brightness;
-    },
-    render: function() {
+    }
+    render() {
         var inputAttrs = {
                 type: 'range',
                 min: '0',
@@ -147,6 +150,6 @@ var BrightnessSlider = React.createClass({
             </div>
         )
     }
-});
+}
 
 module.exports = Lights;

@@ -2,10 +2,11 @@ const React = require('react');
 
 const audioClips = {};
 
-const Banshee = React.createClass({
-    getInitialState: function() {
-        return {soundPaths: []};
-    },
+class Banshee extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {soundPaths: []};
+    }
     componentWillMount() {
         window.Banshee = {
             load: path => {
@@ -21,8 +22,8 @@ const Banshee = React.createClass({
                 audio.play();
             }
         }
-    },
-    render: function() {
+    }
+    render() {
         const audios = this.state.soundPaths.map((path, index) => {
             return <audio key={index} src={path} preload="auto" ref={c => audioClips[path] = c} />
         });
@@ -32,6 +33,6 @@ const Banshee = React.createClass({
             </div>
         )
     }
-});
+}
 
 module.exports = Banshee;

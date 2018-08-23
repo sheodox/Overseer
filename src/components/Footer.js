@@ -1,17 +1,17 @@
 const React = require('react');
 
-const Footer = React.createClass({
-    render: function() {
+class Footer extends React.Component {
+    render() {
         return (
             <footer>
                 <UserData />
             </footer>
         );
     }
-});
+}
 
-const UserData = React.createClass({
-    render: function() {
+class UserData extends React.Component {
+    render() {
         if (!user) {
             return (<section />);
         }
@@ -32,6 +32,6 @@ const UserData = React.createClass({
             </section>
         );
     }
-});
+}
 
 module.exports = Footer;

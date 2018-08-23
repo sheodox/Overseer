@@ -1,25 +1,26 @@
 const React = require('react'),
     reactRouter = require('react-router-dom'),
     Link = reactRouter.Link,
-    SVG = require('./SVG').default,
+    SVG = require('./SVG'),
     TagCloud = require('./TagCloud'),
     UserBubble = require('./UserBubble'),
     formatters = require('../util/formatters'),
     Conduit = require('../util/conduit'),
     echoConduit = new Conduit(socket, 'echo');
 
-module.exports = React.createClass({
-    getInitialState: function () {
-        return {
+class GameDetails extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             file: this.props.match.params.file,
             fieldsUpdated: false,
             oldInfo: {}
         };
-    },
-    redirectToEcho: function() {
+    }
+    redirectToEcho = () => {
         this.props.history.push('/w/game-echo');
-    },
-    componentWillMount: function () {
+    };
+    componentWillMount() {
         echoConduit.on({
             refresh: data => {
                 const thisGame = data.games.find(game => {
@@ -60,11 +61,11 @@ module.exports = React.createClass({
             }
         });
         echoConduit.emit('init');
-    },
-    componentWillUnmount: function () {
+    }
+    componentWillUnmount() {
         echoConduit.destroy();
-    },
-    checkForChanges: function() {
+    }
+    checkForChanges = () => {
         if (this.cloud) {
             this.cloud.captureUsedTags();
         }
@@ -77,8 +78,8 @@ module.exports = React.createClass({
         this.setState({
             fieldsUpdated: somethingChanged
         });
-    },
-    saveChanges: function() {
+    };
+    saveChanges = () => {
         const changes = ['details', 'tags', 'name'].map(type => {
             return {field: type, value: this[type].value};
         });
@@ -86,16 +87,16 @@ module.exports = React.createClass({
         this.setState({
             fieldsUpdated: false
         });
-    },
-    delete: function() {
+    };
+    delete = () => {
         if(confirm(`Are you sure you want to delete ${this.state.name}?`)) {
             echoConduit.emit('delete', this.state.file);
         }
-    },
-    download: function () {
+    };
+    download = () => {
         echoConduit.emit('downloaded', this.state.file);
-    },
-    render: function() {
+    };
+    render() {
         const canEdit = Booker.echo.update,
             inputClass = 'control' + (!canEdit ? ' hidden' : ''),
             readonlyState = {readOnly: !canEdit},
@@ -174,4 +175,6 @@ module.exports = React.createClass({
             </section>
         )
     }
-});
+}
+
+module.exports = GameDetails;

@@ -1,20 +1,21 @@
-import React from 'react';
-const formatTags = require('../util/formatters').tags;
+const React = require('react'),
+    formatTags = require('../util/formatters').tags;
 
-const TagCloud = React.createClass({
-    getInitialState() {
-        return {
+class TagCloud extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             used: []
         }
-    },
+    }
     captureUsedTags (fallbackValue) {
         //safety for when we render before other components might be initialized
         const inputValue = (this.props.tagInput || {value: (fallbackValue || '')}).value.trim();
         this.setState({
             used: inputValue ? inputValue.split(',').map(tag => tag.trim()) : []
         });
-    },
-    tagClicked: function(tag) {
+    }
+    tagClicked = (tag) => {
         if (this.props.readOnly) {
             return;
         }
@@ -33,8 +34,8 @@ const TagCloud = React.createClass({
             this.props.tagClicked();
         }
         this.captureUsedTags();
-    },
-    render: function() {
+    };
+    render() {
         const existing = this.state.used,
             tags = (this.props.tags || []).map((tag, index) => {
                 const selected = existing.includes(tag);
@@ -52,6 +53,6 @@ const TagCloud = React.createClass({
             </div>
         )
     }
-});
+}
 
 module.exports = TagCloud;

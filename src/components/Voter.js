@@ -1,7 +1,7 @@
-import React from 'react';
-import SVG from './SVG';
-import {Redirect} from 'react-router-dom';
-const Conduit = require('../util/conduit'),
+const React = require('react'),
+    SVG = require('./SVG'),
+    {Redirect} = require('react-router-dom'),
+    Conduit = require('../util/conduit'),
     UserBubble = require('./UserBubble'),
     voterConduit = new Conduit(socket, 'voter'),
     voteWeights = {
@@ -13,11 +13,12 @@ let cachedState = {
     activeRace: null,
     races: []
 };
-const Voter = React.createClass({
-    getInitialState: function() {
-        return cachedState;
-    },
-    componentWillMount: function() {
+class Voter extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = cachedState;
+    }
+    componentWillMount() {
         voterConduit.on({
             refresh: races => {
                 cachedState.races = races;
@@ -36,11 +37,11 @@ const Voter = React.createClass({
         });
         voterConduit.emit('init');
         App.title('Voter');
-    },
-    componentWillUnmount: function() {
+    }
+    componentWillUnmount() {
         voterConduit.destroy();
-    },
-    switchRace: function(id) {
+    }
+    switchRace = (id) => {
         const race = this.state.races.find(race => {
             return race.race_id === id;
         });
@@ -48,8 +49,8 @@ const Voter = React.createClass({
         this.setState({
             activeRace: race
         });
-    },
-    render: function() {
+    };
+    render() {
         if (!Booker.voter.view) {
             return <Redirect to="/" />;
         }
@@ -69,35 +70,35 @@ const Voter = React.createClass({
             </section>
         );
     }
-});
+}
 
-const RaceList = React.createClass({
-    componentDidMount: function() {
+class RaceList extends React.Component {
+    componentDidMount() {
         this.updateRaceSelection();
-    },
-    componentDidUpdate: function() {
+    }
+    componentDidUpdate() {
         this.updateRaceSelection();
-    },
-    updateRaceSelection: function() {
+    }
+    updateRaceSelection() {
         if (this.props.activeRace) {
             this.select.value = this.props.activeRace.race_id;
         }
-    },
-    newRaceKeyDown: function(e) {
+    }
+    newRaceKeyDown = (e) => {
         if (e.which === 13) {
             voterConduit.emit('newRace', e.target.value);
             e.target.value = '';
         }
-    },
-    switchRace: function() {
+    };
+    switchRace = () => {
         this.props.switchRace(parseInt(this.select.value, 10));
-    },
-    removeRace: function() {
+    };
+    removeRace = () => {
         if (confirm(`Really remove ${this.props.activeRace.race_name}?`)) {
             voterConduit.emit('removeRace', this.props.activeRace.race_id);
         }
-    },
-    render: function() {
+    };
+    render() {
         const races = this.props.races.map((race, index) => {
                 return <option value={race.race_id} key={index}>{race.race_name}</option>
             }),
@@ -127,17 +128,19 @@ const RaceList = React.createClass({
             </div>
         );
     }
-});
+}
 
-const CandidateList = React.createClass({
-    getInitialState: function() {
-        return {
+class CandidateList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             candidates: this.getSortedCandidates(this.props),
             canSort: true,
             sortQueued: false
-        }
-    },
-    getSortedCandidates: function(props) {
+        };
+
+    }
+    getSortedCandidates(props) {
         function weightedVotes(up, down) {
             up = up.length;
             down = down.length;
@@ -146,8 +149,8 @@ const CandidateList = React.createClass({
         return props.candidates.sort((a, b) => {
             return weightedVotes(b.votedUp, b.votedDown) - weightedVotes(a.votedUp, a.votedDown);
         })
-    },
-    componentWillReceiveProps: function(nextProps) {
+    }
+    componentWillReceiveProps(nextProps) {
         //allow immediate sorting and resetting candidates if the they're not trying to vote or if the active race changes
         if (this.state.canSort || this.props.name !== nextProps.name) {
             this.sortAndSetState(nextProps);
@@ -193,19 +196,19 @@ const CandidateList = React.createClass({
                 candidates: updatedCandidates.concat(newCandidates)
             })
         }
-    },
-    sortAndSetState: function(props) {
+    }
+    sortAndSetState(props) {
         props = props || this.props;
         this.setState({
             candidates: this.getSortedCandidates(props)
         });
-    },
-    lockSorting: function() {
+    }
+    lockSorting = () => {
         this.setState({
             canSort: false
         });
-    },
-    unlockSorting: function() {
+    };
+    unlockSorting = () => {
         if (this.state.sortQueued) {
             this.sortAndSetState();
         }
@@ -213,11 +216,11 @@ const CandidateList = React.createClass({
             canSort: true,
             sortQueued: false
         });
-    },
-    resetVotes: function() {
+    };
+    resetVotes = () => {
         voterConduit.emit('resetVotes', this.props.race_id);
-    },
-    render: function() {
+    };
+    render() {
         const self = this,
             maxVotes = this.state.candidates.reduce((prev, two) => {
                 const sum = a => a.votedUp.length + a.votedDown.length;
@@ -256,16 +259,19 @@ const CandidateList = React.createClass({
             </div>
         )
     }
-});
+}
 
-const NewCandidate = React.createClass({
-    onKeyDown: function(e) {
+class NewCandidate extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    onKeyDown = (e) => {
         if (e.which === 13) {
             this.props.newCandidate(this.input.value);
             this.input.value = '';
         }
-    },
-    render: function() {
+    };
+    render() {
         const inputId = 'voter-new-candidate';
 
         if (!Booker.voter.add_candidate) {
@@ -279,22 +285,22 @@ const NewCandidate = React.createClass({
             </div>
         );
     }
-});
+}
 
-const Candidate = React.createClass({
-    voteUp: function() {
+class Candidate extends React.Component {
+    voteUp = () => {
         this.props.toggleVoteUp();
-    },
-    voteDown: function() {
+    };
+    voteDown = () => {
         this.props.toggleVoteDown();
-    },
-    getImages: function(voters) {
+    };
+    getImages(voters) {
         return voters
             .map((voter, i) => {
                 return <UserBubble key={i} user={voter} />
             });
-    },
-    render: function() {
+    }
+    render() {
         const voters = `${this.props.candidate_name}\nAdded by: ${this.props.creator}`,
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
             votedUp = this.props.votedUp.length,
@@ -330,6 +336,6 @@ const Candidate = React.createClass({
             </div>
         )
     }
-});
+}
 
 module.exports = Voter;

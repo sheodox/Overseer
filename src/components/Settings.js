@@ -1,10 +1,10 @@
-import React from 'react';
-import SVG from './SVG';
-const Conduit = require('../util/conduit'),
+const React = require('react'),
+    SVG = require('./SVG'),
+    Conduit = require('../util/conduit'),
     settingsConduit = new Conduit(socket, 'settings');
 
-const Settings = React.createClass({
-    render: function() {
+class Settings extends React.Component {
+    render() {
         return (
             <section className="panel">
                 <div className="panel-title">
@@ -17,6 +17,6 @@ const Settings = React.createClass({
             </section>
         )
     }
-});
+}
 
 module.exports = Settings;

@@ -1,7 +1,7 @@
-import React from 'react';
-import SVG from './SVG';
-const formatters = require('../util/formatters'),
-    reactRouter =require('react-router-dom'),
+const React = require('react'),
+    SVG = require('./SVG'),
+    formatters = require('../util/formatters'),
+    reactRouter = require('react-router-dom'),
     TagCloud = require('./TagCloud'),
     Link = reactRouter.Link,
     Conduit = require('../util/conduit'),
@@ -10,11 +10,12 @@ const formatters = require('../util/formatters'),
 //cache the state so we can use this state every time we re-mount to prevent jitter as it does a proper refresh of the list
 let cachedState = {filteredGames: null, diskUsage: {total: 0, used: 0}, echoConnected: false, games: [], echoServer: '', search: ''};
 
-const Games = React.createClass({
-    getInitialState: function() {
-        return cachedState;
-    },
-    componentWillMount: function() {
+class Games extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = cachedState;
+    }
+    componentWillMount() {
         echoConduit.on({
             refresh: data => {
                 cachedState = data;
@@ -23,20 +24,20 @@ const Games = React.createClass({
         });
         echoConduit.emit('init');
         App.title('Game Echo');
-    },
-    componentWillUnmount: function() {
+    }
+    componentWillUnmount() {
         echoConduit.destroy();
         cachedState = this.state;
-    },
-    componentDidMount: function() {
+    }
+    componentDidMount() {
         this.searchField.value = this.state.search;
         this.cloud.captureUsedTags(this.state.search);
-    },
-    clearSearch() {
+    }
+    clearSearch = () => {
         this.searchField.value = '';
         this.search();
-    },
-    search: function() {
+    };
+    search = () => {
         const text = this.searchField.value.trim();
         this.cloud.captureUsedTags();
         let filteredGames = null;
@@ -77,8 +78,8 @@ const Games = React.createClass({
             search: text,
             filteredGames
         })
-    },
-    render: function() {
+    };
+    render() {
         const games = (this.state.filteredGames || this.state.games).map((game, index) => {
                 return <Game {...game} echoConnected={this.state.echoConnected} echoServer={this.state.echoServer} key={index} />
             }),
@@ -130,10 +131,10 @@ const Games = React.createClass({
             </section>
         );
     }
-});
+}
 
-const DiskUsage = React.createClass({
-    render: function() {
+class DiskUsage extends React.Component {
+    render() {
         if (!this.props.total) {
             return <div />
         }
@@ -145,15 +146,15 @@ const DiskUsage = React.createClass({
             </div>
         );
     }
-});
+}
 
-const Game = React.createClass({
-    download: function () {
+class Game extends React.Component {
+    download = () => {
         if (Booker.echo.download) {
             echoConduit.emit('downloaded', this.props.file);
         }
-    },
-    render: function() {
+    };
+    render() {
         const size = this.props.in_progress ? '??' : formatters.bytes(this.props.size, 'gb') + ' gb',
             tags = (this.props.tags && this.props.tags.length) ? this.props.tags.join(', ') : 'none!',
             relevancyPercent = (this.props.relevancy * 100).toFixed(0),
@@ -181,6 +182,6 @@ const Game = React.createClass({
             </tr>
         )
     }
-});
+}
 
 module.exports = Games;

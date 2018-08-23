@@ -4,11 +4,12 @@ const React = require('react'),
 const socket = io(),
     adminConduit = new Conduit(socket, 'admin');
 
-const Admin = React.createClass({
-    getInitialState: function() {
-        return {}
-    },
-    componentDidMount: function() {
+class Admin extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
+    componentDidMount() {
         adminConduit.emit('init');
         adminConduit.on({
             refresh: data => {
@@ -16,8 +17,8 @@ const Admin = React.createClass({
                 this.setState(data);
             }
         });
-    },
-    render: function() {
+    }
+    render() {
         const bookers = [];
         for (let bookerModule in this.state) {
             if (this.state.hasOwnProperty(bookerModule)) {
@@ -30,17 +31,17 @@ const Admin = React.createClass({
             <div>{bookers}</div>
         );
     }
-});
+}
 
-const BookerConfig = React.createClass({
-    newRole: function(e) {
+class BookerConfig extends React.Component {
+    newRole(e) {
         const roleName = e.target.value;
         if (roleName && e.which === 13) {
             adminConduit.emit('new-role', this.props.module, roleName);
             e.target.value = '';
         }
-    },
-    render: function() {
+    }
+    render() {
         let headers = [],
             rows = [],
             assignments = [];
@@ -90,19 +91,19 @@ const BookerConfig = React.createClass({
             </div>
         )
     }
-});
+}
 
-const RoleAssignments = React.createClass({
-    componentDidMount: function() {
+class RoleAssignments extends React.Component {
+    componentDidMount() {
         if (this.props.assignment) {
             this.roleSelect.value = this.props.assignment.role_id;
         }
-    },
-    assignRole: function(e) {
+    }
+    assignRole(e) {
         const newRole = this.roleSelect.value;
         adminConduit.emit('assign-role', this.props.module, this.props.user_id, newRole);
-    },
-    render: function() {
+    }
+    render() {
         const options = [{name: '', role_id: ''}, ...this.props.roles].map((role, i) => {
             return <option key={i} value={role.role_id}>{role.name}</option>;
         });
@@ -113,15 +114,15 @@ const RoleAssignments = React.createClass({
             </tr>
         );
     }
-});
+}
 
-const RoleActions = React.createClass({
-    toggleAction: function(e) {
+class RoleActions extends React.Component {
+    toggleAction(e) {
         const action = e.target.getAttribute('data-action');
         console.log(`toggle ${action}`);
         adminConduit.emit('toggle-action', this.props.module, this.props.roleData.role_id, action);
-    },
-    render: function() {
+    }
+    render() {
         const cells = this.props.actions.map((action, index) => {
             //name is text, all others are booleans
             if (action === 'name') {
@@ -136,7 +137,7 @@ const RoleActions = React.createClass({
                 {cells}
             </tr>)
     }
-});
+}
 
 ReactDOM.render(
     <Admin />,
