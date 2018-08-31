@@ -49,7 +49,7 @@ $shading: 0 0 0.05rem 0.05rem material-color('grey', '900'),
         animation: pop 0.06s ease-out forwards,
             glow 2s ease-in-out infinite alternate;
         h2 {
-            animation: glitch-flash 0.1s;
+            animation: glitch-flash-small 0.1s;
         }
     }
 
