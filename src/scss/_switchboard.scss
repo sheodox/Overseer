@@ -1,4 +1,5 @@
 @import 'colors';
+@import 'mixins';
 
 .switchboard {
     display: flex;
@@ -47,6 +48,9 @@ $shading: 0 0 0.05rem 0.05rem material-color('grey', '900'),
     &:hover {
         animation: pop 0.06s ease-out forwards,
             glow 2s ease-in-out infinite alternate;
+        h2 {
+            animation: glitch-flash 0.1s;
+        }
     }
 
     a {
