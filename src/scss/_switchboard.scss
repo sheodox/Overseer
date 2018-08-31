@@ -12,7 +12,7 @@
         transform: scale(1);
     }
     to {
-        transform: scale(1.1);
+        transform: scale(1.02);
     }
 }
 
@@ -45,7 +45,7 @@ $shading: 0 0 0.05rem 0.05rem material-color('grey', '900'),
     box-shadow: #{$shading};
 
     &:hover {
-        animation: pop 0.1s ease-out forwards,
+        animation: pop 0.06s ease-out forwards,
             glow 2s ease-in-out infinite alternate;
     }
 
