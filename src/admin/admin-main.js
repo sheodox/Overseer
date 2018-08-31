@@ -99,10 +99,10 @@ class RoleAssignments extends React.Component {
             this.roleSelect.value = this.props.assignment.role_id;
         }
     }
-    assignRole(e) {
+    assignRole = (e) => {
         const newRole = this.roleSelect.value;
         adminConduit.emit('assign-role', this.props.module, this.props.user_id, newRole);
-    }
+    };
     render() {
         const options = [{name: '', role_id: ''}, ...this.props.roles].map((role, i) => {
             return <option key={i} value={role.role_id}>{role.name}</option>;
@@ -117,11 +117,11 @@ class RoleAssignments extends React.Component {
 }
 
 class RoleActions extends React.Component {
-    toggleAction(e) {
+    toggleAction = (e) => {
         const action = e.target.getAttribute('data-action');
         console.log(`toggle ${action}`);
         adminConduit.emit('toggle-action', this.props.module, this.props.roleData.role_id, action);
-    }
+    };
     render() {
         const cells = this.props.actions.map((action, index) => {
             //name is text, all others are booleans
