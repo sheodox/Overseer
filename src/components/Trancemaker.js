@@ -4,9 +4,10 @@ class Trancemaker {
     constructor() {
         const iw = window.innerWidth,
             ih = window.innerHeight;
-        this.spawnInterval = 10;
-        this.meshTTL = 5000;
+        this.spawnInterval = 5;
+        this.meshTTL = 1000;
         this.fadeInterval = 300;
+        this.colorRotationInterval = 5000;
 
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, iw / ih, 0.1, 1000);
@@ -15,12 +16,30 @@ class Trancemaker {
         this.renderer.setClearColor(0x303138);
         document.body.appendChild(this.renderer.domElement);
 
-        const light = new THREE.SpotLight(0xffffff);
-        light.position.y = -20;
+        const light = new THREE.PointLight(0xffffff);
+        // light.position.y = -20;
         this.scene.add(light);
 
         this.cubeGeometry = new THREE.BoxGeometry( 1, 1, 1 );
-        this.colors = [0xd81b60, 0x00bcd4];
+        const pink = 0xd81b60,
+            cyan = 0x00bcd4,
+            mint =  0x00ff48,
+            yellow = 0xffff00,
+            orange = 0xff8800,
+            red = 0xff0000;
+        const colorSets = [
+            [pink, cyan],
+            [mint, cyan],
+            [mint, yellow],
+            [yellow, orange],
+            [red, pink]
+        ];
+        const rotateColor = () => {
+            this.colors = Trancemaker.random(colorSets);
+        };
+        setInterval(rotateColor, this.colorRotationInterval);
+        rotateColor();
+
         this.meshes = [];
 
         this.camera.position.z = 5;
@@ -56,9 +75,11 @@ class Trancemaker {
         this.meshes.push(cube);
         this.scene.add(cube);
 
-        cube.position.x += Trancemaker.random(15, true) - 7.5;
-        cube.position.y += Trancemaker.random(15, true) - 7.5;
-        cube.position.z += Trancemaker.random(15, true) - 15;
+        cube.position.set(
+            Trancemaker.random(15, true) - 7.5,
+            Trancemaker.random(15, true) - 7.5,
+            Trancemaker.random(15, true) - 15
+        );
 
         function randomRotation() {
             const rotationFactorMax = 0.02;
