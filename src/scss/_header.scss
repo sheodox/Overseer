@@ -5,7 +5,6 @@ header {
     margin: 0 0 1rem 0;
     padding: 2rem 0;
     position: relative;
-    background: $neon2;
     text-align: center;
 
     &.disconnected {
@@ -47,6 +46,9 @@ header {
         transform: translateY(25%);
         text-shadow: 0.2rem -0.2rem 0 $accent-purple;
         font-family: 'Ceviche One', sans-serif;
+        &:hover {
+            text-shadow: 0.2rem -0.2rem 0 $accent-pink;
+        }
 
         a {
             text-decoration: none;
