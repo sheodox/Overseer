@@ -29,8 +29,8 @@ class Trancemaker {
             requestAnimationFrame(animate);
             this.renderer.render(this.scene, this.camera);
             this.meshes.forEach(mesh => {
-                mesh.rotation.x += 0.01;
-                mesh.rotation.y += 0.01;
+                mesh.rotation.x += mesh.xRotationFactor;
+                mesh.rotation.y += mesh.yRotationFactor;
             });
         };
         animate();
@@ -59,6 +59,13 @@ class Trancemaker {
         cube.position.x += Trancemaker.random(15, true) - 7.5;
         cube.position.y += Trancemaker.random(15, true) - 7.5;
         cube.position.z += Trancemaker.random(15, true) - 15;
+
+        function randomRotation() {
+            const rotationFactorMax = 0.02;
+            return Trancemaker.random(rotationFactorMax * 2, true) - rotationFactorMax;
+        }
+        cube.xRotationFactor = randomRotation();
+        cube.yRotationFactor = randomRotation();
 
         material.opacity = 0.5;
         setTimeout(() => {
