@@ -17,6 +17,12 @@ header {
 
     .content-container {
         display: inline-block;
+        &:hover {
+            h1 {
+                animation: glitch-flash 0.1s;
+                text-shadow: 0.2rem -0.2rem 0 $accent-pink;
+            }
+        }
     }
 
     svg, h1 {
@@ -41,18 +47,35 @@ header {
         font-size: 4rem;
         color: white;
         position: relative;
-        text-transform: lowercase;
+        text-transform: uppercase;
         margin: 0 0 0 6rem;
         transform: translateY(25%);
         text-shadow: 0.2rem -0.2rem 0 $accent-purple;
         font-family: 'Ceviche One', sans-serif;
-        &:hover {
-            text-shadow: 0.2rem -0.2rem 0 $accent-pink;
-        }
 
         a {
             text-decoration: none;
             color: inherit;
         }
+    }
+}
+
+@keyframes glitch-flash {
+    0% {
+        clip-path: polygon(84% 93%, 88% 60%, 100% 43%, 62% 53%, 74% 91%, 42% 83%, 23% 62%, 65% 9%, 39% 52%);
+        text-shadow: 0.2rem -0.3rem 0 $accent-pink;
+    }
+    25% {
+        clip-path: polygon(1% 9%, 96% 5%, 73% 94%, 34% 82%, 32% 62%, 10% 100%, 55% 69%, 82% 35%, 18% 64%, 6% 24%);
+        text-shadow: -0.2rem -0.1rem 0 $accent-cyan;
+        color: $accent-red;
+    }
+    50% {
+        clip-path: polygon(92% 14%, 75% 49%, 92% 81%, 34% 56%, 74% 91%, 34% 69%, 20% 62%, 2% 30%, 65% 54%);
+        text-shadow: 0.4rem -0.3rem 0 $accent-purple;
+        color: $accent-mint;
+    }
+    75% {
+        clip-path: polygon(84% 93%, 96% 99%, 70% 6%, 41% 38%, 74% 91%, 45% 64%, 25% 13%, 2% 30%, 70% 28%);
     }
 }
