@@ -69,7 +69,7 @@ class Trancemaker {
     }
     spawnMesh() {
         const color = Trancemaker.random(this.colors),
-            material = new THREE.MeshLambertMaterial({color}),
+            material = new THREE.MeshBasicMaterial({color}),
             cube = new THREE.Mesh(this.cubeGeometry, material);
         material.transparent = true;
         this.meshes.push(cube);
