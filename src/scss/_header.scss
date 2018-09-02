@@ -19,7 +19,7 @@ header {
         display: inline-block;
         &:hover {
             h1 {
-                animation: glitch-flash 0.1s;
+                animation: chromatic-aberration 0.1s;
                 text-shadow: 0.2rem -0.2rem 0 $accent-pink;
             }
         }
@@ -60,30 +60,3 @@ header {
     }
 }
 
-@keyframes glitch-flash {
-    0% {
-        text-shadow: 2.1rem -0.6rem 0 $accent-cyan;
-    }
-    25% {
-        text-shadow: -1.3rem 0.9rem 0 $accent-pink;
-        color: $accent-red;
-    }
-    50% {
-        color: $accent-mint;
-        text-shadow: -0.5rem -0.7rem 0 $accent-cyan;
-    }
-}
-
-@keyframes glitch-flash-small {
-    0% {
-        text-shadow: 0.8rem -0.6rem 0 $accent-cyan;
-    }
-    25% {
-        text-shadow: -0.4rem 0.3rem 0 $accent-pink;
-        color: $accent-red;
-    }
-    50% {
-        color: $accent-mint;
-        text-shadow: -0.5rem -0.2rem 0 $accent-cyan;
-    }
-}

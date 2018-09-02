@@ -101,7 +101,7 @@
     }
 }
 
-@keyframes glitch-flash {
+@keyframes chromatic-aberration {
     0% {
         text-shadow: 2.1rem -0.6rem 0 $accent-cyan;
     }
@@ -112,5 +112,19 @@
     50% {
         color: $accent-mint;
         text-shadow: -0.5rem -0.7rem 0 $accent-cyan;
+    }
+}
+
+@keyframes chromatic-aberration-small {
+    0% {
+        text-shadow: 0.8rem -0.6rem 0 $accent-cyan;
+    }
+    25% {
+        text-shadow: -0.4rem 0.3rem 0 $accent-pink;
+        color: $accent-red;
+    }
+    50% {
+        color: $accent-mint;
+        text-shadow: -0.5rem -0.2rem 0 $accent-cyan;
     }
 }
