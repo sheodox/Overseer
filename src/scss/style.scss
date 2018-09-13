@@ -24,13 +24,13 @@
     width: 100vw;
     height: 100vh;
 }
-#bg-overlay-texture {
-    opacity: 0.4;
-    background-image: url('/bg-tile.png');
-}
-#bg-overlay-fade {
-    background: radial-gradient(transparent 0, $background 70%);
-}
+//#bg-overlay-texture {
+//    opacity: 0.4;
+//    background-image: url('/bg-tile.png');
+//}
+//#bg-overlay-fade {
+//    background: radial-gradient(transparent 0, $background 70%);
+//}
 
 #svg-source {
     display: none;

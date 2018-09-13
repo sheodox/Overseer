@@ -1,59 +1,87 @@
-const THREE = require('three');
+const THREE = require('three'),
+    twopi = 2 * Math.PI;
+
 
 class Trancemaker {
     constructor() {
         const iw = window.innerWidth,
-            ih = window.innerHeight;
-        this.spawnInterval = 5;
-        this.meshTTL = 1000;
-        this.fadeInterval = 300;
+            ih = window.innerHeight,
+            aspect = iw/ih;
         this.colorRotationInterval = 5000;
+        this.colorFadeTime = 1000;
 
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, iw / ih, 0.1, 1000);
+        const d = 3;
+        this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(iw, ih);
         this.renderer.setClearColor(0x303138);
         document.body.appendChild(this.renderer.domElement);
 
         const light = new THREE.PointLight(0xffffff);
-        // light.position.y = -20;
+        light.position.x = 15;
+        light.position.y = 15;
+        light.position.z = 30;
         this.scene.add(light);
 
-        this.cubeGeometry = new THREE.BoxGeometry( 1, 1, 1 );
         const pink = 0xd81b60,
             cyan = 0x00bcd4,
             mint =  0x00ff48,
             yellow = 0xffff00,
             orange = 0xff8800,
             red = 0xff0000;
-        const colorSets = [
-            [pink, cyan],
-            [mint, cyan],
-            [mint, yellow],
-            [yellow, orange],
-            [red, pink]
-        ];
-        const rotateColor = () => {
-            this.colors = Trancemaker.random(colorSets);
-        };
-        setInterval(rotateColor, this.colorRotationInterval);
-        rotateColor();
+        this.colors = [pink, cyan, mint, yellow, orange, red];
 
         this.meshes = [];
 
         this.camera.position.z = 5;
+        this.camera.position.x = 15;
+        this.camera.position.y = 20;
+
+        this.camera.rotation.x = twopi / 12;
+        this.camera.rotation.y = twopi / 12;
+        this.camera.updateProjectionMatrix();
+
+        this.uniforms = {
+            delta: {type: 'f', value: 0},
+            uExistingColor: {value: this.randomColor()},
+            uNewColor: {value: this.randomColor()},
+            lightPos: {value: new THREE.Vector3(0, 20, 0)},
+            uColorFadeTime: {type: 'f', value: this.colorFadeTime},
+            uColorFadeCompletion: {type: 'f', value: this.colorFadeTime},
+            uResolution: {value: new THREE.Vector3(iw, ih, 1)}
+        };
+
+        let nextColorChange = 0;
+        const setU = (uniformName, value) => {
+            this.uniforms[uniformName].value = value;
+        };
+        const getU = (uniformName) => {
+            return this.uniforms[uniformName].value;
+        };
+        const updateUniforms = () => {
+            setU('delta', Date.now() / 1000 % 100);
+            const now = Date.now();
+            if (now > nextColorChange) {
+                setU('uExistingColor', getU('uNewColor'));
+                setU('uNewColor', this.randomColor());
+                nextColorChange = now + this.colorRotationInterval;
+            }
+            let timeUntilChange = nextColorChange - now;
+            setU('uColorFadeCompletion', 1 - (timeUntilChange / this.colorFadeTime));
+        };
+        updateUniforms();
 
         const animate = () => {
             requestAnimationFrame(animate);
+            updateUniforms();
             this.renderer.render(this.scene, this.camera);
-            this.meshes.forEach(mesh => {
-                mesh.rotation.x += mesh.xRotationFactor;
-                mesh.rotation.y += mesh.yRotationFactor;
-            });
         };
         animate();
-        setInterval(this.spawnMesh.bind(this), this.spawnInterval);
+        this.spawnMesh();
+    }
+    randomColor() {
+        return new THREE.Color(Trancemaker.random(this.colors));
     }
     static random(thing, asFloat) {
         if (Array.isArray(thing)) {
@@ -67,40 +95,85 @@ class Trancemaker {
             return Math.random() * thing;
         }
     }
-    spawnMesh() {
-        const color = Trancemaker.random(this.colors),
-            material = new THREE.MeshBasicMaterial({color}),
-            cube = new THREE.Mesh(this.cubeGeometry, material);
-        material.transparent = true;
-        this.meshes.push(cube);
-        this.scene.add(cube);
+    createLowPolyGeometry() {
+        const max = 30,
+            geo = new THREE.Geometry(),
+            vertsTable = [];
 
-        cube.position.set(
-            Trancemaker.random(15, true) - 7.5,
-            Trancemaker.random(15, true) - 7.5,
-            Trancemaker.random(15, true) - 15
-        );
+        for (let i = 0; i < max; i++) {
+            vertsTable[i] = [];
+            for (let j = 0; j < max; j++) {
+                const vertex = new THREE.Vector3(i, j, Trancemaker.random(1, true) - 0.75),
+                    index = geo.vertices.length;
 
-        function randomRotation() {
-            const rotationFactorMax = 0.02;
-            return Trancemaker.random(rotationFactorMax * 2, true) - rotationFactorMax;
+                geo.vertices.push(vertex);
+                vertsTable[i][j] = {vertex, index};
+            }
         }
-        cube.xRotationFactor = randomRotation();
-        cube.yRotationFactor = randomRotation();
 
-        material.opacity = 0.5;
-        setTimeout(() => {
-            material.opacity = 1;
-        }, this.fadeInterval);
+        function getVertexNumber(i, j) {
+            return vertsTable[i][j].index;
+        }
+        for (let i = 0; i+1 < max; i++) {
+            for (let j = 0; j+1 < max; j++) {
+                geo.faces.push(
+                    new THREE.Face3(
+                        getVertexNumber(i + 1, j),
+                        getVertexNumber(i, j + 1),
+                        getVertexNumber(i, j)
+                    ),
+                    new THREE.Face3(
+                        getVertexNumber(i + 1, j),
+                        getVertexNumber(i + 1, j + 1),
+                        getVertexNumber(i, j + 1)
+                    )
+                );
+            }
+        }
+        geo.computeBoundingSphere();
+        geo.computeFaceNormals();
 
-        setTimeout(() => {
-            material.opacity = 0.5;
+        return geo;
+    }
+    spawnMesh() {
+        const material = new THREE.ShaderMaterial({
+                uniforms: this.uniforms,
+                vertexShader: `
+                    varying vec4 vNormal;
+                    uniform float delta;
 
-            setTimeout(() => {
-                this.meshes.splice(this.meshes.indexOf(cube), 1);
-                this.scene.remove(cube);
-            }, this.fadeInterval);
-        }, this.meshTTL - this.fadeInterval);
+                    void main() {
+                        vec3 newPos = vec3(position.xy, 0.3 * sin((delta * 4.0 * position.x * position.y) / 500.0));
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
+                        vNormal = vec4(normal, 1.0) * viewMatrix * modelMatrix;
+                    }`,
+                fragmentShader: `
+                    uniform vec3 uExistingColor;
+                    uniform vec3 uNewColor;
+                    uniform float delta;
+                    uniform float uColorFadeTime;
+                    uniform float uColorFadeCompletion;
+                    uniform vec3 uResolution;
+                    varying vec4 vNormal;
+
+                    void main() {
+                        //time delta shifting the color a bit
+                        float damper = 0.15;
+                        vec3 deltaOffset = abs(vec3(sin(delta * vNormal.x) * damper, sin(delta * vNormal.y) * damper, sin(delta * vNormal.z) * damper));
+                        
+                        //changing colors over time bit by bit
+                        //compute strength of new color
+                        float changeThreshold = (gl_FragCoord.x / uResolution.x) * ((uResolution.y - gl_FragCoord.y) / uResolution.y);
+                        float strength = clamp(uColorFadeCompletion / changeThreshold, 0.0, 1.0);
+                        
+                        vec3 c = mix(uExistingColor, uNewColor, strength);
+                        
+                        gl_FragColor = vec4(c - deltaOffset, 1.0);
+                    }`
+            }),
+            mesh = new THREE.Mesh(this.createLowPolyGeometry(), material);
+        this.meshes.push(mesh);
+        this.scene.add(mesh);
     }
 }
 
