@@ -26,10 +26,10 @@ class Trancemaker {
 
         const pink = 0xd81b60,
             cyan = 0x00bcd4,
-            mint =  0x00ff48,
+            mint =  0x33bc2f,
             yellow = 0xffff00,
             orange = 0xff8800,
-            red = 0xff0000;
+            red = 0xcc0000;
         this.colors = [pink, cyan, mint, yellow, orange, red];
 
         this.meshes = [];
