@@ -40,6 +40,7 @@ class Trancemaker {
         this.camera.rotation.y = twopi / 12;
         this.camera.updateProjectionMatrix();
 
+        //base uniforms, updated every frame with updateUniforms()
         this.uniforms = {
             delta: {type: 'f', value: 0},
             uExistingColor: {value: this.randomColor()},
@@ -56,6 +57,12 @@ class Trancemaker {
         };
 
         let nextColorChange = 0;
+        /**
+         * set or get a uniform
+         * @param uniformName
+         * @param [value]
+         * @returns {*}
+         */
         const uniform = (uniformName, value) => {
             if (typeof value !== 'undefined') { //set
                 this.uniforms[uniformName].value = value;
@@ -93,6 +100,8 @@ class Trancemaker {
             else {
                 uniform('uShiftYInterval', 0);
                 uniform('uShiftXInterval', 0);
+
+                //possibly glitch next frame
                 if (!Trancemaker.random(1000)) {
                     glitchUntil = now + Trancemaker.random(1000);
                 }
