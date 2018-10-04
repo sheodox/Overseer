@@ -7,7 +7,9 @@ class Trancemaker {
         const iw = window.innerWidth,
             ih = window.innerHeight,
             aspect = iw/ih;
+        //how often the color is randomized
         this.colorRotationInterval = 60 * 1000;
+        //how often it takes to transition to the new color
         this.colorFadeTime = 1000;
 
         this.scene = new THREE.Scene();
@@ -24,6 +26,7 @@ class Trancemaker {
         light.position.z = 30;
         this.scene.add(light);
 
+        //cool colors to use
         const pink = 0xd81b60,
             cyan = 0x00bcd4,
             mint =  0x33bc2f,
@@ -40,7 +43,7 @@ class Trancemaker {
         this.camera.rotation.y = twopi / 12;
         this.camera.updateProjectionMatrix();
 
-        //base uniforms, updated every frame with updateUniforms()
+        //base uniforms, updated every frame with updateUniforms(), anything dynamic should be changed there
         this.uniforms = {
             delta: {type: 'f', value: 0},
             uExistingColor: {value: this.randomColor()},
@@ -55,10 +58,8 @@ class Trancemaker {
             uRandomX: {value: 0, type: 'f'},
             uShiftYInterval: {value: 0, type: 'f'},
             uShiftXInterval: {value: 0, type: 'f'},
-
         };
 
-        let nextColorChange = 0;
         /**
          * set or get a uniform
          * @param uniformName
@@ -73,9 +74,12 @@ class Trancemaker {
                 return this.uniforms[uniformName].value;
             }
         };
-        this.uniform = uniform;
 
+        //delta is an ever increasing number that things changing over time is based on
         let delta = 5,
+            //time that we will switch colors
+            nextColorChange = 0,
+            //timestamp of when we should stop showing glitch effects
             glitchUntil = null;
         /**
          * Uniforms that update/randomize each frame
@@ -83,19 +87,23 @@ class Trancemaker {
         const updateUniforms = () => {
             delta += 0.01;
             uniform('delta', delta);
+
             const now = Date.now();
             if (now > nextColorChange) {
                 uniform('uExistingColor', uniform('uNewColor'));
                 uniform('uNewColor', this.randomColor());
                 nextColorChange = now + this.colorRotationInterval;
             }
+
             let timeUntilChange = nextColorChange - now;
             uniform('uColorFadeCompletion', 1 - (timeUntilChange / this.colorFadeTime));
+            //random coordinates to show glitches at if we need to
             uniform('uRandomY', Trancemaker.random(ih));
             uniform('uRandomX', Trancemaker.random(iw));
 
             //currently glitching
             if (glitchUntil > now) {
+                //show "glitched" rectangles with random sizes, really just random RGB channels messed with
                 uniform('uShiftYInterval', Trancemaker.random(50));
                 uniform('uShiftXInterval', Trancemaker.random(iw));
             }
@@ -113,6 +121,7 @@ class Trancemaker {
         };
         updateUniforms();
 
+        //currently unused, to be used with shader effects that react to mouse position
         const ray = new THREE.Raycaster();
         document.addEventListener('mousemove', e => {
             const vec = new THREE.Vector2();
@@ -134,6 +143,13 @@ class Trancemaker {
     randomColor() {
         return new THREE.Color(Trancemaker.random(this.colors));
     }
+
+    /**
+     * Get a random integer/float or element from an array.
+     * @param thing - either an array to chose randomly from, or a maximum number
+     * @param asFloat - if random numbers should include floating points
+     * @returns {*}
+     */
     static random(thing, asFloat) {
         if (Array.isArray(thing)) {
             const index = Math.floor(Math.random() * thing.length);
@@ -146,6 +162,10 @@ class Trancemaker {
             return Math.random() * thing;
         }
     }
+    /**
+     * Creates a large mesh geometry, a plane made of tons of tiny triangles.
+     * @returns {THREE.Geometry}
+     */
     createLowPolyGeometry() {
         const max = 30,
             geo = new THREE.Geometry(),
@@ -252,7 +272,9 @@ class Trancemaker {
                         
                         vec3 c = mix(uExistingColor, uNewColor, step(0.5, uColorFadeCompletion / (length(vPos) / length(vec2(30.0, 30.0)))));
                         
+                        //a number to figure out which one of the three color channels to black out
                         float shiftingColor = mod(delta * uRandomY, 3.0);
+                        //if the fragment is within the random coordinates, mess with the rgb
                         float colorShiftEnabled = when_between(uRandomY - uShiftYInterval, uRandomY, fragY) *
                             when_between(uRandomX - uShiftXInterval, uRandomX, fragX);
                         //blank out one of the color channels for the rgb glitch, randomized
@@ -261,6 +283,7 @@ class Trancemaker {
                             c.z * not(when_between(2.0, 3.0, shiftingColor))
                         );
                         
+                        //fake shading based on the delta of the face
                         vec3 normalColorChange = not(colorShiftEnabled) * abs(vec3(sin(delta * vNormal.x) * damper, sin(delta * vNormal.y) * damper, sin(delta * vNormal.z) * damper));
                         
                         float checkerSize = 50.0;
