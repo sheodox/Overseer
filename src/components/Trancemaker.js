@@ -7,8 +7,8 @@ class Trancemaker {
         const iw = window.innerWidth,
             ih = window.innerHeight,
             aspect = iw/ih;
-        this.colorRotationInterval = 5000;
-        this.colorFadeTime = 4000;
+        this.colorRotationInterval = 60 * 1000;
+        this.colorFadeTime = 1000;
 
         this.scene = new THREE.Scene();
         const d = 3;
@@ -47,7 +47,6 @@ class Trancemaker {
             uNewColor: {value: this.randomColor()},
             lightPos: {value: new THREE.Vector3(0, 20, 0)},
             //color changing
-            uColorFadeTime: {type: 'f', value: this.colorFadeTime},
             uColorFadeCompletion: {type: 'f', value: this.colorFadeTime},
             uResolution: {value: new THREE.Vector3(iw, ih, 1)},
             uMouse: {value: new THREE.Vector3(0, 0, 0)},
@@ -205,7 +204,6 @@ class Trancemaker {
                     uniform vec3 uExistingColor;
                     uniform vec3 uNewColor;
                     uniform float delta;
-                    uniform float uColorFadeTime;
                     uniform float uColorFadeCompletion;
                     uniform vec3 uResolution;
                     uniform vec3 uMouse;
