@@ -48,7 +48,7 @@ class GameDetails extends React.Component {
                         }
                     });
 
-                    App.title(thisGame.name + ' - Echo');
+                    AppControl.title(thisGame.name + ' - Echo');
                     this.setState(Object.assign(thisGame, {
                         oldInfo: formattedGameInfo,
                         tagCloud: data.tagCloud,

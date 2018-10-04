@@ -24,7 +24,7 @@ class EchoUploader extends React.Component {
         };
     }
     componentDidMount() {
-        App.title('Echo Uploader');
+        AppControl.title('Echo Uploader');
     }
     componentWillMount() {
         echoConduit.on({

@@ -24,7 +24,7 @@ class AppControl {
         document.title = (newTitle ? newTitle + ' - ' : '') + 'Overseer';
     }
 }
-window.App = new AppControl();
+window.AppControl = new AppControl();
 
 class App extends React.Component {
     render() {

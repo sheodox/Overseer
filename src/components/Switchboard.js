@@ -17,7 +17,7 @@ class Switchboard extends React.Component {
 
 class Panel extends React.Component {
     componentDidMount() {
-        App.title();
+        AppControl.title();
     }
     render() {
         return (

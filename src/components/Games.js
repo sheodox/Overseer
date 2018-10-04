@@ -23,7 +23,7 @@ class Games extends React.Component {
             }
         });
         echoConduit.emit('init');
-        App.title('Game Echo');
+        AppControl.title('Game Echo');
     }
     componentWillUnmount() {
         echoConduit.destroy();

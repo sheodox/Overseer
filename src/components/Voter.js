@@ -36,7 +36,7 @@ class Voter extends React.Component {
             }
         });
         voterConduit.emit('init');
-        App.title('Voter');
+        AppControl.title('Voter');
     }
     componentWillUnmount() {
         voterConduit.destroy();

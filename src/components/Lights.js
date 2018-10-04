@@ -19,7 +19,7 @@ class Lights extends React.Component {
             }
         });
         lightsConduit.emit('init');
-        App.title('Lights');
+        AppControl.title('Lights');
     }
     componentWillUnmount() {
         lightsConduit.destroy();
