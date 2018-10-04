@@ -9,8 +9,8 @@ class Trancemaker {
             aspect = iw/ih;
         //how often the color is randomized
         this.colorRotationInterval = 60 * 1000;
-        //how often it takes to transition to the new color
-        this.colorFadeTime = 1000;
+        //how quickly it takes to transition the full screen to the new color
+        this.colorFadeTime = 2000;
 
         this.scene = new THREE.Scene();
         const d = 3;
@@ -259,18 +259,24 @@ class Trancemaker {
                         float fragY = gl_FragCoord.y;
                         float fragX = gl_FragCoord.x;
                         
+                        float checkerSize = 50.0;
+                        float checkerY = floor(fragY / checkerSize);
+                        float checkerX = floor(fragX / checkerSize);
+                        
                         //time delta shifting the color a bit
                         float damper = 0.15;
                         // float norm = abs(clamp(dot(vNormal.xyz, cameraPosition), -1.0, 0.0));
                         
                         //changing colors over time bit by bit
                         //compute strength of new color
-                        float changeThreshold = (vPos.x / uResolution.x) * ((uResolution.y - vPos.y) / uResolution.y);
-                        float mouseDist = distance(vPos, uMouse);
+                        float changeThreshold = (checkerX / uResolution.x) * ((uResolution.y - checkerY) / uResolution.y);
                         
-                        // vec3 mouseProximityNoise = mix(vec3(0.0,0.0,0.0), vec3(1.0, 1.0, 1.0), smoothstep(0.5, 1.0, mouseDist));
-                        
-                        vec3 c = mix(uExistingColor, uNewColor, step(0.5, uColorFadeCompletion / (length(vPos) / length(vec2(30.0, 30.0)))));
+                        //color changed computed between the existing/new colors
+                        vec2 checkerVec2 = vec2(checkerX, checkerY);
+                        vec3 c = mix(uExistingColor, uNewColor, 
+                            //step based on the progression th rough the color change completion compared how far across the plane the location is
+                            step(0.5, uColorFadeCompletion / (length(checkerVec2) / length(vec2(30.0, 30.0))) - 0.15 * snoise(checkerVec2))
+                        );
                         
                         //a number to figure out which one of the three color channels to black out
                         float shiftingColor = mod(delta * uRandomY, 3.0);
@@ -286,12 +292,9 @@ class Trancemaker {
                         //fake shading based on the delta of the face
                         vec3 normalColorChange = not(colorShiftEnabled) * abs(vec3(sin(delta * vNormal.x) * damper, sin(delta * vNormal.y) * damper, sin(delta * vNormal.z) * damper));
                         
-                        float checkerSize = 50.0;
-                        float checkerY = floor(fragY / checkerSize);
-                        float checkerX = floor(fragX / checkerSize);
-                        float checker = snoise(vec2(checkerX, checkerY)) * 0.1 * snoise(vec2(delta, checkerX * checkerY));
+                        float checkerColorDamping = snoise(vec2(checkerX, checkerY)) * 0.1 * snoise(vec2(delta, checkerX * checkerY));
                         
-                        gl_FragColor = vec4((c - rgbShift) - normalColorChange - checker, 1.0);
+                        gl_FragColor = vec4((c - rgbShift) - normalColorChange - checkerColorDamping, 1.0);
                     }`
             }),
             mesh = new THREE.Mesh(this.createLowPolyGeometry(), material);
