@@ -113,6 +113,7 @@ class Games extends React.Component {
                             <button title="reset search" onClick={this.clearSearch}><SVG id="x-icon" /></button>
                         </div>
                         <TagCloud ref={c => this.cloud = c} tagInput={this.searchField} tagClicked={this.search} tags={this.state.tagCloud}/>
+                        <p className="g-count">{games.length} results</p>
                         <table>
                             <thead>
                             <tr>
