@@ -39,7 +39,7 @@
     $height: 3rem;
 
     svg {
-        fill: $darkGray;
+        fill: $darkGray !important;
     }
 
     .candidate-buttons {
@@ -50,11 +50,23 @@
         display: inline-block;
         width: $vote-buttons-width;
         float: left;
+
         .vote-count {
             float: right;
         }
         .up svg {
             transform: scaleY(-1);
+        }
+        .up, .down {
+            &:hover svg {
+                fill: $accent-mint !important;
+            }
+        }
+        .up.vote-cast svg {
+            fill: $accent-blue !important;
+        }
+        .down.vote-cast svg {
+            fill: $accent-pink !important;
         }
         svg {
             float: left;
