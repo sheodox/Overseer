@@ -303,8 +303,12 @@ class Candidate extends React.Component {
     render() {
         const voters = `${this.props.candidate_name}\nAdded by: ${this.props.creator}`,
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
-            votedUp = this.props.votedUp.length,
-            votedDown = this.props.votedDown.length,
+            // votes cast in either direction
+            numVotedUp = this.props.votedUp.length,
+            numVotedDown = this.props.votedDown.length,
+            //the current user's vote
+            votedUp = this.props.voted === 'up',
+            votedDown = this.props.voted === 'down',
             disabledState = this.props.removed || (!Booker.voter.remove_candidate && !this.props.created),
             voteButtonProps = {
                 className: 'candidate-name',
@@ -315,16 +319,16 @@ class Candidate extends React.Component {
             <div className="candidate">
                 <div className="candidate-buttons">
                     <div className="up-down">
-                        <button disabled={!Booker.voter.vote} className="up" onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /></button>
-                        <button disabled={!Booker.voter.vote} className="down" onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} /></button>
+                        <button disabled={!Booker.voter.vote} className={'up' + (votedUp ? ' vote-cast' : '')} onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /></button>
+                        <button disabled={!Booker.voter.vote} className={'down' + (votedDown ? ' vote-cast' : '')} onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} /></button>
                     </div>
                     <div {...voteButtonProps}>
                         <div className="vote-bars">
-                            <div className="up-bar vote-bar" style={{width: getWidthPercent(votedUp)}}>
-                                <div className="voter-profile-images"><span className="vote-count">{votedUp}</span> {this.getImages(this.props.votedUp)}</div>
+                            <div className="up-bar vote-bar" style={{width: getWidthPercent(numVotedUp)}}>
+                                <div className="voter-profile-images"><span className="vote-count">{numVotedUp}</span> {this.getImages(this.props.votedUp)}</div>
                             </div>
-                            <div className="down-bar vote-bar" style={{width: getWidthPercent(votedDown)}}>
-                                <div className="voter-profile-images"><span className="vote-count">{votedDown}</span>{this.getImages(this.props.votedDown)}</div>
+                            <div className="down-bar vote-bar" style={{width: getWidthPercent(numVotedDown)}}>
+                                <div className="voter-profile-images"><span className="vote-count">{numVotedDown}</span>{this.getImages(this.props.votedDown)}</div>
                             </div>
                         </div>
                         <span className="candidate-text">{this.props.candidate_name}</span>
