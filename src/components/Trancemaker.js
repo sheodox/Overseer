@@ -1,9 +1,28 @@
 const THREE = require('three'),
     twopi = 2 * Math.PI;
 
+/**
+ * Helper class to scale numbers to 60fps so even at faster framerates animations don't speed up
+ */
+class FrameScaler {
+    constructor() {
+        this.tick();
+        this.frameTimeBase = 1000 / 60;
+    }
+    tick() {
+        const now = Date.now();
+        this.lastFrameTime = now - this.lastTick;
+        this.lastTick = now;
+    }
+    frameTimeScaler() {
+        return this.lastFrameTime / this.frameTimeBase;
+    }
+}
 
 class Trancemaker {
     constructor() {
+        this.fs = new FrameScaler();
+
         const iw = window.innerWidth,
             ih = window.innerHeight,
             aspect = iw/ih;
@@ -85,7 +104,9 @@ class Trancemaker {
          * Uniforms that update/randomize each frame
          */
         const updateUniforms = () => {
-            delta += 0.01;
+            this.fs.tick();
+            const frameScale = this.fs.frameTimeScaler();
+            delta += 0.01 * frameScale;
             uniform('delta', delta);
 
             const now = Date.now();
