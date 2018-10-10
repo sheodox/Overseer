@@ -263,10 +263,6 @@ class Trancemaker {
                         float checkerY = floor(fragY / checkerSize);
                         float checkerX = floor(fragX / checkerSize);
                         
-                        //time delta shifting the color a bit
-                        float damper = 0.15;
-                        // float norm = abs(clamp(dot(vNormal.xyz, cameraPosition), -1.0, 0.0));
-                        
                         //changing colors over time bit by bit
                         //compute strength of new color
                         float changeThreshold = (checkerX / uResolution.x) * ((uResolution.y - checkerY) / uResolution.y);
@@ -289,7 +285,9 @@ class Trancemaker {
                             c.z * not(when_between(2.0, 3.0, shiftingColor))
                         );
                         
-                        //fake shading based on the delta of the face
+                        //time delta shifting the color a bit
+                        float damper = 0.15;
+                        //fake shading based on delta and the normal
                         vec3 normalColorChange = not(colorShiftEnabled) * abs(vec3(sin(delta * vNormal.x) * damper, sin(delta * vNormal.y) * damper, sin(delta * vNormal.z) * damper));
                         
                         float checkerColorDamping = snoise(vec2(checkerX, checkerY)) * 0.1 * snoise(vec2(delta, checkerX * checkerY));
