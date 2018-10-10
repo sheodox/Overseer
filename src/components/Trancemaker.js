@@ -35,7 +35,7 @@ class Trancemaker {
     constructor() {
         this.fs = new FrameScaler();
 
-        const iw = window.innerWidth,
+        let iw = window.innerWidth,
             ih = window.innerHeight,
             aspect = iw/ih;
         //how often the color is randomized
@@ -50,6 +50,15 @@ class Trancemaker {
         this.renderer.setSize(iw, ih);
         this.renderer.setClearColor(0x303138);
         document.body.appendChild(this.renderer.domElement);
+
+        window.addEventListener('resize', () => {
+            iw = window.innerWidth;
+            ih = window.innerHeight;
+            aspect = iw/ih;
+            this.camera.aspect = aspect;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(iw, ih);
+        });
 
         const light = new THREE.PointLight(0xffffff);
         light.position.x = 15;
