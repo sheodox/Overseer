@@ -290,9 +290,7 @@ class Trancemaker {
                         //fake shading based on delta and the normal
                         vec3 normalColorChange = not(colorShiftEnabled) * abs(vec3(sin(delta * vNormal.x) * damper, sin(delta * vNormal.y) * damper, sin(delta * vNormal.z) * damper));
                         
-                        float checkerColorDamping = snoise(vec2(checkerX, checkerY)) * 0.1 * snoise(vec2(delta, checkerX * checkerY));
-                        
-                        gl_FragColor = vec4((c - rgbShift) - normalColorChange - checkerColorDamping, 1.0);
+                        gl_FragColor = vec4((c - rgbShift) - normalColorChange, 1.0);
                     }`
             }),
             mesh = new THREE.Mesh(this.createLowPolyGeometry(), material);
