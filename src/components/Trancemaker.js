@@ -7,15 +7,27 @@ const THREE = require('three'),
 class FrameScaler {
     constructor() {
         this.tick();
-        this.frameTimeBase = 1000 / 60;
+        this._frameTimeBase = 1000 / 60;
     }
     tick() {
         const now = Date.now();
-        this.lastFrameTime = now - this.lastTick;
-        this.lastTick = now;
+        this._lastFrameTime = now - this._lastTick;
+        this._lastTick = now;
     }
+
+    /**
+     * For making things smaller based on frame time, like deltas, so things don't change too much
+     * @returns {number}
+     */
     frameTimeScaler() {
-        return this.lastFrameTime / this.frameTimeBase;
+        return this._lastFrameTime / this._frameTimeBase;
+    }
+
+    /**
+     * For making things bigger based on frame time, like random chance, so rare things don't happen too often
+     */
+    frameTimeScalerInverse() {
+        return 1 / this.frameTimeScaler();
     }
 }
 
@@ -134,7 +146,7 @@ class Trancemaker {
                 uniform('uShiftXInterval', 0);
 
                 //possibly glitch next frame
-                if (!Trancemaker.random(1000)) {
+                if (!Trancemaker.random(1000 * this.fs.frameTimeScalerInverse())) {
                     glitchUntil = now + Trancemaker.random(1000);
                 }
             }
