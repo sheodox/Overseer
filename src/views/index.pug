@@ -5,4 +5,10 @@ block content
     script.
         window.user = !{user};
         window.Booker = !{permissions};
+    script(type=text/glsl)#tm-frag
+        include ../components/tm-frag.glsl
+    script(type=text/glsl)#tm-vert
+        include ../components/tm-vert.glsl
+    script(type=text/glsl)#snoise
+        include ../components/snoise.glsl
     script(src="/js/main.js")
