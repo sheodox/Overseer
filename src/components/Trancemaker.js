@@ -50,7 +50,8 @@ class Trancemaker {
         this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(iw, ih);
-        this.renderer.setClearColor(0x303138);
+        const backgroundColor = 0x303138;
+        this.renderer.setClearColor(backgroundColor);
         document.body.appendChild(this.renderer.domElement);
 
         window.addEventListener('resize', () => {
@@ -60,6 +61,9 @@ class Trancemaker {
             this.camera.aspect = aspect;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(iw, ih);
+
+            uniform('uResolution', new THREE.Vector3(iw, ih, 1));
+            uniform('uAspectRatio', aspect);
         });
 
         const light = new THREE.PointLight(0xffffff);
@@ -90,16 +94,14 @@ class Trancemaker {
             delta: {type: 'f', value: 0},
             uExistingColor: {value: this.randomColor()},
             uNewColor: {value: this.randomColor()},
-            lightPos: {value: new THREE.Vector3(0, 20, 0)},
+            uBackgroundColor: {value: new THREE.Color(backgroundColor)},
             //color changing
             uColorFadeCompletion: {type: 'f', value: this.colorFadeTime},
             uResolution: {value: new THREE.Vector3(iw, ih, 1)},
+            uAspectRatio: {value: aspect, type: 'f'},
             uMouse: {value: new THREE.Vector3(0, 0, 0)},
-            //rgb shifting
-            uRandomY: {value: 0, type: 'f'},
-            uRandomX: {value: 0, type: 'f'},
-            uShiftYInterval: {value: 0, type: 'f'},
-            uShiftXInterval: {value: 0, type: 'f'},
+            //random geometric shapes
+            uDisplayGeometry: {value: 0, type: 'f'}
         };
 
         /**
@@ -141,23 +143,16 @@ class Trancemaker {
 
             let timeUntilChange = nextColorChange - now;
             uniform('uColorFadeCompletion', 1 - (timeUntilChange / this.colorFadeTime));
-            //random coordinates to show glitches at if we need to
-            uniform('uRandomY', Trancemaker.random(ih));
-            uniform('uRandomX', Trancemaker.random(iw));
 
             //currently glitching
             if (glitchUntil > now) {
-                //show "glitched" rectangles with random sizes, really just random RGB channels messed with
-                uniform('uShiftYInterval', Trancemaker.random(50));
-                uniform('uShiftXInterval', Trancemaker.random(iw));
+                uniform('uDisplayGeometry', 1);
             }
             //not glitching
             else {
-                uniform('uShiftYInterval', 0);
-                uniform('uShiftXInterval', 0);
-
+                uniform('uDisplayGeometry', 0);
                 //possibly glitch next frame
-                if (!Trancemaker.random(1000 * this.fs.frameTimeScalerInverse())) {
+                if (!Trancemaker.random(100 * this.fs.frameTimeScalerInverse())) {
                     glitchUntil = now + Trancemaker.random(1000);
                 }
             }
