@@ -16,17 +16,6 @@
     min-height: 100vh;
     z-index: 2;
 }
-.bg-overlay {
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-}
-#bg-overlay-fade {
-    background: radial-gradient(transparent 0, $background 70%);
-}
 
 #svg-source {
     display: none;
