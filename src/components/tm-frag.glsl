@@ -9,6 +9,8 @@ uniform vec3 uMouse;
 uniform float uDisplayGeometry;
 varying vec4 vNormal;
 varying vec3 vPos;
+const vec2 geometryCenter = vec2(0.5, 0.9);
+const vec2 geometryCenterST = 2. * geometryCenter - 1.;
 
 float when_between(float a, float b, float x) {
     return sign(clamp(b - x, 0.0, 1.0)) - sign(clamp(a - x, 0.0, 1.0));
@@ -39,9 +41,15 @@ vec3 inverse_color(vec3 c) {
 
 float distance_from_center() {
     return distance(
-        vec2(0.5, 0.5),
+        geometryCenter,
         square_aspect(gl_FragCoord.xy / uResolution.xy)
     );
+}
+
+float get_sided_shape(vec2 center, int sides, float size, float angle) {
+    float a = atan(center.x, center.y) + angle;
+    float b = 6.28319/float(sides);
+    return step(size, cos(floor(.5+a/b)*b-a)*length(center.xy));
 }
 
 float get_radial_shade() {
@@ -55,12 +63,42 @@ float get_radial_shade() {
 //    return inGradient * ((dist - gradient_min) / (gradient_max - gradient_min));
 }
 
+vec2 get_shape_center_pos(vec2 st, float angle, float dist) {
+    return vec2(st.x + sin(angle) * dist, st.y + cos(angle) * dist) - geometryCenterST;
+}
+
+float get_triangle(vec2 st, float angle) {
+    float tDist = 0.7;
+    float tSize = 0.1;
+    return 1. - get_sided_shape(get_shape_center_pos(st, angle, tDist), 3, tSize, -1. * angle);
+}
+float get_inset_triangle(vec2 st, float angle) {
+    float tDist = 0.2;
+    float tSize = 0.05;
+    angle - 3.14159;
+    return 1. - get_sided_shape(get_shape_center_pos(st, angle, tDist), 3, tSize, -1. * angle);
+}
+
 float is_in_geometry() {
     //sometimes show random geometry
 //    vec2 midpoint = uResolution.xy * 0/**/.5;
     float ringDistance = distance_from_center();
-    float onRing = when_between(0.2, 0.25, ringDistance);
-    return onRing;
+    vec2 st = 2. * square_aspect(gl_FragCoord.xy / uResolution.xy) - 1.;
+
+    float ring = when_between(0.2, 0.22, ringDistance);
+    float triangleBaseAngle = delta;
+    float insetTriangleBaseAngle = -2. * delta;
+    
+    float tri1 = get_triangle(st, triangleBaseAngle);
+    float tri2 = get_triangle(st, triangleBaseAngle + (6.28319 * 2./3.));
+    float tri3 = get_triangle(st, triangleBaseAngle + (6.28319 * 1./3.));
+    float in_tri1 = get_inset_triangle(st, insetTriangleBaseAngle);
+    float in_tri2 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 2./3.));
+    float in_tri3 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 1./3.));
+
+    return step(0.5,
+        ring + tri1 + tri2 + tri3 + in_tri1 + in_tri2 + in_tri3
+    );
 }
 
 //[include snoise]
