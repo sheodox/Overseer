@@ -93,11 +93,12 @@ float is_in_geometry() {
     float tri2 = get_triangle(st, triangleBaseAngle + (6.28319 * 2./3.));
     float tri3 = get_triangle(st, triangleBaseAngle + (6.28319 * 1./3.));
     float in_tri1 = get_inset_triangle(st, insetTriangleBaseAngle);
-    float in_tri2 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 2./3.));
-    float in_tri3 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 1./3.));
+    float in_tri2 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 2./4.));
+    float in_tri3 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 1./4.));
+    float in_tri4 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 3./4.));
 
     return step(0.5,
-        ring + tri1 + tri2 + tri3 + in_tri1 + in_tri2 + in_tri3
+        ring + tri1 + tri2 + tri3 + in_tri1 + in_tri2 + in_tri3 + in_tri4
     );
 }
 
