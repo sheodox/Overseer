@@ -41,10 +41,10 @@ class App extends React.Component {
         }
     };
     render() {
-        let content = <main className="content"><LoginRequired /></main>;
+        let content = <main className="content" key="main"><LoginRequired /></main>;
 
         if (user) {
-            content = <main onClick={this.toSwitchboard} className="content">
+            content = <main onClick={this.toSwitchboard} className="content" key="main">
                 <Route exact path="/" render={() => {
                     const returnUrlKey = 'auth-return-url',
                         returnUrl = sessionStorage.getItem(returnUrlKey);
@@ -71,11 +71,11 @@ class App extends React.Component {
         }
 
         return [
-            <Banshee />,
-            <Toaster />,
-            <Header />,
+            <Banshee key="banshee"/>,
+            <Toaster key="toaster"/>,
+            <Header key="header"/>,
             content,
-            <Footer />
+            <Footer key="footer" />
         ]
     }
 }
