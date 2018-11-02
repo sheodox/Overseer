@@ -4,8 +4,14 @@ const ReactDOM = require('react-dom'),
     Trancemaker = require('./Trancemaker');
 
 new Trancemaker();
+const reactMount = document.querySelector('#react-mount');
+reactMount.addEventListener('click', e => {
+    if (e.target === reactMount) {
+        redirectToSwitchboard(); //in App.js
+    }
+});
 
 ReactDOM.render(
     <App />,
-    document.querySelector('#react-mount')
+    reactMount
 );

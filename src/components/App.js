@@ -27,11 +27,24 @@ class AppControl {
 window.AppControl = new AppControl();
 
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+        
+        window.redirectToSwitchboard = () => {
+            this.props.history.push('/');
+        }
+    }
+    toSwitchboard = (e) => {
+        //if they clicked on the background and not the contents, redirect to the switchboard
+        if (e.target.tagName.toLowerCase() === 'main') {
+            redirectToSwitchboard();
+        }
+    };
     render() {
         let content = <main className="content"><LoginRequired /></main>;
 
         if (user) {
-            content = <main className="content">
+            content = <main onClick={this.toSwitchboard} className="content">
                 <Route exact path="/" render={() => {
                     const returnUrlKey = 'auth-return-url',
                         returnUrl = sessionStorage.getItem(returnUrlKey);
@@ -57,19 +70,19 @@ class App extends React.Component {
             </main>
         }
 
-        return (
-            <BrowserRouter>
-                <div>
-                    <Banshee />
-                    <Toaster />
-                    <Header />
-                    {content}
-                    <Footer />
-                </div>
-            </BrowserRouter>
-        )
+        return [
+            <Banshee />,
+            <Toaster />,
+            <Header />,
+            content,
+            <Footer />
+        ]
     }
 }
 
 
-module.exports = App;
+module.exports = function() {
+    return <BrowserRouter>
+        <Route path="*" component={App} />
+    </BrowserRouter>;
+};
