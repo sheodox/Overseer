@@ -46,12 +46,6 @@ float distance_from_center() {
     );
 }
 
-float get_sided_shape(vec2 center, int sides, float size, float angle) {
-    float a = atan(center.x, center.y) + angle;
-    float b = 6.28319/float(sides);
-    return step(size, cos(floor(.5+a/b)*b-a)*length(center.xy));
-}
-
 float get_radial_shade() {
     float gradient_min = 0.1;
     float gradient_max = 1.;
@@ -59,8 +53,12 @@ float get_radial_shade() {
     float dist = distance_from_center();
     //the amount of mixing within the gradient space
     return smoothstep(gradient_min, gradient_max, dist);
-//    float inGradient = step(gradient_min, dist);
-//    return inGradient * ((dist - gradient_min) / (gradient_max - gradient_min));
+}
+
+float get_sided_shape(vec2 center, int sides, float size, float angle) {
+    float a = atan(center.x, center.y) + angle;
+    float b = 6.28319/float(sides);
+    return step(size, cos(floor(.5+a/b)*b-a)*length(center.xy));
 }
 
 vec2 get_shape_center_pos(vec2 st, float angle, float dist) {
@@ -89,13 +87,16 @@ float is_in_geometry() {
     float triangleBaseAngle = delta;
     float insetTriangleBaseAngle = -2. * delta;
     
+    //far away outwards pointed triangles
     float tri1 = get_triangle(st, triangleBaseAngle);
     float tri2 = get_triangle(st, triangleBaseAngle + (6.28319 * 2./3.));
     float tri3 = get_triangle(st, triangleBaseAngle + (6.28319 * 1./3.));
+    //triangles inside the ring
+    float triMax = 4.;
     float in_tri1 = get_inset_triangle(st, insetTriangleBaseAngle);
-    float in_tri2 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 2./4.));
-    float in_tri3 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 1./4.));
-    float in_tri4 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 3./4.));
+    float in_tri2 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 1./triMax));
+    float in_tri3 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 2./triMax));
+    float in_tri4 = get_inset_triangle(st, insetTriangleBaseAngle + (6.28319 * 3./triMax));
 
     return step(0.5,
         ring + tri1 + tri2 + tri3 + in_tri1 + in_tri2 + in_tri3 + in_tri4
