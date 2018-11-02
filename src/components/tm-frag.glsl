@@ -7,6 +7,7 @@ uniform vec3 uResolution;
 uniform float uAspectRatio;
 uniform vec3 uMouse;
 uniform float uDisplayGeometry;
+uniform float uDotSize;
 varying vec4 vNormal;
 varying vec3 vPos;
 const vec2 geometryCenter = vec2(0.5, 0.9);
@@ -136,8 +137,10 @@ void main() {
     float inGeometry = is_in_geometry();
     vec3 geometryColor = vec3(1., 1., 1.);
 
+    //additional dimming by dots
+    float dotBlanker = step(0.01, mod(fragX - 0.5, uDotSize) + mod(fragY - 0.5, uDotSize));
 
-    gl_FragColor = vec4(choose(
+    gl_FragColor = vec4(dotBlanker * choose(
         mix(
             colorWithNormal,
             uBackgroundColor, //colorWithNormal - (1. - radialShading) * uBackgroundColor,

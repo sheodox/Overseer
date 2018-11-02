@@ -33,6 +33,8 @@ class FrameScaler {
     }
 }
 
+window.dotSize = 2;
+
 class Trancemaker {
     constructor() {
         this.fs = new FrameScaler();
@@ -101,7 +103,8 @@ class Trancemaker {
             uAspectRatio: {value: aspect, type: 'f'},
             uMouse: {value: new THREE.Vector3(0, 0, 0)},
             //random geometric shapes
-            uDisplayGeometry: {value: 0, type: 'f'}
+            uDisplayGeometry: {value: 0, type: 'f'},
+            uDotSize: {value: dotSize, type: 'f'}
         };
 
         /**
@@ -143,6 +146,8 @@ class Trancemaker {
 
             let timeUntilChange = nextColorChange - now;
             uniform('uColorFadeCompletion', 1 - (timeUntilChange / this.colorFadeTime));
+            
+            uniform('uDotSize', dotSize);
 
             //currently glitching
             if (glitchUntil > now) {
