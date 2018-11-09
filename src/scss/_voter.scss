@@ -38,9 +38,6 @@
     margin-bottom: 0.5rem;
     $height: 3rem;
 
-    svg {
-        fill: $darkGray !important;
-    }
 
     .candidate-buttons {
         @include illuminated-toggle-buttons();
@@ -50,6 +47,10 @@
         display: inline-block;
         width: $vote-buttons-width;
         float: left;
+        
+        svg {
+            fill: $darkGray !important;
+        }
 
         .vote-count {
             float: right;
@@ -113,7 +114,8 @@
     }
 
     .candidate-name {
-        @include light-button();
+        @include button();
+        cursor: default;
         height: $height;
         width: calc(100% - #{$vote-buttons-width} - #{$remove-button-width});
         position: relative;
