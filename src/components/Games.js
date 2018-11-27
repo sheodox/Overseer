@@ -175,7 +175,7 @@ class Game extends React.Component {
                 <td className="g-date">{this.props.in_progress ? 'uploading now...' : formatters.date(this.props.modified)}</td>
                 {this.props.in_progress ? (<td><progress /></td>) : (
                     <td className="centered g-actions">
-                        <a onClick={this.download} className={"download " + (this.props.echoConnected && Booker.echo.download ? '' : 'disabled')} href={this.props.echoConnected && Booker.echo.download ? this.props.echoServer + '/' + this.props.file + '.zip' : null} title="download">
+                        <a onClick={this.download} className={"download " + (this.props.echoConnected && Booker.echo.download ? '' : 'disabled')} href={this.props.echoConnected && Booker.echo.download ? this.props.echoServer + '/download/' + this.props.file + '.zip' : null} title="download">
                             <SVG id="down-icon" />
                         </a>
                     </td>

@@ -53,7 +53,7 @@ class GameDetails extends React.Component {
                         oldInfo: formattedGameInfo,
                         tagCloud: data.tagCloud,
                         echoConnected: data.echoConnected,
-                        downloadHref: data.echoServer + '/' + this.state.file + '.zip'
+                        downloadHref: data.echoServer + '/download/' + this.state.file + '.zip'
                     }));
 
                     this.cloud.captureUsedTags();
