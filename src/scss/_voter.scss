@@ -25,7 +25,7 @@
     @include faint-shadow();
     margin-top: 1rem;
     padding: 1rem;
-    background: lighten($background, 5%);
+    background: $background-light;
 
     h3 {
         margin: 0;
@@ -64,10 +64,10 @@
             }
         }
         .up.vote-cast svg {
-            fill: $accent-blue !important;
+            fill: $color-blue !important;
         }
         .down.vote-cast svg {
-            fill: $accent-pink !important;
+            fill: $color-pink !important;
         }
         svg {
             float: left;
@@ -109,7 +109,7 @@
             background: $accent-cyan;
         }
         .down-bar {
-            background: $accent-pink;
+            background: $color-pink;
         }
     }
 

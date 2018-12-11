@@ -12,7 +12,7 @@
 @mixin button {
     display: inline-block;
     color: white;
-    background: $background;
+    background: $background-lighter;
     cursor: pointer;
     transition: border 0.2s, background 0.2s;
     padding: 0.3rem 1rem 0.2rem 1rem;
@@ -29,22 +29,22 @@
         vertical-align: middle;
     }
     &:hover {
-        color: $accent-pink;
+        color: $color-pink;
         svg {
-            fill: $accent-pink;
+            fill: $color-pink;
         }
     }
 }
 
 @mixin light-button {
     @include button();
-    $backgroundColorDisabled: darken($background, 2%);
-    $textColor: $accent-blue;
-    $textColorDisabled: $background;
+    $backgroundColorDisabled: darken($background-lighter, 2%);
+    $textColor: $color-blue;
+    $textColorDisabled: $background-lighter;
     color: $textColor;
 
     &:hover {
-        background: lighten($background, 10%);
+        background: $background-light;
     }
 
     &:disabled, &.disabled {
@@ -68,7 +68,7 @@
 
     }
     to {
-        box-shadow: -0.25rem 0 0.2rem -0.2rem $accent-blue;
+        box-shadow: -0.25rem 0 0.2rem -0.2rem $color-blue;
     }
 }
 
@@ -95,7 +95,7 @@
                 border-color: $illuminateColor;
             }
             &.off {
-                border-color: $background;
+                border-color: $background-dark;
             }
         }
     }
@@ -106,7 +106,7 @@
         text-shadow: 2.1rem -0.6rem 0 $accent-cyan;
     }
     25% {
-        text-shadow: -1.3rem 0.9rem 0 $accent-pink;
+        text-shadow: -1.3rem 0.9rem 0 $color-pink;
         color: $accent-red;
     }
     50% {
@@ -120,7 +120,7 @@
         text-shadow: 0.8rem -0.6rem 0 $accent-cyan;
     }
     25% {
-        text-shadow: -0.4rem 0.3rem 0 $accent-pink;
+        text-shadow: -0.4rem 0.3rem 0 $color-pink;
         color: $accent-red;
     }
     50% {

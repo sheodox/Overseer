@@ -5,19 +5,19 @@
 
     .toast {
         text-overflow: ellipsis;
+        border-bottom: 1px solid $color-blue;
 
         h1 {
             font-size: 1.1rem;
             max-width: 30rem;
             margin-top: 0;
+            color: $color-blue;
         }
         a {
             color: white;
         }
         color: white;
-        background-color: darken($background, 5%);
-        border: 1px solid $accent-pink;
-        border-radius: 0.5rem;
+        background-color: $background-dark;
         margin: 1rem;
         padding: 0.5rem;
     }

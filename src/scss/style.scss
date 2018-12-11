@@ -29,17 +29,17 @@
 }
 html {
     height: 100%;
-    background: $background;
+    background: $background-dark;
     margin: 0;
 }
 body {
     font-family: 'Roboto', sans-serif;
-    background: $background;
+    background: $background-dark;
     margin: 0;
 }
 textarea {
     font-family: 'Roboto', sans-serif;
-    background: $background;
+    background: $background-dark;
     border: none;
     color: white;
 
@@ -72,7 +72,7 @@ li {
     @include faint-shadow();
     margin: 0.5rem;
     display: inline-block;
-    background: $lateNeon;
+    background: $background-light;
 
     &:not(.switch-panel) h2 {
         color: white;
@@ -96,9 +96,9 @@ li {
     }
 
     svg {
-        fill: darken($background, 5%);
-        margin-top: -4rem;
-        width: 10rem;
+        fill: $background-blue;
+        margin-top: -3rem;
+        width: 7rem;
         right: 0.5rem;
         position: absolute;
         z-index: 1;
@@ -106,7 +106,7 @@ li {
 }
 
 .sub-panel {
-    background-color: darken($background, 5%);
+    background-color: $background-dark;
     border: none;
     padding: 1.5rem;
     color: white;

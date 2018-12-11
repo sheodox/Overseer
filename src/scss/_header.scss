@@ -6,9 +6,10 @@ header {
     padding: 2rem 0;
     position: relative;
     text-align: center;
+    border-top: 0.2rem solid $color-blue;
 
     &.disconnected {
-        background: red;
+        border-top-color: red;
 
         h1 {
             color: white;
@@ -20,7 +21,7 @@ header {
         &:hover {
             h1 {
                 animation: chromatic-aberration 0.1s;
-                text-shadow: 0.2rem -0.2rem 0 $accent-pink;
+                text-shadow: 0.2rem -0.2rem 0 $color-pink;
             }
         }
     }
@@ -39,7 +40,7 @@ header {
     }
     //shadow svg
     svg:first-of-type {
-        fill: $accent-pink;
+        fill: $color-pink;
         margin: -0.2rem 0 0 0.2rem;
     }
     h1 {

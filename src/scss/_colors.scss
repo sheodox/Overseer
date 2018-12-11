@@ -1,23 +1,14 @@
 @import '../../node_modules/sass-material-colors/sass/sass-material-colors';
 
-$neon: linear-gradient(
-                120deg,
-                material-color('purple', '600') 20%,
-                material-color('pink', '600') 80%
-);
-$neon2: linear-gradient(
-                120deg,
-                material-color('cyan', '500') 20%,
-                material-color('blue', '800') 80%
-);
-$accent-blue: material-color('blue', '600');
+$color-blue: rgb(61, 180, 242);
+$color-pink: material-color('pink', '600');
 $accent-cyan: material-color('cyan', '500');
-$accent-pink: material-color('pink', '600');
 $accent-purple: material-color('purple', '600');
 $accent-mint: rgb(2, 253, 138);
 $accent-red: rgb(220, 64, 99);
 $darkGray: material-color('grey', '800');
-$background: darken(#474954, 10%);
-$neon-background: lighten($background, 5%);
-$earlyNeon: linear-gradient( 90deg, $accent-mint 50%, $neon-background);
-$lateNeon: linear-gradient( 90deg, darken($background, 5%) 50%, $accent-pink);
+
+$background-light: rgb(39, 44, 56);
+$background-lighter: lighten($background-light, 6%);
+$background-dark: darken($background-light, 6%);
+$background-blue: darken($color-blue, 10%);

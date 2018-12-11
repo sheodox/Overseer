@@ -39,7 +39,7 @@ th {
         }
 
         &:hover {
-            background-color: $neon-background;
+            background-color: $background-dark;
         }
     }
     progress {
@@ -131,7 +131,12 @@ th {
     }
 }
 .g-name a {
-    color: $accent-blue;
+    color: white;
+    text-decoration: none;
+    border-bottom: 1px solid $color-blue;
+    &:hover {
+        color: $color-blue;
+    }
 }
 
 @media (max-width: 900px) {
@@ -141,13 +146,17 @@ th {
 }
 
 .tag-suggestion {
-    background: $accent-pink;
     margin-right: 1rem;
     margin-bottom: 0.2rem;
     white-space: nowrap;
     float: left;
     padding: 0.1rem 0.2rem;
     border-radius: 0.1rem;
+    border-bottom: 1px solid transparent;
+    
+    &:hover {
+        border-bottom-color: $color-blue;
+    }
 
     .plus-character {
         color: rgba(255, 255, 255, 0.3);
@@ -157,19 +166,16 @@ th {
         text-align: center;
     }
     &.selected {
-        background: $neon-background;
+        border-bottom-color: $color-pink;
 
         .tag-cloud:not(.readonly) & {
             &:hover {
-                background: lighten($neon-background, 10%);
+                background: $background-light;
             }
         }
     }
     .tag-cloud:not(.readonly) & {
         cursor: pointer;
-        &:hover {
-            background: lighten($accent-pink, 10%);
-        }
     }
 }
 .tag-cloud {

@@ -18,25 +18,23 @@
 }
 
 $shading: 0 0 0.05rem 0.05rem material-color('grey', '900'),
-            inset 0 0.2rem 0.2rem 0 lighten($background, 15%);
+            inset 0 0.2rem 0.2rem 0 $background-light;
 @keyframes glow {
     0% {
         //box-shadow: 0 0 0 -0.9rem $accent-blue, #{$shading};
-        box-shadow: 0 0.7rem 1.6rem -0.9rem $accent-pink, #{$shading};
+        box-shadow: 0 0.7rem 1.6rem -0.9rem $color-pink, #{$shading};
     }
     50% {
         box-shadow: 0 0.7rem 1rem -0.9rem $accent-purple, #{$shading};
     }
     100% {
-        box-shadow: 0 0.7rem 1.6rem -0.9rem $accent-pink, #{$shading};
+        box-shadow: 0 0.7rem 1.6rem -0.9rem $color-pink, #{$shading};
     }
 }
 
 .panel.switch-panel {
-    color: white;
-    background: lighten($background, 5%);
-    //background-position: 0 0;
-    //background-attachment: fixed;
+    color: $color-blue;
+    background: $background-light;
     margin: 1rem;
     width: 20rem;
     height: 20rem;
@@ -63,7 +61,7 @@ $shading: 0 0 0.05rem 0.05rem material-color('grey', '900'),
 
 .switch-icon {
     transform: scale(0.75);
-    fill: darken($background, 5%);
+    fill: $background-dark;
     margin-top: -1.75rem;
     margin-bottom: -4rem;
 }

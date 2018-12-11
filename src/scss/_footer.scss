@@ -5,7 +5,7 @@ footer {
     position: absolute;
     bottom: 0;
     height: $footerHeight;
-    background: darken($background, 5%);
+    background: $background-dark;
     //TODO BREAKPOINTS
     padding: 2rem 25% 1rem 25%;
     color: white;
