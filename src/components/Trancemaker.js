@@ -50,7 +50,7 @@ class Trancemaker {
         this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(iw, ih);
-        const backgroundColor = 0x303138;
+        const backgroundColor = 0x272c38;
         this.renderer.setClearColor(backgroundColor);
         document.body.appendChild(this.renderer.domElement);
 
