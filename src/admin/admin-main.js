@@ -34,13 +34,13 @@ class Admin extends React.Component {
 }
 
 class BookerConfig extends React.Component {
-    newRole(e) {
+    newRole = (e) => {
         const roleName = e.target.value;
         if (roleName && e.which === 13) {
             adminConduit.emit('new-role', this.props.module, roleName);
             e.target.value = '';
         }
-    }
+    };
     render() {
         let headers = [],
             rows = [],
