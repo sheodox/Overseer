@@ -5,7 +5,8 @@ const router = require('express').Router(),
     bookers = {
         echo: require('../db/echobooker'),
         voter: require('../db/voterbooker'),
-        lights: require('../db/lightsbooker')
+        lights: require('../db/lightsbooker'),
+        proxy: require('../db/proxybooker')
     };
 let io;
 

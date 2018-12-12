@@ -1,0 +1,23 @@
+doctype html
+html
+    head
+        title= title
+        style.
+            td {
+                border: 1px solid gray;
+            }
+            * {
+                font-family: 'Roboto', sans-serif;
+            }
+            th {
+                padding-right: 1rem;
+            }
+        link(rel='icon', href='/favicon.png')
+        link(href='//fonts.googleapis.com/css?family=Roboto', rel="stylesheet")
+    body
+        h1= title
+        ul
+            for proxy in proxies
+                li
+                    a(href='/proxy/' + proxy.name + '/')= proxy.name
+                    p= proxy.description

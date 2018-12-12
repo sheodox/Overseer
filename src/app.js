@@ -22,12 +22,14 @@ const isProd = process.env.NODE_ENV === 'production',
     echo = require('./routes/game-echo'),
     settings = require('./routes/settings'),
     voter = require('./routes/voter'),
-    admin = require('./routes/admin');
+    admin = require('./routes/admin'),
+    proxy = require('./routes/proxy');
+
+app.use(logger('dev'));
 
 app.disable('x-powered-by');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
-app.use(bodyParser());
 const s = session({
     store: new SessionEmitter(),
     secret: config.sessionSecret,
@@ -41,13 +43,14 @@ const s = session({
 app.use(s);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use('/proxy', proxy);
+app.use(bodyParser());
 
 app.use('/auth', auth);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(logger('dev'));
 
 server.listen(port);
 server.on('listening', onListening);
