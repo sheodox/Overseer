@@ -17,6 +17,8 @@ proxies.forEach(({name, url}) => {
     router.use(`/${name}/`, async (req, res, next) => {
         if (req.user && await proxyBooker.check(req.user.user_id, name)) {
             const hasQuery = req.url.includes('?');
+            //trim trailing slashes from config url, or they'll be doubled up
+            url = url.replace(/\/$/, '');
             
             //block websocket connections, need to use relative xhr/fetch, but don't block socket.io.js
             //in case the other server falls back to xhr based on connection failures
