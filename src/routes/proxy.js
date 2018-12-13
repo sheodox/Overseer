@@ -1,7 +1,7 @@
 const router = require('express').Router({strict: true}),
     request = require('request'),
     proxyBooker = require('../db/proxybooker'),
-    {proxies} = require('../config.json') || [];
+    proxies = require('../config.json').proxies || [];
 
 router.get('/', async (req, res, next) => {
     if (req.user && await proxyBooker.check(req.user.user_id, 'view')) {
