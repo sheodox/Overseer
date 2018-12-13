@@ -1,7 +1,7 @@
 const Booker = require('./booker'),
-    config = require('../config.json');
+    proxies = require('../config.json').proxies || [];
 
 //'view' is the list of proxies, then there are the proxies themselves
-const proxyBooker = new Booker('proxy', ['view', ...config.proxies.map(p => p.name)]);
+const proxyBooker = new Booker('proxy', ['view', ...proxies.map(p => p.name)]);
 
 module.exports = proxyBooker;
