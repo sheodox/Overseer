@@ -1,0 +1,30 @@
+body {
+    padding: 20px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: #24252b;
+    color: white;
+}
+
+button {
+    border: 1px solid #586c79;
+    background: #303138;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+}
+
+input[type=text] {
+    background: #3d4b54;
+    border: none;
+    color: white;
+    padding: 2px;
+    border-radius: 1px;
+}
+label input[type=text] {
+    margin-left: 0.5rem;
+}
+
+a {
+    color: #00d6f2;
+}
