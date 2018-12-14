@@ -1,9 +1,11 @@
 const express = require('express'),
     serialize = require('serialize-javascript'),
     su = require('../util/superuser'),
+    //bookers
     voterBooker = require('../db/voterbooker'),
     echoBooker = require('../db/echobooker'),
-    lightsBooker = require('../db/lightsbooker');
+    lightsBooker = require('../db/lightsbooker'),
+    proxyBooker = require('../db/proxybooker');
 
 const router = express.Router();
 
@@ -23,6 +25,12 @@ router.get('/|/w/', async function(req, res) {
         links.push({
             text: 'Admin', href: '/admin'
         });
+    }
+    
+    if (await proxyBooker.check(id, 'view')) {
+        links.push({
+            text: 'Proxies', href: '/proxy'
+        })
     }
 
     if (req.user) {
