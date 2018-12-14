@@ -46,24 +46,25 @@ class AssignmentTable extends React.Component {
     }
     render() {
         const bookerNames = Object.keys(this.props.bookers);
-        console.log(bookerNames);
         
-        const getAssignedRole = (user, bookerName) => {
+        const getAssignedRole = (user, bookerName, key) => {
             const booker = this.props.bookers[bookerName],
-                roleId = booker.assignments.find(a => a.user_id === user).role_id;
-            return <td>
+                assignment = booker.assignments.find(a => a.user_id === user),
+                roleId = assignment ? assignment.role_id : '';
+            return <td key={key}>
                     <select value={roleId} onChange={e => this.changeRole(user, bookerName, e.target.value)}>
-                        {booker.roles.map(r => <option value={r.role_id}>{r.name}</option>)};
+                        <option key='' value='' />
+                        {booker.roles.map((r, i) => <option key={i} value={r.role_id}>{r.name}</option>)};
                     </select>
                 </td>;
         };
         
-        const headers = ['User', ...bookerNames].map(text => <th>{text}</th>),
+        const headers = ['User', ...bookerNames].map((text, index) => <th key={index}>{text}</th>),
             rows = this.props.users.map(user => {
                 //user's name and profile picture, then the assignments
-                const assignments = bookerNames.map(booker => getAssignedRole(user.user_id, booker));
+                const assignments = bookerNames.map((booker, i) => getAssignedRole(user.user_id, booker, i));
                 return <tr key={user.user_id}>
-                        <td>
+                        <td key='user'>
                             <img alt='profile picture' src={user.profile_image} style={{width: '20px', height: '20px'}}/>
                             {user.display_name}
                         </td>
