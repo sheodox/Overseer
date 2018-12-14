@@ -35,27 +35,6 @@ class Admin extends React.Component {
         );
     }
 }
-class RoleAssignments extends React.Component {
-    componentDidMount() {
-        if (this.props.assignment) {
-            this.roleSelect.value = this.props.assignment.role_id;
-        }
-    }
-    assignRole = (e) => {
-        const newRole = this.roleSelect.value;
-        adminConduit.emit('assign-role', this.props.module, this.props.user_id, newRole);
-    };
-    render() {
-        const options = [{name: '', role_id: ''}, ...this.props.roles].map((role, i) => {
-            return <option key={i} value={role.role_id}>{role.name}</option>;
-        });
-        return (
-            <tr>
-                <td><select ref={c=>this.roleSelect=c} onChange={this.assignRole}>{options}</select></td>
-            </tr>
-        );
-    }
-}
         
 class AssignmentTable extends React.Component {
     constructor(props) {
@@ -151,7 +130,6 @@ class BookerConfig extends React.Component {
         )
     }
 }
-
 
 
 class RoleActions extends React.Component {
