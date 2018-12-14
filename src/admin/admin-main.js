@@ -109,7 +109,7 @@ class BookerConfig extends React.Component {
         }
 
         return (
-            <div>
+            <section className="booker">
                 <h1>Booker - {this.props.module}</h1>
                 <h2>Roles</h2>
                 <label>New role:
@@ -125,8 +125,7 @@ class BookerConfig extends React.Component {
                         {rows}
                     </tbody>
                 </table>
-                <hr />
-            </div>
+            </section>
         )
     }
 }
