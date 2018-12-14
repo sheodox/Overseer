@@ -93,13 +93,12 @@ class Booker extends StockPile {
      */
     async dump() {
         const assignments = await this.all(`SELECT * FROM role_assignment LEFT JOIN role_registry ON role_registry.role_id = role_assignment.role_id`),
-            roles = await this.all(`SELECT * FROM role_registry`),
-            users = await Users.getAllUsers();
+            roles = await this.all(`SELECT * FROM role_registry`);
         roles.forEach(role => {
             role.permissions = this.buildPermissionsMap(role.permissions);
         });
 
-        return {assignments, roles, users};
+        return {assignments, roles};
     }
 }
 

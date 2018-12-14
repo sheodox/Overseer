@@ -7,7 +7,7 @@ const socket = io(),
 class Admin extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {bookers: {}, users: []}
     }
     componentDidMount() {
         adminConduit.emit('init');
@@ -20,16 +20,90 @@ class Admin extends React.Component {
     }
     render() {
         const bookers = [];
-        for (let bookerModule in this.state) {
-            if (this.state.hasOwnProperty(bookerModule)) {
+        for (let bookerModule in this.state.bookers) {
+            if (this.state.bookers.hasOwnProperty(bookerModule)) {
                 bookers.push(
-                    <BookerConfig key={bookerModule} module={bookerModule} {...this.state[bookerModule]} />
+                    <BookerConfig key={bookerModule} module={bookerModule} {...this.state.bookers[bookerModule]} />
                 );
             }
         }
         return (
-            <div>{bookers}</div>
+            <div>
+                <AssignmentTable bookers={this.state.bookers} users={this.state.users} />
+                {bookers}
+            </div>
         );
+    }
+}
+class RoleAssignments extends React.Component {
+    componentDidMount() {
+        if (this.props.assignment) {
+            this.roleSelect.value = this.props.assignment.role_id;
+        }
+    }
+    assignRole = (e) => {
+        const newRole = this.roleSelect.value;
+        adminConduit.emit('assign-role', this.props.module, this.props.user_id, newRole);
+    };
+    render() {
+        const options = [{name: '', role_id: ''}, ...this.props.roles].map((role, i) => {
+            return <option key={i} value={role.role_id}>{role.name}</option>;
+        });
+        return (
+            <tr>
+                <td><select ref={c=>this.roleSelect=c} onChange={this.assignRole}>{options}</select></td>
+            </tr>
+        );
+    }
+}
+        
+class AssignmentTable extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+    changeRole(userId, booker, role) {
+        adminConduit.emit('assign-role', booker, userId, role)
+    }
+    render() {
+        const bookerNames = Object.keys(this.props.bookers);
+        console.log(bookerNames);
+        
+        const getAssignedRole = (user, bookerName) => {
+            const booker = this.props.bookers[bookerName],
+                roleId = booker.assignments.find(a => a.user_id === user).role_id;
+            return <td>
+                    <select value={roleId} onChange={e => this.changeRole(user, bookerName, e.target.value)}>
+                        {booker.roles.map(r => <option value={r.role_id}>{r.name}</option>)};
+                    </select>
+                </td>;
+        };
+        
+        const headers = ['User', ...bookerNames].map(text => <th>{text}</th>),
+            rows = this.props.users.map(user => {
+                //user's name and profile picture, then the assignments
+                const assignments = bookerNames.map(booker => getAssignedRole(user.user_id, booker));
+                return <tr key={user.user_id}>
+                        <td>
+                            <img alt='profile picture' src={user.profile_image} style={{width: '20px', height: '20px'}}/>
+                            {user.display_name}
+                        </td>
+                        {assignments}
+                    </tr>;
+            });
+
+        return (
+        <section>
+            <h1>Assignments</h1>
+            <table>
+                <thead>
+                <tr>{headers}</tr>
+                </thead>
+                <tbody>
+                {rows}
+                </tbody>
+            </table>
+        </section>);
     }
 }
 
@@ -53,12 +127,6 @@ class BookerConfig extends React.Component {
             rows = this.props.roles.map((roleData, index) => {
                 return <RoleActions key={index} module={this.props.module} actions={actions} roleData={roleData}/>;
             });
-            assignments = this.props.users.map((userData, index) => {
-                const assignment = this.props.assignments.find(assignment => {
-                    return assignment.user_id === userData.user_id;
-                });
-                return <RoleAssignments assignment={assignment} module={this.props.module} {...userData} roles={this.props.roles} key={index}/>
-            });
         }
 
         return (
@@ -78,43 +146,13 @@ class BookerConfig extends React.Component {
                         {rows}
                     </tbody>
                 </table>
-                <h2>Assignments</h2>
-                <table>
-                    <thead>
-                        <tr><th>User</th><th>Role</th></tr>
-                    </thead>
-                    <tbody>
-                        {assignments}
-                    </tbody>
-                </table>
                 <hr />
             </div>
         )
     }
 }
 
-class RoleAssignments extends React.Component {
-    componentDidMount() {
-        if (this.props.assignment) {
-            this.roleSelect.value = this.props.assignment.role_id;
-        }
-    }
-    assignRole = (e) => {
-        const newRole = this.roleSelect.value;
-        adminConduit.emit('assign-role', this.props.module, this.props.user_id, newRole);
-    };
-    render() {
-        const options = [{name: '', role_id: ''}, ...this.props.roles].map((role, i) => {
-            return <option key={i} value={role.role_id}>{role.name}</option>;
-        });
-        return (
-            <tr>
-                <td><img src={this.props.profile_image} style={{width: '20px', height: '20px'}}/>{this.props.display_name}</td>
-                <td><select ref={c=>this.roleSelect=c} onChange={this.assignRole}>{options}</select></td>
-            </tr>
-        );
-    }
-}
+
 
 class RoleActions extends React.Component {
     toggleAction = (e) => {

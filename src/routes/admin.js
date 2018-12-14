@@ -2,6 +2,7 @@ const router = require('express').Router(),
     path = require('path'),
     su = require('../util/superuser'),
     Conduit = require('../util/conduit'),
+    Users = require('../users'),
     bookers = {
         echo: require('../db/echobooker'),
         voter: require('../db/voterbooker'),
@@ -55,7 +56,10 @@ async function dump(socket) {
             bookerDumps[i] = await bookers[i].dump();
         }
     }
-    socket.emit('admin:refresh', bookerDumps);
+    socket.emit('admin:refresh', {
+        users: await Users.getAllUsers(),
+        bookers: bookerDumps
+    });
 }
 
 module.exports = function(i) {
