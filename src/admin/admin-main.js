@@ -113,7 +113,7 @@ class BookerConfig extends React.Component {
                 <h1>Booker - {this.props.module}</h1>
                 <h2>Roles</h2>
                 <label>New role:
-                    <input onKeyDown={this.newRole} />
+                    <input type="text" onKeyDown={this.newRole} />
                 </label>
                 <table>
                     <thead>
