@@ -61,9 +61,15 @@ class Booker extends StockPile {
         const userPermissions = await this.getAllUserPermissions(userId);
         return userPermissions[action];
     }
-    async newRole(roleName) {
+    static cleanRoleName(roleName) {
+        if (!roleName) {
+            return null;
+        }
         //character whitelist
-        roleName = roleName.trim().replace(/[^\w\d-]/g, '');
+        return roleName.trim().replace(/[^\w\d-]/g, '');
+    }
+    async newRole(roleName) {
+        roleName = Booker.cleanRoleName(roleName);
 
         if (roleName) {
             await this.run(`INSERT INTO role_registry (name, permissions) VALUES (?, ?)`, roleName, 0);
@@ -75,6 +81,17 @@ class Booker extends StockPile {
             permissions ^= this.getPermissionBitmask(action);
             await this.run(`UPDATE role_registry SET permissions=? WHERE role_id=?`, permissions, role_id);
         }
+    }
+    async renameRole(role_id, name) {
+        name = Booker.cleanRoleName(name);
+        if (name) {
+            await this.run(`UPDATE role_registry SET name=? WHERE role_id=?`, name, role_id);
+        }
+    }
+    async deleteRole(role_id) {
+        //delete role assignments for anyone with this role
+        await this.run(`DELETE FROM role_assignment WHERE role_id=?`, role_id);
+        await this.run(`DELETE FROM role_registry WHERE role_id=?`, role_id);
     }
     async assignRole(user_id, role_id) {
         if (role_id !== '') {
@@ -89,7 +106,7 @@ class Booker extends StockPile {
 
     /**
      * Gets all data necessary for configuring roles and assignments
-     * @returns {Promise<{assignments, roles, users: *}>}
+     * @returns {Promise<{assignments, roles}>}
      */
     async dump() {
         const assignments = await this.all(`SELECT * FROM role_assignment LEFT JOIN role_registry ON role_registry.role_id = role_assignment.role_id`),

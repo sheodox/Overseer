@@ -1,5 +1,6 @@
 const React = require('react'),
     ReactDOM = require('react-dom'),
+    SVG = require('../components/SVG'),
     Conduit = require('../util/conduit');
 const socket = io(),
     adminConduit = new Conduit(socket, 'admin');
@@ -97,8 +98,7 @@ class BookerConfig extends React.Component {
     };
     render() {
         let headers = [],
-            rows = [],
-            assignments = [];
+            rows = [];
         if (this.props.roles.length) {
             const actions = ['name', ...Object.keys(this.props.roles[0].permissions)];
             headers = actions.map((action, index) => {
@@ -138,11 +138,27 @@ class RoleActions extends React.Component {
         console.log(`toggle ${action}`);
         adminConduit.emit('toggle-action', this.props.module, this.props.roleData.role_id, action);
     };
+    deleteRole = e => {
+        if (confirm(`Really delete ${this.props.module} role ${this.props.roleData.name}?`)) {
+            adminConduit.emit('delete-role', this.props.module, this.props.roleData.role_id);
+        }
+    };
+    renameRole = e => {
+        const newName = prompt('New name:', this.props.roleData.name);
+        //if they cancel don't send anything
+        if (newName) {
+            adminConduit.emit('rename-role', this.props.module, this.props.roleData.role_id, newName);
+        }
+    };
     render() {
         const cells = this.props.actions.map((action, index) => {
             //name is text, all others are booleans
             if (action === 'name') {
-                return <td key={index}>{this.props.roleData.name}</td>
+                return <td key={index}>
+                    {this.props.roleData.name}
+                    <button title='delete role' onClick={this.deleteRole}><SVG id='x-icon' /></button>
+                    <button title='rename role' onClick={this.renameRole}><SVG id='settings-icon' /></button>
+                </td>
             }
             return <td key={index}>
                 <input type="checkbox" data-action={action} checked={!!this.props.roleData.permissions[action]} onChange={this.toggleAction}/>

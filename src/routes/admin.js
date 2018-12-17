@@ -42,8 +42,16 @@ function bindAdminSocketListeners(socket) {
             await bookers[module].assignRole(user_id, role_id);
             await dump(socket);
         },
-        'toggle-action': async(module, role_id, action) => {
+        'toggle-action': async (module, role_id, action) => {
             await bookers[module].toggleAction(role_id, action);
+            await dump(socket);
+        },
+        'delete-role': async (module, role_id) => {
+            await bookers[module].deleteRole(role_id);
+            await dump(socket);
+        },
+        'rename-role': async (module, role_id, newName) => {
+            await bookers[module].renameRole(role_id, newName);
             await dump(socket);
         }
      });
