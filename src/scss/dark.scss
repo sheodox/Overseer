@@ -6,12 +6,16 @@ body {
 }
 
 button {
+    $bg: #303138;
     border: 1px solid #586c79;
-    background: #303138;
+    background: $bg;
     color: white;
     cursor: pointer;
     padding: 5px;
     line-height: 1;
+    &:hover {
+        background: lighten($bg, 5%);
+    }
 }
 
 input[type=text], textarea{
@@ -31,4 +35,7 @@ a {
 
 table {
     border-collapse: collapse;
+}
+svg {
+    fill: white;
 }
