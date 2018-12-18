@@ -1,5 +1,6 @@
 const React = require('react'),
     SVG = require('./SVG'),
+    Loading = require('./Loading'),
     Conduit = require('../util/conduit'),
     lightsConduit = new Conduit(socket, 'lights'),
     {Redirect} = require('react-router-dom');
@@ -31,16 +32,16 @@ class Lights extends React.Component {
 
         const groups = this.state.states.map((s, i) => {
             return <LightGroup {...s} key={i} />
-        });
+        }),
+            groupList = <ul>{groups}</ul>,
+            content = this.state.states.length ? groupList : <Loading />;
         return (
             <section className="panel">
                 <div className="panel-title">
                     <h2>Lights</h2>
                     <SVG id="light-icon" />
                 </div>
-                <ul>
-                    {groups}
-                </ul>
+                {content}
             </section>
         );
     }

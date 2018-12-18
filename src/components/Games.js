@@ -1,5 +1,6 @@
 const React = require('react'),
     SVG = require('./SVG'),
+    Loading = require('./Loading'),
     formatters = require('../util/formatters'),
     reactRouter = require('react-router-dom'),
     TagCloud = require('./TagCloud'),
@@ -8,7 +9,15 @@ const React = require('react'),
     echoConduit = new Conduit(socket, 'echo');
 
 //cache the state so we can use this state every time we re-mount to prevent jitter as it does a proper refresh of the list
-let cachedState = {filteredGames: null, diskUsage: {total: 0, used: 0}, echoConnected: false, games: [], echoServer: '', search: ''};
+let cachedState = {
+    loaded: false,
+    filteredGames: null,
+    diskUsage: {total: 0, used: 0},
+    echoConnected: false,
+    games: [],
+    echoServer: '',
+    search: ''
+};
 
 class Games extends React.Component {
     constructor(props) {
@@ -19,6 +28,7 @@ class Games extends React.Component {
         echoConduit.on({
             refresh: data => {
                 cachedState = data;
+                cachedState.loaded = true;
                 this.setState(data);
             }
         });
@@ -80,7 +90,8 @@ class Games extends React.Component {
         })
     };
     render() {
-        const games = (this.state.filteredGames || this.state.games).map((game, index) => {
+        const gamesList =(this.state.filteredGames || this.state.games),
+            games = gamesList.map((game, index) => {
                 return <Game {...game} echoConnected={this.state.echoConnected} echoServer={this.state.echoServer} key={index} />
             }),
             connection = this.state.echoConnected ? 'online' : 'offline';
@@ -93,7 +104,8 @@ class Games extends React.Component {
                     <SVG id="echo-icon" />
                 </div>
                 <div className="sub-panel">
-                    <div>
+                    <Loading renderWhen={!this.state.loaded} />
+                    <div className={this.state.loaded ? '' : 'hidden'}>
                         <div className="columns">
                             <div className="one-half">
                                 <DiskUsage {...this.state.diskUsage} />

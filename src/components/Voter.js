@@ -1,5 +1,7 @@
 const React = require('react'),
     SVG = require('./SVG'),
+    Loading = require('./Loading'),
+    If = require('./If'),
     {Redirect} = require('react-router-dom'),
     Conduit = require('../util/conduit'),
     UserBubble = require('./UserBubble'),
@@ -11,7 +13,8 @@ const React = require('react'),
 
 let cachedState = {
     activeRace: null,
-    races: []
+    races: [],
+    loaded: false
 };
 class Voter extends React.Component {
     constructor(props) {
@@ -29,9 +32,10 @@ class Voter extends React.Component {
                     cachedState.activeRace = updatedRace || races[0];
                 }
                 else {
-                    //blank ou the candidate list if all races are gone
+                    //blank out the candidate list if all races are gone
                     cachedState.activeRace = null;
                 }
+                cachedState.loaded = true;
                 this.setState(cachedState);
             }
         });
@@ -62,10 +66,13 @@ class Voter extends React.Component {
                     <SVG id="voter-icon" />
                 </div>
                 <div className="sub-panel voter">
-                    <RaceList {...this.state} switchRace={this.switchRace} />
-                    {this.state.activeRace ?
-                        <CandidateList {...this.state.activeRace} />
-                        : null}
+                    <Loading renderWhen={!this.state.loaded}/>
+                    <If renderWhen={this.state.loaded}>
+                        <RaceList {...this.state} switchRace={this.switchRace} />
+                        {this.state.activeRace ?
+                            <CandidateList {...this.state.activeRace} />
+                            : null}
+                    </If>
                 </div>
             </section>
         );
