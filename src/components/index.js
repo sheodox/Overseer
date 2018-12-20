@@ -7,7 +7,7 @@ new Trancemaker();
 const reactMount = document.querySelector('#react-mount');
 reactMount.addEventListener('click', e => {
     if (e.target === reactMount) {
-        redirectToSwitchboard(); //in App.js
+        appBack(); //in App.js
     }
 });
 

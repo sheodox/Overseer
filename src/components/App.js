@@ -30,21 +30,24 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         
-        window.redirectToSwitchboard = () => {
-            this.props.history.push('/');
+        window.appBack = () => {
+            //pretend like we're just going up a page, really just going back
+            if (location.pathname !== '/') {
+                this.props.history.goBack();
+            }
         }
     }
-    toSwitchboard = (e) => {
+    backgroundClick = (e) => {
         //if they clicked on the background and not the contents, redirect to the switchboard
         if (e.target.tagName.toLowerCase() === 'main') {
-            redirectToSwitchboard();
+            appBack();
         }
     };
     render() {
         let content = <main className="content" key="main"><LoginRequired /></main>;
 
         if (user) {
-            content = <main onClick={this.toSwitchboard} className="content" key="main">
+            content = <main onClick={this.backgroundClick} className="content" key="main">
                 <Route exact path="/" render={() => {
                     const returnUrlKey = 'auth-return-url',
                         returnUrl = sessionStorage.getItem(returnUrlKey);
