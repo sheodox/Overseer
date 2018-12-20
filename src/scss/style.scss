@@ -73,7 +73,6 @@ li {
     @include faint-shadow();
     margin: 0.5rem;
     display: inline-block;
-    background: $background-light;
 
     &:not(.switch-panel) h2 {
         color: white;
@@ -85,6 +84,7 @@ li {
     padding: 1rem;
     overflow: hidden;
     position: relative;
+    background: rgba($background-light, 0.95);
 
     h2 {
         margin: 0;
@@ -107,7 +107,7 @@ li {
 }
 
 .sub-panel {
-    background-color: $background-dark;
+    background-color: rgba($background-dark, 0.95);
     border: none;
     padding: 1.5rem;
     color: white;
