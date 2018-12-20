@@ -12,6 +12,7 @@ const router = express.Router();
 /* GET home page for / and any client side routing urls */
 router.get('/', entry);
 router.get('/w/:module', entry);
+router.get('/w/:module/**', entry);
 
 async function entry(req, res) {
     const id = req.user ? req.user.user_id : null,
