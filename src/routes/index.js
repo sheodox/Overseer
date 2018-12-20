@@ -10,7 +10,10 @@ const express = require('express'),
 const router = express.Router();
 
 /* GET home page for / and any client side routing urls */
-router.get('/|/w/', async function(req, res) {
+router.get('/', entry);
+router.get('/w/:module', entry);
+
+async function entry(req, res) {
     const id = req.user ? req.user.user_id : null,
         permissions = serialize({
             voter: await voterBooker.getAllUserPermissions(id),
@@ -32,9 +35,17 @@ router.get('/|/w/', async function(req, res) {
             text: 'Proxies', href: '/proxy'
         })
     }
-
+    
+    //add the module name for social meta
+    const moduleName = {
+        'game-echo': 'Game Echo',
+        voter: 'Voter',
+        lights: 'Lights'
+    }[req.params.module];
+    
     if (req.user) {
         res.render('index', {
+            title: (moduleName ? `${moduleName} - ` : '') + 'Overseer' ,
             user: serialize({
                 display_name: req.user.display_name,
                 profile_image: req.user.profile_image,
@@ -49,6 +60,6 @@ router.get('/|/w/', async function(req, res) {
             permissions
         });
     }
-});
+}
 
 module.exports = router;

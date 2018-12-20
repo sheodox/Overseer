@@ -1,7 +1,7 @@
 doctype html
 html
     head
-        title= "Overseer"
+        title= title
         link(rel='stylesheet', href='/css/style.css')
         link(rel='icon', href='/favicon.png')
         script(src="/socket.io/socket.io.js")
@@ -9,8 +9,8 @@ html
             const socket = io();
         meta(name='viewport',  content='width=device-width, initial-scale=1')
         meta(name='theme-color', content='#24252b')
-        meta(property='og:title', content='Overseer')
-        meta(property='og:site_name', content='Overseer')
+        meta(property='og:title', content=title)
+        meta(property='og:site_name', content=title)
         meta(property='og:image', content='/favicon.png')
         meta(property='og:description', content='LAN tools and home control.')
         meta(property='description', content='LAN tools and home control.')
