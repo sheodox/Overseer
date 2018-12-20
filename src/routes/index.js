@@ -46,6 +46,7 @@ async function entry(req, res) {
     if (req.user) {
         res.render('index', {
             title: (moduleName ? `${moduleName} - ` : '') + 'Overseer' ,
+            description: 'LAN tools and home control.',
             user: serialize({
                 display_name: req.user.display_name,
                 profile_image: req.user.profile_image,
