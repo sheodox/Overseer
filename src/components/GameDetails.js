@@ -1,6 +1,8 @@
 const React = require('react'),
     reactRouter = require('react-router-dom'),
     Link = reactRouter.Link,
+    Loading = require('./Loading'),
+    If = require('./If'),
     SVG = require('./SVG'),
     TagCloud = require('./TagCloud'),
     UserBubble = require('./UserBubble'),
@@ -14,7 +16,8 @@ class GameDetails extends React.Component {
         this.state = {
             file: this.props.match.params.file,
             fieldsUpdated: false,
-            oldInfo: {}
+            oldInfo: {},
+            loaded: false
         };
     }
     redirectToEcho = () => {
@@ -53,7 +56,8 @@ class GameDetails extends React.Component {
                         oldInfo: formattedGameInfo,
                         tagCloud: data.tagCloud,
                         echoConnected: data.echoConnected,
-                        downloadHref: data.echoServer + '/download/' + this.state.file + '.zip'
+                        downloadHref: data.echoServer + '/download/' + this.state.file + '.zip',
+                        loaded: true
                     }));
 
                     this.cloud.captureUsedTags();
@@ -133,44 +137,47 @@ class GameDetails extends React.Component {
                     <SVG id="echo-icon" />
                 </div>
                 <div className="sub-panel">
-                    <div className="action-buttons">
-                        <a {...downloadAttrs}>
-                            <SVG id="down-icon" />
-                        </a>
-                        <button {...deleteAttrs}><SVG id="x-icon" /></button>
-                    </div>
-                    <table>
-                        <tbody>
-                        <tr>
-                            <td>Size</td><td>{formatters.bytes(this.state.size, 'gb')}gb</td>
-                        </tr>
-                        <tr>
-                            <td>Downloads</td><td>{this.state.downloads}</td>
-                        </tr>
-                        <tr>
-                            <td>Last Upload</td><td><UserBubble user={this.state.last_uploader} />{formatters.date(this.state.modified)}</td>
-                        </tr>
-                        <tr>
-                            <td>Initial Upload</td><td><UserBubble user={this.state.initial_uploader} />{formatters.date(this.state.created)}</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <Loading renderWhen={!this.state.loaded}/>
+                    <If showWhen={this.state.loaded}>
+                        <div className="action-buttons">
+                            <a {...downloadAttrs}>
+                                <SVG id="down-icon" />
+                            </a>
+                            <button {...deleteAttrs}><SVG id="x-icon" /></button>
+                        </div>
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td>Size</td><td>{formatters.bytes(this.state.size, 'gb')}gb</td>
+                            </tr>
+                            <tr>
+                                <td>Downloads</td><td>{this.state.downloads}</td>
+                            </tr>
+                            <tr>
+                                <td>Last Upload</td><td><UserBubble user={this.state.last_uploader} />{formatters.date(this.state.modified)}</td>
+                            </tr>
+                            <tr>
+                                <td>Initial Upload</td><td><UserBubble user={this.state.initial_uploader} />{formatters.date(this.state.created)}</td>
+                            </tr>
+                            </tbody>
+                        </table>
 
-                    <div className={inputClass}>
-                        <label htmlFor="name">Game Name:</label>
-                        <input ref={c => this.name = c} onKeyUp={this.checkForChanges} type="text" id="name" {...readonlyState} />
-                    </div>
-                    <div className={inputClass}>
-                        <label htmlFor="tags">Tags:</label>
-                        <input onKeyUp={this.checkForChanges} ref={c => this.tags = c} type="text" id="tags" autoComplete="off" {...readonlyState} />
-                    </div>
-                    <TagCloud ref={c => this.cloud = c} tagInput={this.tags} tags={this.state.tagCloud} tagClicked={this.checkForChanges} {...readonlyState} />
-                    <br />
-                    <label htmlFor="details">Game details:</label>
-                    <textarea {...detailsAttrs} />
-                    <br />
-                    <button {...saveAttrs}>Save Changes</button>
-                    <button type="button" onClick={this.redirectToEcho}>{canEdit ? 'Cancel' : 'Back'}</button>
+                        <div className={inputClass}>
+                            <label htmlFor="name">Game Name:</label>
+                            <input ref={c => this.name = c} onKeyUp={this.checkForChanges} type="text" id="name" {...readonlyState} />
+                        </div>
+                        <div className={inputClass}>
+                            <label htmlFor="tags">Tags:</label>
+                            <input onKeyUp={this.checkForChanges} ref={c => this.tags = c} type="text" id="tags" autoComplete="off" {...readonlyState} />
+                        </div>
+                        <TagCloud ref={c => this.cloud = c} tagInput={this.tags} tags={this.state.tagCloud} tagClicked={this.checkForChanges} {...readonlyState} />
+                        <br />
+                        <label htmlFor="details">Game details:</label>
+                        <textarea {...detailsAttrs} />
+                        <br />
+                        <button {...saveAttrs}>Save Changes</button>
+                        <button type="button" onClick={this.redirectToEcho}>{canEdit ? 'Cancel' : 'Back'}</button>
+                    </If>
                 </div>
             </section>
         )
