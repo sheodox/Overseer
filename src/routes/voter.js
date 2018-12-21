@@ -16,6 +16,13 @@ module.exports = function(io) {
             }
         });
     }
+    async function notificationBroadcast(notificationData) {
+        notificationConduit.filteredBroadcast('notification', async user_id => {
+            if (await voterBooker.check(user_id, 'view')) {
+                return notificationData;
+            }
+        });
+    }
 
     io.on('connection', socket => {
         const socketConduit = new SilverConduit(socket, 'voter');
@@ -35,7 +42,7 @@ module.exports = function(io) {
                 if (await voterBooker.check(userId, 'add_race')) {
                     const raceData = await voterTracker.addRace(name);
                     broadcast();
-                    notificationConduit.emit('notification', {
+                    notificationBroadcast({
                         type: 'link',
                         title: 'Voter - New Race',
                         text: `A new race "${raceData.race_name}" was added to Voter by ${displayName}!`,
@@ -52,7 +59,7 @@ module.exports = function(io) {
                         broadcast();
 
                         const {race_name} = (await voterTracker.getRaceById(raceId));
-                        notificationConduit.emit('notification', {
+                        notificationBroadcast({
                             type: 'link',
                             title: 'Voter - New Candidate',
                             text: `${displayName} added "${name}" to ${race_name} in Voter!`,

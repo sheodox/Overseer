@@ -23,6 +23,13 @@ async function broadcast() {
         }
     });
 }
+async function notificationBroadcast(notificationData) {
+    notificationConduit.filteredBroadcast('notification', async user_id => {
+        if (await echoBooker.check(user_id, 'view')) {
+            return notificationData;
+        }
+    });
+}
 
 async function prepareData() {
     const allTags = {},
@@ -100,7 +107,7 @@ const echoListener = socket => {
         //if it's a brand new game send a notification to everyone
         const addedGame = await tracker.addGame(data.game);
         if (addedGame) {
-            notificationConduit.emit('notification', {
+            notificationBroadcast({
                 type: 'link',
                 title: 'New game!',
                 text: addedGame.name,
