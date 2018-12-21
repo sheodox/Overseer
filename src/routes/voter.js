@@ -47,15 +47,18 @@ module.exports = function(io) {
                 if (await voterBooker.check(userId, 'add_candidate')) {
                     //overwrite name with the cleaned name from the tracker
                     name = await voterTracker.addCandidate(raceId, name, userId);
-                    broadcast();
-                    
-                    const {race_name} = (await voterTracker.getRaceById(raceId));
-                    notificationConduit.emit('notification', {
-                        type: 'link',
-                        title: 'Voter - New Candidate',
-                        text: `${displayName} added "${name}" to ${race_name} in Voter!`,
-                        href: `/w/voter/${raceId}`
-                    });
+                    //if we got the name back, it means it was added, don't notify anyone if it wasn't
+                    if (name) {
+                        broadcast();
+
+                        const {race_name} = (await voterTracker.getRaceById(raceId));
+                        notificationConduit.emit('notification', {
+                            type: 'link',
+                            title: 'Voter - New Candidate',
+                            text: `${displayName} added "${name}" to ${race_name} in Voter!`,
+                            href: `/w/voter/${raceId}`
+                        });
+                    }
                 }
             },
             toggleVote: async (raceId, candidateId, direction) => {
