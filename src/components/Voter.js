@@ -78,7 +78,6 @@ class Voter extends React.Component {
         this.setState({
             activeRace: race
         });
-        console.log(id);
         this.props.history.push(Voter.getRaceRoute(id));
     };
     render() {
