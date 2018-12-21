@@ -71,7 +71,7 @@ class App extends React.Component {
                         <Route path={`${match.url}/details/:file`} component={GameDetails} />
                     </div>;
                 }} />
-                <Route path="/w/voter" component={Voter} />
+                <Route path="/w/voter/:race?" component={Voter} />
                 <Route path="/w/settings" component={Settings} />
             </main>
         }

@@ -55,11 +55,18 @@ class VoterTracker extends Stockpile {
         if (valid.name(race_name)) {
             const insertMap = this.buildInsertMap({race_name}, 'races');
             await this.run(`INSERT INTO races ${insertMap.sql}`, insertMap.values);
+            return await this.getRaceByName(race_name);
         }
     }
     async getCandidateCreator(race_id, candidate_id) {
         const data = this.get(`SELECT creator FROM candidates WHERE race_id=? AND candidate_id=?`, race_id, candidate_id);
         return data ? data.creator : null;
+    }
+    async getRaceByName(name) {
+        return await this.get(`SELECT * FROM races WHERE race_name=?`, name);
+    }
+    async getRaceById(id) {
+        return await this.get(`SELECT * FROM races WHERE race_id=?`, id);
     }
     async removeRace(race_id) {
         await this.run(`DELETE FROM races WHERE race_id=?`, race_id);
@@ -74,6 +81,8 @@ class VoterTracker extends Stockpile {
         if (valid.name(candidate_name) && !existing) {
             const insertMap = this.buildInsertMap({ race_id, candidate_name, creator: user_id}, 'candidates');
             await this.run(`INSERT INTO candidates ${insertMap.sql}`, insertMap.values);
+            //return the cleaned name
+            return candidate_name;
         }
     }
     async removeCandidate(race_id, candidate_id) {

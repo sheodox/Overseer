@@ -21,13 +21,24 @@ class Voter extends React.Component {
         super(props);
         this.state = cachedState;
     }
+    static getRaceRoute(id) {
+        return `/w/voter/${id}`;
+    }
     componentWillMount() {
+        const getActiveRaceId = () => {
+            if (this.props.match.params.race) {
+                return parseInt(this.props.match.params.race, 10);
+            }
+            else if (cachedState.activeRace) {
+                return cachedState.activeRace.race_id;
+            }
+        };
         voterConduit.on({
             refresh: races => {
                 cachedState.races = races;
                 if (races.length) {
                     const updatedRace = races.find(r => {
-                        return r.race_id === (cachedState.activeRace || {}).race_id;
+                        return r.race_id === getActiveRaceId();
                     });
                     cachedState.activeRace = updatedRace || races[0];
                 }
@@ -37,15 +48,29 @@ class Voter extends React.Component {
                 }
                 cachedState.loaded = true;
                 this.setState(cachedState);
+                //redirect to this race in the url
+                this.props.history.push(Voter.getRaceRoute(
+                    cachedState.activeRace ? cachedState.activeRace.race_id : ''
+                ));
             }
         });
         voterConduit.emit('init');
         AppControl.title('Voter');
     }
+    componentDidUpdate(prevProps) {
+        //could happen if they click a notification to a different race, don't want to cause a loop though
+        if (prevProps.match.params.race !== this.props.match.params.race) {
+            this.switchRace(parseInt(this.props.match.params.race, 10));
+        }
+    }
     componentWillUnmount() {
         voterConduit.destroy();
     }
     switchRace = (id) => {
+        //NaN can happen if all races have been deleted
+        if (isNaN(id)) {
+            return;
+        }
         const race = this.state.races.find(race => {
             return race.race_id === id;
         });
@@ -53,6 +78,8 @@ class Voter extends React.Component {
         this.setState({
             activeRace: race
         });
+        console.log(id);
+        this.props.history.push(Voter.getRaceRoute(id));
     };
     render() {
         if (!Booker.voter.view) {
