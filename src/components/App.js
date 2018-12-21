@@ -31,9 +31,8 @@ class App extends React.Component {
         super(props);
         
         window.appBack = () => {
-            //pretend like we're just going up a page, really just going back
             if (location.pathname !== '/') {
-                this.props.history.goBack();
+                this.props.history.push('..');
             }
         }
     }
@@ -57,6 +56,10 @@ class App extends React.Component {
                     }
                     return <Switchboard />
                 }} />
+                <Route exact path="/w/" render={() => {
+                    // '/w/' without any module isn't valid, but could happen from clicking the background, just redirect to the landing page
+                    return <Redirect to='/'/>
+                }}/>
                 <Route path="/w/lights" component={Lights} />
                 <Route path="/w/game-echo" render={({match}) => {
                     if (!Booker.echo.view) {
