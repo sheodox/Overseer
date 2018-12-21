@@ -59,7 +59,7 @@ class VoterTracker extends Stockpile {
         }
     }
     async getCandidateCreator(race_id, candidate_id) {
-        const data = this.get(`SELECT creator FROM candidates WHERE race_id=? AND candidate_id=?`, race_id, candidate_id);
+        const data = await this.get(`SELECT creator FROM candidates WHERE race_id=? AND candidate_id=?`, race_id, candidate_id);
         return data ? data.creator : null;
     }
     async getRaceByName(name) {
