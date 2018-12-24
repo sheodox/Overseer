@@ -22,6 +22,8 @@ class EchoUploader extends React.Component {
             toast: null,
             file: ''
         };
+        //no good way to stop maximizing the file input, after a timeout minimize it
+        this.minimizeTimeout = null;
     }
     componentDidMount() {
         AppControl.title('Echo Uploader');
@@ -110,8 +112,17 @@ class EchoUploader extends React.Component {
     }
     onFileSelect = (e) => {
         //file selections will give a value of C:\fakepath\Game Name.zip, trim the non-name bits
-        const selectedGame = e.target.value.replace(/^C\:\\fakepath\\|.zip$/g, ''),
+        const fileValue = e.target.value,
+            isZip = /\.zip$/.test(fileValue),
+            selectedGame = fileValue.replace(/^C\:\\fakepath\\|.zip$/g, ''),
             existingGame = this.state.games.find(g => g.file === selectedGame);
+        
+        //if they're trying to upload a non-zip, clear it
+        if (!isZip) {
+            e.target.value = null;
+            return;
+        }
+        
         this.setState({
             file: selectedGame
         });
@@ -132,6 +143,30 @@ class EchoUploader extends React.Component {
             this.cloud.captureUsedTags();
         }
     };
+    dragOver = e => {
+        this.maximize();
+        this.scheduleMinimize();
+        e.preventDefault();
+    };
+    scheduleMinimize() {
+        clearTimeout(this.minimizeTimeout);
+        this.minimizeTimeout = setTimeout(() => this.minimize(), 250);
+    }
+    drop = e => {
+        this.minimize();
+    };
+    maximize() {
+        if (!this.state.dragging) {
+            this.setState({
+                dragging: true
+            });
+        }
+    }
+    minimize() {
+        this.setState({
+            dragging: false
+        });
+    }
     render() {
         if (!Booker.echo.upload) {
             return <Redirect to="/w/game-echo" />
@@ -139,15 +174,18 @@ class EchoUploader extends React.Component {
         const disabled = this.state.uploading;
 
         return (
-            <section className="panel" id="echo-uploader">
+            <section className="panel" id="echo-uploader"  onMouseLeave={this.mouseLeave} onDragOver={this.dragOver} onDrop={this.drop}>
                 <div className="panel-title">
                     <h2>Game Echo Uploader</h2>
                     <SVG id="echo-icon" />
                 </div>
                 <div className="sub-panel">
                     <form ref={c => this.form = c} onSubmit={this.upload}>
-                        <label htmlFor="file">Select a zip:</label>
-                        <input ref={c => this.fileSelect = c} onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file" disabled={disabled}/>
+                        <label id="file-label" htmlFor="file" >Select or drag a file here!<span>{this.state.file ? `(${this.state.file}.zip)` : '(no file selected)'}</span></label>
+                        <div className={this.state.dragging ? 'file-overlay' : 'hidden'}>
+                            Drop to attach file
+                        </div>
+                        <input ref={c => this.fileSelect = c} onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file" disabled={disabled} className={this.state.dragging ? 'dragging' : ''}/>
                         <br />
                         <div className="control">
                             <label htmlFor="name">Game name:</label>

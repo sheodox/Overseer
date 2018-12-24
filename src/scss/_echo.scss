@@ -69,6 +69,47 @@ th {
     form button[type=submit] {
         margin-right: 1rem;
     }
+    
+    #file-label {
+        @include button();
+        width: 100%;
+        text-align: center;
+        
+        span {
+            display: block;
+        }
+    }
+    $fileZIndex: 10000000;
+    @mixin fullscreen() {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+    }
+    .file-overlay {
+        @include fullscreen();
+        //put it just under the invisible file input
+        z-index: $fileZIndex - 1;
+        background-color: rgba($background-light, 0.95);
+        color: white;
+        font-size: 5rem;
+        text-align: center;
+        line-height: 100vh;
+        vertical-align: middle;
+        text-transform: uppercase;
+    }
+    #file {
+        display: none;
+        //maximized but invisible
+        &.dragging {
+            @include fullscreen();
+            opacity: 0;
+            z-index: $fileZIndex;
+            color: transparent;
+        }
+    }
 }
 
 #echo-details {
