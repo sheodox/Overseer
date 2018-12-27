@@ -25,7 +25,8 @@ module.exports = function(io) {
     }
 
     io.on('connection', socket => {
-        const socketConduit = new SilverConduit(socket, 'voter');
+        const socketConduit = new SilverConduit(socket, 'voter'),
+            singleUserNotifications = new SilverConduit(socket, 'notifications');
         let userId, displayName;
 
         socketConduit.on({
@@ -53,9 +54,9 @@ module.exports = function(io) {
             newCandidate: async (raceId, name) => {
                 if (await voterBooker.check(userId, 'add_candidate')) {
                     //overwrite name with the cleaned name from the tracker
-                    name = await voterTracker.addCandidate(raceId, name, userId);
+                    const {candidate_name, error} = await voterTracker.addCandidate(raceId, name, userId);
                     //if we got the name back, it means it was added, don't notify anyone if it wasn't
-                    if (name) {
+                    if (candidate_name) {
                         broadcast();
 
                         const {race_name} = (await voterTracker.getRaceById(raceId));
@@ -64,6 +65,13 @@ module.exports = function(io) {
                             title: 'Voter - New Candidate',
                             text: `${displayName} added "${name}" to ${race_name} in Voter!`,
                             href: `/w/voter/${raceId}`
+                        });
+                    }
+                    else if (error) {
+                        singleUserNotifications.emit('notification', {
+                            type: 'text',
+                            title: 'Voter Error',
+                            text: error
                         });
                     }
                 }

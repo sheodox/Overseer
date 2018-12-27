@@ -159,7 +159,13 @@ class VoterTracker extends Stockpile {
             await this.run(`INSERT INTO candidates ${insertMap.sql}`, insertMap.values);
             await this._refreshCache();
             //return the cleaned name
-            return candidate_name;
+            return {candidate_name};
+        }
+        else if (existing) {
+            return {error: 'Something that name already exists!'}
+        }
+        else {
+            return {error: 'Invalid name!'}
         }
     }
     async removeCandidate(race_id, candidate_id) {
