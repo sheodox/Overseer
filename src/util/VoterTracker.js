@@ -94,13 +94,14 @@ class VoterTracker extends Stockpile {
             return;
         }
         const existingVote = await this.get(`SELECT direction FROM votes WHERE race_id=? AND candidate_id=? AND user_id=?`, race_id, candidate_id, user_id);
+        await this.run('BEGIN TRANSACTION');
         await this.run(`DELETE FROM votes WHERE race_id=? AND candidate_id=? AND user_id=?`, race_id, candidate_id, user_id);
         //if they voted, we just cleared it so we're done here
-        if (existingVote && existingVote.direction === direction) {
-            return;
+        if (!existingVote || existingVote.direction !== direction) {
+            const insertMap = this.buildInsertMap({ race_id, candidate_id, user_id, direction }, 'votes');
+            await this.run(`INSERT INTO votes ${insertMap.sql}`, insertMap.values);
         }
-        const insertMap = this.buildInsertMap({ race_id, candidate_id, user_id, direction }, 'votes');
-        await this.run(`INSERT INTO votes ${insertMap.sql}`, insertMap.values);
+        await this.run('COMMIT');
     }
     async resetVotes(race_id) {
         await this.run(`DELETE FROM votes WHERE race_id=?`, race_id);
