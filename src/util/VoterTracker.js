@@ -162,7 +162,7 @@ class VoterTracker extends Stockpile {
             return {candidate_name};
         }
         else if (existing) {
-            return {error: 'Something that name already exists!'}
+            return {error: 'Something with that name already exists!'}
         }
         else {
             return {error: 'Invalid name!'}
