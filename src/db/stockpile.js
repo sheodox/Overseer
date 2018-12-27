@@ -40,10 +40,10 @@ class Stockpile {
         return this._callSql(...args);
     }
     _callSql(type, sql, params=[]) {
-        this.debug(sql, params);
         const startTime = Date.now();
         return new Promise((resolve, reject) => {
             this._db[type](sql, ...params, (err, row) => {
+                this.debug(sql, params);
                 if (err) {
                     reject(err);
                     return;
@@ -51,6 +51,9 @@ class Stockpile {
                 else if (row) {
                     const count = Array.isArray(row) ? row.length : 1;
                     this.debug(`${count} results in ${Date.now() - startTime}ms`);
+                }
+                else {
+                    this.debug(`0 results in ${Date.now() - startTime}ms`);
                 }
                 resolve(row);
             })
