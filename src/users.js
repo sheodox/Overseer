@@ -1,4 +1,5 @@
 const StockPile = require('./db/stockpile'),
+    TTLCache = require('./util/TTLCache'),
     debug = require('debug')('users');
 
 class Users extends StockPile{
@@ -15,6 +16,8 @@ class Users extends StockPile{
                 }
             ]
         });
+        
+        this._cache = new TTLCache(1000);
     }
 
     /**
@@ -66,8 +69,10 @@ class Users extends StockPile{
 
         const masked = [];
         for (let i of ids) {
-            const user = await this.getUser(i);
+            const user = this._cache.get(i) || await this.getUser(i);
             if (user) {
+                this._cache.set(i, user);
+                
                 masked.push({
                     display_name: user.display_name,
                     profile_image: user.profile_image
