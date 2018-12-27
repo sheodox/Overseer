@@ -49,9 +49,12 @@ class Voter extends React.Component {
                 cachedState.loaded = true;
                 this.setState(cachedState);
                 //redirect to this race in the url
-                this.props.history.push(Voter.getRaceRoute(
+                const raceRoute = Voter.getRaceRoute(
                     cachedState.activeRace ? cachedState.activeRace.race_id : ''
-                ));
+                );
+                if (location.pathname !== raceRoute) {
+                    this.props.history.push(raceRoute);
+                }
             }
         });
         voterConduit.emit('init');
