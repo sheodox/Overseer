@@ -9,7 +9,6 @@ class TTLCache {
     get (key) {
         const cached = this._data[key];
         if (cached && Date.now() < cached.expires) {
-            
             return cached.data;
         }
     }
