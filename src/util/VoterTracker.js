@@ -60,6 +60,17 @@ class VoterTracker extends Stockpile {
     }
 
     /**
+     * Get a single user's vote for a specific candidate
+     * @param race_id
+     * @param candidate_id
+     * @param user_id
+     * @private
+     */
+    _getCachedVote(race_id, candidate_id, user_id) {
+        return this._voteCache.find(vote => vote.race_id === race_id && vote.candidate_id === candidate_id && vote.user_id === user_id);
+    }
+
+    /**
      * Cast a vote in the cache, to be done at the same time as the same db operations.
      * @param race_id
      * @param candidate_id
@@ -162,7 +173,7 @@ class VoterTracker extends Stockpile {
         if (direction !== 'up' && direction !== 'down') {
             return;
         }
-        const existingVote = await this.get(`SELECT direction FROM votes WHERE race_id=? AND candidate_id=? AND user_id=?`, race_id, candidate_id, user_id);
+        const existingVote = this._getCachedVote(race_id, candidate_id, user_id);
         await this.run('BEGIN TRANSACTION');
         await this.run(`DELETE FROM votes WHERE race_id=? AND candidate_id=? AND user_id=?`, race_id, candidate_id, user_id);
         //if they voted, we just cleared it so we're done here
