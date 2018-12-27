@@ -240,17 +240,23 @@ class CandidateList extends React.Component {
         });
     }
     lockSorting = () => {
+        clearTimeout(this.state.sortTimeout);
         this.setState({
             canSort: false
         });
     };
     unlockSorting = () => {
-        if (this.state.sortQueued) {
-            this.sortAndSetState();
-        }
+        //wait for a bit before sorting, sometimes it quickly flips to unlocked and back so make sure it's been a while
         this.setState({
-            canSort: true,
-            sortQueued: false
+            sortTimeout: setTimeout(() => {
+                if (this.state.sortQueued) {
+                    this.sortAndSetState();
+                }
+                this.setState({
+                    canSort: true,
+                    sortQueued: false
+                });
+            }, 1000)
         });
     };
     resetVotes = () => {
