@@ -47,7 +47,13 @@ class Users extends StockPile{
      * @returns {Promise<null>}
      */
     async getUser(id) {
+        const cached = this._cache.get(id);
+        if (cached) {
+            return cached;
+        }
+        //not cached
         const user = await this.get(`SELECT * FROM users WHERE user_id=?`, id);
+        this._cache.set(id, user);
         return user || null;
     }
 
@@ -69,10 +75,8 @@ class Users extends StockPile{
 
         const masked = [];
         for (let i of ids) {
-            const user = this._cache.get(i) || await this.getUser(i);
+            const user = await this.getUser(i);
             if (user) {
-                this._cache.set(i, user);
-                
                 masked.push({
                     display_name: user.display_name,
                     profile_image: user.profile_image
