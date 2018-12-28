@@ -1,6 +1,11 @@
 doctype html
 html
     head
+        meta(property='og:title', content=module || title)
+        meta(property='og:site_name', content=site)
+        meta(property='og:image', content='/favicon.png')
+        meta(property='og:description', content=description)
+        meta(property='description', content=description)
         title= title
         link(rel='stylesheet', href='/css/style.css')
         link(rel='icon', href='/favicon.png')
@@ -9,11 +14,6 @@ html
             const socket = io();
         meta(name='viewport',  content='width=device-width, initial-scale=1')
         meta(name='theme-color', content='#24252b')
-        meta(property='og:title', content=module || title)
-        meta(property='og:site_name', content=site)
-        meta(property='og:image', content='/favicon.png')
-        meta(property='og:description', content=description)
-        meta(property='description', content=description)
         link(href='//fonts.googleapis.com/css?family=Roboto', rel="stylesheet")
         link(href='//fonts.googleapis.com/css?family=Ceviche+One', rel="stylesheet")
     body
