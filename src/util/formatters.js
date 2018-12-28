@@ -1,8 +1,8 @@
 const formatters = {
     bytes: function(bytes, unit) {
         let units = {
-            gb: 1000000000,
-            mb: 1000000
+            gb: 1073741824, //gibibytes
+            mb: 1048576 //mebibytes
         };
         return (bytes / units[unit]).toFixed(2);
     },
