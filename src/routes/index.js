@@ -44,12 +44,16 @@ async function entry(req, res) {
         lights: 'Lights'
     }[req.params.module];
     
+    const social = {
+        title: (moduleName ? `${moduleName} - ` : '') + 'Overseer' ,
+        site: 'Overseer',
+        module: moduleName,
+        description: 'LAN tools and home control.',
+    };
+    
     if (req.user) {
         res.render('index', {
-            title: (moduleName ? `${moduleName} - ` : '') + 'Overseer' ,
-            site: 'Overseer',
-            module: moduleName,
-            description: 'LAN tools and home control.',
+            ...social,
             user: serialize({
                 display_name: req.user.display_name,
                 profile_image: req.user.profile_image,
@@ -60,6 +64,7 @@ async function entry(req, res) {
     }
     else {
         res.render('index', {
+            ...social,
             user: serialize(false),
             permissions
         });
