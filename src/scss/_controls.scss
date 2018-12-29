@@ -69,11 +69,11 @@ button, input[type=submit] {
 }
 progress {
     -webkit-appearance: none;
-    background: $background-dark;
+    background: $background-light;
     border-radius: 0.1rem;
 
     &::-webkit-progress-bar {
-        background: $background-dark;
+        background: $background-light;
     }
     &::-webkit-progress-value {
         background: $color-blue;
