@@ -31,11 +31,15 @@ const formatters = {
             minutes = delta / ms.minute,
             seconds = delta / ms.second,
             format = (num, unit) => {
+                num = parseFloat(num.toFixed(1));
                 const floor = Math.floor(num),
                     decimal = num - floor;
                 //toFixed will round, so 2.96 turns into 3.0 and it will fail the 'if' condition otherwise, make it round first
-                num = parseFloat(num.toFixed(1));
                 if (decimal < 0.1) {
+                    if (floor === 1) {
+                        //strip plural
+                        unit = unit.replace(/s$/, '');
+                    }
                     return `${floor} ${unit} ago`
                 }
                 return `${num} ${unit} ago`;
