@@ -154,10 +154,14 @@ class GameDetails extends React.Component {
                                 <td>Downloads</td><td>{this.state.downloads}</td>
                             </tr>
                             <tr>
-                                <td>Last Upload</td><td><UserBubble user={this.state.last_uploader} />{formatters.date(this.state.modified)}</td>
+                                <td>Last Upload</td><td><UserBubble user={this.state.last_uploader} />
+                                <span title={formatters.dateTime(this.state.modified)}>{formatters.relativeDate(this.state.modified)}</span>
+                                </td>
                             </tr>
                             <tr>
-                                <td>Initial Upload</td><td><UserBubble user={this.state.initial_uploader} />{formatters.date(this.state.created)}</td>
+                                <td>Initial Upload</td><td><UserBubble user={this.state.initial_uploader} />
+                                <span title={formatters.dateTime(this.state.created)}>{formatters.relativeDate(this.state.created)}</span>
+                                </td>
                             </tr>
                             </tbody>
                         </table>

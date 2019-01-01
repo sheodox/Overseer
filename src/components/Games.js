@@ -184,7 +184,7 @@ class Game extends React.Component {
                     <Link to={detailsHref}>{this.props.name}</Link>
                 </td>
                 <td className="g-size">{size}</td>
-                <td className="g-date">{this.props.in_progress ? 'uploading now...' : formatters.date(this.props.modified)}</td>
+                <td className="g-date">{this.props.in_progress ? 'uploading now...' : (<span title={formatters.date(this.props.modified)}>{formatters.relativeDate(this.props.modified)}</span>)}</td>
                 {this.props.in_progress ? (<td><progress /></td>) : (
                     <td className="centered g-actions">
                         <a onClick={this.download} className={"download " + (this.props.echoConnected && Booker.echo.download ? '' : 'disabled')} href={this.props.echoConnected && Booker.echo.download ? this.props.echoServer + '/download/' + this.props.file + '.zip' : null} title="download">
