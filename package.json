@@ -9,7 +9,9 @@
     "start": "export NODE_ENV=production && forever start dist/app.js",
     "stop": "forever stop dist/app.js",
     "deploy": "npm stop && git pull && npm run build && npm start",
-    "test": "export NODE_ENV=production && node dist/app.js"
+    "test": "export NODE_ENV=production && node dist/app.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -32,7 +34,8 @@
     "serve-favicon": "^2.5.0",
     "socket.io": "^2.1.1",
     "sqlite3": "^4.0.0",
-    "three": "^0.96.0"
+    "three": "^0.96.0",
+    "snyk": "^1.161.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -51,5 +54,6 @@
     "gulp-webpack": "^1.5.0",
     "sass-material-colors": "0.0.5",
     "source-map-loader": "^0.2.4"
-  }
+  },
+  "snyk": true
 }
