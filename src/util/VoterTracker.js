@@ -194,6 +194,7 @@ class VoterTracker extends Stockpile {
     }
     async resetVotes(race_id) {
         await this.run(`DELETE FROM votes WHERE race_id=?`, race_id);
+        this._voteCache = this._voteCache.filter(v => v.race_id !== race_id);
     }
 }
 
