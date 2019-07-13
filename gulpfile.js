@@ -2,8 +2,8 @@
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
     babel = require('gulp-babel'),
-    webpack = require('gulp-webpack'),
-    svgmin = require('gulp-svgmin'),
+    _webpack = require('gulp-webpack'),
+    _svgmin = require('gulp-svgmin'),
     sourcemaps = require('gulp-sourcemaps'),
     jsGlob = './src/**/*.js',
     webpackEntry = './dist/components/index.js',
@@ -12,48 +12,48 @@ var gulp = require('gulp'),
     uncompiledGlob = './src/**/*.!(js|scss|svg)',
     svgGlob = './src/**/*.svg';
 
-gulp.task('run:js', function() {
+ function runjs() {
     return gulp.src(jsGlob)
         .pipe(babel({
-            presets: ['react'],
-            plugins: ['transform-object-rest-spread', 'syntax-object-rest-spread', 'transform-class-properties']
+            presets: ['@babel/react'],
+            plugins: ['@babel/plugin-proposal-class-properties', '@babel/plugin-proposal-object-rest-spread']//, 'transform-class-properties']
         }))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist'));
-});
-
-gulp.task('run:webpack', ['run:js'], function() {
-    gulp.src(webpackEntry)
-        .pipe(webpack({
+};
+exports.runjs = runjs;
+function runwebpack() {
+    return gulp.src(webpackEntry)
+        .pipe(_webpack({
             output: {filename: '[name].js'},
             devtool: 'source-map'
         }))
         .pipe(gulp.dest('./dist/public/js'));
-});
-
-gulp.task('run:webpack-admin', ['run:js'], function() {
-    gulp.src(adminWebpackEntry)
-        .pipe(webpack({
+}
+exports.runwebpack = gulp.series(runjs, runwebpack);
+function runwebpackadmin() {
+    return gulp.src(adminWebpackEntry)
+        .pipe(_webpack({
             output: {filename: '[name].js'},
             devtool: 'source-map'
         }))
         .pipe(gulp.dest('./dist/admin'));
-});
-
-gulp.task('run:scss', function() {
-    gulp.src(sassGlob)
+}
+exports.runwebpackadmin = gulp.series(runjs, runwebpackadmin);
+function runscss() {
+    return gulp.src(sassGlob)
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('./dist/public/css'));
-});
-
-gulp.task('run:uncompiled', function() {
-    gulp.src(uncompiledGlob)
+}
+exports.runscss = runscss;
+function rununcompiled() {
+    return gulp.src(uncompiledGlob)
         .pipe(gulp.dest('./dist'));
-});
-
-gulp.task('run:svgmin',  function() {
-    gulp.src(svgGlob)
-        .pipe(svgmin(function(file) {
+}
+exports.rununcompiled = rununcompiled;
+function runsvgmin() {
+    return gulp.src(svgGlob)
+        .pipe(_svgmin(function(file) {
                 return {
                     plugins: [{
                         cleanupIDs: false
@@ -62,37 +62,46 @@ gulp.task('run:svgmin',  function() {
             }
         ))
         .pipe(gulp.dest('./dist'));
-});
+}
+exports.runsvgmin = runsvgmin;
+function watchjs() {
+    return gulp.watch(jsGlob, runjs);
+}
+exports.watchjs = watchjs;
+function watchscss() {
+    return gulp.watch(sassGlob, runscss);
+};
+exports.watchscss = watchscss;
+function watchuncompiled() {
+    return gulp.watch(uncompiledGlob, rununcompiled);
+}
+exports.watchuncompiled = watchuncompiled;
+function watchwebpack() {
+    return gulp.watch(webpackEntry, runwebpack);
+}
+exports.watchwebpack = watchwebpack;
+function watchwebpackadmin() {
+    return gulp.watch(adminWebpackEntry, runwebpackadmin);
+}
+exports.watchwebpackadmin = watchwebpackadmin;
+function watchsvgmin() {
+    return gulp.watch(svgGlob, runsvgmin);
+}
+exports.watchsvgmin = watchsvgmin;
 
-gulp.task('watch:js', function() {
-    gulp.watch(jsGlob, ['run:js']);
-});
-
-gulp.task('watch:scss', function() {
-    gulp.watch(sassGlob, ['run:scss']);
-});
-
-gulp.task('watch:uncompiled', function() {
-    gulp.watch(uncompiledGlob, ['run:uncompiled']);
-});
-
-gulp.task('watch:webpack', function() {
-    gulp.watch(webpackEntry, ['run:webpack']);
-});
-
-gulp.task('watch:webpack-admin', function() {
-    gulp.watch(adminWebpackEntry, ['run:webpack-admin']);
-});
-
-gulp.task('watch:svgmin', function() {
-    gulp.watch(svgGlob, ['run:svgmin']);
-});
-
-gulp.task('js', ['run:js', 'watch:js']);
-gulp.task('sass', ['run:scss', 'watch:scss']);
-gulp.task('uncompiled', ['run:uncompiled', 'watch:uncompiled']);
-gulp.task('webpack', ['run:webpack', 'watch:webpack']);
-gulp.task('webpack-admin', ['run:webpack-admin', 'watch:webpack-admin']);
-gulp.task('svgmin', ['run:svgmin', 'watch:svgmin']);
-gulp.task('run-all', ['js', 'webpack', 'webpack-admin', 'sass', 'uncompiled', 'svgmin']);
-gulp.task('build', ['run:js', 'run:webpack', 'run:webpack-admin', 'run:scss', 'run:uncompiled', 'run:svgmin']);
+const js = gulp.series(runjs, watchjs);
+exports.js = js;
+const scss = gulp.series(runscss, watchscss);
+exports.scss = scss;
+const uncompiled = gulp.series(rununcompiled, watchuncompiled);
+exports.uncompiled = uncompiled;
+const webpack = gulp.series(runwebpack, watchwebpack);
+exports.webpack = webpack;
+const webpackadmin = gulp.series(runwebpackadmin, watchwebpackadmin);
+exports.webpackadmin = webpackadmin;
+const svgmin = gulp.series(runsvgmin, watchsvgmin);
+exports.svgmin = svgmin;
+const runall = gulp.parallel(js, webpack, webpackadmin, scss, uncompiled, svgmin);
+exports.runall = runall;
+const build = gulp.parallel(runjs, runwebpack, runwebpackadmin, runscss, rununcompiled, runsvgmin);
+exports.build = build;
