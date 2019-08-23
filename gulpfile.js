@@ -55,9 +55,10 @@ function runsvgmin() {
     return gulp.src(svgGlob)
         .pipe(_svgmin(function(file) {
                 return {
-                    plugins: [{
-                        cleanupIDs: false
-                    }]
+                    plugins: [
+                        { cleanupIDs: false },
+                        { removeAttrs: { attrs: ['(fill|stroke|class|style)'] }},
+                    ]
                 }
             }
         ))
