@@ -43,8 +43,11 @@ router.get('/lights/toggle/:id', (req, res) => {
     const ip = req.ip.replace('::ffff:', '');
     if ((config['trusted-light-switching-ips'] || []).includes(ip)) {
         harbinger.toggle(req.params.id);
+        res.send('toggled');
     }
-    res.send();
+    else {
+        res.send();
+    }
 });
 
 module.exports = function(io) {
