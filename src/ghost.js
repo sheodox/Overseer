@@ -1,6 +1,8 @@
 const harbinger = require('./harbinger'),
     SilverConduit = require('./util/SilverConduit'),
-    lightsBooker = require('./db/lightsbooker');
+    lightsBooker = require('./db/lightsbooker'),
+    config = require('./config.json'),
+    router = require('express').Router();
 
 function listen(io) {
     const ioConduit = new SilverConduit(io, 'lights');
@@ -37,6 +39,14 @@ function listen(io) {
     });
 }
 
+router.get('/lights/toggle/:id', (req, res) => {
+    const ip = req.ip.replace('::ffff:', '');
+    if ((config['trusted-light-switching-ips'] || []).includes(ip)) {
+        harbinger.toggle(req.params.id);
+    }
+    res.send();
+});
+
 module.exports = function(io) {
     harbinger
         .init()
@@ -44,4 +54,6 @@ module.exports = function(io) {
             //the rest of the code is in 'listen' to reduce indenting
             listen(io);
         }, err => {console.log(err);});
+    
+    return router;
 };

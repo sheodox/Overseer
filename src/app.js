@@ -71,7 +71,7 @@ function onListening() {
 
 io.use(sharedSession(s));
 
-ghost(io);
+app.use(ghost(io));
 echo(io);
 voter(io);
 settings(io);
