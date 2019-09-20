@@ -5,17 +5,34 @@ const harbinger = require('./harbinger'),
     router = require('express').Router();
 
 function listen(io) {
+    router.get('/lights/toggle/:id', (req, res) => {
+        checkIfAllowedIP(req, res, () => {
+            harbinger.toggle(req.params.id);
+            broadcastState();
+            res.send('toggled');
+        });
+    });
+
+    router.post('/lights/toggle-several', (req, res) => {
+        checkIfAllowedIP(req, res, () => {
+            harbinger.toggleSeveral(req.body);
+            broadcastState();
+            res.send('toggled');
+        });
+    });
+    
     const ioConduit = new SilverConduit(io, 'lights');
+    function broadcastState() {
+        ioConduit.filteredBroadcast('refresh', async userId => {
+            if (await lightsBooker.check(userId, 'use')) {
+                return harbinger.getState();
+            }
+        });
+    }
+    
     io.on('connection', socket => {
         const socketConduit = new SilverConduit(socket, 'lights');
         const userId = SilverConduit.getUserId(socketConduit.socket);
-        function broadcastState() {
-            ioConduit.filteredBroadcast('refresh', async userId => {
-                if (await lightsBooker.check(userId, 'use')) {
-                    return harbinger.getState();
-                }
-            });
-        }
 
         socketConduit.on({
             init: async () => {
@@ -36,19 +53,19 @@ function listen(io) {
                 }
             }
         });
+
     });
 }
 
-router.get('/lights/toggle/:id', (req, res) => {
-    const ip = req.headers['x-real-ip'];
+function checkIfAllowedIP(req, res, cb) {
+    const ip = req.headers['x-real-ip'] || req.ip.replace('::ffff:', '');
     if ((config['trusted-light-switching-ips'] || []).includes(ip)) {
-        harbinger.toggle(req.params.id);
-        res.send('toggled');
+        cb();
     }
     else {
-        res.send();
+        res.send('not allowed');
     }
-});
+}
 
 module.exports = function(io) {
     harbinger

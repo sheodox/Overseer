@@ -99,6 +99,23 @@ Harbinger.prototype = {
         group.on = !group.on;
         return api.setGroupLightState(id, states[nextState]);
     },
+    toggleSeveral: async function (ids) {
+        //make sure they're strings, the IDs are numbers as string, so just in case make sure we're dealing with actual strings
+        ids = ids.map(id => String(id));
+        
+        const groupsByState = ids.reduce((done, id) => {
+            const state = this.findGroup(this.stateCache, id).on;
+            done[state ? 'on': 'off'].push(id);
+            return done;
+        }, {on: [], off: []});
+        const allOff = groupsByState.on.length === 0;
+        
+        //we only want to turn lights on if all the lights are off because it's possible that some groups can be on and some off,
+        //when that happens we will prefer to turn everything off first, so abruptly turning lights on in some room won't wake someone.
+        groupsByState[allOff ? 'off' : 'on'].forEach(id => {
+            this.toggle(id);
+        })
+    },
     setBrightness: function(id, brightness) {
         console.log(`brightness ${id} ${brightness}`);
         const group = this.findGroup(this.stateCache, id);
