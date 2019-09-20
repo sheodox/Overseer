@@ -37,7 +37,16 @@ Harbinger.prototype = {
                 .then(result => {
                     groups = result;
                     //optionally log initial light data
-                    // console.log(JSON.stringify(result, null, 4));
+                    console.log('Available Lights');
+                    console.table(
+                        result
+                            .filter(r => !!r.lights)
+                            .map(group => {
+                                return {
+                                    id: group.id,
+                                    name: group.name
+                                }
+                            }));
 
                     const poll = () => {
                         return api
