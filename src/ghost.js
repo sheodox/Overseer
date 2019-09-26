@@ -9,7 +9,7 @@ function listen(io) {
         checkIfAllowedIP(req, res, () => {
             harbinger.toggle(req.params.id);
             broadcastState();
-            res.send('toggled');
+            res.json({msg: `toggled ${req.params.id}`});
         });
     });
 
@@ -17,8 +17,14 @@ function listen(io) {
         checkIfAllowedIP(req, res, () => {
             harbinger.toggleSeveral(req.body);
             broadcastState();
-            res.send('toggled');
+            res.json({msg: `toggled ${JSON.stringify(req.body)}`});
         });
+    });
+    
+    router.get('/lights/info', (req, res) => {
+        checkIfAllowedIP(req, res, () => {
+            res.json(harbinger.getState());
+        })
     });
     
     const ioConduit = new SilverConduit(io, 'lights');
@@ -63,7 +69,7 @@ function checkIfAllowedIP(req, res, cb) {
         cb();
     }
     else {
-        res.send('not allowed');
+        res.json({error: 'not allowed'});
     }
 }
 
