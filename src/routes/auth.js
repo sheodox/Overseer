@@ -37,7 +37,7 @@ router.get('/google', (req, res, next) => {
 });
 router.get('/google/callback', (req, res, next) => {
     const redirectProxy = req.cookies['proxy-login-redirect'],
-        proxyUrl = isValidProxy(redirectProxy) && `/proxy/${redirectProxy}`;
+        proxyUrl = isValidProxy(redirectProxy) && `/proxy/${redirectProxy}/`;
 
     passport.authenticate('google', {
         callbackURL: getCallbackUrl(req),
