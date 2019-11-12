@@ -43,7 +43,7 @@ const s = session({
 app.use(s);
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/proxy', proxy);
+app.use('/proxy', proxy.router);
 app.use(bodyParser());
 
 app.use('/auth', auth);

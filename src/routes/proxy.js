@@ -12,10 +12,20 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+function isValidProxy(name) {
+    return proxies.some(proxy => proxy.name === name)
+}
+
 
 proxies.forEach(({name, url}) => {
     router.use(`/${name}/`, async (req, res, next) => {
-        if (req.user && await proxyBooker.check(req.user.user_id, name)) {
+        //if not logged in, send them to the login
+        if (!req.user) {
+            //make sure we redirect back here after logging in
+            res.cookie('proxy-login-redirect', name, {httpOnly: true});
+            res.redirect('/auth/google');
+        }
+        else if (req.user && await proxyBooker.check(req.user.user_id, name)) {
             const hasQuery = req.url.includes('?');
             //trim trailing slashes from config url, or they'll be doubled up
             url = url.replace(/\/$/, '');
@@ -31,9 +41,11 @@ proxies.forEach(({name, url}) => {
             }
         }
         else {
-            next();
+            res.redirect('/');
         }
     })
 });
 
-module.exports = router;
+module.exports = {
+    router, isValidProxy
+};

@@ -1,8 +1,9 @@
 const router = require('express').Router(),
     passport = require('passport'),
-    GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
+    GoogleStrategy = require('passport-google-oauth20').Strategy,
     config = require('../config.json'),
     gAuth = require(config.googleAuth).web,
+    {isValidProxy} = require('./proxy'),
     Users = require('../users');
 
 function getCallbackUrl(req) {
@@ -35,9 +36,12 @@ router.get('/google', (req, res, next) => {
     })(req, res, next);
 });
 router.get('/google/callback', (req, res, next) => {
+    const redirectProxy = req.cookies['proxy-login-redirect'],
+        proxyUrl = isValidProxy(redirectProxy) && `/proxy/${redirectProxy}`;
+
     passport.authenticate('google', {
         callbackURL: getCallbackUrl(req),
-        successRedirect: '/',
+        successRedirect: proxyUrl || '/',
         failureRedirect: '/auth/google'
     })(req, res, next);
 });

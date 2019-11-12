@@ -22,7 +22,7 @@
     "morgan": "^1.9.0",
     "node-hue-api": "^2.2.0",
     "passport": "^0.4.0",
-    "passport-google-oauth": "^1.0.0",
+    "passport-google-oauth20": "^2.0.0",
     "pug": "^2.0.3",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
