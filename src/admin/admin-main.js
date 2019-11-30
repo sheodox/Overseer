@@ -1,3 +1,4 @@
+import '../scss/dark.scss';
 const React = require('react'),
     ReactDOM = require('react-dom'),
     SVG = require('../components/SVG'),

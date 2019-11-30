@@ -1,5 +1,5 @@
 const hue = require('node-hue-api'),
-    config = require('./config'),
+    config = require('../config'),
     pollInterval = config['lights-poll-interval'],
     lightState = hue.lightState,
     states = {

@@ -1,7 +1,7 @@
 const harbinger = require('./harbinger'),
     SilverConduit = require('./util/SilverConduit'),
     lightsBooker = require('./db/lightsbooker'),
-    config = require('./config.json'),
+    config = require('../config.json'),
     router = require('express').Router();
 
 function listen(io) {

@@ -1,7 +1,7 @@
 const router = require('express').Router(),
     passport = require('passport'),
     GoogleStrategy = require('passport-google-oauth20').Strategy,
-    config = require('../config.json'),
+    config = require('../../config.json'),
     gAuth = require(config.googleAuth).web,
     {isValidProxy} = require('./proxy'),
     Users = require('../users');

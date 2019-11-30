@@ -1,4 +1,4 @@
-const config = require('../config');
+const config = require('../../config');
 
 function isReqSuperUser(req) {
     return req.user && (config['super-users'] || []).includes(req.user.user_id);

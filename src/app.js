@@ -3,7 +3,7 @@
 const isProd = process.env.NODE_ENV === 'production',
     express = require('express'),
     passport = require('passport'),
-    config = require('./config.json'),
+    config = require('../config.json'),
     app = express(),
     port = 3000,
     debug = require('debug')('game-voter:server'),

@@ -1,5 +1,5 @@
 const SilverConduit = require('../util/SilverConduit'),
-    config = require('../config'),
+    config = require('../../config'),
     echoServerIP = config['games-server'],
     tracker = require('../util/GameTracker'),
     echoBooker = require('../db/echobooker');

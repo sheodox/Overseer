@@ -1,14 +1,15 @@
 {
-  "name": "Overseer",
+  "name": "overseer",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "gulp build",
+    "prod-build": "NODE_ENV=production && webpack",
+    "dev-build": "NODE_ENV=development && webpack",
     "dev": "NODE_ENV=development && nodemon --watch dist --ignore dist/public/js/main.js --inspect dist/app.js",
     "inspect": "node --inspect dist/app.js",
     "start": "export NODE_ENV=production && forever start dist/app.js",
     "stop": "forever stop dist/app.js",
-    "deploy": "npm stop && git pull && npm run build && npm start",
+    "deploy": "npm stop && git pull && npm install && npm run prod-build && npm start",
     "test": "export NODE_ENV=production && node dist/app.js"
   },
   "dependencies": {
@@ -35,22 +36,20 @@
     "three": "^0.96.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
-    "@babel/preset-react": "^7.0.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-es2015-destructuring": "^6.16.0",
-    "babel-preset-react": "^6.16.0",
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-react": "^7.7.4",
+    "babel-loader": "^8.0.6",
     "babelify": "^8.0.0",
-    "gulp": "^4.0.2",
-    "gulp-babel": "^8.0.0",
-    "gulp-connect": "^5.7.0",
-    "gulp-sass": "^4.0.2",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-svgmin": "^2.2.0",
-    "gulp-webpack": "^1.5.0",
+    "copy-webpack-plugin": "^5.0.5",
+    "css-loader": "^3.2.0",
+    "file-loader": "^5.0.2",
+    "sass-loader": "^8.0.0",
     "sass-material-colors": "0.0.5",
-    "source-map-loader": "^0.2.4"
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^1.0.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }
