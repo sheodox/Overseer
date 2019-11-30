@@ -32,7 +32,8 @@ module.exports = {
 			{from: '**/*.pug', context: './src'},
 			{from: '**/*.js', context: './src'},
 			{from: '**/*.svg', context: './src'},
-			{from: '**/*.glsl', context: './src'}
+			{from: '**/*.glsl', context: './src'},
+			{from: 'public/**.*', context: './src'}
 		])
 	]
 };
