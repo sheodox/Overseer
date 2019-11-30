@@ -11,7 +11,8 @@ module.exports = {
 	mode: isProd ? 'production' : 'development',
 	entry: {
 		'public/js/main': './src/components/index.js',
-		'admin/main': './src/admin/admin-main.js'
+		'admin/main': './src/admin/admin-main.js',
+		'public/js/proxy-main': './src/components/proxy.js'
 	},
 	output: {
 		filename: '[name].js',
