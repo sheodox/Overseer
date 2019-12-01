@@ -96,4 +96,7 @@ progress {
     position: absolute;
     right: 0;
     top: 0;
+    button:not(:last-child) {
+        margin-right: 0.1rem;
+    }
 }

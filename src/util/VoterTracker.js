@@ -14,14 +14,33 @@ class VoterTracker extends Stockpile {
                         race_id: 'INTEGER NOT NULL',
                         candidate_id: 'INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT',
                         candidate_name: 'TEXT NOT NULL',
-                        creator: 'TEXT NOT NULL'
+                        creator: 'TEXT NOT NULL',
+                        notes: 'TEXT'
                     }},
                 {name: 'votes', columns: {
                         race_id: 'INTEGER NOT NULL',
                         candidate_id: 'INTEGER NOT NULL',
                         user_id: 'TEXT NOT NULL',
                         direction: 'TEXT NOT NULL'
+                    }},
+                {name: 'candidate_images', columns: {
+                        race_id: 'INTEGER NOT NULL',
+                        candidate_id: 'INTEGER NOT NULL',
+                        image_id: 'INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT',
+                        image: 'BLOB'
+                    }},
+                {name: 'candidate_links', columns: {
+                        race_id: 'INTEGER NOT NULL',
+                        candidate_id: 'INTEGER NOT NULL',
+                        link_text: 'TEXT NOT NULL',
+                        link_href: 'TEXT NOT NULL'
                     }}
+            ],
+            migrations: [
+                {version: 1, addColumns: [{
+                        to: 'candidates', column: 'notes'
+                    }]
+                }
             ]
         });
         //cache everything so votes are fast even with slow disk i/o
@@ -42,6 +61,14 @@ class VoterTracker extends Stockpile {
     async _refreshCache() {
         this._raceCache = await this.all(`SELECT * FROM races`);
         this._candidateCache = await this.all(`SELECT * FROM candidates`);
+        const images = await this.all(`SELECT race_id, candidate_id, image_id FROM candidate_Images`);
+        //find all images that belong to each candidate
+        this._candidateCache.forEach(candidate => {
+            candidate.images = images.filter(image => {
+                return image.race_id === candidate.race_id && image.candidate_id === candidate.candidate_id
+            })
+        });
+
         this._voteCache = await this.all(`SELECT * FROM votes`);
     }
 
@@ -111,7 +138,7 @@ class VoterTracker extends Stockpile {
 
                 for (let candidate of candidates) {
                     candidate.votedUp = this._getCachedVotes(race.race_id, candidate.candidate_id, 'up');
-                    candidate.votedDown = this._getCachedVotes(race.race_id, candidate.candidate_id, 'down') 
+                    candidate.votedDown = this._getCachedVotes(race.race_id, candidate.candidate_id, 'down')
                 }
             }
 
@@ -187,7 +214,7 @@ class VoterTracker extends Stockpile {
             const insertMap = this.buildInsertMap({ race_id, candidate_id, user_id, direction }, 'votes');
             await this.run(`INSERT INTO votes ${insertMap.sql}`, insertMap.values);
         }
-        
+
         this._castCachedVote(race_id, candidate_id, user_id, direction);
         //don't await, assume everything went as planned and just run with the cached values
         this.run('COMMIT');
@@ -195,6 +222,30 @@ class VoterTracker extends Stockpile {
     async resetVotes(race_id) {
         await this.run(`DELETE FROM votes WHERE race_id=?`, race_id);
         this._voteCache = this._voteCache.filter(v => v.race_id !== race_id);
+    }
+    async uploadImage(race_id, candidate_id, image) {
+        const insertMap = this.buildInsertMap({
+            race_id, candidate_id, image
+        }, 'candidate_images');
+        await this.run(`INSERT INTO candidate_images ${insertMap.sql}`, insertMap.values);
+        await this._refreshCache();
+    }
+    async getImage(image) {
+    	return (await this.get(`SELECT image FROM candidate_images WHERE image_id=?`, [image])).image
+	}
+	async removeImage(image_id) {
+        await this.run(`DELETE FROM candidate_images WHERE image_id=?`, [image_id])
+        await this._refreshCache();
+    }
+    async updateCandidateName(race_id, candidate_id, candidate_name) {
+        if (valid.name(candidate_name)) {
+            await this.run(`UPDATE candidates SET candidate_name=? WHERE race_id=? AND candidate_id=?`, [candidate_name, race_id, candidate_id]);
+            await this._refreshCache();
+        }
+    }
+    async updateNotes(race_id, candidate_id, notes) {
+        await this.run(`UPDATE candidates SET notes=? WHERE race_id=? AND candidate_id=?`, [notes, race_id, candidate_id]);
+        await this._refreshCache();
     }
 }
 

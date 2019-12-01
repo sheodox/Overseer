@@ -8,7 +8,9 @@ const voterBooker = new Booker('voter', [
     'reset_votes',
     'add_race',
     'add_candidate',
-    'view'
+    'view',
+    'add_image',
+    'remove_image'
 ]);
 
 module.exports = voterBooker;

@@ -172,11 +172,21 @@ class CandidateList extends React.Component {
         this.state = {
             candidates: this.getSortedCandidates(this.props),
             canSort: true,
-            sortQueued: false
+            sortQueued: false,
+            detailedView: false
         };
 
     }
-    getSortedCandidates(props) {
+    getSortedCandidates(props, asDetailed) {
+        //when in detailed row, sort by the candidate id, otherwise sort by vote ranking.
+        //a user is more likely to be actively spending time looking through a detailed list,
+        //so re-sorting things would be confusing.
+        if (asDetailed || (this.state && this.state.detailedView)) {
+            return props.candidates.sort((a, b) => {
+                return a.candidate_id - b.candidate_id;
+            })
+        }
+
         function weightedVotes(up, down) {
             up = up.length;
             down = down.length;
@@ -202,7 +212,7 @@ class CandidateList extends React.Component {
             let updatedCandidates = this.state.candidates.map(c => {
                 let matchingCandidate = findCandidate(c);
                 if (matchingCandidate) {
-                    ['votedUp', 'votedDown', 'votedUpImages', 'votedDownImages', 'voted']
+                    ['votedUp', 'votedDown', 'votedUpImages', 'votedDownImages', 'voted', 'images', 'candidate_name', 'notes']
                         .forEach(prop => {
                             c[prop] = matchingCandidate[prop];
                         });
@@ -262,28 +272,36 @@ class CandidateList extends React.Component {
     resetVotes = () => {
         voterConduit.emit('resetVotes', this.props.race_id);
     };
+    toggleView = () => {
+        const detailed = !this.state.detailedView;
+        this.setState({
+            detailedView: detailed,
+            candidates: this.getSortedCandidates(this.props, detailed)
+        });
+    };
     render() {
         const self = this,
             maxVotes = this.state.candidates.reduce((prev, two) => {
                 const sum = a => a.votedUp.length + a.votedDown.length;
                 return Math.max(prev, sum(two));
             }, 1), // min of one so we don't divide by zero
-            candidates = this.state.candidates.map((c, index) => {
-                const toggleVote = (direction) => {
-                        voterConduit.emit('toggleVote', this.props.race_id, c.candidate_id, direction);
-                    },
-                    toggleVoteUp = () => {
-                        toggleVote('up');
-                    },
-                    toggleVoteDown = () => {
-                        toggleVote('down')
-                    },
-                    removeCandidate = () => {
-                        voterConduit.emit('removeCandidate', this.props.race_id, c.candidate_id);
-                    };
+            candidates = this.state.candidates
+                .map((c, index) => {
+                    const toggleVote = (direction) => {
+                            voterConduit.emit('toggleVote', this.props.race_id, c.candidate_id, direction);
+                        },
+                        toggleVoteUp = () => {
+                            toggleVote('up');
+                        },
+                        toggleVoteDown = () => {
+                            toggleVote('down')
+                        },
+                        removeCandidate = () => {
+                            voterConduit.emit('removeCandidate', this.props.race_id, c.candidate_id);
+                        };
 
-                return <Candidate removeCandidate={removeCandidate} toggleVoteUp={toggleVoteUp} toggleVoteDown={toggleVoteDown} {...c} maxVotes={maxVotes} key={index} />
-            });
+                    return <Candidate detailedView={this.state.detailedView} removeCandidate={removeCandidate} toggleVoteUp={toggleVoteUp} toggleVoteDown={toggleVoteDown} {...c} maxVotes={maxVotes} key={index} />
+                });
 
         function newCandidate(name) {
             voterConduit.emit('newCandidate', self.props.race_id, name);
@@ -292,11 +310,15 @@ class CandidateList extends React.Component {
         return (
             <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseMove={this.lockSorting} onMouseLeave={this.unlockSorting}>
                 <div className="docked-buttons">
+                    <button onClick={this.toggleView}>{this.state.detailedView ? 'Ranking' : 'Detailed'} View</button>
                     <button disabled={!Booker.voter.reset_votes} onClick={this.resetVotes} title="reset votes"><SVG id="reset-icon" /></button>
                 </div>
                 <h3>{this.props.race_name}</h3>
                 <br />
                 <NewCandidate newCandidate={newCandidate} />
+                <If renderWhen={this.state.detailedView}>
+                    <p>This list does not automatically sort by votes while in detailed view.</p>
+                </If>
                 {candidates}
             </div>
         )
@@ -330,6 +352,34 @@ class NewCandidate extends React.Component {
 }
 
 class Candidate extends React.Component {
+	constructor(props) {
+	    super(props);
+	    this.nameInput = React.createRef();
+	    this.notesInput = React.createRef();
+
+	    this.state = {
+            candidate_name_edited: false,
+            notes_edited: false
+        }
+    }
+    componentDidUpdate(oldProps) {
+	    const newName = this.props.candidate_name,
+            newNotes = this.props.notes;
+
+	    if (newName !== oldProps.candidate_name) {
+	        this.nameInput.current.value = newName;
+            this.setState({
+                candidate_name_edited: false
+            })
+        }
+
+	    if (newNotes !== oldProps.notes) {
+	        this.notesInput.current.value = newNotes;
+	        this.setState({
+                notes_edited: false
+            })
+        }
+    }
     voteUp = () => {
         this.props.toggleVoteUp();
     };
@@ -342,6 +392,30 @@ class Candidate extends React.Component {
                 return <UserBubble key={i} user={voter} />
             });
     }
+    checkDirty(propName, e) {
+        const newState = {};
+        newState[propName + '_edited'] = this.props[propName] !== e.target.value;
+        this.setState(newState);
+    }
+    saveCandidateName = () => {
+        voterConduit.emit('updateCandidateName',
+            this.props.race_id,
+            this.props.candidate_id,
+            this.nameInput.current.value
+        );
+    };
+    saveNotes = () => {
+        voterConduit.emit('updateNotes',
+            this.props.race_id,
+            this.props.candidate_id,
+            this.notesInput.current.value
+        );
+    };
+    nameKeyDown = e => {
+        if (e.which === 13) {
+            this.saveCandidateName();
+        }
+    };
     render() {
         const voters = `${this.props.candidate_name}\nAdded by: ${this.props.creator}`,
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
@@ -356,9 +430,14 @@ class Candidate extends React.Component {
                 className: 'candidate-name',
                 disabled: disabledState,
                 title: voters
-            };
+            },
+            detailed = this.props.detailedView,
+            candidateIdBase = `candidate-${this.props.race_id}-${this.props.candidate_id}-`,
+            nameInputId = candidateIdBase + 'name',
+            notesId = candidateIdBase + 'notes';
+
         return (
-            <div className="candidate">
+            <div className={"candidate" + (detailed ? ' detailed' : '')} data-candidate={this.props.candidate_id}>
                 <div className="candidate-buttons">
                     <div className="up-down">
                         <button disabled={!Booker.voter.vote} className={'up' + (votedUp ? ' vote-cast' : '')} onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /></button>
@@ -373,12 +452,115 @@ class Candidate extends React.Component {
                                 <div className="voter-profile-images"><span className="vote-count">{numVotedDown}</span>{this.getImages(this.props.votedDown)}</div>
                             </div>
                         </div>
-                        <span className="candidate-text">{this.props.candidate_name}</span>
+                        <span className="candidate-text">
+							<If renderWhen={detailed}>
+                                <label className={'hidden ' + nameInputId}>Candidate Name</label>
+                                <input ref={this.nameInput} onKeyDown={this.nameKeyDown} defaultValue={this.props.candidate_name} onKeyUp={this.checkDirty.bind(this, 'candidate_name')}/>
+                                {this.state.candidate_name_edited && <button onClick={this.saveCandidateName}>Save</button>}
+                            </If>
+                            {!detailed && this.props.candidate_name}
+                        </span>
                     </div>
-                    <button className="candidate-remove" onClick={this.props.removeCandidate} disabled={disabledState}>
+                    <button className="candidate-remove" onClick={this.props.removeCandidate} disabled={disabledState} title="Remove this candidate">
                         <SVG id="x-icon" />
                     </button>
                 </div>
+                <If renderWhen={detailed}>
+                    <CandidateImages race_id={this.props.race_id} candidate_id={this.props.candidate_id} images={this.props.images}/>
+                    <label htmlFor={notesId}>Notes</label>
+                    <textarea ref={this.notesInput} id={notesId} className="candidate-notes" onKeyUp={this.checkDirty.bind(this, 'notes')}>{this.props.notes}</textarea>
+                    {this.state.notes_edited && <button onClick={this.saveNotes}>Save</button>}
+                </If>
+            </div>
+        )
+    }
+}
+
+class CandidateImages extends React.Component {
+    constructor(props) {
+        super(props);
+        const propsHasImages = this.props.images.length > 0;
+        this.state = {
+            currentImage: propsHasImages ? this.props.images[0].image_id : null,
+        };
+    }
+    componentDidUpdate() {
+        const propsHasImages = this.props.images.length > 0;
+        if (this.state.currentImage === null && propsHasImages) {
+            this.setState({
+                currentImage: this.props.images[0].image_id
+            })
+        }
+    }
+    upload (e) {
+        const file = e.target.files.item(0);
+        fetch(`/voter/${this.props.race_id}/${this.props.candidate_id}/upload`, {
+            method: 'POST',
+            body: file
+        })
+            .then(response => {
+            	const errorToast = msg => Toaster.add({type: 'text', text: 'Error! ' + msg});
+
+                if(response.status === 413) {
+                    errorToast('That image is too big!');
+                }
+                else if (!response.ok) {
+                    errorToast(response.statusText)
+                }
+            });
+        e.target.value = '';
+    }
+    pickImage(image_id) {
+        this.setState({
+            currentImage: image_id
+        });
+    }
+    toggleMaximize = () => {
+        this.setState({maximized: !this.state.maximized});
+    };
+    deleteMainImage = (e) => {
+        e.stopPropagation();
+        if (confirm('Are you sure you want to remove this image?')) {
+            voterConduit.emit('removeImage', this.state.currentImage);
+
+            //find the first image that's not the current one, otherwise we'll be showing an image that's already been deleted
+            const nextImage = this.props.images.find(image => image.image_id !== this.state.currentImage);
+            this.setState({
+                currentImage: nextImage ? nextImage.image_id : null
+            })
+        }
+    };
+    render() {
+        const images = this.props.images.map(image => {
+            const imageId = image.image_id;
+            return <img key={imageId} onClick={this.pickImage.bind(this, imageId)} src={`/voter/image/${imageId}`} />
+        });
+        const candidateIdBase = `candidate-${this.props.race_id}-${this.props.candidate_id}-`,
+            uploadInputId = candidateIdBase + 'upload';
+
+        return (
+            <div className="candidate-images">
+                <If renderWhen={this.props.images.length > 0}>
+                    <div className={'main-image-container ' + (this.state.maximized ? 'maximized' : '')} onClick={this.toggleMaximize}>
+						<If renderWhen={Booker.voter.remove_image}>
+                            <div className="docked-buttons">
+                                <button onClick={this.deleteMainImage} title="Delete this image"><SVG id="x-icon"/></button>
+                            </div>
+                        </If>
+                        {this.state.currentImage !== null && <img className="main-image" src={`/voter/image/${this.state.currentImage}`}/>}
+                    </div>
+                </If>
+                <If renderWhen={this.props.images.length > 1}>
+                    <div className="image-tray">
+                        {images}
+                    </div>
+                </If>
+                <If renderWhen={Booker.voter.add_image}>
+                    <div>
+                        <label className="upload-candidate-image" htmlFor={uploadInputId}>Attach an image</label>
+                        <input id={uploadInputId} className='hidden' onChange={this.upload.bind(this)} type="file" accept="image/png, image/jpeg" />
+                    </div>
+                </If>
             </div>
         )
     }

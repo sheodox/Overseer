@@ -2,11 +2,34 @@ const maskRaceSessions = require('../util/maskVoterSessions'),
     SilverConduit = require('../util/SilverConduit'),
     voterBooker = require('../db/voterbooker'),
     Users = require('../users'),
-    voterTracker = require('../util/VoterTracker');
+    voterTracker = require('../util/VoterTracker'),
+    router = require('express').Router();
 
 module.exports = function(io) {
     const ioConduit = new SilverConduit(io, 'voter'),
         notificationConduit = new SilverConduit(io, 'notifications');
+
+    router.post('/voter/:race_id/:candidate_id/upload', async (req, res) => {
+        if (req.user && await voterBooker.check(req.user.user_id, 'add_image')) {
+            await voterTracker.uploadImage(
+                req.params.race_id,
+                req.params.candidate_id,
+                req.body
+                // new Blob(req.body.toString())
+            );
+            res.send(null);
+            await broadcast();
+        }
+    });
+    router.get('/voter/image/:image_id', async (req, res) => {
+        if (req.user && await voterBooker.check(req.user.user_id, 'view')) {
+            res.send(
+                await voterTracker.getImage(
+                    req.params.image_id
+                )
+            );
+        }
+    });
 
     async function broadcast() {
         const raceData = await voterTracker.list();
@@ -102,7 +125,26 @@ module.exports = function(io) {
                     await voterTracker.resetVotes(raceId);
                     broadcast();
                 }
-            }
+            },
+            removeImage: async imageId => {
+                if (await voterBooker.check(userId, 'remove_image')) {
+                    await voterTracker.removeImage(imageId);
+                    broadcast();
+                }
+            },
+            updateCandidateName: async (race_id, candidate_id, candidate_name) => {
+                if (await voterBooker.check(userId, 'add_candidate')) {
+                    await voterTracker.updateCandidateName(race_id, candidate_id, candidate_name);
+                    broadcast();
+                }
+            },
+            updateNotes: async (race_id, candidate_id, notes) => {
+                if (await voterBooker.check(userId, 'add_candidate')) {
+                    await voterTracker.updateNotes(race_id, candidate_id, notes);
+                    broadcast();
+                }
+            },
         });
     });
-}
+    return router;
+};

@@ -44,7 +44,15 @@ app.use(s);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/proxy', proxy.router);
-app.use(bodyParser());
+app.use(bodyParser.json());
+app.use(bodyParser.raw({
+    type: 'image/png',
+    limit: '1mb'
+}));
+app.use(bodyParser.raw({
+    type: 'image/jpeg',
+    limit: '1mb'
+}));
 
 app.use('/auth', auth);
 // view engine setup
@@ -73,7 +81,7 @@ io.use(sharedSession(s));
 
 app.use(ghost(io));
 echo(io);
-voter(io);
+app.use(voter(io));
 settings(io);
 app.use(admin(io));
 app.use(require('./routes/index'));

@@ -39,8 +39,8 @@ body {
     margin: 0;
 }
 textarea {
+    background: $background-dark;
     font-family: 'Roboto', sans-serif;
-    background: $background-light;
     border: none;
     color: white;
 
