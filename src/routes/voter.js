@@ -144,6 +144,18 @@ module.exports = function(io) {
                     broadcast();
                 }
             },
+            addLink: async (race_id, candidate_id, link_text, link_href) => {
+                if (await voterBooker.check(userId, 'add_candidate')) {
+                    await voterTracker.addLink(race_id, candidate_id, link_text, link_href);
+                    broadcast();
+                }
+            },
+            removeLink: async (race_id, candidate_id, link_href) => {
+                if (await voterBooker.check(userId, 'add_candidate')) {
+                    await voterTracker.removeLink(race_id, candidate_id, link_href);
+                    broadcast();
+                }
+            }
         });
     });
     return router;

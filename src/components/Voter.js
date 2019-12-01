@@ -212,7 +212,7 @@ class CandidateList extends React.Component {
             let updatedCandidates = this.state.candidates.map(c => {
                 let matchingCandidate = findCandidate(c);
                 if (matchingCandidate) {
-                    ['votedUp', 'votedDown', 'votedUpImages', 'votedDownImages', 'voted', 'images', 'candidate_name', 'notes']
+                    ['votedUp', 'votedDown', 'votedUpImages', 'votedDownImages', 'voted', 'images', 'candidate_name', 'notes', 'links']
                         .forEach(prop => {
                             c[prop] = matchingCandidate[prop];
                         });
@@ -359,7 +359,8 @@ class Candidate extends React.Component {
 
 	    this.state = {
             candidate_name_edited: false,
-            notes_edited: false
+            notes_edited: false,
+            view: 'overview'
         }
     }
     componentDidUpdate(oldProps) {
@@ -416,6 +417,9 @@ class Candidate extends React.Component {
             this.saveCandidateName();
         }
     };
+    switchView = view => {
+        this.setState({ view });
+    };
     render() {
         const voters = `${this.props.candidate_name}\nAdded by: ${this.props.creator}`,
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
@@ -434,7 +438,11 @@ class Candidate extends React.Component {
             detailed = this.props.detailedView,
             candidateIdBase = `candidate-${this.props.race_id}-${this.props.candidate_id}-`,
             nameInputId = candidateIdBase + 'name',
-            notesId = candidateIdBase + 'notes';
+            notesId = candidateIdBase + 'notes',
+            candidateProps = {
+                race_id: this.props.race_id,
+                candidate_id: this.props.candidate_id
+            };
 
         return (
             <div className={"candidate" + (detailed ? ' detailed' : '')} data-candidate={this.props.candidate_id}>
@@ -466,15 +474,90 @@ class Candidate extends React.Component {
                     </button>
                 </div>
                 <If renderWhen={detailed}>
-                    <CandidateImages race_id={this.props.race_id} candidate_id={this.props.candidate_id} images={this.props.images}/>
-                    <label htmlFor={notesId}>Notes</label>
-                    <textarea ref={this.notesInput} id={notesId} className="candidate-notes" onKeyUp={this.checkDirty.bind(this, 'notes')} defaultValue={this.props.notes} />
-                    {this.state.notes_edited && <button onClick={this.saveNotes}>Save</button>}
+                    <div className="candidate-view-switchers">
+                        <button onClick={this.switchView.bind(this, 'overview')} className={this.state.view === 'overview' ? 'disabled' : ''}>Overview</button>
+                        <button onClick={this.switchView.bind(this, 'links')} className={this.state.view === 'links' ? 'disabled' : ''}>Links</button>
+                    </div>
+
+                    <If renderWhen={this.state.view === 'overview'}>
+                        <CandidateImages {...candidateProps} images={this.props.images}/>
+
+                        <label htmlFor={notesId}>Notes</label>
+                        <textarea ref={this.notesInput} id={notesId} className="candidate-notes" onKeyUp={this.checkDirty.bind(this, 'notes')} defaultValue={this.props.notes} />
+                        <div className="buttons-on-right">
+                            {this.state.notes_edited && <button onClick={this.saveNotes}>Save</button>}
+                        </div>
+                    </If>
+                    {this.state.view === 'links' && <CandidateLinks {...candidateProps} links={this.props.links} />}
+
                 </If>
             </div>
         )
     }
 }
+
+class CandidateLinks extends React.Component {
+    constructor(props) {
+        super(props);
+        this.textRef = React.createRef();
+        this.hrefRef = React.createRef();
+    }
+    submit = e => {
+        e.preventDefault();
+        console.log(e);
+
+        voterConduit.emit(
+            'addLink',
+			this.props.race_id,
+			this.props.candidate_id,
+			this.textRef.current.value,
+            this.hrefRef.current.value
+        );
+        e.target.reset();
+    };
+    delete = href => {
+        voterConduit.emit(
+            'removeLink',
+            this.props.race_id,
+            this.props.candidate_id,
+			href
+        );
+    };
+    render() {
+        const baseId = `candidate-${this.props.race_id}-${this.props.candidate_id}-links-`,
+            linkNameId = baseId + 'name',
+            linkHrefId = baseId + 'href',
+            links = this.props.links.map(link => {
+                const href = link.link_href;
+                return <li key={href}>
+                    <a href={href} target='_blank' rel="noreferrer noopener" title={href}>{link.link_text}</a>
+                    <button onClick={this.delete.bind(this, href)} title="Delete this link">
+                        <SVG id='x-icon' />
+                    </button>
+                </li>
+            });
+
+        return <div>
+			<ul className="candidate-links-list">
+                {links}
+            </ul>
+            <form onSubmit={this.submit}>
+                <div className="control">
+                    <label htmlFor={linkNameId}>Link Text</label>
+                    <input id={linkNameId} ref={this.textRef} />
+                </div>
+                <div className="control">
+                    <label htmlFor={linkHrefId}>Link URL</label>
+                    <input id={linkHrefId} ref={this.hrefRef} />
+                </div>
+                <div className="buttons-on-right">
+                    <input type="submit" value="Add Link"/>
+                </div>
+            </form>
+        </div>
+    }
+}
+
 
 class CandidateImages extends React.Component {
     constructor(props) {

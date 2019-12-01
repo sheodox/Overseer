@@ -61,15 +61,18 @@ class VoterTracker extends Stockpile {
     async _refreshCache() {
         this._raceCache = await this.all(`SELECT * FROM races`);
         this._candidateCache = await this.all(`SELECT * FROM candidates`);
-        const images = await this.all(`SELECT race_id, candidate_id, image_id FROM candidate_Images`);
-        //find all images that belong to each candidate
+        this._voteCache = await this.all(`SELECT * FROM votes`);
+
+        const images = await this.all(`SELECT race_id, candidate_id, image_id FROM candidate_Images`),
+            links = await this.all(`SELECT * FROM candidate_links`);
+        //find all links and images that belong to each candidate
         this._candidateCache.forEach(candidate => {
-            candidate.images = images.filter(image => {
-                return image.race_id === candidate.race_id && image.candidate_id === candidate.candidate_id
-            })
+            const matching = thing => thing.race_id === candidate.race_id && thing.candidate_id === candidate.candidate_id;
+
+            candidate.images = images.filter(matching);
+            candidate.links = links.filter(matching);
         });
 
-        this._voteCache = await this.all(`SELECT * FROM votes`);
     }
 
     /**
@@ -245,6 +248,18 @@ class VoterTracker extends Stockpile {
     }
     async updateNotes(race_id, candidate_id, notes) {
         await this.run(`UPDATE candidates SET notes=? WHERE race_id=? AND candidate_id=?`, [notes, race_id, candidate_id]);
+        await this._refreshCache();
+    }
+    async addLink(race_id, candidate_id, link_text, link_href) {
+        const insertMap = this.buildInsertMap({
+            race_id, candidate_id, link_text, link_href
+        }, 'candidate_links');
+
+        await this.run(`INSERT INTO candidate_links ${insertMap.sql}`, insertMap.values);
+        await this._refreshCache();
+    }
+    async removeLink(race_id, candidate_id, link_href) {
+    	await this.run(`DELETE FROM candidate_links WHERE race_id=? AND candidate_id=? AND link_href=?`, [race_id, candidate_id, link_href]);
         await this._refreshCache();
     }
 }
