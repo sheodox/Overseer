@@ -40,7 +40,7 @@
     @include button();
     $backgroundColorDisabled: darken($background-lighter, 2%);
     $textColor: $color-blue;
-    $textColorDisabled: $background-lighter;
+    $textColorDisabled: darken($background-lighter, 7%);
     color: $textColor;
 
     &:hover {
