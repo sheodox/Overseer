@@ -1,6 +1,22 @@
 const sqlite3 = require('sqlite3'),
     debug = require('debug');
 
+const validateTableName = name => {
+    if (!/^[a-z_]+$/.test(name)) {
+        throw new Error(`Invalid table name "${name}"`)
+    }
+};
+const validateColumnName = name => {
+    if (!/^[a-z_]+$/.test(name)) {
+        throw new Error(`Invalid column name "${name}"`)
+    }
+};
+const validateColumnDefinition = name => {
+    if (!/^[A-Z ]+$/.test(name)) {
+        throw new Error(`Invalid column definition "${name}"`)
+    }
+};
+
 class Stockpile {
     constructor(options) {
         if (!options.db) {
@@ -16,13 +32,54 @@ class Stockpile {
                 if (err) {
                     throw err;
                 }
+
+                //table for StockPile metadata
+                await this._callSql('run', `CREATE TABLE IF NOT EXISTS stockpile_meta (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL)`);
+
                 for (let table of this.options.tables) {
                     const columns = Object.keys(table.columns).map(column => {
+                        validateColumnName(column);
+                        validateColumnDefinition(table.columns[column]);
                         return column + ' ' + table.columns[column];
                     }).join(',');
+
+                    validateTableName(table.name);
                     //skip the queue, this needs to run first
                     await this._callSql('run', `CREATE TABLE IF NOT EXISTS ${table.name} (${columns});`);
-                    //todo add missing columns
+                }
+
+
+                for (let migration of (this.options.migrations || []) ) {
+                    const schemaVersion = parseInt((await this._callSql(`get`, `SELECT value FROM stockpile_meta WHERE key="schema_version"`)) || 0, 10);
+                    if (typeof migration.version !== 'number') {
+                        throw new TypeError(`Stockpile schema version must be a number! (got "${migration.version}")`);
+                    }
+
+                    if (schemaVersion < migration.version) {
+                        //add new columns, column definitions are found in the schema passed in to the constructor
+                        for (const column of (migration.addColumns || [])) {
+                            const table = column.to,
+                                columnName = column.column,
+                                columnDefinition = this.options.tables.reduce((found, next) => {
+                                    if (found) return found;
+
+                                    if (next.name === table) {
+                                        return next.columns[columnName];
+                                    }
+                                }, null);
+
+                            if (!columnDefinition) {
+                                throw new Error(`Missing column definition for ${columnName} in ${table}.`)
+                            }
+
+                            validateTableName(table);
+                            validateColumnName(columnName);
+                            validateColumnDefinition(columnDefinition);
+
+                            await this._callSql(`run`, `ALTER TABLE ${table} ADD COLUMN ${columnName} ${columnDefinition}`)
+                        }
+                        await this._callSql('run', `INSERT OR REPLACE INTO stockpile_meta (key, value) VALUES (?,?)`, ['schema_version', migration.version])
+                    }
                 }
 
                 this.ready = true;
