@@ -10,7 +10,7 @@ module.exports = function(io) {
         notificationConduit = new SilverConduit(io, 'notifications');
 
     router.post('/voter/:race_id/:candidate_id/upload', async (req, res) => {
-        const contentType = res.get('Content-Type');
+        const contentType = req.get('Content-Type');
         //don't save data of the wrong content type
     	if (!['image/jpeg', 'image/png'].includes(contentType)) {
             res.status(415); //unsupported media type
