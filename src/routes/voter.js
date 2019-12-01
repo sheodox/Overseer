@@ -14,7 +14,7 @@ module.exports = function(io) {
         //don't save data of the wrong content type
     	if (!['image/jpeg', 'image/png'].includes(contentType)) {
             res.status(415); //unsupported media type
-			res.send();
+			res.send(`invalid content type "${contentType}", needs to be a jpeg or png`);
         }
         else if (req.user && await voterBooker.check(req.user.user_id, 'add_image')) {
             await voterTracker.uploadImage(
