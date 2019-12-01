@@ -44,15 +44,15 @@ app.use(s);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/proxy', proxy.router);
-app.use(bodyParser.json());
-const imageLimit = '3mb';
+const limit = '3mb';
+app.use(bodyParser.json({limit}));
 app.use(bodyParser.raw({
     type: 'image/png',
-    limit: imageLimit
+    limit
 }));
 app.use(bodyParser.raw({
     type: 'image/jpeg',
-    limit: imageLimit
+    limit
 }));
 
 app.use('/auth', auth);
