@@ -59,6 +59,8 @@
 
     .candidate-buttons {
         @include illuminated-toggle-buttons();
+        border-radius: 2px;
+        overflow: hidden;
     }
 
     .up-down {
@@ -91,6 +93,7 @@
             float: left;
         }
         button {
+            border-radius: 0 !important;
             height: $height / 2;
             padding: 0 0.6rem;
             width: 100%;
@@ -141,6 +144,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         text-transform: capitalize;
+        border-radius: 0;
     }
     .candidate-text {
         position: relative;
