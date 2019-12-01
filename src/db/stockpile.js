@@ -50,12 +50,13 @@ class Stockpile {
 
 
                 for (let migration of (this.options.migrations || []) ) {
-                    const schemaVersion = parseInt((await this._callSql(`get`, `SELECT value FROM stockpile_meta WHERE key="schema_version"`)) || 0, 10);
+                    const schemaVersion = parseInt((await this._callSql(`get`, `SELECT value FROM stockpile_meta WHERE key="schema_version"`)).value || 0, 10);
                     if (typeof migration.version !== 'number') {
                         throw new TypeError(`Stockpile schema version must be a number! (got "${migration.version}")`);
                     }
 
                     if (schemaVersion < migration.version) {
+                        console.log(`Migrating database "${options.db}" to version ${migration.version}`);
                         //add new columns, column definitions are found in the schema passed in to the constructor
                         for (const column of (migration.addColumns || [])) {
                             const table = column.to,
