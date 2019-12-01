@@ -76,6 +76,7 @@ li {
     @include faint-shadow();
     margin: 0.5rem;
     display: inline-block;
+    background: $background-light;
 
     &:not(.switch-panel) h2 {
         color: white;

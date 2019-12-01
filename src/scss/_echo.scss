@@ -113,6 +113,10 @@ th {
 }
 
 #echo-details {
+    .sub-panel {
+        background: $background-light;
+    }
+
     label {
         display: block;
     }
