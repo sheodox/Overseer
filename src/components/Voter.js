@@ -438,6 +438,7 @@ class Candidate extends React.Component {
         this.setState({ view });
     };
     imagePasted = e => {
+    	e.preventDefault();
         const file = e.clipboardData.files[0];
         //ignore it if a file wasn't pasted, could just be pasting text
         if (file) {
