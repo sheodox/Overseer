@@ -198,10 +198,14 @@
         max-height: 20rem;
     }
     .image-tray {
+        background: $background-light;
         overflow-x: auto;
         white-space: nowrap;
+        padding: 0.4rem;
+        border-radius: 3px;
 
         img {
+            padding: 0.1rem;
             max-width: 7rem;
             max-height: 7rem;
         }
