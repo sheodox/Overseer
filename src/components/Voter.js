@@ -468,7 +468,7 @@ class Candidate extends React.Component {
                 <If renderWhen={detailed}>
                     <CandidateImages race_id={this.props.race_id} candidate_id={this.props.candidate_id} images={this.props.images}/>
                     <label htmlFor={notesId}>Notes</label>
-                    <textarea ref={this.notesInput} id={notesId} className="candidate-notes" onKeyUp={this.checkDirty.bind(this, 'notes')}>{this.props.notes}</textarea>
+                    <textarea ref={this.notesInput} id={notesId} className="candidate-notes" onKeyUp={this.checkDirty.bind(this, 'notes')} defaultValue={this.props.notes} />
                     {this.state.notes_edited && <button onClick={this.saveNotes}>Save</button>}
                 </If>
             </div>
