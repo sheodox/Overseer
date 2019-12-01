@@ -181,7 +181,8 @@ class CandidateList extends React.Component {
         //when in detailed row, sort by the candidate id, otherwise sort by vote ranking.
         //a user is more likely to be actively spending time looking through a detailed list,
         //so re-sorting things would be confusing.
-        if (asDetailed || (this.state && this.state.detailedView)) {
+        //need to also check to make sure asDetailed isn't defined, otherwise it won't instantly sort from toggling the view
+        if (asDetailed || (typeof asDetailed === 'undefined' && this.state && this.state.detailedView)) {
             return props.candidates.sort((a, b) => {
                 return a.candidate_id - b.candidate_id;
             })
