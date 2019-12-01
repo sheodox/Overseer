@@ -6,6 +6,11 @@
         width: 35rem;
     }
 }
+@media (max-width: 40rem) {
+    .voter-panel {
+        width: 95%;
+    }
+}
 
 @mixin smallButton {
     width: 2rem;
