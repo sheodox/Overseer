@@ -11,6 +11,22 @@ const React = require('react'),
         down: 1.1
     };
 
+function uploadPicture(race_id, candidate_id, file) {
+    fetch(`/voter/${race_id}/${candidate_id}/upload`, {
+        method: 'POST',
+        body: file
+    })
+        .then(response => {
+            const errorToast = msg => Toaster.add({type: 'text', text: 'Error! ' + msg});
+
+            if(response.status === 413) {
+                errorToast('That image is too big!');
+            }
+            else if (!response.ok) {
+                errorToast(response.statusText)
+            }
+        });
+}
 let cachedState = {
     activeRace: null,
     races: [],
@@ -421,6 +437,17 @@ class Candidate extends React.Component {
     switchView = view => {
         this.setState({ view });
     };
+    imagePasted = e => {
+        const file = e.clipboardData.files[0];
+        //ignore it if a file wasn't pasted, could just be pasting text
+        if (file) {
+            if (['image/png', 'image/jpeg'].includes(file.type)) {
+                uploadPicture(this.props.race_id, this.props.candidate_id, file);
+            } else {
+                Toaster.add({type: 'text', text: 'Invalid file type!'})
+            }
+        }
+    };
     render() {
         const voters = `${this.props.candidate_name}\nAdded by: ${this.props.creator}`,
             getWidthPercent = votes => (votes / this.props.maxVotes) * 100 + '%',
@@ -443,7 +470,8 @@ class Candidate extends React.Component {
             candidateProps = {
                 race_id: this.props.race_id,
                 candidate_id: this.props.candidate_id
-            };
+            },
+            notesPlaceholder = 'Add any notes you want.' + (Booker.voter.add_image ? ' Or paste an image here to attach it.' : '');
 
         return (
             <div className={"candidate" + (detailed ? ' detailed' : '')} data-candidate={this.props.candidate_id}>
@@ -484,7 +512,7 @@ class Candidate extends React.Component {
                         <CandidateImages {...candidateProps} images={this.props.images}/>
 
                         <label htmlFor={notesId}>Notes</label>
-                        <textarea ref={this.notesInput} id={notesId} className="candidate-notes" onKeyUp={this.checkDirty.bind(this, 'notes')} defaultValue={this.props.notes} />
+                        <textarea ref={this.notesInput} id={notesId} className="candidate-notes" onPaste={this.imagePasted} onKeyUp={this.checkDirty.bind(this, 'notes')} defaultValue={this.props.notes} placeholder={notesPlaceholder} />
                         <div className="buttons-on-right">
                             {this.state.notes_edited && <button onClick={this.saveNotes}>Save</button>}
                         </div>
@@ -578,20 +606,7 @@ class CandidateImages extends React.Component {
     }
     upload (e) {
         const file = e.target.files.item(0);
-        fetch(`/voter/${this.props.race_id}/${this.props.candidate_id}/upload`, {
-            method: 'POST',
-            body: file
-        })
-            .then(response => {
-            	const errorToast = msg => Toaster.add({type: 'text', text: 'Error! ' + msg});
-
-                if(response.status === 413) {
-                    errorToast('That image is too big!');
-                }
-                else if (!response.ok) {
-                    errorToast(response.statusText)
-                }
-            });
+        uploadPicture(this.props.race_id, this.props.candidate_id, file);
         e.target.value = '';
     }
     pickImage(image_id) {
