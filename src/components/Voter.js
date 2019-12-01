@@ -308,7 +308,7 @@ class CandidateList extends React.Component {
         }
 
         return (
-            <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseMove={this.lockSorting} onMouseLeave={this.unlockSorting}>
+            <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseLeave={this.unlockSorting}>
                 <div className="docked-buttons">
                     <button onClick={this.toggleView}>{this.state.detailedView ? 'Ranking' : 'Detailed'} View</button>
                     <button disabled={!Booker.voter.reset_votes} onClick={this.resetVotes} title="reset votes"><SVG id="reset-icon" /></button>
@@ -366,14 +366,14 @@ class Candidate extends React.Component {
 	    const newName = this.props.candidate_name,
             newNotes = this.props.notes;
 
-	    if (newName !== oldProps.candidate_name) {
+	    if (newName !== oldProps.candidate_name && this.nameInput.current) {
 	        this.nameInput.current.value = newName;
             this.setState({
                 candidate_name_edited: false
             })
         }
 
-	    if (newNotes !== oldProps.notes) {
+	    if (newNotes !== oldProps.notes && this.notesInput.current) {
 	        this.notesInput.current.value = newNotes;
 	        this.setState({
                 notes_edited: false
