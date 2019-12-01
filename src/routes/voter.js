@@ -10,12 +10,18 @@ module.exports = function(io) {
         notificationConduit = new SilverConduit(io, 'notifications');
 
     router.post('/voter/:race_id/:candidate_id/upload', async (req, res) => {
-        if (req.user && await voterBooker.check(req.user.user_id, 'add_image')) {
+        const contentType = res.get('Content-Type');
+        //don't save data of the wrong content type
+    	if (!['image/jpeg', 'image/png'].includes(contentType)) {
+            res.status(415); //unsupported media type
+			res.send();
+        }
+        else if (req.user && await voterBooker.check(req.user.user_id, 'add_image')) {
             await voterTracker.uploadImage(
                 req.params.race_id,
                 req.params.candidate_id,
-                req.body
-                // new Blob(req.body.toString())
+                req.body,
+                contentType
             );
             res.send(null);
             await broadcast();
@@ -23,11 +29,13 @@ module.exports = function(io) {
     });
     router.get('/voter/image/:image_id', async (req, res) => {
         if (req.user && await voterBooker.check(req.user.user_id, 'view')) {
-            res.send(
-                await voterTracker.getImage(
-                    req.params.image_id
-                )
+            const imageData = await voterTracker.getImage(
+                req.params.image_id
             );
+            if (imageData.image_type) {
+                res.header('Content-Type', imageData.image_type);
+            }
+            res.send(imageData.image);
         }
     });
 

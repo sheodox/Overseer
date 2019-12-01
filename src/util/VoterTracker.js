@@ -27,7 +27,8 @@ class VoterTracker extends Stockpile {
                         race_id: 'INTEGER NOT NULL',
                         candidate_id: 'INTEGER NOT NULL',
                         image_id: 'INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT',
-                        image: 'BLOB'
+                        image: 'BLOB',
+                        image_type: 'TEXT'
                     }},
                 {name: 'candidate_links', columns: {
                         race_id: 'INTEGER NOT NULL',
@@ -40,7 +41,10 @@ class VoterTracker extends Stockpile {
                 {version: 1, addColumns: [{
                         to: 'candidates', column: 'notes'
                     }]
-                }
+                },
+                {version: 2, addColumns: [{
+                        to: 'candidate_images', column: 'image_type'
+                    }]}
             ]
         });
         //cache everything so votes are fast even with slow disk i/o
@@ -226,15 +230,15 @@ class VoterTracker extends Stockpile {
         await this.run(`DELETE FROM votes WHERE race_id=?`, race_id);
         this._voteCache = this._voteCache.filter(v => v.race_id !== race_id);
     }
-    async uploadImage(race_id, candidate_id, image) {
+    async uploadImage(race_id, candidate_id, image, image_type) {
         const insertMap = this.buildInsertMap({
-            race_id, candidate_id, image
+            race_id, candidate_id, image, image_type
         }, 'candidate_images');
         await this.run(`INSERT INTO candidate_images ${insertMap.sql}`, insertMap.values);
         await this._refreshCache();
     }
     async getImage(image) {
-    	return (await this.get(`SELECT image FROM candidate_images WHERE image_id=?`, [image])).image
+    	return await this.get(`SELECT image, image_type FROM candidate_images WHERE image_id=?`, [image])
 	}
 	async removeImage(image_id) {
         await this.run(`DELETE FROM candidate_images WHERE image_id=?`, [image_id])
