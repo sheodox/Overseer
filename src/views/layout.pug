@@ -7,6 +7,13 @@ html
         meta(property='og:description', content=description)
         meta(property='description', content=description)
         title= title
+        style.
+            body, html {
+                background: #1a1e26;
+            }
+            #svg-source {
+                display: hidden;
+            }
         link(rel='icon', href='/favicon.png')
         script(src="/socket.io/socket.io.js")
         script.
