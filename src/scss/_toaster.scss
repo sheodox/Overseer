@@ -1,3 +1,5 @@
+@import 'colors';
+
 #toaster {
     position: fixed;
     right: 0;
@@ -17,7 +19,7 @@
             color: white;
         }
         color: white;
-        background-color: $background-dark;
+        background-color: $bg-dark-1;
         margin: 1rem;
         padding: 0.5rem;
     }

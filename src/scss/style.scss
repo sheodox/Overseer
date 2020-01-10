@@ -12,6 +12,51 @@
 @import 'trancemaker';
 @import 'loading';
 
+
+@mixin nested-colors($step-base, $ignore-initial-bg: false) {
+    @if $ignore-initial-bg == false {
+        background: nth($bg-steps, $step-base);
+    }
+
+    button {
+        background: nth($bg-steps, $step-base + 1);
+        &:disabled {
+            background: nth($bg-steps, $step-base - 1);
+        }
+    }
+
+    input, select, textarea {
+        background: nth($bg-steps, $step-base - 1);
+    }
+
+    .inset-panel {
+        background: nth($bg-steps, $step-base - 1);
+
+        .inset-panel {
+            background: nth($bg-steps, $step-base - 2);
+        }
+    }
+}
+
+// auto-nest colors
+.sub-panel {
+    // transparent starting panel color so the panel icon can show in the background
+    $base-bg-step: 7;
+    @include nested-colors($base-bg-step, true);
+    .sub-panel {
+        @include nested-colors($base-bg-step + 1);
+        .sub-panel {
+            @include nested-colors($base-bg-step + 2);
+            .sub-panel {
+                @include nested-colors($base-bg-step + 3);
+                .sub-panel {
+                    @include nested-colors($base-bg-step + 4);
+                }
+            }
+        }
+    }
+}
+
 #react-mount {
     position: relative;
     min-height: 100vh;
@@ -25,24 +70,30 @@
 * {
     box-sizing: border-box;
 }
+
+.row:not(:first-child) {
+    margin-top: 2rem;
+    clear: both;
+}
+
 .hidden {
     display: none !important;
 }
 html {
     height: 100%;
-    background: $background-dark;
+    background: $bg-dark-1;
     margin: 0;
 }
 body {
     font-family: 'Roboto', sans-serif;
-    background: $background-dark;
+    background: $bg-dark-1;
     margin: 0;
 }
 a {
     color: white;
 }
 textarea {
-    background: $background-dark;
+    background: $bg-dark-1;
     font-family: 'Roboto', sans-serif;
     border: none;
     color: white;
@@ -76,7 +127,8 @@ li {
     @include faint-shadow();
     margin: 0.5rem;
     display: inline-block;
-    background: $background-light;
+    background: $bg-1;
+    overflow: hidden;
 
     &:not(.switch-panel) h2 {
         color: white;
@@ -86,9 +138,7 @@ li {
 
 .panel-title {
     padding: 1rem;
-    overflow: hidden;
     position: relative;
-    background: rgba($background-light, 0.95);
 
     h2 {
         margin: 0;
@@ -101,9 +151,9 @@ li {
     }
 
     svg {
-        fill: $background-blue;
+        fill: $color-blue;
         margin-top: -3rem;
-        width: 7rem;
+        width: 13rem;
         right: 0.5rem;
         position: absolute;
         z-index: 1;
@@ -111,10 +161,11 @@ li {
 }
 
 .sub-panel {
-    background-color: rgba($background-dark, 0.95);
     border: none;
     padding: 1.5rem;
     color: white;
+    position: relative;
+    z-index: 2;
 
     + .sub-panel {
         padding-top: 0;

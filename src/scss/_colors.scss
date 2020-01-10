@@ -8,7 +8,21 @@ $accent-mint: rgb(2, 253, 138);
 $accent-red: rgb(220, 64, 99);
 $darkGray: material-color('grey', '800');
 
-$background-light: rgb(39, 44, 56);
-$background-lighter: lighten($background-light, 6%);
-$background-dark: darken($background-light, 6%);
-$background-blue: darken($color-blue, 10%);
+$bg-color-step: 6%;
+$bg-base: rgb(29, 32, 41);
+$bg-1: $bg-base;
+$bg-2: lighten($bg-1, $bg-color-step);
+$bg-3: lighten($bg-2, $bg-color-step);
+$bg-4: lighten($bg-3, $bg-color-step);
+$bg-5: lighten($bg-4, $bg-color-step);
+$bg-6: lighten($bg-5, $bg-color-step);
+
+$bg-dark-1: darken($bg-base, $bg-color-step);
+$bg-dark-2: darken($bg-dark-1, $bg-color-step);
+$bg-dark-3: darken($bg-dark-2, $bg-color-step);
+$bg-dark-4: darken($bg-dark-3, $bg-color-step);
+$bg-dark-5: darken($bg-dark-4, $bg-color-step);
+$bg-dark-6: darken($bg-dark-5, $bg-color-step);
+
+$bg-steps: $bg-dark-6, $bg-dark-5, $bg-dark-4, $bg-dark-3, $bg-dark-2, $bg-dark-1, $bg-1, $bg-2, $bg-3, $bg-4, $bg-5, $bg-6;
+

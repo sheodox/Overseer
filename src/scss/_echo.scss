@@ -39,7 +39,7 @@ th {
         }
 
         &:hover {
-            background-color: $background-dark;
+            background-color: $bg-2;
         }
     }
     progress {
@@ -63,7 +63,7 @@ th {
         display: block;
     }
     textarea {
-        width: 30rem;
+        width: 100%;
         height: 15rem;
     }
     form button[type=submit] {
@@ -74,7 +74,7 @@ th {
         @include button();
         width: 100%;
         text-align: center;
-        
+
         span {
             display: block;
         }
@@ -92,7 +92,7 @@ th {
         @include fullscreen();
         //put it just under the invisible file input
         z-index: $fileZIndex - 1;
-        background-color: rgba($background-light, 0.95);
+        background-color: rgba($bg-dark-1, 0.95);
         color: white;
         font-size: 5rem;
         text-align: center;
@@ -113,10 +113,6 @@ th {
 }
 
 #echo-details {
-    .sub-panel {
-        background: $background-light;
-    }
-
     label {
         display: block;
     }
@@ -192,7 +188,6 @@ th {
     margin-right: 1rem;
     margin-bottom: 0.2rem;
     white-space: nowrap;
-    float: left;
     padding: 0.1rem 0.2rem;
     border-radius: 0.1rem;
     border-bottom: 1px solid transparent;
@@ -213,7 +208,7 @@ th {
 
         .tag-cloud:not(.readonly) & {
             &:hover {
-                background: $background-light;
+                background: $bg-1;
             }
         }
     }
@@ -222,6 +217,8 @@ th {
     }
 }
 .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
     max-width: 40rem;
 
     + * {

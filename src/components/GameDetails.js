@@ -166,7 +166,7 @@ class GameDetails extends React.Component {
                             </tbody>
                         </table>
 
-                        <div className={inputClass}>
+                        <div className={inputClass + ' row'}>
                             <label htmlFor="name">Game Name:</label>
                             <input ref={c => this.name = c} onKeyUp={this.checkForChanges} type="text" id="name" {...readonlyState} />
                         </div>
@@ -179,8 +179,10 @@ class GameDetails extends React.Component {
                         <label htmlFor="details">Game details:</label>
                         <textarea {...detailsAttrs} />
                         <br />
-                        <button {...saveAttrs}>Save Changes</button>
-                        <button type="button" onClick={this.redirectToEcho}>{canEdit ? 'Cancel' : 'Back'}</button>
+                        <div className="row">
+                            <button {...saveAttrs}>Save Changes</button>
+                            <button type="button" onClick={this.redirectToEcho}>{canEdit ? 'Cancel' : 'Back'}</button>
+                        </div>
                     </If>
                 </div>
             </section>

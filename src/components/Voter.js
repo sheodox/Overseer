@@ -325,7 +325,7 @@ class CandidateList extends React.Component {
         }
 
         return (
-            <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseLeave={this.unlockSorting}>
+            <div className="sub-panel candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseLeave={this.unlockSorting}>
                 <div className="docked-buttons">
                     <button onClick={this.toggleView}>{this.state.detailedView ? 'Ranking' : 'Detailed'} View</button>
                     <button disabled={!Booker.voter.reset_votes} onClick={this.resetVotes} title="reset votes"><SVG id="reset-icon" /></button>
@@ -475,8 +475,8 @@ class Candidate extends React.Component {
             notesPlaceholder = 'Add any notes you want.' + (Booker.voter.add_image ? ' Or paste an image here to attach it.' : '');
 
         return (
-            <div className={"candidate" + (detailed ? ' detailed' : '')} data-candidate={this.props.candidate_id}>
-                <div className="candidate-buttons">
+            <div className={"candidate" + (detailed ? ' detailed sub-panel' : '')} data-candidate={this.props.candidate_id}>
+                <div className="candidate-buttons sub-panel">
                     <div className="up-down">
                         <button disabled={!Booker.voter.vote} className={'up' + (votedUp ? ' vote-cast' : '')} onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /></button>
                         <button disabled={!Booker.voter.vote} className={'down' + (votedDown ? ' vote-cast' : '')} onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} /></button>
@@ -651,7 +651,7 @@ class CandidateImages extends React.Component {
                     </div>
                 </If>
                 <If renderWhen={this.props.images.length > 1}>
-                    <div className="image-tray">
+                    <div className="image-tray inset-panel">
                         {images}
                     </div>
                 </If>

@@ -28,7 +28,6 @@
         white-space: nowrap;
     }
     input, select {
-        background: $background-dark;
         width: 75%;
         color: white;
         font-size: 1.4rem;
@@ -54,6 +53,9 @@
         }
     }
 }
+label {
+    font-size: 1.1rem;
+}
 button, input[type=submit] {
     @include button();
     @include light-button();
@@ -69,11 +71,11 @@ button, input[type=submit] {
 }
 progress {
     -webkit-appearance: none;
-    background: $background-lighter;
+    background: $bg-2;
     border-radius: 0.1rem;
 
     &::-webkit-progress-bar {
-        background: $background-lighter;
+        background: $bg-3;
     }
     &::-webkit-progress-value {
         background: $color-blue;

@@ -187,23 +187,27 @@ class EchoUploader extends React.Component {
                         </div>
                         <input ref={c => this.fileSelect = c} onChange={this.onFileSelect} type="file" accept=".zip" name="zippedGame" id="file" disabled={disabled} className={this.state.dragging ? 'dragging' : ''}/>
                         <br />
-                        <div className="control">
-                            <label htmlFor="name">Game name:</label>
-                            <input ref={c => this.name = c} id="name" name="name" />
+                        <div className="row">
+                            <div className="control">
+                                <label htmlFor="name">Game name:</label>
+                                <input ref={c => this.name = c} id="name" name="name" />
+                            </div>
+                            <div className="control">
+                                <label htmlFor="tags">Tags:</label>
+                                <input ref={c => this.tags = c} id="tags" name="tags" onKeyUp={this.updateTags} onChange={this.updateTags} placeholder="tags separated by commas" autoComplete="off"/>
+                            </div>
+                            <TagCloud ref={c => this.cloud = c} tagInput={this.tags} tags={this.state.tagCloud} />
                         </div>
-                        <div className="control">
-                            <label htmlFor="tags">Tags:</label>
-                            <input ref={c => this.tags = c} id="tags" name="tags" onKeyUp={this.updateTags} onChange={this.updateTags} placeholder="tags separated by commas" autoComplete="off"/>
+                        <div className="row">
+                            <label htmlFor="details">Game details:</label>
+                            <textarea ref={c => this.details = c} id="details" name="details" placeholder="patch information, included mods, description, etc." disabled={disabled}/>
                         </div>
-                        <TagCloud ref={c => this.cloud = c} tagInput={this.tags} tags={this.state.tagCloud} />
-                        <br />
-                        <label htmlFor="details">Game details:</label>
-                        <textarea ref={c => this.details = c} id="details" name="details" placeholder="patch information, included mods, description, etc." disabled={disabled}/>
-                        <br />
-                        <button type="submit" disabled={!this.state.uploadAllowed || disabled} className="upload-submit">Upload</button>
-                        <Link to="/w/game-echo">
-                            <button type="button" disabled={disabled}>Cancel</button>
-                        </Link>
+                        <div className="row">
+                            <button type="submit" disabled={!this.state.uploadAllowed || disabled} className="upload-submit">Upload</button>
+                            <Link to="/w/game-echo">
+                                <button type="button" disabled={disabled}>Cancel</button>
+                            </Link>
+                        </div>
                     </form>
                 </div>
             </section>

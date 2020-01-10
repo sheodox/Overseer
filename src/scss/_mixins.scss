@@ -12,7 +12,7 @@
 @mixin button {
     display: inline-block;
     color: white;
-    background: $background-lighter;
+    background: $bg-2;
     cursor: pointer;
     transition: border 0.2s, background 0.2s;
     padding: 0.3rem 1rem 0.2rem 1rem;
@@ -38,13 +38,13 @@
 
 @mixin light-button {
     @include button();
-    $backgroundColorDisabled: darken($background-lighter, 2%);
+    $backgroundColorDisabled: $bg-dark-1;
     $textColor: $color-blue;
-    $textColorDisabled: darken($background-lighter, 7%);
+    $textColorDisabled: $bg-dark-2;
     color: $textColor;
 
     &:hover {
-        background: $background-light;
+        background: $bg-1;
     }
 
     &:disabled, &.disabled {
@@ -95,7 +95,7 @@
                 border-color: $illuminateColor;
             }
             &.off {
-                border-color: $background-dark;
+                border-color: $bg-dark-1;
             }
         }
     }
