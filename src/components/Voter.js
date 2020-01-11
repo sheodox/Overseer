@@ -327,7 +327,16 @@ class CandidateList extends React.Component {
         return (
             <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseLeave={this.unlockSorting}>
                 <div className="centered-buttons">
-                    <button onClick={this.toggleView}>{this.state.detailedView ? 'Ranking' : 'Detailed'} View</button>
+                    <button onClick={this.toggleView}>
+                        <If renderWhen={!this.state.detailedView}>
+                            <SVG id="details-icon" />
+                            Detailed View
+                        </If>
+                        <If renderWhen={this.state.detailedView}>
+                            <SVG id="ranking-icon" />
+                            Ranking View
+                        </If>
+                    </button>
 					<If renderWhen={Booker.voter.reset_votes}>
                         <button onClick={this.resetVotes}><SVG id="reset-icon" />Reset Votes</button>
                     </If>
