@@ -287,7 +287,9 @@ class CandidateList extends React.Component {
         });
     };
     resetVotes = () => {
-        voterConduit.emit('resetVotes', this.props.race_id);
+        if (confirm(`Are you sure you want to reset votes for ${this.props.race_name}?`)) {
+            voterConduit.emit('resetVotes', this.props.race_id);
+        }
     };
     toggleView = () => {
         const detailed = !this.state.detailedView;
