@@ -156,11 +156,6 @@ class RaceList extends React.Component {
     switchRace = () => {
         this.props.switchRace(parseInt(this.select.value, 10));
     };
-    removeRace = () => {
-        if (confirm(`Really remove ${this.props.activeRace.race_name}?`)) {
-            voterConduit.emit('removeRace', this.props.activeRace.race_id);
-        }
-    };
     render() {
         const races = this.props.races.map((race, index) => {
                 return <option value={race.race_id} key={index}>{race.race_name}</option>
@@ -287,6 +282,11 @@ class CandidateList extends React.Component {
     resetVotes = () => {
         if (confirm(`Are you sure you want to reset votes for ${this.props.race_name}?`)) {
             voterConduit.emit('resetVotes', this.props.race_id);
+        }
+    };
+    removeRace = () => {
+        if (confirm(`Really remove ${this.props.race_name}?`)) {
+            voterConduit.emit('removeRace', this.props.race_id);
         }
     };
     toggleView = () => {
