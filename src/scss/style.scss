@@ -13,7 +13,7 @@
 @import 'loading';
 
 
-@mixin nested-colors($step-base, $ignore-initial-bg: false) {
+@mixin nested-colors($step-base, $ignore-initial-bg: false, $inset-level: 0) {
     @if $ignore-initial-bg == false {
         background: nth($bg-steps, $step-base);
     }
@@ -26,22 +26,20 @@
     }
 
     input, select, textarea {
-        background: nth($bg-steps, $step-base - 1);
+        background: nth($bg-steps, $step-base - 2);
     }
 
-    .inset-panel {
-        background: nth($bg-steps, $step-base - 1);
-
+    @if $inset-level < 2 {
         .inset-panel {
-            background: nth($bg-steps, $step-base - 2);
+            @include nested-colors($base-bg-step - 1, false, $inset-level + 1);
         }
     }
 }
 
+$base-bg-step: 7;
 // auto-nest colors
 .sub-panel {
     // transparent starting panel color so the panel icon can show in the background
-    $base-bg-step: 7;
     @include nested-colors($base-bg-step, true);
     .sub-panel {
         @include nested-colors($base-bg-step + 1);
@@ -127,7 +125,7 @@ li {
     @include faint-shadow();
     margin: 0.5rem;
     display: inline-block;
-    background: $bg-1;
+    background: linear-gradient(nth($bg-steps, $base-bg-step), nth($bg-steps, $base-bg-step - 1)) fixed;
     overflow: hidden;
 
     &:not(.switch-panel) h2 {

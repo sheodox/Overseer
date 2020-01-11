@@ -505,8 +505,8 @@ class Candidate extends React.Component {
                 </div>
                 <If renderWhen={detailed}>
                     <div className="candidate-view-switchers">
-                        <button onClick={this.switchView.bind(this, 'overview')} className={this.state.view === 'overview' ? 'disabled' : ''}>Overview</button>
-                        <button onClick={this.switchView.bind(this, 'links')} className={this.state.view === 'links' ? 'disabled' : ''}>Links</button>
+                        <button onClick={this.switchView.bind(this, 'overview')} disabled={this.state.view === 'overview'}>Overview</button>
+                        <button onClick={this.switchView.bind(this, 'links')} disabled={this.state.view === 'links'}>Links</button>
                     </div>
 
                     <If renderWhen={this.state.view === 'overview'}>

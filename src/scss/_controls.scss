@@ -32,7 +32,8 @@
         color: white;
         font-size: 1.4rem;
         border: none;
-        border-bottom: 0.2rem solid white;
+        border-radius: 0.1rem;
+        border-bottom: 0.2rem solid #364962;
         padding-left: 0.5rem;
         &:focus {
             border-color: $focusBorderColor;
