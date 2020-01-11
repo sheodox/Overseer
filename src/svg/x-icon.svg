@@ -14,7 +14,7 @@
    viewBox="0 0 99.999997 99.999997"
    id="x-icon"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="x-icon.svg">
   <defs
      id="defs4">
@@ -33,17 +33,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.8101934"
-     inkscape:cx="109.14542"
-     inkscape:cy="-36.883933"
+     inkscape:zoom="5.1200001"
+     inkscape:cx="65.043388"
+     inkscape:cy="23.365048"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="1912"
-     inkscape:window-y="-8"
+     inkscape:window-width="2560"
+     inkscape:window-height="1379"
+     inkscape:window-x="1920"
+     inkscape:window-y="1104"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -63,17 +63,17 @@
      id="layer1"
      transform="translate(0,-952.36223)">
     <path
-       style="fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M -38.942308,902.36221 149.99999,1091.3044 138.9423,1102.3621 -50,913.42 Z"
+       style="fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.21289085;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 12.130001,959.78407 80.448167,80.44813 -4.708161,4.7081 -80.4481687,-80.44802 z"
        id="rect4182"
        inkscape:connector-curvature="0" />
     <rect
-       style="fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.21289083;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4182-2"
-       width="267.20468"
-       height="15.637931"
-       x="539.8197"
-       y="-751.95178"
-       transform="matrix(-0.70710701,0.70710655,-0.70710701,-0.70710655,0,0)" />
+       width="113.77086"
+       height="6.6583443"
+       x="616.53656"
+       y="-747.46198"
+       transform="rotate(135.00002)" />
   </g>
 </svg>
