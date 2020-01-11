@@ -103,6 +103,14 @@ progress {
         margin-right: 0.1rem;
     }
 }
+.centered-buttons {
+    display: flex;
+    justify-content: center;
+    
+    button:not(:last-child) {
+        margin-right: 0.1rem;
+    }
+}
 
 .buttons-on-right {
     display: flex;

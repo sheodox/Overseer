@@ -99,9 +99,23 @@ class Voter extends React.Component {
         });
         this.props.history.push(Voter.getRaceRoute(id));
     };
+    newRaceKeyDown = (e) => {
+        if (e.which === 13) {
+            voterConduit.emit('newRace', e.target.value);
+            e.target.value = '';
+        }
+    };
     render() {
         if (!Booker.voter.view) {
             return <Redirect to="/" />;
+        }
+        const raceInputId = 'voter-new-race';
+        let newRace;
+        if (Booker.voter.add_race) {
+            newRace = <div className="control">
+                <label htmlFor={raceInputId}>New race</label>
+                <input id={raceInputId} onKeyDown={this.newRaceKeyDown} type="text" maxLength="20" placeholder="enter a category name"/>
+            </div>
         }
 
         return (
@@ -113,10 +127,13 @@ class Voter extends React.Component {
                 <div className="sub-panel voter">
                     <Loading renderWhen={!this.state.loaded}/>
                     <If renderWhen={this.state.loaded}>
-                        <RaceList {...this.state} switchRace={this.switchRace} />
-                        {this.state.activeRace ?
-                            <CandidateList {...this.state.activeRace} />
-                            : null}
+                        {newRace}
+						<div className="sub-panel row">
+                            <RaceList {...this.state} switchRace={this.switchRace} />
+                            {this.state.activeRace ?
+                                <CandidateList {...this.state.activeRace} />
+                                : null}
+                        </div>
                     </If>
                 </div>
             </section>
@@ -136,12 +153,6 @@ class RaceList extends React.Component {
             this.select.value = this.props.activeRace.race_id;
         }
     }
-    newRaceKeyDown = (e) => {
-        if (e.which === 13) {
-            voterConduit.emit('newRace', e.target.value);
-            e.target.value = '';
-        }
-    };
     switchRace = () => {
         this.props.switchRace(parseInt(this.select.value, 10));
     };
@@ -154,22 +165,12 @@ class RaceList extends React.Component {
         const races = this.props.races.map((race, index) => {
                 return <option value={race.race_id} key={index}>{race.race_name}</option>
             }),
-            raceSwitcherId = 'voter-race-switcher',
-            raceInputId = 'voter-new-race';
-
-        let addCandidate;
-        if (Booker.voter.add_race) {
-            addCandidate = <div className="control">
-                <label htmlFor={raceInputId}>New race</label>
-                <input id={raceInputId} onKeyDown={this.newRaceKeyDown} type="text" maxLength="20" placeholder="enter a category name"/>
-            </div>
-        }
+            raceSwitcherId = 'voter-race-switcher';
 
         return (
             <div className="race-list">
-                {addCandidate}
                 <div className="control">
-                    <label htmlFor={raceSwitcherId}>View</label>
+                    <label htmlFor={raceSwitcherId}>Viewing Race</label>
                     <select ref={c => this.select = c} id={raceSwitcherId} onChange={this.switchRace}>
                         {races}
                     </select>
@@ -327,12 +328,11 @@ class CandidateList extends React.Component {
         }
 
         return (
-            <div className="sub-panel candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseLeave={this.unlockSorting}>
-                <div className="docked-buttons">
+            <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseLeave={this.unlockSorting}>
+                <div className="centered-buttons">
                     <button onClick={this.toggleView}>{this.state.detailedView ? 'Ranking' : 'Detailed'} View</button>
                     <button disabled={!Booker.voter.reset_votes} onClick={this.resetVotes} title="reset votes"><SVG id="reset-icon" /></button>
                 </div>
-                <h3>{this.props.race_name}</h3>
                 <br />
                 <NewCandidate newCandidate={newCandidate} />
                 <If renderWhen={this.state.detailedView}>
