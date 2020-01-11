@@ -38,8 +38,8 @@ class Lights extends React.Component {
         return (
             <section className="panel">
                 <div className="panel-title">
-                    <h2>Lights</h2>
                     <SVG id="light-icon" />
+                    <h2>Lights</h2>
                 </div>
                 {content}
             </section>

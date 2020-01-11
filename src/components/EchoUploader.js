@@ -176,8 +176,8 @@ class EchoUploader extends React.Component {
         return (
             <section className="panel" id="echo-uploader"  onMouseLeave={this.mouseLeave} onDragOver={this.dragOver} onDrop={this.drop}>
                 <div className="panel-title">
-                    <h2>Game Echo Uploader</h2>
                     <SVG id="echo-icon" />
+                    <h2>Game Echo Uploader</h2>
                 </div>
                 <div className="sub-panel">
                     <form ref={c => this.form = c} onSubmit={this.upload}>

@@ -133,8 +133,8 @@ class GameDetails extends React.Component {
         return (
             <section className="panel" id="echo-details">
                 <div className="panel-title">
-                    <h2>{this.state.name}</h2>
                     <SVG id="echo-icon" />
+                    <h2>{this.state.name}</h2>
                 </div>
                 <div className="sub-panel">
                     <Loading renderWhen={!this.state.loaded}/>

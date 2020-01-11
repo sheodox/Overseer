@@ -8,8 +8,8 @@ class Settings extends React.Component {
         return (
             <section className="panel">
                 <div className="panel-title">
-                    <h2>Settings</h2>
                     <SVG id="settings-icon" />
+                    <h2>Settings</h2>
                 </div>
                 <div className="sub-panel">
                     <strong>there doesn't seem to be anything here</strong>

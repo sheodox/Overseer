@@ -121,8 +121,8 @@ class Voter extends React.Component {
         return (
             <section className="panel voter-panel">
                 <div className="panel-title">
-                    <h2>Voter</h2>
                     <SVG id="voter-icon" />
+                    <h2>Voter</h2>
                 </div>
                 <div className="sub-panel voter">
                     <Loading renderWhen={!this.state.loaded}/>

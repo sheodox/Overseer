@@ -12,8 +12,8 @@ class LoginRequired extends React.Component {
         return (
             <section className="panel login-required">
                 <div className="panel-title">
-                    <h2>Login Required</h2>
                     <SVG id="login-icon" />
+                    <h2>Login Required</h2>
                 </div>
                 <div className="sub-panel">
                     <span>

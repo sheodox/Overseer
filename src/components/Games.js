@@ -99,9 +99,9 @@ class Games extends React.Component {
         return (
             <section className="panel" id="games">
                 <div className="panel-title">
+                    <SVG id="echo-icon" />
                     <h2>Game Echo</h2>
                     <div className={"pulse " + connection} title={"echo server is " + connection}> </div>
-                    <SVG id="echo-icon" />
                 </div>
                 <div className="sub-panel">
                     <Loading renderWhen={!this.state.loaded} />
