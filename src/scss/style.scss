@@ -26,7 +26,7 @@
     }
 
     input, select, textarea {
-        background: nth($bg-steps, $step-base - 2);
+        background: rgba(nth($bg-steps, $step-base - 2), 0.8);
     }
 
     @if $inset-level < 2 {
@@ -148,7 +148,6 @@ li {
     //anything that isn't an svg should show over the top of the svg
     *:not(svg) {
         position: relative;
-        z-index: 2;
     }
 
     svg {
@@ -157,7 +156,6 @@ li {
         width: 13rem;
         right: 0.5rem;
         position: absolute;
-        z-index: 1;
     }
 }
 
@@ -166,7 +164,6 @@ li {
     padding: 1.5rem;
     color: white;
     position: relative;
-    z-index: 2;
 
     + .sub-panel {
         padding-top: 0;
