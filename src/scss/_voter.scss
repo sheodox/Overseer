@@ -1,9 +1,9 @@
 @import 'colors';
 @import 'mixins';
 
-@media (min-width: 40rem) {
+@media (min-width: 45rem) {
     .voter-panel {
-        width: 35rem;
+        width: 45rem;
     }
 }
 @media (max-width: 40rem) {
