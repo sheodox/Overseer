@@ -161,7 +161,7 @@ class RaceList extends React.Component {
         if (Booker.voter.add_race) {
             addCandidate = <div className="control">
                 <label htmlFor={raceInputId}>New race</label>
-                <input id={raceInputId} onKeyDown={this.newRaceKeyDown} type="text" maxLength="20"/>
+                <input id={raceInputId} onKeyDown={this.newRaceKeyDown} type="text" maxLength="20" placeholder="enter a category name"/>
             </div>
         }
 
@@ -361,8 +361,8 @@ class NewCandidate extends React.Component {
 
         return (
             <div className="control">
-                <label htmlFor={inputId}>New </label>
-                <input id={inputId} ref={c => this.input = c} onKeyDown={this.onKeyDown} type="text" maxLength="50" />
+                <label htmlFor={inputId}>New item </label>
+                <input id={inputId} ref={c => this.input = c} onKeyDown={this.onKeyDown} type="text" maxLength="50" placeholder="add something to vote for"/>
             </div>
         );
     }
