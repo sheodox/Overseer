@@ -174,9 +174,6 @@ class RaceList extends React.Component {
                     <select ref={c => this.select = c} id={raceSwitcherId} onChange={this.switchRace}>
                         {races}
                     </select>
-                    <button disabled={!Booker.voter.remove_race} title="remove race" className="race-remove" onClick={this.removeRace}>
-                        <SVG id="x-icon" />
-                    </button>
                 </div>
             </div>
         );
@@ -331,7 +328,14 @@ class CandidateList extends React.Component {
             <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseLeave={this.unlockSorting}>
                 <div className="centered-buttons">
                     <button onClick={this.toggleView}>{this.state.detailedView ? 'Ranking' : 'Detailed'} View</button>
-                    <button disabled={!Booker.voter.reset_votes} onClick={this.resetVotes} title="reset votes"><SVG id="reset-icon" /></button>
+					<If renderWhen={Booker.voter.reset_votes}>
+                        <button onClick={this.resetVotes}><SVG id="reset-icon" />Reset Votes</button>
+                    </If>
+                    <If renderWhen={Booker.voter.remove_race}>
+                        <button className="race-remove" onClick={this.removeRace}>
+                            <SVG id="x-icon" />Remove Race
+                        </button>
+                    </If>
                 </div>
                 <br />
                 <NewCandidate newCandidate={newCandidate} />

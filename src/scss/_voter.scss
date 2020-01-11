@@ -18,17 +18,11 @@
     padding: 0;
 }
 
-.race-list {
-    select {
-        width: 62%;
-        float: none;
-    }
-    .race-remove {
-        @include light-button();
-        float: right;
-        margin-left: 0;
-        height: auto;
-        width: 13%;
+.candidate-list .centered-buttons {
+    flex-wrap: wrap;
+
+    button {
+        white-space: nowrap;
     }
 }
 
