@@ -114,7 +114,7 @@ class Voter extends React.Component {
         if (Booker.voter.add_race) {
             newRace = <div className="control">
                 <label htmlFor={raceInputId}>New race</label>
-                <input id={raceInputId} onKeyDown={this.newRaceKeyDown} type="text" maxLength="20" placeholder="enter a category name"/>
+                <input id={raceInputId} onKeyDown={this.newRaceKeyDown} type="text" maxLength="50" placeholder="enter a new category name to vote on"/>
             </div>
         }
 
