@@ -121,8 +121,10 @@ class Games extends React.Component {
                         <br/><br/>
                         <div className="g-search control">
                             <label htmlFor="g-search">Search:</label>
-                            <input onKeyUp={this.search} ref={c => this.searchField = c} type="text" id="g-search" placeholder="search by title or tags"/>
-                            <button title="reset search" disabled={this.state.search.length === 0} onClick={this.clearSearch}><SVG id="x-icon" /></button>
+                            <div className="input-with-button">
+                                <input onKeyUp={this.search} ref={c => this.searchField = c} type="text" id="g-search" placeholder="search by title or tags"/>
+                                <button title="reset search" disabled={this.state.search.length === 0} onClick={this.clearSearch}><SVG id="x-icon" /></button>
+                            </div>
                         </div>
                         <TagCloud ref={c => this.cloud = c} tagInput={this.searchField} tagClicked={this.search} tags={this.state.tagCloud}/>
                         <p className="g-count">{games.length} results</p>
