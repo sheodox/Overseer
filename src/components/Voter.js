@@ -672,7 +672,7 @@ class CandidateImages extends React.Component {
                 </If>
                 <If renderWhen={Booker.voter.add_image}>
                     <div>
-                        <label className="upload-candidate-image" htmlFor={uploadInputId}>Attach an image</label>
+                        <label className="upload-candidate-image as-button" htmlFor={uploadInputId}>Attach an image</label>
                         <input id={uploadInputId} className='hidden' onChange={this.upload.bind(this)} type="file" accept="image/png, image/jpeg" />
                     </div>
                 </If>

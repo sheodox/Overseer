@@ -181,7 +181,7 @@ class EchoUploader extends React.Component {
                 </div>
                 <div className="sub-panel">
                     <form ref={c => this.form = c} onSubmit={this.upload}>
-                        <label id="file-label" htmlFor="file" >Select or drag a file here!<span>{this.state.file ? `(${this.state.file}.zip)` : '(no file selected)'}</span></label>
+                        <label id="file-label" htmlFor="file" className="as-button" >Select or drag a file here!<span>{this.state.file ? `(${this.state.file}.zip)` : '(no file selected)'}</span></label>
                         <div className={this.state.dragging ? 'file-overlay' : 'hidden'}>
                             Drop to attach file
                         </div>

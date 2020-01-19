@@ -83,7 +83,7 @@
 label {
     font-size: 1.1rem;
 }
-button, input[type=submit] {
+button, input[type=submit], .as-button {
     @include button();
     @include light-button();
 }

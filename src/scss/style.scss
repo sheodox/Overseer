@@ -18,7 +18,7 @@
         background: nth($bg-steps, $step-base);
     }
 
-    button {
+    button, .as-button {
         background: nth($bg-steps, $step-base + 1);
         &:disabled {
             background: nth($bg-steps, $step-base - 1);
