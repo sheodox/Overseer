@@ -88,6 +88,14 @@ class Stockpile {
             });
         });
     }
+
+    /**
+     * Run a function after the database has been initialized. Helpful when you want to do some cleanup or data integrity checks.
+     * @param fn
+     */
+    onReady(fn) {
+        this._databaseCreation.then(fn);
+    }
     _queue(...args) {
         //if queries are called before the database has been created, queue them up in promises, otherwise run them normally
         if (!this.ready) {
