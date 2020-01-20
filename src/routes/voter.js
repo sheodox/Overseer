@@ -3,6 +3,7 @@ const maskRaceSessions = require('../util/maskVoterSessions'),
     voterBooker = require('../db/voterbooker'),
     Users = require('../users'),
     voterTracker = require('../util/VoterTracker'),
+    thumbnails = require('../util/thumbnails'),
     router = require('express').Router();
 
 module.exports = function(io) {
@@ -27,6 +28,7 @@ module.exports = function(io) {
             await broadcast();
         }
     });
+
     router.get('/voter/image/:image_id', async (req, res) => {
         if (req.user && await voterBooker.check(req.user.user_id, 'view')) {
             const imageData = await voterTracker.getImage(
@@ -36,6 +38,18 @@ module.exports = function(io) {
                 res.header('Content-Type', imageData.image_type);
             }
             res.send(imageData.image);
+        }
+    });
+
+    router.get('/voter/image/thumbnail/:size/:image_id', async (req, res) => {
+        if (req.user && await voterBooker.check(req.user.user_id, 'view')) {
+            const {size, image_id} = req.params;
+            const imageData = await thumbnails.getThumbnail(size, 'voter', image_id);
+
+            if (imageData.image_type) {
+                res.header('Content-Type', imageData.image_type);
+            }
+            res.send(imageData[`image_${size}`]);
         }
     });
 

@@ -648,10 +648,11 @@ class CandidateImages extends React.Component {
     render() {
         const images = this.props.images.map(image => {
             const imageId = image.image_id;
-            return <img key={imageId} onClick={this.pickImage.bind(this, imageId)} src={`/voter/image/${imageId}`} />
+            return <img key={imageId} onClick={this.pickImage.bind(this, imageId)} src={`/voter/image/thumbnail/small/${imageId}`} />
         });
         const candidateIdBase = `candidate-${this.props.race_id}-${this.props.candidate_id}-`,
-            uploadInputId = candidateIdBase + 'upload';
+            uploadInputId = candidateIdBase + 'upload',
+            currentImageSrc = `/voter/image/thumbnail/${this.state.maximized ? 'large' : `medium`}/${this.state.currentImage}`;
 
         return (
             <div className="candidate-images">
@@ -662,7 +663,9 @@ class CandidateImages extends React.Component {
                                 <button onClick={this.deleteMainImage} title="Delete this image"><SVG id="x-icon"/></button>
                             </div>
                         </If>
-                        {this.state.currentImage !== null && <img className="main-image" src={`/voter/image/${this.state.currentImage}`}/>}
+                        {this.state.currentImage !== null &&
+                            <img className="main-image" src={currentImageSrc}/>
+                        }
                     </div>
                 </If>
                 <If renderWhen={this.props.images.length > 1}>

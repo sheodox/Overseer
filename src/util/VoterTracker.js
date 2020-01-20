@@ -1,5 +1,6 @@
 const Stockpile = require('../db/stockpile'),
-    valid = require('./validator');
+    valid = require('./validator'),
+    thumbnails = require('./thumbnails');
 
 class VoterTracker extends Stockpile {
     constructor() {
@@ -51,6 +52,29 @@ class VoterTracker extends Stockpile {
         this._raceCache = [];
         this._candidateCache = [];
         this._voteCache = [];
+        this.onReady(() => {
+            this._generateMissingThumbnails();
+        })
+    }
+    async _generateMissingThumbnails() {
+        const startTime = Date.now(),
+            imageIds = (await this.all(`SELECT image_id FROM candidate_images`)).map(obj => obj.image_id),
+            missing = await thumbnails.findMissingThumbnails('voter', imageIds);
+
+        if (!missing.length) {
+            return;
+        }
+
+        console.log(`Voter: Need to generate thumbnails for ${missing.length} images.`);
+        for (const imageID of missing) {
+            const {image, image_type} = await this.get(`SELECT image, image_type, image_id FROM candidate_images WHERE image_id=?`, [imageID]);
+            await thumbnails.generate({
+                image, image_type,
+                source: 'voter',
+                source_key: imageID
+            })
+        }
+        console.log(`Voter: generated missing thumbnails in ${((Date.now() - startTime) / 1000).toFixed(1)} seconds`);
     }
     //trim and remove all unnecessary spaces
     static cleanString(str) {
@@ -235,13 +259,16 @@ class VoterTracker extends Stockpile {
             race_id, candidate_id, image, image_type
         }, 'candidate_images');
         await this.run(`INSERT INTO candidate_images ${insertMap.sql}`, insertMap.values);
+        await this._generateMissingThumbnails();
         await this._refreshCache();
     }
     async getImage(image) {
     	return await this.get(`SELECT image, image_type FROM candidate_images WHERE image_id=?`, [image])
 	}
 	async removeImage(image_id) {
-        await this.run(`DELETE FROM candidate_images WHERE image_id=?`, [image_id])
+        const {candidate_id} = await this.get(`SELECT candidate_id FROM candidate_images WHERE image_id=?`, [image_id]);
+        await this.run(`DELETE FROM candidate_images WHERE image_id=?`, [image_id]);
+        await thumbnails.removeThumbnails('voter', candidate_id);
         await this._refreshCache();
     }
     async updateCandidateName(race_id, candidate_id, candidate_name) {
