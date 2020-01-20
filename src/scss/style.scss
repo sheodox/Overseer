@@ -162,6 +162,9 @@ li {
 .sub-panel {
     border: none;
     padding: 1.5rem;
+    @media (max-width: 40rem) {
+        padding: 0.6rem;
+    }
     color: white;
     position: relative;
 
