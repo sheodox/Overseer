@@ -25,6 +25,18 @@ const isProd = process.env.NODE_ENV === 'production',
     admin = require('./routes/admin'),
     proxy = require('./routes/proxy');
 
+const limit = '15mb';
+app.use(bodyParser.raw({
+    type: 'image/png',
+    limit
+}));
+app.use(bodyParser.raw({
+    type: 'image/jpeg',
+    limit
+}));
+app.use(bodyParser.json({limit}));
+app.use(bodyParser.urlencoded({limit, extended: true, parameterLimit: 50000}));
+
 app.use(logger('dev'));
 
 app.disable('x-powered-by');
@@ -44,16 +56,6 @@ app.use(s);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/proxy', proxy.router);
-const limit = '3mb';
-app.use(bodyParser.json({limit}));
-app.use(bodyParser.raw({
-    type: 'image/png',
-    limit
-}));
-app.use(bodyParser.raw({
-    type: 'image/jpeg',
-    limit
-}));
 
 app.use('/auth', auth);
 // view engine setup
