@@ -60,6 +60,15 @@ module.exports = function(io) {
             singleUserNotifications = new SilverConduit(socket, 'notifications');
         let userId, displayName;
 
+        const singleUserError = msg => {
+            singleUserNotifications.emit('notification', {
+                type: 'text',
+                title: 'Voter Error',
+                text: msg,
+                error: true
+            });
+        };
+
         socketConduit.on({
             init: async () => {
                 userId = socket.handshake.session.passport.user.user_id;
@@ -99,11 +108,7 @@ module.exports = function(io) {
                         });
                     }
                     else if (error) {
-                        singleUserNotifications.emit('notification', {
-                            type: 'text',
-                            title: 'Voter Error',
-                            text: error
-                        });
+                        singleUserError(error);
                     }
                 }
             },
@@ -154,8 +159,18 @@ module.exports = function(io) {
             },
             addLink: async (race_id, candidate_id, link_text, link_href) => {
                 if (await voterBooker.check(userId, 'add_candidate')) {
-                    await voterTracker.addLink(race_id, candidate_id, link_text, link_href);
-                    broadcast();
+                    const {error} = await voterTracker.addLink(race_id, candidate_id, link_text, link_href);
+                    if (!error) {
+                        broadcast();
+                    }
+                    else {
+                        singleUserNotifications.emit('notification', {
+                            type: 'text',
+                            title: 'Voter Error',
+                            text: "That's an invalid link!",
+                            error: true
+                        });
+                    }
                 }
             },
             removeLink: async (race_id, candidate_id, link_href) => {

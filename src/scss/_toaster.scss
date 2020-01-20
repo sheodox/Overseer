@@ -22,5 +22,14 @@
         background-color: $bg-dark-1;
         margin: 1rem;
         padding: 0.5rem;
+
+        &.error {
+            background: $accent-red;
+            border-bottom: 1px solid black;
+
+            h1 {
+                color: black;
+            }
+        }
     }
 }

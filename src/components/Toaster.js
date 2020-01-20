@@ -84,7 +84,7 @@ class Toast extends React.Component {
     }
     render() {
         return (
-            <div className="toast">
+            <div className={'toast' + (this.props.error ? ' error' : '')}>
                 <h1>{this.props.title}</h1>
                 {this.getDetailDom()}
             </div>

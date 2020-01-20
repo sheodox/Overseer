@@ -255,12 +255,18 @@ class VoterTracker extends Stockpile {
         await this._refreshCache();
     }
     async addLink(race_id, candidate_id, link_text, link_href) {
+        if (!/^https?:\/\//.test(link_href)) {
+            return {
+                error: 'Invalid link!'
+            };
+        }
         const insertMap = this.buildInsertMap({
             race_id, candidate_id, link_text, link_href
         }, 'candidate_links');
 
         await this.run(`INSERT INTO candidate_links ${insertMap.sql}`, insertMap.values);
         await this._refreshCache();
+        return {};
     }
     async removeLink(race_id, candidate_id, link_href) {
     	await this.run(`DELETE FROM candidate_links WHERE race_id=? AND candidate_id=? AND link_href=?`, [race_id, candidate_id, link_href]);
