@@ -572,10 +572,10 @@ class CandidateLinks extends React.Component {
         const baseId = `candidate-${this.props.race_id}-${this.props.candidate_id}-links-`,
             linkNameId = baseId + 'name',
             linkHrefId = baseId + 'href',
-            links = this.props.links.map(link => {
-                const href = link.link_href;
-                return <li key={href}>
-                    <a href={href} target='_blank' rel="noreferrer noopener" title={href}>{link.link_text}</a>
+            links = this.props.links.map((link, index) => {
+                const href = /^https?:\/\//.test(link.link_href || '') ? link.link_href : '';
+                return <li key={baseId + index}>
+                    <a href={href} target='_blank' rel="noreferrer noopener" title={href}>{link.link_text || href || 'invalid link!'}</a>
                     <button onClick={this.delete.bind(this, href)} title="Delete this link">
                         <SVG id='x-icon' />
                     </button>
@@ -589,11 +589,11 @@ class CandidateLinks extends React.Component {
             <form onSubmit={this.submit}>
                 <div className="control">
                     <label htmlFor={linkNameId}>Link Text</label>
-                    <input id={linkNameId} ref={this.textRef} />
+                    <input id={linkNameId} ref={this.textRef} placeholder="optional description for this link" />
                 </div>
                 <div className="control">
                     <label htmlFor={linkHrefId}>Link URL</label>
-                    <input id={linkHrefId} ref={this.hrefRef} />
+                    <input id={linkHrefId} ref={this.hrefRef} placeholder="https://..."/>
                 </div>
                 <div className="buttons-on-right">
                     <input type="submit" value="Add Link"/>
