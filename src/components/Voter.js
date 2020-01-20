@@ -612,9 +612,9 @@ class CandidateImages extends React.Component {
             currentImage: propsHasImages ? this.props.images[0].image_id : null,
         };
     }
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         const propsHasImages = this.props.images.length > 0;
-        if (this.state.currentImage === null && propsHasImages) {
+        if ((this.state.currentImage === null || this.props.candidate_id !== prevProps.candidate_id) && propsHasImages) {
             this.setState({
                 currentImage: this.props.images[0].image_id
             })
