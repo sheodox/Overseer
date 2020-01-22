@@ -1,4 +1,5 @@
 const React = require('react'),
+	Gaze = require('./Gaze'),
     SVG = require('./SVG'),
     Loading = require('./Loading'),
     If = require('./If'),
@@ -607,80 +608,33 @@ class CandidateLinks extends React.Component {
 class CandidateImages extends React.Component {
     constructor(props) {
         super(props);
-        const propsHasImages = this.props.images.length > 0;
-        this.state = {
-            currentImage: propsHasImages ? this.props.images[0].image_id : null,
-        };
-    }
-    componentDidUpdate(prevProps) {
-        const propsHasImages = this.props.images.length > 0;
-        if ((this.state.currentImage === null || this.props.candidate_id !== prevProps.candidate_id) && propsHasImages) {
-            this.setState({
-                currentImage: this.props.images[0].image_id
-            })
-        }
     }
     upload (e) {
         const file = e.target.files.item(0);
         uploadPicture(this.props.race_id, this.props.candidate_id, file);
         e.target.value = '';
     }
-    pickImage(image_id) {
-        this.setState({
-            currentImage: image_id
-        });
-    }
-    toggleMaximize = () => {
-        this.setState({maximized: !this.state.maximized});
-    };
-    deleteMainImage = (e) => {
-        e.stopPropagation();
+    deleteImage = (id) => {
         if (confirm('Are you sure you want to remove this image?')) {
-            voterConduit.emit('removeImage', this.state.currentImage);
-
-            //find the first image that's not the current one, otherwise we'll be showing an image that's already been deleted
-            const nextImage = this.props.images.find(image => image.image_id !== this.state.currentImage);
-            this.setState({
-                currentImage: nextImage ? nextImage.image_id : null
-            })
+            voterConduit.emit('removeImage', id);
         }
     };
     render() {
-        const images = this.props.images.map(image => {
-            const imageId = image.image_id;
-            return <img key={imageId} onClick={this.pickImage.bind(this, imageId)} src={`/image/voter/small/${imageId}`} />
-        });
         const candidateIdBase = `candidate-${this.props.race_id}-${this.props.candidate_id}-`,
-            uploadInputId = candidateIdBase + 'upload',
-            currentImageSrc = `/image/voter/${this.state.maximized ? 'large' : `medium`}/${this.state.currentImage}`;
+            uploadInputId = candidateIdBase + 'upload';
 
-        return (
-            <div className="candidate-images">
-                <If renderWhen={this.props.images.length > 0}>
-                    <div className={'main-image-container ' + (this.state.maximized ? 'maximized' : '')} onClick={this.toggleMaximize}>
-						<If renderWhen={Booker.voter.remove_image}>
-                            <div className="docked-buttons">
-                                <button onClick={this.deleteMainImage} title="Delete this image"><SVG id="x-icon"/></button>
-                            </div>
-                        </If>
-                        {this.state.currentImage !== null &&
-                            <img className="main-image" src={currentImageSrc}/>
-                        }
-                    </div>
-                </If>
-                <If renderWhen={this.props.images.length > 1}>
-                    <div className="image-tray inset-panel">
-                        {images}
-                    </div>
-                </If>
+    	return (
+    		<React.Fragment>
+                <Gaze source="voter" images={this.props.images.map(i => i.image_id)} canDelete={Booker.voter.remove_image} onDelete={this.deleteImage}/>
+
                 <If renderWhen={Booker.voter.add_image}>
                     <div className="centered-buttons">
                         <label className="upload-candidate-image as-button" htmlFor={uploadInputId}>Attach an image</label>
                         <input id={uploadInputId} className='hidden' onChange={this.upload.bind(this)} type="file" accept="image/png, image/jpeg" />
                     </div>
                 </If>
-            </div>
-        )
+            </React.Fragment>
+        );
     }
 }
 

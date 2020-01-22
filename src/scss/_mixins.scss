@@ -128,3 +128,9 @@
         text-shadow: -0.5rem -0.2rem 0 $accent-cyan;
     }
 }
+
+@mixin smallButton {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+}
