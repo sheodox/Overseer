@@ -9,21 +9,23 @@ class Gaze extends React.Component {
 			currentImage: null
 		}
 	}
-	componentDidUpdate() {
-		const images = this.props.images;
+	static getDerivedStateFromProps(props, state) {
+		const images = props.images;
 
-		if (images.length && !images.includes(this.state.currentImage)) {
-			this.setState({
+		if (images.length && !images.includes(state.currentImage)) {
+			return {
 				currentImage: images[0],
 				maximized: false
-			});
+			};
 		}
 		else if (images.length === 0) {
-			this.setState({
+			return {
 				currentImage: null,
 				maximized: false
-			});
+			};
 		}
+
+		return state;
 	}
 	pickImage(key) {
 		this.setState({
