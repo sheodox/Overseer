@@ -32,7 +32,14 @@ class Gaze extends React.Component {
 			currentImage: key
 		});
 	};
-	toggleMaximized = () => {
+	minimize = () => {
+		// we don't want the background behind the image to toggle maximized, but we do want it to minimize when maximized
+		this.setState({
+			maximized: false
+		})
+	};
+	toggleMaximized = (e) => {
+		e.stopPropagation();
 		this.setState({
 			maximized: !this.state.maximized
 		});
@@ -73,8 +80,8 @@ class Gaze extends React.Component {
 
 
 		return (<div className="gaze sub-panel">
-			<div className={'gaze-main' + (this.state.maximized ? ' maximized' : '')} onClick={this.toggleMaximized}>
-				<img  src={src(this.state.currentImage, this.state.maximized ? 'large' : 'medium')} className="gaze-main-image" alt=""/>
+			<div className={'gaze-main' + (this.state.maximized ? ' maximized' : '')} onClick={this.minimize}>
+				<img  src={src(this.state.currentImage, this.state.maximized ? 'large' : 'medium')} onClick={this.toggleMaximized} className="gaze-main-image" alt=""/>
 				<If renderWhen={multipleImages}>
 					<div className="gaze-actions centered-buttons">
 						<button onClick={this.prev} disabled={viewingFirst} className="gaze-prev">
