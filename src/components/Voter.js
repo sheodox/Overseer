@@ -648,11 +648,11 @@ class CandidateImages extends React.Component {
     render() {
         const images = this.props.images.map(image => {
             const imageId = image.image_id;
-            return <img key={imageId} onClick={this.pickImage.bind(this, imageId)} src={`/voter/image/thumbnail/small/${imageId}`} />
+            return <img key={imageId} onClick={this.pickImage.bind(this, imageId)} src={`/image/voter/small/${imageId}`} />
         });
         const candidateIdBase = `candidate-${this.props.race_id}-${this.props.candidate_id}-`,
             uploadInputId = candidateIdBase + 'upload',
-            currentImageSrc = `/voter/image/thumbnail/${this.state.maximized ? 'large' : `medium`}/${this.state.currentImage}`;
+            currentImageSrc = `/image/voter/${this.state.maximized ? 'large' : `medium`}/${this.state.currentImage}`;
 
         return (
             <div className="candidate-images">

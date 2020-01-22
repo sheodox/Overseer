@@ -23,7 +23,8 @@ const isProd = process.env.NODE_ENV === 'production',
     settings = require('./routes/settings'),
     voter = require('./routes/voter'),
     admin = require('./routes/admin'),
-    proxy = require('./routes/proxy');
+    proxy = require('./routes/proxy'),
+    images = require('./routes/image');
 
 const limit = '15mb';
 app.use(bodyParser.raw({
@@ -87,6 +88,7 @@ echo(io);
 app.use(voter(io));
 settings(io);
 app.use(admin(io));
+app.use(images);
 app.use(require('./routes/index'));
 
 module.exports = app;

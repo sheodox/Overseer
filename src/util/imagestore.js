@@ -10,7 +10,7 @@ const VALID_MIMES = ['image/jpeg', 'image/png'],
 		small: scaledResolution(120)
 	};
 
-class Thumbnails extends StockPile {
+class ImageStore extends StockPile {
 	constructor() {
 		super({
 			db: 'thumbnails',
@@ -86,7 +86,7 @@ class Thumbnails extends StockPile {
 		return {};
 	}
 
-	async getThumbnail(size, source, source_key){
+	async getImage(size, source, source_key){
 		if (!MAX_RESOLUTION.hasOwnProperty(size)) {
 			throw new Error(`Thumbnails: invalid size specified "${size}`);
 		}
@@ -100,5 +100,5 @@ class Thumbnails extends StockPile {
 	}
 }
 
-module.exports = new Thumbnails();
+module.exports = new ImageStore();
 
