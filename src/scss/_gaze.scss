@@ -1,6 +1,8 @@
 @import 'mixins';
 
 .gaze {
+    border-radius: 3px;
+
     .gaze-main {
         position: relative;
         display: flex;
