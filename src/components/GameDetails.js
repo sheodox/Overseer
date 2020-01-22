@@ -23,7 +23,7 @@ class GameDetails extends React.Component {
     redirectToEcho = () => {
         this.props.history.push('/w/game-echo');
     };
-    componentWillMount() {
+    componentDidMount() {
         echoConduit.on({
             refresh: data => {
                 const thisGame = data.games.find(game => {

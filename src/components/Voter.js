@@ -40,7 +40,7 @@ class Voter extends React.Component {
     static getRaceRoute(id) {
         return `/w/voter/${id}`;
     }
-    componentWillMount() {
+    componentDidMount() {
         const getActiveRaceId = () => {
             if (this.props.match.params.race) {
                 return parseInt(this.props.match.params.race, 10);

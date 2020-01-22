@@ -7,7 +7,7 @@ class Banshee extends React.Component {
         super(props);
         this.state = {soundPaths: []};
     }
-    componentWillMount() {
+    componentDidMount() {
         window.Banshee = {
             load: path => {
                 const paths = this.state.soundPaths.slice();

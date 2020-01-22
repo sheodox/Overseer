@@ -24,7 +24,11 @@ class Games extends React.Component {
         super(props);
         this.state = cachedState;
     }
-    componentWillMount() {
+    componentWillUnmount() {
+        echoConduit.destroy();
+        cachedState = this.state;
+    }
+    componentDidMount() {
         echoConduit.on({
             refresh: data => {
                 cachedState = data;
@@ -34,12 +38,6 @@ class Games extends React.Component {
         });
         echoConduit.emit('init');
         AppControl.title('Game Echo');
-    }
-    componentWillUnmount() {
-        echoConduit.destroy();
-        cachedState = this.state;
-    }
-    componentDidMount() {
         this.searchField.value = this.state.search;
         this.cloud.captureUsedTags(this.state.search);
     }

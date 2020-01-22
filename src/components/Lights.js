@@ -12,7 +12,7 @@ class Lights extends React.Component {
         super(props);
         this.state = {states: cachedStates};
     }
-    componentWillMount() {
+    componentDidMount() {
         lightsConduit.on({
             refresh: states => {
                 cachedStates = states;

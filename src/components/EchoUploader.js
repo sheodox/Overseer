@@ -27,8 +27,6 @@ class EchoUploader extends React.Component {
     }
     componentDidMount() {
         AppControl.title('Echo Uploader');
-    }
-    componentWillMount() {
         echoConduit.on({
             refresh: data => {
                 this.setState(data);
