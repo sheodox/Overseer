@@ -6,11 +6,6 @@ const ReactDOM = require('react-dom'),
 
 new Trancemaker();
 const reactMount = document.querySelector('#react-mount');
-reactMount.addEventListener('click', e => {
-    if (e.target === reactMount) {
-        appBack(); //in App.js
-    }
-});
 
 ReactDOM.render(
     <App />,

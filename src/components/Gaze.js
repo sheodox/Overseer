@@ -1,4 +1,5 @@
 const React = require('react'),
+	{useState, useEffect} = React,
 	If = require('./If'),
 	SVG = require('./SVG');
 
@@ -70,19 +71,19 @@ class Gaze extends React.Component {
 		}
 
 		const src = (id, size) => `/image/${this.props.source}/${size}/${id}`,
-			multipleImages = this.props.images.length > 1,
+			hasMultipleImages = this.props.images.length > 1,
 			current = this.state.currentImage,
 			viewingFirst = this.props.images[0] === current,
 			viewingLast = this.props.images[this.props.images.length - 1] === current,
 			trayImages = this.props.images.map(id => {
-				return <img key={`gaze-tray-${id}`} alt="" src={src(id, 'small')} onClick={this.pickImage.bind(this, id)} />
-			});
-
+				return <Image key={`gaze-tray-${id}`} alt="" src={src(id, 'small')} onClick={this.pickImage.bind(this, id)} size="small" />
+			}),
+			mainImageSize = this.state.maximized ? 'large' : 'medium';
 
 		return (<div className="gaze sub-panel">
 			<div className={'gaze-main' + (this.state.maximized ? ' maximized' : '')} onClick={this.minimize}>
-				<img  src={src(this.state.currentImage, this.state.maximized ? 'large' : 'medium')} onClick={this.toggleMaximized} className="gaze-main-image" alt=""/>
-				<If renderWhen={multipleImages}>
+				<Image size={mainImageSize} src={src(this.state.currentImage, mainImageSize)} onClick={this.toggleMaximized} className="gaze-main-image" alt=""/>
+				<If renderWhen={hasMultipleImages}>
 					<div className="gaze-actions centered-buttons">
 						<button onClick={this.prev} disabled={viewingFirst} className="gaze-prev">
 							<SVG id="chevron-icon" />
@@ -104,13 +105,32 @@ class Gaze extends React.Component {
 				</If>
 			</div>
 
-			<If renderWhen={multipleImages}>
+			<If renderWhen={hasMultipleImages}>
 				<div className="gaze-tray inset-panel">
 					{trayImages}
 				</div>
 			</If>
 		</div>)
 	}
+}
+
+function Image(props) {
+	const [loaded, setLoaded] = useState(false);
+
+	useEffect(() => {
+		setLoaded(false);
+	}, [props.src]);
+
+	return (
+		<div className='gaze-image' onClick={props.onClick}>
+			<div className={`gaze-placeholder-${props.size} ${loaded ? 'hidden' : ''}`}/>
+			<img
+				alt=''
+				className={loaded ? '' : `hidden`}
+				src={props.src} onLoad={() => setLoaded(true)}
+			/>
+		</div>
+	)
 }
 
 module.exports = Gaze;

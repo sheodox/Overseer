@@ -134,3 +134,20 @@
     height: 2rem;
     padding: 0;
 }
+
+@mixin placeholder {
+    animation: placeholder 2s infinite forwards;
+    $back: $bg-1;
+    $pulse: black;
+    background: linear-gradient(70deg, $back 0%, $back 40%, $pulse 50%, $back 60%, $back 100%);
+    background-size: 500% 500%;
+    opacity: 0.8;
+}
+@keyframes placeholder {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 100% 0;
+    }
+}

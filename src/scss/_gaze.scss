@@ -1,7 +1,39 @@
 @import 'mixins';
 
+@mixin gaze-placeholder($size, $width, $as-max: false) {
+    $aspect: 9 / 16;
+    $height: $aspect * $width;
+
+    .gaze-placeholder-#{$size} {
+        @include placeholder();
+        margin: 0.5rem;
+        transition: background 1s;
+        height: #{$height}px;
+        width: #{$width}px;
+    }
+
+}
 .gaze {
     border-radius: 3px;
+
+    .gaze-image {
+        display: inline-flex;
+
+        @include gaze-placeholder('large', 1280, true);
+        @include gaze-placeholder('medium', 550, true);
+        @include gaze-placeholder('small', 120);
+        @media (max-width: 800px) {
+            .gaze-placeholder-medium {
+                height: 70vw * (9/16);
+            }
+        }
+        @media (max-width: 1500px) {
+            .gaze-placeholder-large {
+                width: 95vw;
+                height: 100vw * (9/16);
+            }
+        }
+    }
 
     .gaze-main {
         position: relative;
@@ -9,10 +41,13 @@
         flex-direction: column;
         justify-content: center;
 
+        .gaze-image {
+            cursor: zoom-in;
+        }
+
         img {
             max-width: 100%;
             max-height: 20rem;
-            cursor: zoom-in;
             align-self: center;
         }
 
