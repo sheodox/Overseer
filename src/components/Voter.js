@@ -31,15 +31,21 @@ function uploadPicture(race_id, candidate_id, file) {
 let cachedState = {
     activeRace: null,
     races: [],
-    loaded: false
+    loaded: false,
+    detailedView: false
 };
 class Voter extends React.Component {
     constructor(props) {
         super(props);
         this.state = cachedState;
     }
-    static getRaceRoute(id) {
-        return `/w/voter/${id}`;
+    static getDerivedStateFromProps(props, state) {
+        return {
+            detailedView: props.match.params.viewMode === 'detailed'
+        }
+    }
+    getRaceRoute(id) {
+        return `/w/voter/${id}/${this.props.match.params.viewMode || 'ranking'}`;
     }
     componentDidMount() {
         const getActiveRaceId = () => {
@@ -66,7 +72,7 @@ class Voter extends React.Component {
                 cachedState.loaded = true;
                 this.setState(cachedState);
                 //redirect to this race in the url
-                const raceRoute = Voter.getRaceRoute(
+                const raceRoute = this.getRaceRoute(
                     cachedState.activeRace ? cachedState.activeRace.race_id : ''
                 );
                 if (location.pathname !== raceRoute) {
@@ -98,7 +104,11 @@ class Voter extends React.Component {
         this.setState({
             activeRace: race
         });
-        this.props.history.push(Voter.getRaceRoute(id));
+        this.props.history.push(this.getRaceRoute(id));
+    };
+    toggleViewMode = () => {
+        const nextView = this.state.detailedView ? 'ranking' : 'detailed';
+        this.props.history.push(`${nextView}`)
     };
     newRaceKeyDown = (e) => {
         if (e.which === 13) {
@@ -132,7 +142,7 @@ class Voter extends React.Component {
 						<div className="sub-panel row">
                             <RaceList {...this.state} switchRace={this.switchRace} />
                             {this.state.activeRace ?
-                                <CandidateList {...this.state.activeRace} />
+                                <CandidateList {...this.state.activeRace} detailedView={this.state.detailedView} toggleViewMode={this.toggleViewMode}/>
                                 : null}
                         </div>
                     </If>
@@ -183,7 +193,6 @@ class CandidateList extends React.Component {
             candidates: this.getSortedCandidates(this.props),
             canSort: true,
             sortQueued: false,
-            detailedView: false
         };
 
     }
@@ -192,7 +201,7 @@ class CandidateList extends React.Component {
         //a user is more likely to be actively spending time looking through a detailed list,
         //so re-sorting things would be confusing.
         //need to also check to make sure asDetailed isn't defined, otherwise it won't instantly sort from toggling the view
-        if (asDetailed || (typeof asDetailed === 'undefined' && this.state && this.state.detailedView)) {
+        if (asDetailed || (typeof asDetailed === 'undefined' && this.state && this.props.detailedView)) {
             return props.candidates.sort((a, b) => {
                 return a.candidate_id - b.candidate_id;
             })
@@ -291,11 +300,7 @@ class CandidateList extends React.Component {
         }
     };
     toggleView = () => {
-        const detailed = !this.state.detailedView;
-        this.setState({
-            detailedView: detailed,
-            candidates: this.getSortedCandidates(this.props, detailed)
-        });
+        this.props.toggleViewMode();
     };
     render() {
         const self = this,
@@ -318,7 +323,7 @@ class CandidateList extends React.Component {
                             voterConduit.emit('removeCandidate', this.props.race_id, c.candidate_id);
                         };
 
-                    return <Candidate detailedView={this.state.detailedView} removeCandidate={removeCandidate} toggleVoteUp={toggleVoteUp} toggleVoteDown={toggleVoteDown} {...c} maxVotes={maxVotes} key={index} />
+                    return <Candidate detailedView={this.props.detailedView} removeCandidate={removeCandidate} toggleVoteUp={toggleVoteUp} toggleVoteDown={toggleVoteDown} {...c} maxVotes={maxVotes} key={index} />
                 });
 
         function newCandidate(name) {
@@ -329,11 +334,11 @@ class CandidateList extends React.Component {
             <div className="candidate-list button-dock" onMouseEnter={this.lockSorting} onMouseLeave={this.unlockSorting}>
                 <div className="centered-buttons">
                     <button onClick={this.toggleView}>
-                        <If renderWhen={!this.state.detailedView}>
+                        <If renderWhen={!this.props.detailedView}>
                             <SVG id="details-icon" />
                             Detailed View
                         </If>
-                        <If renderWhen={this.state.detailedView}>
+                        <If renderWhen={this.props.detailedView}>
                             <SVG id="ranking-icon" />
                             Ranking View
                         </If>
@@ -349,7 +354,7 @@ class CandidateList extends React.Component {
                 </div>
                 <br />
                 <NewCandidate newCandidate={newCandidate} />
-                <If renderWhen={this.state.detailedView}>
+                <If renderWhen={this.props.detailedView}>
                     <p>This list does not automatically sort by votes while in detailed view.</p>
                 </If>
                 {candidates}

@@ -29,24 +29,12 @@ window.AppControl = new AppControl();
 class App extends React.Component {
     constructor(props) {
         super(props);
-        
-        window.appBack = () => {
-            if (location.pathname !== '/') {
-                this.props.history.push('..');
-            }
-        }
     }
-    backgroundClick = (e) => {
-        //if they clicked on the background and not the contents, redirect to the switchboard
-        if (e.target.tagName.toLowerCase() === 'main') {
-            appBack();
-        }
-    };
     render() {
         let content = <main className="content" key="main"><LoginRequired /></main>;
 
         if (user) {
-            content = <main onClick={this.backgroundClick} className="content" key="main">
+            content = <main className="content" key="main">
                 <Route exact path="/" render={() => {
                     const returnUrlKey = 'auth-return-url',
                         returnUrl = sessionStorage.getItem(returnUrlKey);
@@ -71,7 +59,10 @@ class App extends React.Component {
                         <Route path={`${match.url}/details/:file`} component={GameDetails} />
                     </div>;
                 }} />
-                <Route path="/w/voter/:race?" component={Voter} />
+                <Route path="/w/voter/:race" exact render={props => {
+                    return <Redirect to={`/w/voter/${props.match.params.race}/ranking`} />
+                }} />
+                <Route path="/w/voter/:race?/:viewMode?" component={Voter} />
                 <Route path="/w/settings" component={Settings} />
             </main>
         }
