@@ -18,6 +18,7 @@
 
     .gaze-image {
         display: inline-flex;
+        justify-content: center;
 
         @include gaze-placeholder('large', 1280, true);
         @include gaze-placeholder('medium', 550, true);
