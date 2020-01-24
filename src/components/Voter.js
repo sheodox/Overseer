@@ -218,7 +218,7 @@ class CandidateList extends React.Component {
     }
     componentWillReceiveProps(nextProps) {
         //allow immediate sorting and resetting candidates if the they're not trying to vote or if the active race changes
-        if (this.state.canSort || this.props.race_id !== nextProps.race_id) {
+        if (this.state.canSort || this.props.race_id !== nextProps.race_id || this.props.detailedView !== nextProps.detailedView) {
             this.sortAndSetState(nextProps);
         }
         else {
@@ -266,7 +266,7 @@ class CandidateList extends React.Component {
     sortAndSetState(props) {
         props = props || this.props;
         this.setState({
-            candidates: this.getSortedCandidates(props)
+            candidates: this.getSortedCandidates(props, props.detailedView)
         });
     }
     lockSorting = () => {
