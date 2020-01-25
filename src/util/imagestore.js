@@ -13,9 +13,9 @@ const VALID_MIMES = ['image/jpeg', 'image/png'],
 class ImageStore extends StockPile {
 	constructor() {
 		super({
-			db: 'thumbnails',
+			db: 'imagestore',
 			tables: [
-				{name: 'thumbnails', columns: {
+				{name: 'imagestore', columns: {
 						id: 'INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT',
 						//content type of the image, image/jpeg or image/png
 						image_type: 'TEXT NOT NULL',
@@ -36,13 +36,13 @@ class ImageStore extends StockPile {
 	}
 
 	/**
-	 * Get an array of source IDs that are missing thumbnails, given a bunch of sourceIDs
+	 * Get an array of source IDs that are missing images, given a bunch of sourceIDs
 	 * @param {string} source - where this image is for on Overseer
 	 * @param {string[]} sourceKeys - array of source IDs
 	 * @returns {Promise<string[]>}
 	 */
-	async findMissingThumbnails(source, sourceKeys) {
-		const populatedIds = (await this.all(`SELECT source_id FROM thumbnails`) || []).map(obj => obj.source_id);
+	async findMissingImages(source, sourceKeys) {
+		const populatedIds = (await this.all(`SELECT source_id FROM imagestore`) || []).map(obj => obj.source_id);
 		return sourceKeys.filter(key => {
 			return !populatedIds.includes(this._toSourceId(source, key));
 		});
@@ -68,8 +68,8 @@ class ImageStore extends StockPile {
 
 		const map = this.buildInsertMap({
 			source_id, image_type, image_large: image
-		}, 'thumbnails');
-		this.run(`INSERT INTO thumbnails ${map.sql}`, map.values);
+		}, 'imagestore');
+		this.run(`INSERT INTO imagestore ${map.sql}`, map.values);
 
 		const getResizeOptions = size => ({fit: 'inside', ...MAX_RESOLUTION[size]}),
 			sizes = Object.keys(MAX_RESOLUTION);
@@ -79,24 +79,24 @@ class ImageStore extends StockPile {
 				.resize(getResizeOptions(size))
 				.toBuffer();
 
-			await this.run(`UPDATE thumbnails SET image_${size}=? WHERE source_id=?`, [resized, source_id]);
+			await this.run(`UPDATE imagestore SET image_${size}=? WHERE source_id=?`, [resized, source_id]);
 		}
 
-		console.log(`Thumnails: generated thumbnails for ${source_id} in ${Date.now() - startTime} milliseconds`);
+		console.log(`ImageStore: generated images for ${source_id} in ${Date.now() - startTime} milliseconds`);
 		return {};
 	}
 
 	async getImage(size, source, source_key){
 		if (!MAX_RESOLUTION.hasOwnProperty(size)) {
-			throw new Error(`Thumbnails: invalid size specified "${size}`);
+			throw new Error(`ImageStore: invalid size specified "${size}`);
 		}
 
-		return this.get(`SELECT image_${size}, image_type FROM thumbnails WHERE source_id=?`, [this._toSourceId(source, source_key)])
+		return this.get(`SELECT image_${size}, image_type FROM imagestore WHERE source_id=?`, [this._toSourceId(source, source_key)])
 	}
 
-	async removeThumbnails(source, source_key) {
-		console.log(`removing thumbnail for ${source}-${source_key}`);
-		await this.run(`DELETE FROM thumbnails WHERE source_id=?`, [this._toSourceId(source, source_key)]);
+	async removeImages(source, source_key) {
+		console.log(`removing images for ${source}-${source_key}`);
+		await this.run(`DELETE FROM imagestore WHERE source_id=?`, [this._toSourceId(source, source_key)]);
 	}
 }
 
