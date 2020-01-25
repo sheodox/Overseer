@@ -83,26 +83,28 @@ class Gaze extends React.Component {
 		return (<div className="gaze sub-panel">
 			<div className={'gaze-main' + (this.state.maximized ? ' maximized' : '')} onClick={this.minimize}>
 				<Image size={mainImageSize} src={src(this.state.currentImage, mainImageSize)} onClick={this.toggleMaximized} className="gaze-main-image" alt=""/>
-				<If renderWhen={hasMultipleImages}>
-					<div className="gaze-actions centered-buttons">
+				<div className="gaze-actions centered-buttons">
+					<If renderWhen={hasMultipleImages}>
 						<button onClick={this.prev} disabled={viewingFirst} className="gaze-prev">
 							<SVG id="chevron-icon" />
 							Previous
 						</button>
+					</If>
 
-						<If renderWhen={this.props.canDelete}>
-							<button className="gaze-delete" onClick={this.onDelete} title="Delete this image">
-								<SVG id="x-icon"/>
-								Delete
-							</button>
-						</If>
+					<If renderWhen={this.props.canDelete}>
+						<button className="gaze-delete" onClick={this.onDelete} title="Delete this image">
+							<SVG id="x-icon"/>
+							Delete Image
+						</button>
+					</If>
 
+					<If renderWhen={hasMultipleImages}>
 						<button onClick={this.next} disabled={viewingLast} className="gaze-next">
 							Next
 							<SVG id="chevron-icon" />
 						</button>
-					</div>
-				</If>
+					</If>
+				</div>
 			</div>
 
 			<If renderWhen={hasMultipleImages}>
