@@ -181,7 +181,13 @@ module.exports = function(io) {
                 	    done('');
                 	    return singleUserError('You must enter a link URL!');
                     }
-                    request(href, (error, response, body) => {
+                    request({
+                        url: href,
+                        headers: {
+                            //some websites don't respond without a valid user agent
+                            'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:72.0) Gecko/20100101 Firefox/72.0'
+                        }
+                    }, (error, response, body) => {
                         if (error) {
                             done('');
 
