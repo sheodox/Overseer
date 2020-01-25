@@ -165,7 +165,13 @@ module.exports = function(io) {
                     }
                 }
             },
-            suggestLinkText(href, done) {
+            async suggestLinkText(href, done) {
+                const allowed = await voterBooker.check(userId, 'add_candidate');
+                if (!allowed) {
+                    done('');
+                    return;
+                }
+
                 const errorNotification = (extraInfo) => {
                     singleUserError(`Error getting link text suggestion${extraInfo ? ` (${extraInfo})`: ''}`)
                 };
