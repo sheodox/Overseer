@@ -8,6 +8,9 @@ class CandidateLinks extends React.Component {
 		super(props);
 		this.textRef = React.createRef();
 		this.hrefRef = React.createRef();
+		this.state = {
+			suggesting: false
+		};
 	}
 	submit = e => {
 		e.preventDefault();
@@ -29,6 +32,22 @@ class CandidateLinks extends React.Component {
 			href
 		);
 	};
+	getSuggestion = (e) => {
+		//prevent the form submitting
+		e.preventDefault();
+		this.setState({
+			suggesting: true
+		});
+
+		voterConduit.emit('suggestLinkText', this.hrefRef.current.value, (suggested) => {
+			this.textRef.current.value = suggested;
+
+			this.setState({
+				suggesting: false
+			});
+		});
+	};
+
 	render() {
 		const baseId = `candidate-${this.props.race_id}-${this.props.candidate_id}-links-`,
 			linkNameId = baseId + 'name',
@@ -57,7 +76,8 @@ class CandidateLinks extends React.Component {
 					<input id={linkHrefId} ref={this.hrefRef} placeholder="https://..."/>
 				</div>
 				<div className="buttons-on-right">
-					<input type="submit" value="Add Link"/>
+					<button onClick={this.getSuggestion}>Suggest Link Text</button>
+					<input type="submit" value="Add Link" disabled={this.state.suggesting}/>
 				</div>
 			</form>
 		</div>

@@ -282,7 +282,7 @@ class VoterTracker extends Stockpile {
         await this._refreshCache();
     }
     async addLink(race_id, candidate_id, link_text, link_href) {
-        if (!/^https?:\/\//.test(link_href)) {
+    	if (!valid.href(link_href)) {
             return {
                 error: 'Invalid link!'
             };

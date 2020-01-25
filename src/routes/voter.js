@@ -3,8 +3,10 @@ const maskRaceSessions = require('../util/maskVoterSessions'),
     voterBooker = require('../db/voterbooker'),
     Users = require('../users'),
     voterTracker = require('../util/VoterTracker'),
-    imageStore = require('../util/imagestore'),
-    router = require('express').Router();
+    request = require('request'),
+    cheerio = require('cheerio'),
+    router = require('express').Router(),
+    valid = require('../util/validator');
 
 module.exports = function(io) {
     const ioConduit = new SilverConduit(io, 'voter'),
@@ -161,6 +163,41 @@ module.exports = function(io) {
                             error: true
                         });
                     }
+                }
+            },
+            suggestLinkText(href, done) {
+                const errorNotification = (extraInfo) => {
+                    singleUserError(`Error getting link text suggestion${extraInfo ? ` (${extraInfo})`: ''}`)
+                };
+
+                if (valid.href(href)) {
+                	if (!href) {
+                	    done('');
+                	    return singleUserError('You must enter a link URL!');
+                    }
+                    request(href, (error, response, body) => {
+                        if (error) {
+                            done('');
+
+                            if (response) {
+                                return errorNotification(`Code ${response.statusCode}`)
+                            }
+                            else {
+                                return errorNotification({
+                                   ENOTFOUND: 'site not found'
+                                }[error.code] || error.code)
+                            }
+                        }
+
+                        const $ = cheerio.load(body),
+                            title = $('title').text();
+
+                        done(title);
+                    });
+                }
+                else {
+                    done('');
+                    singleUserError('Invalid link!');
                 }
             },
             removeLink: async (race_id, candidate_id, link_href) => {

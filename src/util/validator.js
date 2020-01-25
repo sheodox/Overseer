@@ -12,5 +12,8 @@ module.exports = {
                 && reg.test(name);
         }
         return false;
+    },
+    href: (href) => {
+        return /^https?:\/\/.+/.test(href);
     }
 };

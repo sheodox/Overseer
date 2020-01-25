@@ -143,4 +143,8 @@ progress {
 .buttons-on-right {
     display: flex;
     justify-content: flex-end;
+
+    button:not(:last-child) {
+        margin-right: 0.3rem;
+    }
 }
