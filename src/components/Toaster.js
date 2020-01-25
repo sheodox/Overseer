@@ -45,8 +45,10 @@ class Toaster extends React.Component {
                     const messages = this.state.messages,
                         replacingProps = messages.find(p => p.id === id);
 
-                    Object.assign(replacingProps, newProps);
-                    this.setState({messages});
+                    if (replacingProps) {
+                        Object.assign(replacingProps, newProps);
+                        this.setState({messages});
+                    }
                 }
             }
         };
@@ -83,6 +85,10 @@ class Toast extends React.Component {
         }
     }
     render() {
+        if (this.props.hidden) {
+            return null;
+        }
+
         return (
             <div className={'toast' + (this.props.error ? ' error' : '')}>
                 <h1>{this.props.title}</h1>
