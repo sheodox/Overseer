@@ -7,6 +7,8 @@ function uploadPicture(race_id, candidate_id, file) {
 		type: 'progress'
 	});
 
+	const errorToast = msg => Toaster.add({type: 'text', text: 'Error! ' + msg});
+
 	axios
 		.request({
 			method: 'POST',
@@ -34,6 +36,14 @@ function uploadPicture(race_id, candidate_id, file) {
 				title: 'Voter',
 				text: 'Image uploaded!'
 			});
+		})
+		.catch(e => {
+			if (e.response.statusCode === 413) {
+				errorToast('That image is too big!');
+			}
+			else {
+				errorToast(e.response.statusText);
+			}
 		});
 }
 
