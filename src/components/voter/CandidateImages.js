@@ -2,24 +2,8 @@ const React = require('react'),
 	If = require('../If'),
 	Gaze = require('../Gaze'),
 	Conduit = require('../../util/conduit'),
-	voterConduit = new Conduit(socket, 'voter');
-
-function uploadPicture(race_id, candidate_id, file) {
-	fetch(`/voter/${race_id}/${candidate_id}/upload`, {
-		method: 'POST',
-		body: file
-	})
-		.then(response => {
-			const errorToast = msg => Toaster.add({type: 'text', text: 'Error! ' + msg});
-
-			if(response.status === 413) {
-				errorToast('That image is too big!');
-			}
-			else if (!response.ok) {
-				errorToast(response.statusText)
-			}
-		});
-}
+	voterConduit = new Conduit(socket, 'voter'),
+	uploadPicture = require('./uploadPicture');
 
 class CandidateImages extends React.Component {
 	constructor(props) {

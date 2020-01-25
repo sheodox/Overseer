@@ -5,6 +5,7 @@ const React = require('react'),
 	CandidateLinks = require('./CandidateLinks'),
 	UserBubble = require('../UserBubble'),
 	Conduit = require('../../util/conduit'),
+	uploadPicture = require('./uploadPicture'),
 	voterConduit = new Conduit(socket, 'voter');
 
 class Candidate extends React.Component {
