@@ -14,7 +14,7 @@ class CandidateList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			candidates: this.getSortedCandidates(this.props),
+			candidates: this.getSortedCandidates(this.props, props.detailedView),
 			canSort: true,
 			sortQueued: false,
 		};
