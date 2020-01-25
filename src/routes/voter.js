@@ -202,7 +202,7 @@ module.exports = function(io) {
                         }
 
                         const $ = cheerio.load(body),
-                            title = $('title').text();
+                            title = $('title').text().trim();
 
                         done(title);
                     });
