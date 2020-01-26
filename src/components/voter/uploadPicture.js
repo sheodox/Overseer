@@ -18,11 +18,18 @@ function uploadPicture(race_id, candidate_id, file) {
 				'Content-type': file.type
 			},
 			onUploadProgress(e) {
+				if (e.loaded === e.total) {
+					progressToast({
+						type: 'text',
+						text: 'Processing uploaded image...'
+					});
+					return;
+				}
 				progressToast({
 					value: e.loaded,
 					max: e.total,
 					text: `${formatters.bytes(e.loaded, 'mb')} mb / ${formatters.bytes(e.total, 'mb')} mb`
-			})
+				})
 			}
 		})
 		.then(() => {
