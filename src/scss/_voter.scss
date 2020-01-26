@@ -124,6 +124,14 @@
         text-transform: capitalize;
         border-radius: 0;
     }
+
+    &.deleted {
+        .candidate-text {
+            text-decoration: line-through;
+            font-style: italic;
+            color: lightslategray;
+        }
+    }
     .candidate-text {
         position: relative;
         color: white;

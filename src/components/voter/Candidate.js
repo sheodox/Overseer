@@ -115,7 +115,7 @@ class Candidate extends React.Component {
 			notesPlaceholder = 'Add any notes you want.' + (Booker.voter.add_image ? ' Or paste an image here to attach it.' : '');
 
 		return (
-			<div className={"candidate" + (detailed ? ' detailed sub-panel' : '')} data-candidate={this.props.candidate_id}>
+			<div className={"candidate" + (detailed ? ' detailed sub-panel' : '' + (this.props.removed ? ' deleted' : ''))} data-candidate={this.props.candidate_id}>
 				<div className="candidate-buttons sub-panel">
 					<div className="up-down">
 						<button disabled={!Booker.voter.vote} className={'up' + (votedUp ? ' vote-cast' : '')} onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /></button>
