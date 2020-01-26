@@ -6,7 +6,6 @@
     $baseHeight: 2.5rem;
     $padding: 0.3rem;
     $innerHeight: $baseHeight - (2 * $padding);
-    $focusBorderColor: $accent-cyan;
     display: flex;
 
     vertical-align: middle;
@@ -37,7 +36,6 @@
     > * {
         line-height: $innerHeight;
         height: 100%;
-        transition: border 0.2s;
     }
 
     label {
@@ -57,14 +55,9 @@
         color: white;
         font-size: 1.1rem;
         height: $baseHeight;
-        border: none;
+        @include field-focus-highlight();
         border-radius: 0.1rem;
-        border-bottom: 0.2rem solid #364962;
         padding-left: 0.5rem;
-        &:focus {
-            border-color: $focusBorderColor;
-            outline: none;
-        }
         &.dirty {
             border-color: material-color('amber', '500');
         }

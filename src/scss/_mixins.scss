@@ -151,3 +151,15 @@
         background-position: 100% 0;
     }
 }
+
+
+@mixin field-focus-highlight {
+    border: none;
+    border-bottom: 0.2rem solid $fieldInactiveHighlight;
+    transition: border 0.2s;
+
+    &:focus {
+        border-bottom-color: $fieldActiveHighlight;
+    }
+}
+

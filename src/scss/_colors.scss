@@ -9,6 +9,9 @@ $accent-red: rgb(220, 64, 99);
 $accent-yellow: rgb(255, 241, 0);
 $darkGray: material-color('grey', '800');
 
+$fieldInactiveHighlight: #364962;
+$fieldActiveHighlight: $accent-cyan;
+
 $bg-color-step: 6%;
 $bg-base: rgb(21, 29, 41);
 $bg-1: $bg-base;

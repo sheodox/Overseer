@@ -95,10 +95,11 @@ button svg {
     margin-right: 0.2rem;
 }
 textarea {
-    background: $bg-dark-1;
     font-family: 'Roboto', sans-serif;
-    border: none;
     color: white;
+    border-radius: 0.1rem;
+    padding: 0.2rem;
+    @include field-focus-highlight();
 
     &[readonly] {
         background: transparent;
