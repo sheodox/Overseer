@@ -202,7 +202,8 @@ module.exports = function(io) {
                         }
 
                         const $ = cheerio.load(body),
-                            title = $('title').text().trim();
+                            // some pages have more than one title element, just show the first one or you see weird concatenated titles
+                            title = $('title').first().text().trim();
 
                         done(title);
                     });
