@@ -137,15 +137,17 @@ module.exports = function(io) {
                     broadcast();
                 }
             },
-            updateCandidateName: async (race_id, candidate_id, candidate_name) => {
+            updateCandidateName: async (race_id, candidate_id, candidate_name, done) => {
                 if (await voterBooker.check(userId, 'add_candidate')) {
-                    await voterTracker.updateCandidateName(race_id, candidate_id, candidate_name);
+                    const result = await voterTracker.updateCandidateName(race_id, candidate_id, candidate_name);
+                    done(result);
                     broadcast();
                 }
             },
-            updateNotes: async (race_id, candidate_id, notes) => {
+            updateNotes: async (race_id, candidate_id, notes, done) => {
                 if (await voterBooker.check(userId, 'add_candidate')) {
-                    await voterTracker.updateNotes(race_id, candidate_id, notes);
+                    const result = await voterTracker.updateNotes(race_id, candidate_id, notes);
+                    done(result);
                     broadcast();
                 }
             },

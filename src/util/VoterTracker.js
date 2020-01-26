@@ -275,11 +275,16 @@ class VoterTracker extends Stockpile {
         if (valid.name(candidate_name)) {
             await this.run(`UPDATE candidates SET candidate_name=? WHERE race_id=? AND candidate_id=?`, [candidate_name, race_id, candidate_id]);
             await this._refreshCache();
+            return {};
+        }
+        return {
+            error: 'Invalid name!'
         }
     }
     async updateNotes(race_id, candidate_id, notes) {
         await this.run(`UPDATE candidates SET notes=? WHERE race_id=? AND candidate_id=?`, [notes, race_id, candidate_id]);
         await this._refreshCache();
+        return {};
     }
     async addLink(race_id, candidate_id, link_text, link_href) {
     	if (!valid.href(link_href)) {

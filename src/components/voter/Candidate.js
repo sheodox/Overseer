@@ -55,18 +55,28 @@ class Candidate extends React.Component {
 		newState[propName + '_edited'] = this.props[propName] !== e.target.value;
 		this.setState(newState);
 	}
+	handleUpdateResponse = successMessage => (response={}) => {
+		Toaster.add({
+			error: !!response.error,
+			type: 'text',
+			text: response.error || successMessage,
+			title: 'Voter'
+		});
+	};
 	saveCandidateName = () => {
 		voterConduit.emit('updateCandidateName',
 			this.props.race_id,
 			this.props.candidate_id,
-			this.nameInput.current.value
+			this.nameInput.current.value,
+			this.handleUpdateResponse('Candidate name saved!')
 		);
 	};
 	saveNotes = () => {
 		voterConduit.emit('updateNotes',
 			this.props.race_id,
 			this.props.candidate_id,
-			this.notesInput.current.value
+			this.notesInput.current.value,
+			this.handleUpdateResponse('Candidate notes saved!')
 		);
 	};
 	nameKeyDown = e => {
@@ -85,7 +95,7 @@ class Candidate extends React.Component {
 			if (['image/png', 'image/jpeg'].includes(file.type)) {
 				uploadPicture(this.props.race_id, this.props.candidate_id, file);
 			} else {
-				Toaster.add({type: 'text', text: 'Invalid file type!'})
+				Toaster.add({type: 'text', text: 'Invalid file type!', title: 'Error', error: true})
 			}
 		}
 	};
