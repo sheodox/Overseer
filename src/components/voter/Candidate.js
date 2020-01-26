@@ -118,8 +118,8 @@ class Candidate extends React.Component {
 			<div className={"candidate" + (detailed ? ' detailed sub-panel' : '' + (this.props.removed ? ' deleted' : ''))} data-candidate={this.props.candidate_id}>
 				<div className="candidate-buttons sub-panel">
 					<div className="up-down">
-						<button disabled={!Booker.voter.vote} className={'up' + (votedUp ? ' vote-cast' : '')} onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /></button>
-						<button disabled={!Booker.voter.vote} className={'down' + (votedDown ? ' vote-cast' : '')} onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} /></button>
+						<button disabled={!Booker.voter.vote || this.props.removed} className={'up' + (votedUp ? ' vote-cast' : '')} onClick={this.voteUp}><SVG id={'chevron-icon' + (this.props.voted === 'up' ? '-bold' : '')} /></button>
+						<button disabled={!Booker.voter.vote || this.props.removed} className={'down' + (votedDown ? ' vote-cast' : '')} onClick={this.voteDown}><SVG id={'chevron-icon' + (this.props.voted === 'down' ? '-bold' : '')} /></button>
 					</div>
 					<div {...voteButtonProps}>
 						<div className="vote-bars">
