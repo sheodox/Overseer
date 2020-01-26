@@ -55,7 +55,7 @@
         .gaze-actions {
             margin: 0.5rem 0;
             // show delete below the next/prev buttons, otherwise they wrap with next by itself which seems weird
-            @media (max-width: 600px) {
+            @media (max-width: 700px) {
                 .gaze-prev {
                     flex: 1;
                     order: 1;
