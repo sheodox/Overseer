@@ -123,9 +123,8 @@ progress {
 }
 
 @mixin spaced-apart-buttons {
-    $spacing: 0.2rem;
-    button:not(:last-child) {
-        margin: 0 $spacing $spacing 0;
+    button {
+        margin: 0.2rem;
     }
 }
 .docked-buttons {
