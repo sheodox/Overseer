@@ -40,26 +40,3 @@ $onAccentColor: $color-blue;
     }
 }
 
-.lg-brightness-slide {
-    -webkit-appearance: none;
-    width: 100%;
-
-    &::-webkit-slider-runnable-track {
-        background: material-color('grey', '800');
-        height: 0.2rem;
-    }
-
-    &::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        cursor: pointer;
-        height: 1.75rem;
-        width: 1.75rem;
-        background: $onAccentColor;
-        border-radius: 50%;
-        margin-top: -0.875rem;
-    }
-
-    &:focus {
-        outline: none;
-    }
-}

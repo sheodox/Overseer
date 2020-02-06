@@ -10,6 +10,12 @@ const React = require('react'),
 		down: 1.1
 	};
 
+function weightedVotes(up, down) {
+	up = up.length;
+	down = down.length;
+	return (up * voteWeights.up) - (down * voteWeights.down);
+}
+
 class CandidateList extends React.Component {
 	constructor(props) {
 		super(props);
@@ -17,6 +23,7 @@ class CandidateList extends React.Component {
 			candidates: this.getSortedCandidates(this.props, props.detailedView),
 			canSort: true,
 			sortQueued: false,
+			voteThreshold: 0
 		};
 
 	}
@@ -31,11 +38,6 @@ class CandidateList extends React.Component {
 			})
 		}
 
-		function weightedVotes(up, down) {
-			up = up.length;
-			down = down.length;
-			return (up * voteWeights.up) - (down * voteWeights.down);
-		}
 		return props.candidates.sort((a, b) => {
 			return weightedVotes(b.votedUp, b.votedDown) - weightedVotes(a.votedUp, a.votedDown);
 		})
@@ -126,14 +128,30 @@ class CandidateList extends React.Component {
 	toggleView = () => {
 		this.props.toggleViewMode();
 	};
+	thresholdChange = e => {
+		this.setState({
+			voteThreshold: parseInt(e.target.value, 10)
+		});
+	};
 	render() {
 		const self = this,
 			maxVotes = this.state.candidates.reduce((prev, two) => {
 				const sum = a => a.votedUp.length + a.votedDown.length;
 				return Math.max(prev, sum(two));
 			}, 1), // min of one so we don't divide by zero
+			maxVoteWeight = this.state.candidates.reduce((prev, next) => {
+				const weight = weightedVotes(next.votedUp, next.votedDown);
+				return Math.max(weight, prev);
+			}, -Infinity),
 			candidates = this.state.candidates
 				.map((c, index) => {
+					const weight = weightedVotes(c.votedUp, c.votedDown);
+
+					//if they're looking by threshold, don't show anything below that
+					if (this.props.detailedView && this.state.voteThreshold > 0 && weight < this.state.voteThreshold) {
+						return null;
+					}
+
 					const toggleVote = (direction) => {
 							voterConduit.emit('toggleVote', this.props.race_id, c.candidate_id, direction);
 						},
@@ -148,7 +166,7 @@ class CandidateList extends React.Component {
 						};
 
 					return <Candidate detailedView={this.props.detailedView} removeCandidate={removeCandidate} toggleVoteUp={toggleVoteUp} toggleVoteDown={toggleVoteDown} {...c} maxVotes={maxVotes} key={index} />
-				});
+				}).filter(c => !!c);
 
 		function newCandidate(name) {
 			voterConduit.emit('newCandidate', self.props.race_id, name);
@@ -179,7 +197,17 @@ class CandidateList extends React.Component {
 				<br />
 				<NewCandidate newCandidate={newCandidate} />
 				<If renderWhen={this.props.detailedView}>
-					<p>This list does not automatically sort by votes while in detailed view.</p>
+					<p>This list does not automatically sort by votes while in detailed view. However you can show everything above a minimum threshold.</p>
+
+					<label htmlFor="min-vote-threshold">Minimum vote threshold</label>
+					<input type="range" min="0" max={maxVoteWeight} id="min-vote-threshold" onChange={this.thresholdChange} defaultValue="0" />
+
+					<If renderWhen={this.state.voteThreshold > 0}>
+						<p>Showing {candidates.length} candidates of {this.state.candidates.length} with at least {this.state.voteThreshold} net votes.</p>
+					</If>
+					<If renderWhen={this.state.voteThreshold === 0}>
+						<p>Showing all {this.state.candidates.length} candidates.</p>
+					</If>
 				</If>
 				{candidates}
 			</div>
