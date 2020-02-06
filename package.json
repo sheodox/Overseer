@@ -25,7 +25,6 @@
     "node-hue-api": "^2.2.0",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^2.0.0",
-    "proxy-polyfill": "^0.3.0",
     "pug": "^2.0.3",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",

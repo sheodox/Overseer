@@ -1,4 +1,3 @@
-require('proxy-polyfill');
 const React = require('react'),
     {BrowserRouter, Route, Redirect} = require('react-router-dom'),
     Header = require('./Header'),
