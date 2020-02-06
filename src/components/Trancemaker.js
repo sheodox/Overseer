@@ -1,12 +1,19 @@
-const THREE = require('three'),
+const lsCache = require('./lsCache'),
+    settings = lsCache('settings'),
+    THREE = require('three'),
     twopi = 2 * Math.PI,
     FrameScaler = require('./FrameScaler');
+
 function getGLSL(name) {
     return document.querySelector(`script#${name}`).textContent;
 }
 
 class Trancemaker {
     constructor() {
+        if (settings.disableTrancemaker) {
+            return;
+        }
+
         this.fs = new FrameScaler();
 
         let iw = window.innerWidth,
