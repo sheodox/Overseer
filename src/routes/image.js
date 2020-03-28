@@ -10,6 +10,7 @@ async function respondWithImage({req, res, source, allowed}) {
 		if (imageData.image_type) {
 			res.header('Content-Type', imageData.image_type);
 		}
+		res.set('Cache-Control', `public, max-age=${60 * 60 * 24 * 7}`); //one week
 		res.send(imageData[`image_${size}`]);
 	}
 	else {
