@@ -56,6 +56,7 @@ const s = session({
 app.use(s);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use('/p', proxy.router);
 app.use('/proxy', proxy.router);
 
 app.use('/auth', auth);

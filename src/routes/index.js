@@ -33,7 +33,7 @@ async function entry(req, res) {
     
     if (await proxyBooker.check(id, 'view')) {
         links.push({
-            text: 'Proxies', href: '/proxy'
+            text: 'Proxies', href: '/p'
         })
     }
     

@@ -17,8 +17,8 @@ function isValidProxy(name) {
 }
 
 
-proxies.forEach(({name, url}) => {
-    router.use(`/${name}/`, async (req, res, next) => {
+proxies.forEach(({name, abbreviation, url}) => {
+	const serveProxy = async (req, res, next) => {
         //if not logged in, send them to the login
         if (!req.user) {
             //make sure we redirect back here after logging in
@@ -29,7 +29,7 @@ proxies.forEach(({name, url}) => {
             const hasQuery = req.url.includes('?');
             //trim trailing slashes from config url, or they'll be doubled up
             url = url.replace(/\/$/, '');
-            
+
             //block websocket connections, need to use relative xhr/fetch, but don't block socket.io.js
             //in case the other server falls back to xhr based on connection failures
             if (req.url.includes('socket.io/socket.io') && hasQuery) {
@@ -43,7 +43,11 @@ proxies.forEach(({name, url}) => {
         else {
             res.redirect('/');
         }
-    })
+    }
+    router.use(`/${name}/`, serveProxy)
+    if (abbreviation) {
+        router.use(`/${abbreviation}/`, serveProxy)
+    }
 });
 
 module.exports = {
