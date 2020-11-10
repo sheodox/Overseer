@@ -44,7 +44,7 @@
     "@babel/preset-react": "^7.7.4",
     "babel-loader": "^8.0.6",
     "babelify": "^8.0.0",
-    "copy-webpack-plugin": "^5.0.5",
+    "copy-webpack-plugin": "^5.1.2",
     "css-loader": "^3.2.0",
     "file-loader": "^5.0.2",
     "node-sass": "^4.14.1",
