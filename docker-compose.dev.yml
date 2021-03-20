@@ -1,0 +1,34 @@
+version: '3.7'
+services:
+  app:
+    build:
+      target: dev
+    ports:
+      - 9222:9222 #nodejs inspect port
+      - 9229:9229 #nodejs inspect port
+    volumes:
+      - type: bind
+        source: .
+        target: /usr/src/app
+    logging:
+      options:
+        max-size: "1m"
+        max-file: "1"
+  nginx:
+    volumes:
+      - type: bind
+        source: ./config/nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+      - type: bind
+        source: ./public
+        target: /var/www/static
+        read_only: true
+    logging:
+      options:
+        max-size: "1m"
+        max-file: "1"
+  postgres:
+    # expose postgres in development so Prisma can be run from outside the container
+    ports:
+      - 50433:5432

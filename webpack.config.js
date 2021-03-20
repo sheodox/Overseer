@@ -1,40 +1,44 @@
 const path = require('path'),
-	isProd = process.env.NODE_ENV === 'production',
+	{WebpackManifestPlugin} = require('webpack-manifest-plugin'),
 	CopyPlugin = require('copy-webpack-plugin');
 
-/*
-need svgmin
- */
-
 module.exports = {
-	watch: !isProd,
-	mode: isProd ? 'production' : 'development',
 	entry: {
-		'public/js/main': './src/components/index.js',
-		'admin/main': './src/admin/admin-main.js',
-		'public/js/proxy-main': './src/components/proxy.js'
+		'main': './src/static/main.js',
+		'admin': './src/static/admin/admin-main.js',
 	},
 	output: {
-		filename: '[name].js',
-		path: path.resolve(__dirname, './dist/')
+		filename: '[name].[contenthash].js',
+		path: path.resolve(__dirname, './public/'),
+		publicPath: ""
+	},
+	resolve: {
+		alias: {
+			svelte: path.resolve('node_modules', 'svelte')
+		},
+		extensions: ['.mjs', '.js', '.svelte'],
+		mainFields: ['svelte', 'browser', 'module', 'main'],
 	},
 	module: {
-		rules: [{
-			test: /\.js$/,
-			exclude: /node_modules/,
-			use: ['babel-loader']
-		}, {
-			test: /\.scss$/,
-			use: ['style-loader', 'css-loader', 'sass-loader']
-		}],
+		rules: [
+			{
+				test: /\.(html|svelte)$/,
+				use: 'svelte-loader'
+			},
+			{
+				test: /\.scss$/,
+				use: ['style-loader', 'css-loader', 'sass-loader']
+			}
+		]
 	},
 	plugins: [
 		new CopyPlugin([
-			{from: '**/*.pug', context: './src'},
-			{from: '**/*.js', context: './src'},
-			{from: '**/*.svg', context: './src'},
-			{from: '**/*.glsl', context: './src'},
-			{from: 'public/**.*', context: './src'}
-		])
+			{from: '**/*.svg', context: './src/static'},
+			{from: '**/*.glsl', context: './src/static'},
+			{from: 'assets/**.*', context: './src/static'},
+			//move fontawesome assets to where they can be served
+			{from: 'fontawesome-free/**/*.{woff,ttf,css,txt,woff2}', context: './node_modules/@fortawesome/'}
+		]),
+		new WebpackManifestPlugin(),
 	]
 };
