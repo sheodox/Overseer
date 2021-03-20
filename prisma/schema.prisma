@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Echo {
+  id                String   @id @default(uuid())
+  name              String
+  notes             String   @default("")
+  tags              String   @default("")
+  // size gets filled out by echo so we won't have it right away
+  size              Int      @default(0)
+  downloads         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
+  initialUploaderId String
+  lastUploaderId    String
+  uploading         Boolean  @default(true)
+}
+
+model User {
+  id               String             @id @default(uuid())
+  oauthId          String             @unique
+  displayName      String
+  profileImage     String
+  bookerAssignment BookerAssignment[]
+  createdAt        DateTime           @default(now())
+  lastActiveAt     DateTime           @default(now())
+}
+
+model Image {
+  id                String           @id @default(uuid())
+  generationVersion Int
+  original          Bytes
+  large             Bytes
+  medium            Bytes
+  small             Bytes
+  CandidateImage    CandidateImage[]
+  createdAt         DateTime         @default(now())
+}
+
+model Race {
+  id              String           @id @default(uuid())
+  name            String
+  candidates      Candidate[]
+  candidateImages CandidateImage[]
+  votes           Vote[]
+  creatorId       String
+  createdAt       DateTime         @default(now())
+}
+
+model Candidate {
+  id        String           @id @default(uuid())
+  name      String
+  notes     String
+  votes     Vote[]
+  creatorId String
+  raceId    String
+  images    CandidateImage[]
+  race      Race             @relation(fields: [raceId], references: [id])
+  createdAt DateTime         @default(now())
+
+  @@unique([raceId, name])
+  @@index([raceId])
+}
+
+model CandidateImage {
+  id          String    @id @default(uuid())
+  raceId      String
+  candidateId String
+  imageId     String
+  creatorId   String
+  race        Race      @relation(fields: [raceId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  image       Image     @relation(fields: [imageId], references: [id])
+  createdAt   DateTime  @default(now())
+
+  @@index([raceId])
+  @@index([candidateId])
+}
+
+model Vote {
+  raceId      String
+  candidateId String
+  race        Race      @relation(fields: [raceId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  userId      String
+  direction   String
+
+  @@unique([candidateId, userId])
+  @@index([raceId])
+  @@index([candidateId])
+}
+
+model BookerRole {
+  id               String             @id @default(uuid())
+  name             String
+  concern          String
+  permissions      Json
+  BookerAssignment BookerAssignment[]
+  createdAt        DateTime           @default(now())
+}
+
+model BookerAssignment {
+  id        String     @id @default(uuid())
+  concern   String
+  userId    String
+  roleId    String
+  role      BookerRole @relation(fields: [roleId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
+  createdAt DateTime   @default(now())
+
+  @@unique([concern, userId])
+}
