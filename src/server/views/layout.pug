@@ -1,0 +1,37 @@
+doctype html
+html
+    head
+        meta(property='og:title', content=title)
+        meta(property='og:site_name', content=site)
+        meta(property='og:image', content='/favicon.png')
+        meta(property='og:description', content=description)
+        meta(property='description', content=description)
+        title= title
+        style.
+            body, html {
+                background: #1a1e26;
+            }
+            #svg-source {
+                display: none;
+            }
+        link(rel='icon', href='/favicon.png')
+        meta(name='viewport',  content='width=device-width, initial-scale=1')
+        meta(name='theme-color', content='#24252b')
+        link(href="//fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap", rel="stylesheet")
+        link(rel="stylesheet", href="/fontawesome-free/css/all.min.css")
+    body
+        svg#svg-source
+            include ../../static/svg/light-icon.svg
+            include ../../static/svg/echo-icon.svg
+            include ../../static/svg/logo.svg
+            include ../../static/svg/chevron-icon.svg
+            include ../../static/svg/chevron-icon-bold.svg
+            include ../../static/svg/voter-icon.svg
+            include ../../static/svg/settings-icon.svg
+            include ../../static/svg/x-icon.svg
+            include ../../static/svg/down-icon.svg
+            include ../../static/svg/details-icon.svg
+            include ../../static/svg/lock-icon.svg
+            include ../../static/svg/reset-icon.svg
+            include ../../static/svg/ranking-icon.svg
+        block content

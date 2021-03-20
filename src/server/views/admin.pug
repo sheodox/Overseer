@@ -1,0 +1,20 @@
+doctype html
+html
+    head
+        title= "Admin - Overseer"
+        style.
+            #svg-source {
+                display: none;
+            }
+        link(rel='icon', href='/favicon.png')
+        link(href='//fonts.googleapis.com/css?family=Roboto', rel="stylesheet")
+        link(rel="stylesheet", href="/fontawesome-free/css/all.min.css")
+    body
+        svg#svg-source
+            include ../../static/svg/logo.svg
+            include ../../static/svg/chevron-icon.svg
+            include ../../static/svg/chevron-icon-bold.svg
+            include ../../static/svg/settings-icon.svg
+            include ../../static/svg/x-icon.svg
+        div#app-root
+        script(src=manifest['admin.js'])
