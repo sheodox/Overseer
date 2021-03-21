@@ -24,26 +24,12 @@
 {/if}
 
 {#if showAddRace}
-    <Modal bind:visible={showAddRace} title="Add Race">
-        <form on:submit|preventDefault={addRace}>
-            <div class="modal-body">
-                <label>
-                    Race Name
-                    <br>
-                    <input bind:value={newRaceName} />
-                </label>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" on:click={() => showAddRace = false}>
-                    Cancel
-                </button>
-                <button disabled={!newRaceName}>
-                    Add
-                </button>
-            </div>
-        </form>
-    </Modal>
+    <PromptModal
+        bind:visible={showAddRace}
+        label="Enter the name for a new race"
+        title="Add Race"
+        on:save={addRace}
+    />
 {/if}
 
 <script>
@@ -52,13 +38,13 @@
     import PageSpinner from "../PageSpinner.svelte";
     import RacePreview from './RacePreview.svelte';
     import {pageName} from "../stores/app";
+    import PromptModal from "../PromptModal.svelte";
 
-    let showAddRace = false,
-        newRaceName = '';
+    let showAddRace = false;
     pageName.set('Voter');
 
-    function addRace() {
-        voterOps.race.new(newRaceName);
+    function addRace(e) {
+        voterOps.race.new(e.detail);
         showAddRace = false;
     }
 </script>
