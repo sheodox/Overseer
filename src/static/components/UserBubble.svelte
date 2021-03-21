@@ -11,7 +11,7 @@
     }
 </style>
 <div class="user-bubble f-row">
-    <img src={user.profileImage} alt={user.displayName} class:minimal={mode === 'minimal'} class={user.displayName} />
+    <img src={user.profileImage} alt={user.displayName} class:minimal={mode === 'minimal'} title={user.displayName} />
     <div class="f-column">
         {#if mode === 'full'}
             <span>{user.displayName}</span>
