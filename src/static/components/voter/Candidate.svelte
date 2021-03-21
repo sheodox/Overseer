@@ -35,15 +35,30 @@
         height: 100%;
         position: absolute;
     }
+    .deleted {
+        filter: grayscale(1);
+    }
 </style>
 
-<div class="candidate f-row" style="--vote-up-percent: {voteUpPercent}%; --vote-down-percent: {voteDownPercent}%">
+<div class="candidate f-row" class:deleted={candidate.deleted}>
     {#if interactive}
-        <button on:click={voteUp} class="vote-button upvote" class:voted={votedUp} aria-pressed={votedUp}>
+        <button
+            on:click={voteUp}
+            class="vote-button upvote"
+            class:voted={votedUp}
+            aria-pressed={votedUp}
+            disabled={candidate.deleted}
+        >
             <Icon icon={votedUp ? 'plus-circle' : 'plus'} noPadding={true} />
             <span class="sr-only">Vote up</span>
         </button>
-        <button on:click={voteDown} class="vote-button downvote" class:voted={votedDown} aria-pressed={votedDown}>
+        <button
+            on:click={voteDown}
+            class="vote-button downvote"
+            class:voted={votedDown}
+            aria-pressed={votedDown}
+            disabled={candidate.deleted}
+        >
             <Icon icon={votedDown ? 'minus-circle' : 'minus'} noPadding={true} />
             <span class="sr-only">Vote down</span>
         </button>
@@ -51,12 +66,12 @@
     <div class="candidate-name-container f-column f-1">
         <span class="fw-bold candidate-name">{candidate.name}</span>
         <div class="vote-bars">
-            <CandidateVoteBar direction="up" votePercent={voteUpPercent} voters={candidate.votedUp} />
-            <CandidateVoteBar direction="down" votePercent={voteDownPercent} voters={candidate.votedDown} />
+            <CandidateVoteBar direction="up" {raceMaxVotes} voters={candidate.votedUp} candidateDeleted={candidate.deleted} />
+            <CandidateVoteBar direction="down" {raceMaxVotes} voters={candidate.votedDown} candidateDeleted={candidate.deleted} />
         </div>
     </div>
     {#if interactive}
-        <button on:click={() => showDetails = !showDetails}>
+        <button on:click={() => showDetails = !showDetails} aria-expanded={showDetails}>
             <Icon icon="chevron-{showDetails ? 'up' : 'down'}" />
             <span class="sr-only">Toggle Showing Details</span>
         </button>
@@ -75,11 +90,9 @@
     export let candidate;
     //if you can vote with this, we don't want that to happen on the the race dashboard
     export let interactive = true;
-    export let raceMaxVotes = 1;
+    export let raceMaxVotes;
     let showDetails = false;
 
-    $: voteUpPercent = (candidate.votedUp.length / raceMaxVotes) * 100;
-    $: voteDownPercent = (candidate.votedDown.length / raceMaxVotes) * 100;
     $: votedUp = candidate.voted === 'up'
     $: votedDown = candidate.voted === 'down'
 

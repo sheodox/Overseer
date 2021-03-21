@@ -18,7 +18,7 @@
     <div class="f-row {direction}" style="width: {votePercent}%">
         <div class="voters f-row">
             <span class="vote-count fw-bold">{votes}</span>
-            {#each voters as user}
+            {#each voters as user (user)}
                 <UserBubble {user} mode="minimal" />
             {/each}
         </div>
@@ -28,8 +28,9 @@
 <script>
     import UserBubble from '../UserBubble.svelte';
     export let direction;
-    export let votePercent;
     export let voters;
+    export let raceMaxVotes;
 
     $: votes = voters.length;
+    $: votePercent = (votes / raceMaxVotes) * 100;
 </script>

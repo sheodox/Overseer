@@ -12,7 +12,11 @@
 </style>
 
 {#if $voterSelectedRace}
-    <div class="page-content panel panel-body bordered f-column">
+    <div
+        class="page-content panel panel-body bordered f-column"
+        on:mouseenter={() => $sortLocked = true}
+        on:mouseleave={() => $sortLocked = false}
+    >
         <div class="f-row justify-content-between align-items-center">
             <h1>{$voterSelectedRace?.name}</h1>
             {#if hasRaceOptionPermissions}
@@ -102,7 +106,6 @@
     import Candidate from "./Candidate.svelte";
     import {activeRouteParams} from "../stores/routing";
     import Link from "../Link.svelte";
-    import TextInputModal from "../PromptModal.svelte";
     import PromptModal from "../PromptModal.svelte";
 
     const sortLocked = writable(false),

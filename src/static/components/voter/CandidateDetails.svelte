@@ -8,34 +8,36 @@
     <UserBubble user={candidate.creator}>
         <em>Created {new Date(candidate.createdAt).toLocaleDateString()}</em>
     </UserBubble>
-    <MenuButton>
+    {#if !candidate.deleted}
+        <MenuButton>
         <span slot="trigger">
             Options
             <Icon icon="chevron-down" />
         </span>
-        <ul slot="menu">
-            <li>
-                <button on:click={() => showCandidateRename = true}>
-                    <Icon icon="edit" />
-                    Rename
-                </button>
-            </li>
-            <li>
-                <button on:click={() => showNotesEdit = true}>
-                    <Icon icon="sticky-note" />
-                    Edit Notes
-                </button>
-            </li>
-            {#if window.Booker.voter.remove_candidate || candidate.created}
+            <ul slot="menu">
                 <li>
-                    <button on:click={deleteCandidate}>
-                        <Icon icon="trash" />
-                        Delete
+                    <button on:click={() => showCandidateRename = true}>
+                        <Icon icon="edit" />
+                        Rename
                     </button>
                 </li>
-            {/if}
-        </ul>
-    </MenuButton>
+                <li>
+                    <button on:click={() => showNotesEdit = true}>
+                        <Icon icon="sticky-note" />
+                        Edit Notes
+                    </button>
+                </li>
+                {#if window.Booker.voter.remove_candidate || candidate.created}
+                    <li>
+                        <button on:click={deleteCandidate}>
+                            <Icon icon="trash" />
+                            Delete
+                        </button>
+                    </li>
+                {/if}
+            </ul>
+        </MenuButton>
+    {/if}
 </div>
 
 <p class="notes">

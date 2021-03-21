@@ -1,4 +1,4 @@
-import {writable, derived} from 'svelte/store';
+import {writable, derived, get} from 'svelte/store';
 import {socket} from "../../socket";
 import {Conduit} from "../../../shared/conduit";
 import {activeRouteParams} from "./routing";
@@ -51,9 +51,60 @@ export const voterOps = {
 }
 
 export function createRankedCandidateStore(raceStore, lockStore) {
-    return derived([raceStore, lockStore], ([race, locked]) => {
-        return rankCandidates(race);
-    })
+    function findNewCandidates(newCandidates, oldCandidates) {
+        return newCandidates.filter(({id}) => {
+            return !oldCandidates.some(old => old.id === id);
+        });
+    }
+
+    const store = writable([]),
+        raceUnsubscribe = raceStore.subscribe(raceUpdate => {
+            if (!raceUpdate) {
+                return [];
+            }
+            const locked = get(lockStore);
+
+            store.update(oldCandidates => {
+                if (locked) {
+                    const newCandidates = findNewCandidates(raceUpdate.candidates, oldCandidates);
+
+                    oldCandidates = oldCandidates.map(candidate => {
+                        const newVersionOfThisCandidate = raceUpdate.candidates.find(({id}) => id === candidate.id);
+
+                        return newVersionOfThisCandidate ? newVersionOfThisCandidate : {
+                            ...candidate,
+                            deleted: true
+                        };
+                    })
+
+                    return [
+                        ...oldCandidates,
+                        //add any new candidates to the bottom
+                        ...newCandidates
+                    ]
+                }
+                else {
+                    return rankCandidates(raceUpdate);
+                }
+            })
+        }),
+        lockUnsubscribe = lockStore.subscribe(locked => {
+            //when unlocked, immediately sort in case we deferred sorting until now
+            if (!locked) {
+                store.set(rankCandidates(get(raceStore) || {candidates: []}))
+            }
+        });
+
+    return {
+        subscribe: (subscription) => {
+            const rankingUnsubscribe = store.subscribe(subscription)
+            return  () => {
+                rankingUnsubscribe();
+                raceUnsubscribe();
+                lockUnsubscribe();
+            }
+        },
+    };
 }
 
 function weightedVotes(candidate) {
