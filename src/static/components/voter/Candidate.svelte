@@ -39,12 +39,12 @@
 
 <div class="candidate f-row" style="--vote-up-percent: {voteUpPercent}%; --vote-down-percent: {voteDownPercent}%">
     {#if interactive}
-        <button on:click={voteUp} class="vote-button upvote" class:voted={votedUp}>
-            <Icon icon={votedUp ? 'arrow-alt-circle-up' : 'arrow-up'} noPadding={true} />
+        <button on:click={voteUp} class="vote-button upvote" class:voted={votedUp} aria-pressed={votedUp}>
+            <Icon icon={votedUp ? 'plus-circle' : 'plus'} noPadding={true} />
             <span class="sr-only">Vote up</span>
         </button>
-        <button on:click={voteDown} class="vote-button downvote" class:voted={votedDown}>
-            <Icon icon={votedDown ? 'arrow-alt-circle-down' : "arrow-down"} noPadding={true} />
+        <button on:click={voteDown} class="vote-button downvote" class:voted={votedDown} aria-pressed={votedDown}>
+            <Icon icon={votedDown ? 'minus-circle' : 'minus'} noPadding={true} />
             <span class="sr-only">Vote down</span>
         </button>
     {/if}
@@ -55,10 +55,12 @@
             <CandidateVoteBar direction="down" votePercent={voteDownPercent} voters={candidate.votedDown} />
         </div>
     </div>
-    <button on:click={() => showDetails = !showDetails}>
-        <Icon icon="chevron-{showDetails ? 'up' : 'down'}" />
-        <span class="sr-only">Toggle Showing Details</span>
-    </button>
+    {#if interactive}
+        <button on:click={() => showDetails = !showDetails}>
+            <Icon icon="chevron-{showDetails ? 'up' : 'down'}" />
+            <span class="sr-only">Toggle Showing Details</span>
+        </button>
+    {/if}
 </div>
 {#if showDetails}
     <CandidateDetails {candidate} />
