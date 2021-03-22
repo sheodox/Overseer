@@ -5,6 +5,7 @@
     .preview {
         margin: 1rem;
         width: 35rem;
+        max-width: 95%;
     }
     ol {
         padding: 0;

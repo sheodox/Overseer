@@ -1,11 +1,18 @@
 <style>
-    .details {
-        display: flex;
-        flex-direction: row;
+    h1 {
+        margin: 0;
+    }
+    @media (max-width: 800px) {
+        .details {
+            flex-direction: column;
+        }
     }
     .page-content {
         margin: 1rem;
         padding: 1rem;
+    }
+    .details {
+        display: flex;
     }
     .column {
         margin: 0.2rem;

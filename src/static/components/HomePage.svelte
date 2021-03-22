@@ -1,13 +1,11 @@
 <style>
-    .panel {
-        margin: 1rem;
-    }
     .app-preview {
         margin: 1rem;
+        max-width: 90%
     }
 </style>
 
-<div class="f-row f-wrap">
+<div class="page-content f-row f-wrap justify-content-center">
     {#if window.Booker.echo.view}
         <div class="app-preview">
             <RecentUploads />

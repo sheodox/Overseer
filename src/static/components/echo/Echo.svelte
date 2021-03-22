@@ -5,6 +5,9 @@
     .input-group {
         margin: 0.5rem;
     }
+    .input-group input {
+        font-size: 0.9rem;
+    }
     .input-group label {
         padding: 0.5rem;
     }
@@ -22,40 +25,40 @@
         <PageSpinner />
     {:else}
         <div class="f-column">
-            <h1>
-                Uploads
-            </h1>
-            {#if $echoOnline}
-                <div class="f-row justify-content-between align-items-center">
+            <div class="f-row justify-content-between">
+                <h1>Uploads</h1>
+                {#if $echoOnline && window.Booker.echo.upload}
+                    <button on:click={() => page('/echo/upload')}>
+                        <Icon icon="upload" />
+                        New Upload
+                    </button>
+                {/if}
+            </div>
+            <div class="f-row justify-content-between">
+                {#if $echoOnline}
                     <EchoStatus />
-                    {#if window.Booker.echo.upload}
-                        <button on:click={() => page('/echo/upload')}>
-                            <Icon icon="upload" />
-                            New Upload
-                        </button>
-                    {/if}
-                </div>
-            {:else}
-                <div class="f-row justify-content-center">
-            <span class="offline-message">
-                <Icon icon="power-off" />
-                Echo is offline!
-            </span>
-                </div>
-            {/if}
+                {:else}
+                    <span class="offline-message">
+                        <Icon icon="power-off" />
+                        Echo is offline!
+                    </span>
+                {/if}
+            </div>
 
             <div class="f-row align-items-center">
                 <div class="input-group f-1">
                     <label for="echo-search">
-                        <Icon icon="search" />
+                        <Icon icon="search" noPadding={true} />
                         <span class="sr-only">
                             Search
                         </span>
                     </label>
                     <input bind:value={$echoSearch} id="echo-search" placeholder="search for a name or tags (comma separated)" class="f-1"/>
                     <button on:click={() => $echoSearch = ''}>
-                        <Icon icon="times" />
-                        Reset
+                        <Icon icon="times" noPadding={true} />
+                        <span class="sr-only">
+                            Reset search
+                        </span>
                     </button>
                 </div>
                 <button on:click={() => showTagCloud = !showTagCloud}>
