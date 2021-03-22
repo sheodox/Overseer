@@ -2,13 +2,20 @@
     .page-content {
         margin: 1rem;
     }
+
+    h1 {
+        margin: 0;
+    }
 </style>
 {#if !$voterInitialized}
     <PageSpinner />
 {:else}
     <div class="page-content">
         <div class="panel panel-body bordered">
-            <div class="toolbar">
+            <div class="f-row justify-content-between align-items-center">
+                <h1>
+                    Races
+                </h1>
                 <button on:click={() => showAddRace = true}>
                     <Icon icon="plus" />
                     Add Race

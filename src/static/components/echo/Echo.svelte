@@ -2,14 +2,14 @@
     .offline-message {
         margin: 0.5rem;
     }
-    table {
-        width: 100%;
-    }
     .input-group {
         margin: 0.5rem;
     }
     .input-group label {
         padding: 0.5rem;
+    }
+    .page-content {
+        max-width: 60rem;
     }
 </style>
 
@@ -57,34 +57,13 @@
                 <TagCloud bind:tags={$echoSearch}/>
             {/if}
 
-            {#if $echoSearchResults.length}
-                <table class="hoverable">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Size</th>
-                        <th>Updated</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {#each $echoSearchResults as item}
-                        <tr>
-                            <td>
-                                <a href={item.path} on:click|preventDefault={() => page(item.path)}>{item.name}</a>
-                            </td>
-                            <td>
-                                <FileSize echoItem={item} />
-                            </td>
-                            <td>{new Date(item.updatedAt).toLocaleDateString()}</td>
-                        </tr>
-                    {/each}
-                    </tbody>
-                </table>
+            {#each $echoSearchResults as item}
+                <EchoItemPreview {item} />
             {:else}
                 <p class="text-align-center">
                     No items matching this search.
                 </p>
-            {/if}
+            {/each}
         </div>
     {/if}
 </div>
@@ -99,6 +78,7 @@
     import TagCloud from "./TagCloud.svelte";
     import {activeQueryParams} from "../stores/routing";
     import PageSpinner from "../PageSpinner.svelte";
+    import EchoItemPreview from "./EchoItemPreview.svelte";
 
     let showTagCloud = false;
 

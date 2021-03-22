@@ -7,6 +7,9 @@
     .large {
         --spike-size: 3rem;
     }
+    .medium {
+        --spike-size: 1.5rem;
+    }
     .small {
         --spike-size: 0.3rem;
     }

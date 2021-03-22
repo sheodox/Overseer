@@ -10,6 +10,10 @@
     <Voter />
 {:else if $activeRoute === 'voter/race' && voterView}
     <VoterRace />
+{:else if !voterView && !echoView}
+    <NoAccess />
+{:else}
+    <HomePage />
 {/if}
 <script>
     import {activeRoute} from './stores/routing';
@@ -18,6 +22,8 @@
     import EchoView from "./echo/EchoView.svelte";
     import Voter from "./voter/Voter.svelte";
     import VoterRace from "./voter/VoterRace.svelte";
+    import NoAccess from "./NoAccess.svelte";
+    import HomePage from "./HomePage.svelte";
 
     const echoView = window.Booker.echo.view,
         voterView = window.Booker.echo.view;

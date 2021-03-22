@@ -27,4 +27,5 @@ page(`/echo/:echoId`, setRoute('echo', 'echo/view'))
 page(`/echo/:echoId/edit`, setRoute('echo', 'echo/edit'))
 page(`/voter`, setRoute('voter', 'voter'))
 page(`/voter/:raceId`, setRoute('voter', 'voter/race'))
+page(`/`, setRoute('home', 'home'))
 page();

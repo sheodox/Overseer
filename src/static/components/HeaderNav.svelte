@@ -27,6 +27,12 @@
     import page from 'page';
 
     const links = [{
+        viewable: window.Booker.echo.view || window.Booker.voter.view,
+        path: '/',
+        app: 'home',
+        text: 'Home',
+        icon: 'home'
+    }, {
         viewable: window.Booker.echo.view,
         path: '/echo',
         app: 'echo',

@@ -5,7 +5,7 @@
 {#if echoItem.uploading}
     <SpikeSpinner size="small" /> Uploading
 {:else}
-    {bytes(echoItem.size, 'gb')}gb
+    {bytes(echoItem.size, 'gb')}GB
 {/if}
 
 <script>
