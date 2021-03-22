@@ -19,8 +19,9 @@
             {#each $users as user}
                 <tr>
                     <td>
-                        <img src={user.profileImage} alt={user.displayName} />
-                        {user.displayName}
+                        <UserBubble {user}>
+                            <em>Active {new Date(user.lastActiveAt).toLocaleDateString()}</em>
+                        </UserBubble>
                     </td>
                     {#each $bookers as booker}
                         <td>
@@ -39,5 +40,6 @@
 <script>
     import {users, bookers, adminConduit} from "./admin-common";
     import AssignmentRoles from "./AssignmentRoles.svelte";
+    import UserBubble from "../components/UserBubble.svelte";
 
 </script>
