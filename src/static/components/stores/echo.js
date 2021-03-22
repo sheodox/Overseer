@@ -64,12 +64,11 @@ export const echoSearchResults = derived([echoItems, echoSearch], ([list, search
 
 echoConduit.on({
     refresh: (data) => {
-        console.log('data from echo conduit', data)
-        echoInitialized.set(true);
         echoItems.set(data.items);
         echoDiskUsage.set(data.diskUsage);
         echoOnline.set(data.echoOnline);
         echoTagCloud.set(data.tagCloud);
+        echoInitialized.set(true);
     },
     downloadToken: token => {
         echoDownloadToken.set(token);

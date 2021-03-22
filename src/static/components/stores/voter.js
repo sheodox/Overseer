@@ -179,7 +179,6 @@ export function getRaceMaxVotes(race) {
 
 voterConduit.on({
     refresh: (races) => {
-        console.log(`data from voter`, races);
         voterRaces.set(races);
         voterInitialized.set(true);
     }
