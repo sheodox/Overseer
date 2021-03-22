@@ -15,7 +15,7 @@ class ImageStore {
     version = 1;
 	constructor() {}
 
-	async generate({image, mimeType}: {image: Buffer, mimeType: string}) {
+	async generate({image, mimeType, source}: {image: Buffer, mimeType: string, source: string}) {
 		const startTime = Date.now();
 
 		if (!VALID_MIMES.includes(mimeType)) {
@@ -24,6 +24,7 @@ class ImageStore {
 
 		const data = {
 			original: image,
+			source,
 			...(await this.resize(image))
 		}
 
@@ -65,14 +66,23 @@ class ImageStore {
 
 		//todo regenerate if the version is old
 
-		const image: {[size: string]: Buffer} = await prisma.image.findFirst({
+		const image = await prisma.image.findFirst({
 			where: {id},
 			select: {
-				[size]: true
+				[size]: true,
+				source: true,
 			}
-		});
+		}) as {
+			large?: Buffer,
+			medium?: Buffer,
+			small?: Buffer,
+			source: string
+		};
 
-		return image[size];
+		return {
+			image: image[size as keyof typeof image],
+			source: image.source as string
+		};
 	}
 
 	async delete(id: string) {

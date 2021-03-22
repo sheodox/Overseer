@@ -1,6 +1,8 @@
 <style>
-    .candidate {
+    .candidate-container {
         margin-bottom: 0.5rem;
+    }
+    .candidate {
         height: 3rem;
     }
     .vote-button {
@@ -40,46 +42,48 @@
     }
 </style>
 
-<div class="candidate f-row" class:deleted={candidate.deleted}>
-    {#if interactive}
-        <button
-            on:click={voteUp}
-            class="vote-button upvote"
-            class:voted={votedUp}
-            aria-pressed={votedUp}
-            disabled={candidate.deleted}
-        >
-            <Icon icon={votedUp ? 'plus-circle' : 'plus'} noPadding={true} />
-            <span class="sr-only">Vote up</span>
-        </button>
-        <button
-            on:click={voteDown}
-            class="vote-button downvote"
-            class:voted={votedDown}
-            aria-pressed={votedDown}
-            disabled={candidate.deleted}
-        >
-            <Icon icon={votedDown ? 'minus-circle' : 'minus'} noPadding={true} />
-            <span class="sr-only">Vote down</span>
-        </button>
-    {/if}
-    <div class="candidate-name-container f-column f-1">
-        <span class="fw-bold candidate-name">{candidate.name}</span>
-        <div class="vote-bars">
-            <CandidateVoteBar direction="up" {raceMaxVotes} voters={candidate.votedUp} candidateDeleted={candidate.deleted} />
-            <CandidateVoteBar direction="down" {raceMaxVotes} voters={candidate.votedDown} candidateDeleted={candidate.deleted} />
+<div class="candidate-container">
+    <div class="candidate f-row" class:deleted={candidate.deleted}>
+        {#if interactive}
+            <button
+                on:click={voteUp}
+                class="vote-button upvote"
+                class:voted={votedUp}
+                aria-pressed={votedUp}
+                disabled={candidate.deleted}
+            >
+                <Icon icon={votedUp ? 'plus-circle' : 'plus'} noPadding={true} />
+                <span class="sr-only">Vote up</span>
+            </button>
+            <button
+                on:click={voteDown}
+                class="vote-button downvote"
+                class:voted={votedDown}
+                aria-pressed={votedDown}
+                disabled={candidate.deleted}
+            >
+                <Icon icon={votedDown ? 'minus-circle' : 'minus'} noPadding={true} />
+                <span class="sr-only">Vote down</span>
+            </button>
+        {/if}
+        <div class="candidate-name-container f-column f-1">
+            <span class="fw-bold candidate-name">{candidate.name}</span>
+            <div class="vote-bars">
+                <CandidateVoteBar direction="up" {raceMaxVotes} voters={candidate.votedUp} candidateDeleted={candidate.deleted} />
+                <CandidateVoteBar direction="down" {raceMaxVotes} voters={candidate.votedDown} candidateDeleted={candidate.deleted} />
+            </div>
         </div>
+        {#if interactive}
+            <button on:click={() => showDetails = !showDetails} aria-expanded={showDetails}>
+                <Icon icon="chevron-{showDetails ? 'up' : 'down'}" />
+                <span class="sr-only">Toggle Showing Details</span>
+            </button>
+        {/if}
     </div>
-    {#if interactive}
-        <button on:click={() => showDetails = !showDetails} aria-expanded={showDetails}>
-            <Icon icon="chevron-{showDetails ? 'up' : 'down'}" />
-            <span class="sr-only">Toggle Showing Details</span>
-        </button>
+    {#if showDetails}
+        <CandidateDetails {candidate} {candidateImages} />
     {/if}
 </div>
-{#if showDetails}
-    <CandidateDetails {candidate} />
-{/if}
 
 <script>
     import {Icon} from 'sheodox-ui';
@@ -88,6 +92,7 @@
     import CandidateDetails from "./CandidateDetails.svelte";
 
     export let candidate;
+    export let candidateImages;
     //if you can vote with this, we don't want that to happen on the the race dashboard
     export let interactive = true;
     export let raceMaxVotes;

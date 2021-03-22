@@ -16,15 +16,9 @@
         </span>
             <ul slot="menu">
                 <li>
-                    <button on:click={() => showCandidateRename = true}>
-                        <Icon icon="edit" />
-                        Rename
-                    </button>
-                </li>
-                <li>
-                    <button on:click={() => showNotesEdit = true}>
+                    <button on:click={() => showEdit = true}>
                         <Icon icon="sticky-note" />
-                        Edit Notes
+                        Edit
                     </button>
                 </li>
                 {#if window.Booker.voter.remove_candidate || candidate.created}
@@ -44,25 +38,16 @@
     <!-- notes are markdown rendered HTML -->
     {@html candidate.notesRendered}
 </p>
+<CandidateImages
+    {candidate}
+    {candidateImages}
+/>
 
-{#if showCandidateRename}
-    <PromptModal
-        bind:visible={showCandidateRename}
-        title="Rename {candidate.name}"
-        label="New name"
-        on:save={renameCandidate}
-    />
-{/if}
-
-{#if showNotesEdit}
-    <PromptModal
-        bind:visible={showNotesEdit}
-        initialValue={candidate.notes}
-        title="Edit {candidate.name} Notes"
-        hint="You can use markdown!"
-        label="Notes"
-        type="textarea"
-        on:save={updateNotes}
+{#if showEdit}
+    <EditCandidateModal
+        {candidateImages}
+        {candidate}
+        bind:visible={showEdit}
     />
 {/if}
 
@@ -70,22 +55,15 @@
     import {MenuButton, Icon} from 'sheodox-ui';
     import UserBubble from "../UserBubble.svelte";
     import {voterOps} from "../stores/voter";
-    import PromptModal from "../PromptModal.svelte";
+    import EditCandidateModal from "./EditCandidateModal.svelte";
+    import CandidateImages from "./CandidateImages.svelte";
 
     export let candidate;
+    export let candidateImages;
 
-    let showCandidateRename = false,
-        showNotesEdit = false;
+    let showEdit = false;
 
     function deleteCandidate() {
         voterOps.candidate.delete(candidate.id);
-    }
-
-    function renameCandidate(e) {
-        voterOps.candidate.rename(candidate.id, e.detail)
-    }
-
-    function updateNotes(e) {
-        voterOps.candidate.updateNotes(candidate.id, e.detail);
     }
 </script>

@@ -3,27 +3,39 @@ import {Router, Response} from 'express';
 import {imageStore} from "../db/image-store";
 import {voterBooker} from "../db/booker";
 
-const router = Router();
+const router = Router(),
+	//a mapping of a 'source' as stored in the image table to the booker for which it matches,
+	//this is used when serving images to check if the user actually has the permissions to
+	//view images for the page this image came from
+	bookersWithImages = {
+		voter: voterBooker
+	};
 
-async function respondWithImage({req, res, allowed}: {req: AppRequest, res: Response, allowed: boolean}) {
+router.get('/image/:id/:size', async (req: AppRequest, res: Response) => {
+	const {size, id} = req.params;
+
+	let image, imageSource;
+	try {
+		const imageData = await imageStore.get(id, size);
+		image = imageData.image;
+		imageSource = imageData.source;
+	}
+	catch (e) {
+		res.status(404);
+		res.send('Image not found!');
+	}
+
+	//check to make sure the user has permission to view an image from where this came from
+	const allowed = await bookersWithImages[imageSource as keyof typeof bookersWithImages].check(req.user.id, 'view');
+
 	if (allowed) {
-		const {size, id} = req.params;
-		const image = await imageStore.get(id, size);
-
 		res.header('Content-Type', 'image/webp');
-		res.set('Cache-Control', `public, max-age=${60 * 60 * 24 * 7}`); //one week
 		res.send(image);
 	}
 	else {
-		res.send(null);
+		res.status(403)
+		res.send(`You don't have permissions to access that image`);
 	}
-}
-
-router.get('/image/voter/:id/:size', async (req: AppRequest, res: Response) => {
-	await respondWithImage({
-		req, res,
-		allowed: await voterBooker.check(req.user.id, 'view')
-	});
 });
 
 module.exports = router;

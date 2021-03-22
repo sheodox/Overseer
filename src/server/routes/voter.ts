@@ -152,9 +152,9 @@ module.exports = function(io: Server) {
                     broadcast();
                 }
             },
-            renameCandidate: async (candidateId, candidateName) => {
+            updateCandidate: async (candidateId, name, notes) => {
                 if (await voterBooker.check(userId, 'add_candidate')) {
-                    const result = await voter.renameCandidate(candidateId, candidateName);
+                    const result = await voter.updateCandidate(candidateId, name, notes);
 
                     if ('error' in result) {
                         singleUserError(result.error);
@@ -163,13 +163,7 @@ module.exports = function(io: Server) {
                         broadcast();
                     }
                 }
-            },
-            updateNotes: async (candidateId, notes) => {
-                if (await voterBooker.check(userId, 'add_candidate')) {
-                    await voter.updateNotes(candidateId, notes);
-                    broadcast();
-                }
-            },
+            }
         });
     });
     return router;

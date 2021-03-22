@@ -1,7 +1,10 @@
 import {writable, derived, get} from 'svelte/store';
+import {post} from 'axios';
+import {createProgressToast, createAutoExpireToast, updateToast} from 'sheodox-ui';
 import {socket} from "../../socket";
 import {Conduit} from "../../../shared/conduit";
 import {activeRouteParams} from "./routing";
+import {bytes as formatBytes} from "../../../shared/formatters";
 const voterConduit = new Conduit(socket, 'voter');
 
 export const voterInitialized = writable(false);
@@ -41,11 +44,54 @@ export const voterOps = {
         delete: (candidateId) => {
             voterConduit.emit('removeCandidate', candidateId);
         },
-        rename: (candidateId, name) => {
-            voterConduit.emit('renameCandidate', candidateId, name);
+        update: (candidateId, name, notes) => {
+            voterConduit.emit('updateCandidate', candidateId, name, notes);
         },
-        updateNotes: (candidateId, notes) => {
-            voterConduit.emit('updateNotes', candidateId, notes);
+        uploadImage(candidateId, file) {
+            const progressToastId = createProgressToast({
+                title: 'Voter Upload',
+                message: '',
+                min: 0,
+                max: file.size
+            });
+
+            const errorToast = message => createAutoExpireToast({
+                    variant: 'error',
+                    title: 'Upload Error',
+                    message
+                });
+
+            post(`/voter/${candidateId}/upload`, file, {
+                headers: {
+                    'Content-type': file.type
+                },
+                onUploadProgress(e) {
+                    if (e.loaded === e.total) {
+                        updateToast(progressToastId, {
+                            message: 'Upload complete!',
+                            value: e.loaded,
+                            max: e.total,
+                        });
+                        return;
+                    }
+                    updateToast(progressToastId, {
+                        value: e.loaded,
+                        max: e.total,
+                        messaage: `${formatBytes(e.loaded, 'mb')} mb / ${formatBytes(e.total, 'mb')} mb`
+                    })
+                }
+            })
+                .catch(e => {
+                    if (e.response.statusCode === 413) {
+                        errorToast('That image is too big!');
+                    }
+                    else {
+                        errorToast(e.response.statusText);
+                    }
+                });
+        },
+        deleteImage: id => {
+            voterConduit.emit('removeImage', id);
         }
     },
 }

@@ -61,7 +61,7 @@
         </form>
 
         {#each $candidates as candidate (candidate.id)}
-            <Candidate {candidate} {raceMaxVotes} />
+            <Candidate {candidate} {raceMaxVotes} candidateImages={$voterSelectedRace.candidateImages}/>
         {/each}
     </div>
 {:else if $voterInitialized}

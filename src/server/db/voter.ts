@@ -161,7 +161,8 @@ class Voter {
             }),
             imageId = await imageStore.generate({
                 image,
-                mimeType
+                mimeType,
+                source: 'voter',
             });
         await prisma.candidateImage.create({
             data: {
@@ -180,25 +181,20 @@ class Voter {
         });
         await imageStore.delete(candidateImage.imageId);
     }
-    async renameCandidate(candidateId: string, name: string) {
+    async updateCandidate(candidateId: string, name: string, notes: string) {
+        name = Voter.cleanString(name);
+
         if (validName(name)) {
             return await prisma.candidate.update({
                 where: {id: candidateId},
                 data: {
-                    name
+                    name, notes
                 }
             })
         }
         return {
             error: 'Invalid name!'
         }
-    }
-    async updateNotes(candidateId: string, notes: string) {
-        await prisma.candidate.update({
-            where: {id: candidateId},
-            data: {notes}
-        })
-        return {};
     }
 }
 

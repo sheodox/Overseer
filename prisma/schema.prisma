@@ -42,6 +42,7 @@ model Image {
   large             Bytes
   medium            Bytes
   small             Bytes
+  source            String
   CandidateImage    CandidateImage[]
   createdAt         DateTime         @default(now())
 }
