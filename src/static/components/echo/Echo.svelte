@@ -10,6 +10,10 @@
     }
     .page-content {
         max-width: 60rem;
+        margin: 1rem;
+    }
+    h1 {
+        margin: 0;
     }
 </style>
 
@@ -17,24 +21,27 @@
     {#if !$echoInitialized}
         <PageSpinner />
     {:else}
-        {#if $echoOnline}
-            <div class="f-row justify-content-between align-items-center">
-                <EchoStatus />
-                <button on:click={() => page('/echo/upload')}>
-                    <Icon icon="upload" />
-                    New Upload
-                </button>
-            </div>
-        {:else}
-            <div class="f-row justify-content-center">
+        <div class="panel panel-body bordered f-column">
+            <h1>
+                Uploads
+            </h1>
+            {#if $echoOnline}
+                <div class="f-row justify-content-between align-items-center">
+                    <EchoStatus />
+                    <button on:click={() => page('/echo/upload')}>
+                        <Icon icon="upload" />
+                        New Upload
+                    </button>
+                </div>
+            {:else}
+                <div class="f-row justify-content-center">
             <span class="offline-message">
                 <Icon icon="power-off" />
                 Echo is offline!
             </span>
-            </div>
-        {/if}
+                </div>
+            {/if}
 
-        <div class="panel panel-body bordered f-column">
             <div class="f-row align-items-center">
                 <div class="input-group f-1">
                     <label for="echo-search">
@@ -57,13 +64,18 @@
                 <TagCloud bind:tags={$echoSearch}/>
             {/if}
 
-            {#each $echoSearchResults as item}
-                <EchoItemPreview {item} />
+            {#if numResults > 0}
+                {#each $echoSearchResults as item}
+                    <EchoItemPreview {item} />
+                {/each}
+                <p class="text-align-center">
+                    {numResults === 1 ? 'one result' : `${numResults} results`}
+                </p>
             {:else}
                 <p class="text-align-center">
                     No items matching this search.
                 </p>
-            {/each}
+            {/if}
         </div>
     {/if}
 </div>
@@ -74,7 +86,6 @@
     import {echoInitialized, echoOnline, echoSearch, echoSearchResults} from "../stores/echo";
     import {pageName} from "../stores/app";
     import EchoStatus from "./EchoStatus.svelte";
-    import FileSize from "./FileSize.svelte";
     import TagCloud from "./TagCloud.svelte";
     import {activeQueryParams} from "../stores/routing";
     import PageSpinner from "../PageSpinner.svelte";
@@ -82,7 +93,9 @@
 
     let showTagCloud = false;
 
-    pageName.set('Echo');
+    $: numResults = $echoSearchResults.length
+
+    $pageName = 'Echo'
 
     echoSearch.set($activeQueryParams.search);
 </script>
