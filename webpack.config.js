@@ -1,5 +1,6 @@
 const path = require('path'),
 	{WebpackManifestPlugin} = require('webpack-manifest-plugin'),
+	{BundleAnalyzerPlugin} = require('webpack-bundle-analyzer'),
 	CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -40,5 +41,6 @@ module.exports = {
 			{from: 'fontawesome-free/**/*.{woff,ttf,css,txt,woff2}', context: './node_modules/@fortawesome/'}
 		]),
 		new WebpackManifestPlugin(),
+		// new BundleAnalyzerPlugin()
 	]
 };

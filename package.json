@@ -70,6 +70,7 @@
     "prisma": "^2.19.0",
     "sass": "^1.32.8",
     "sass-material-colors": "0.0.5",
-    "source-map-loader": "^0.2.4"
+    "source-map-loader": "^0.2.4",
+    "webpack-bundle-analyzer": "^4.4.0"
   }
 }
