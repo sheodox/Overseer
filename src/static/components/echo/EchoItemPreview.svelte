@@ -16,7 +16,7 @@
             <Link href={item.path}>
                 <p>{item.name}</p>
             </Link>
-            <p class="muted">
+            <p>
                 <FileSize echoItem={item} /> - Updated {new Date(item.updatedAt).toLocaleDateString()}
             </p>
         </div>
