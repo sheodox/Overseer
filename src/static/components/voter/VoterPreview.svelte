@@ -12,7 +12,7 @@
     }
 </style>
 
-<div class="panel bordered panel-body">
+<div class="panel panel-body">
     <div class="f-row justify-content-between align-items-center">
         <h1>Voter - Preview</h1>
         <Link href="/voter">

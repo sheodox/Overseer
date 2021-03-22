@@ -12,7 +12,7 @@
     }
 </style>
 
-<div class="panel bordered">
+<div class="panel">
     <div class="f-row justify-content-between align-items-center">
         <h2>{race.name}</h2>
         <Link href="/voter/{race.id}">
