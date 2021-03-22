@@ -3,6 +3,7 @@ import express, {NextFunction, Request, Response} from 'express';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+import favicon from 'serve-favicon';
 import path from 'path';
 import expressSession from 'express-session';
 import {Server as SocketIOServer} from 'socket.io';
@@ -35,6 +36,7 @@ app.use(bodyParser.raw({
 }));
 app.use(bodyParser.json({limit: bodySizeLimit}));
 app.use(bodyParser.urlencoded({limit: bodySizeLimit, extended: true, parameterLimit: 50000}));
+app.use(favicon('./public/assets/favicon.png'));
 
 app.use(logger('dev'));
 
