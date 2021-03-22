@@ -16,10 +16,12 @@
                 <h1>
                     Races
                 </h1>
-                <button on:click={() => showAddRace = true}>
-                    <Icon icon="plus" />
-                    Add Race
-                </button>
+                {#if window.Booker.voter.add_race}
+                    <button on:click={() => showAddRace = true}>
+                        <Icon icon="plus" />
+                        Add Race
+                    </button>
+                {/if}
             </div>
             <div class="f-row f-wrap justify-content-center">
                 {#each $voterRaces as race}

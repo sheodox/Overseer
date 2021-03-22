@@ -39,26 +39,32 @@
     <div class="panel bordered viewer">
         <div class="f-row justify-content-between align-items-center">
             <h1>{echoItem.name}</h1>
-            <MenuButton>
+            {#if hasOptionPermission}
+                <MenuButton>
                 <span slot="trigger">
                     Menu
                     <Icon icon="chevron-down" />
                 </span>
-                <ul slot="menu">
-                    <li>
-                        <a class="button" href={echoItem.editPath} on:click|preventDefault={() => page(echoItem.editPath)}>
-                            <Icon icon="edit" />
-                            Edit
-                        </a>
-                    </li>
-                    <li>
-                        <button on:click={() => showDeleteConfirm = true}>
-                            <Icon icon="trash" />
-                            Delete
-                        </button>
-                    </li>
-                </ul>
-            </MenuButton>
+                    <ul slot="menu">
+                        {#if window.Booker.echo.update}
+                            <li>
+                                <a class="button" href={echoItem.editPath} on:click|preventDefault={() => page(echoItem.editPath)}>
+                                    <Icon icon="edit" />
+                                    Edit
+                                </a>
+                            </li>
+                        {/if}
+                        {#if window.Booker.echo.delete}
+                            <li>
+                                <button on:click={() => showDeleteConfirm = true}>
+                                    <Icon icon="trash" />
+                                    Delete
+                                </button>
+                            </li>
+                        {/if}
+                    </ul>
+                </MenuButton>
+            {/if}
         </div>
         <div class="f-row">
             <div class:partially-hidden={hasBeenUpdated}>
@@ -123,6 +129,7 @@
     import UserBubble from "../UserBubble.svelte";
     import Link from "../Link.svelte";
 
+    const hasOptionPermission = window.Booker.echo.update || window.Booker.echo.delete
     let showDeleteConfirm = false;
 
     $: echoItem = $echoItems.find(({id}) => id === $activeRouteParams.echoId);

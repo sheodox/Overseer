@@ -28,16 +28,24 @@
             <br>
             <textarea bind:value={notes} on:paste|preventDefault={notesPaste}></textarea>
         </label>
-        <p><Icon icon="info-circle" />You can use markdown in notes! Paste into notes to attach images.</p>
+        <p>
+            <Icon icon="info-circle" />
+            You can use markdown in notes!
+            {#if window.Booker.voter.add_image}
+                Paste into notes to attach images.
+            {/if}
+        </p>
 
-        <div class="images">
-            <CandidateImages
-                mode="edit"
-                {candidateImages}
-                {candidate}
-                on:delete={deleteImage}
-            />
-        </div>
+        {#if window.Booker.voter.remove_image}
+            <div class="images">
+                <CandidateImages
+                    mode="edit"
+                    {candidateImages}
+                    {candidate}
+                    on:delete={deleteImage}
+                />
+            </div>
+        {/if}
     </div>
     <div class="modal-footer">
         <button on:click={() => visible = false}>Cancel</button>

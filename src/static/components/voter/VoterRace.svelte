@@ -51,14 +51,16 @@
             {/if}
         </div>
 
-        <form on:submit|preventDefault={addCandidate} class="align-self-center" id="new-candidate-form">
-            <div class="input-group align-self-center">
-                <label for="new-candidate">
-                    New candidate
-                </label>
-                <input id="new-candidate" placeholder="add something to vote for" bind:value={newCandidateName} />
-            </div>
-        </form>
+        {#if window.Booker.voter.add_candidate}
+            <form on:submit|preventDefault={addCandidate} class="align-self-center" id="new-candidate-form">
+                <div class="input-group align-self-center">
+                    <label for="new-candidate">
+                        New candidate
+                    </label>
+                    <input id="new-candidate" placeholder="add something to vote for" bind:value={newCandidateName} />
+                </div>
+            </form>
+        {/if}
 
         {#each $candidates as candidate (candidate.id)}
             <Candidate {candidate} {raceMaxVotes} candidateImages={$voterSelectedRace.candidateImages}/>

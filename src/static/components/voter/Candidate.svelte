@@ -44,7 +44,7 @@
 
 <div class="candidate-container">
     <div class="candidate f-row" class:deleted={candidate.deleted}>
-        {#if interactive}
+        {#if interactive && window.Booker.voter.vote}
             <button
                 on:click={voteUp}
                 class="vote-button upvote"

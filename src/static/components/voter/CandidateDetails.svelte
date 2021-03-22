@@ -8,20 +8,22 @@
     <UserBubble user={candidate.creator}>
         <em>Created {new Date(candidate.createdAt).toLocaleDateString()}</em>
     </UserBubble>
-    {#if !candidate.deleted}
+    {#if !candidate.deleted && (window.Booker.voter.update_candidate || canDelete)}
         <MenuButton>
         <span slot="trigger">
             Options
             <Icon icon="chevron-down" />
         </span>
             <ul slot="menu">
-                <li>
-                    <button on:click={() => showEdit = true}>
-                        <Icon icon="sticky-note" />
-                        Edit
-                    </button>
-                </li>
-                {#if window.Booker.voter.remove_candidate || candidate.created}
+                {#if window.Booker.voter.update_candidate}
+                    <li>
+                        <button on:click={() => showEdit = true}>
+                            <Icon icon="sticky-note" />
+                            Edit
+                        </button>
+                    </li>
+                {/if}
+                {#if canDelete}
                     <li>
                         <button on:click={deleteCandidate}>
                             <Icon icon="trash" />
@@ -61,6 +63,7 @@
     export let candidate;
     export let candidateImages;
 
+    const canDelete = window.Booker.voter.remove_candidate || candidate.created;
     let showEdit = false;
 
     function deleteCandidate() {

@@ -26,7 +26,10 @@ class Booker {
         });
 
         if (assignment) {
-            return assignment.role.permissions as BookerPermissions;
+            return {
+                ...this.denyAll(),
+                ...(assignment.role.permissions as BookerPermissions)
+            };
         }
         return this.denyAll();
     }
@@ -160,7 +163,12 @@ class Booker {
             moduleName: this.moduleName,
             actions: this.allowedActions,
             assignments: await prisma.bookerAssignment.findMany(whereThisBooker),
-            roles: await prisma.bookerRole.findMany(whereThisBooker)
+            roles: await prisma.bookerRole.findMany({
+                ...whereThisBooker,
+                orderBy: {
+                    name: 'asc'
+                }
+            })
         };
     }
 }
@@ -174,15 +182,16 @@ export const echoBooker = new Booker('echo', [
 ]);
 
 export const voterBooker = new Booker('voter', [
+    'view',
     'vote',
     //the ability to remove other user's candidates. you can always remove your own.
     'remove_candidate',
     'rename_race',
     'remove_race',
     'reset_votes',
+    'update_candidate',
     'add_race',
     'add_candidate',
-    'view',
     'add_image',
     'remove_image'
 ])

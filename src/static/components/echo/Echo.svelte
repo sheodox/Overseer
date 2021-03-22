@@ -28,10 +28,12 @@
             {#if $echoOnline}
                 <div class="f-row justify-content-between align-items-center">
                     <EchoStatus />
-                    <button on:click={() => page('/echo/upload')}>
-                        <Icon icon="upload" />
-                        New Upload
-                    </button>
+                    {#if window.Booker.echo.upload}
+                        <button on:click={() => page('/echo/upload')}>
+                            <Icon icon="upload" />
+                            New Upload
+                        </button>
+                    {/if}
                 </div>
             {:else}
                 <div class="f-row justify-content-center">

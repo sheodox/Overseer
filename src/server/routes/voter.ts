@@ -153,7 +153,7 @@ module.exports = function(io: Server) {
                 }
             },
             updateCandidate: async (candidateId, name, notes) => {
-                if (await voterBooker.check(userId, 'add_candidate')) {
+                if (await voterBooker.check(userId, 'update_candidate')) {
                     const result = await voter.updateCandidate(candidateId, name, notes);
 
                     if ('error' in result) {
