@@ -21,7 +21,7 @@
     {#if !$echoInitialized}
         <PageSpinner />
     {:else}
-        <div class="panel panel-body bordered f-column">
+        <div class="f-column">
             <h1>
                 Uploads
             </h1>

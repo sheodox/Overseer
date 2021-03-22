@@ -1,6 +1,5 @@
 <style>
     h1 {
-        font-size: 1.1rem;
         margin: 0 1rem 0 0;
     }
     .centered {
@@ -12,7 +11,7 @@
     }
 </style>
 
-<div class="panel panel-body">
+<div>
     <div class="f-row justify-content-between align-items-center">
         <h1>Echo - Recent Uploads</h1>
         <Link href="/echo">

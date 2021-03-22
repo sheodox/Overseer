@@ -2,7 +2,7 @@
     h2 {
         margin: 0.5rem;
     }
-    .panel {
+    .preview {
         margin: 1rem;
         width: 35rem;
     }
@@ -12,7 +12,7 @@
     }
 </style>
 
-<div class="panel">
+<div class="preview">
     <div class="f-row justify-content-between align-items-center">
         <h2>{race.name}</h2>
         <Link href="/voter/{race.id}">

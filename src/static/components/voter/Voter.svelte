@@ -11,23 +11,21 @@
     <PageSpinner />
 {:else}
     <div class="page-content">
-        <div class="panel panel-body bordered">
-            <div class="f-row justify-content-between align-items-center">
-                <h1>
-                    Races
-                </h1>
-                {#if window.Booker.voter.add_race}
-                    <button on:click={() => showAddRace = true}>
-                        <Icon icon="plus" />
-                        Add Race
-                    </button>
-                {/if}
-            </div>
-            <div class="f-row f-wrap justify-content-center">
-                {#each $voterRaces as race}
-                    <RacePreview {race} />
-                {/each}
-            </div>
+        <div class="f-row justify-content-between align-items-center">
+            <h1>
+                Races
+            </h1>
+            {#if window.Booker.voter.add_race}
+                <button on:click={() => showAddRace = true}>
+                    <Icon icon="plus" />
+                    Add Race
+                </button>
+            {/if}
+        </div>
+        <div class="f-row f-wrap justify-content-center">
+            {#each $voterRaces as race}
+                <RacePreview {race} />
+            {/each}
         </div>
     </div>
 {/if}

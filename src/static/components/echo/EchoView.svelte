@@ -1,7 +1,9 @@
 <style>
-    .panel {
+    .page-content {
         margin: 1rem;
         padding: 1rem;
+        width: 50rem;
+        max-width: 95%;
     }
     .notes {
         white-space: pre-line;
@@ -11,10 +13,6 @@
     }
     .tag {
         margin: 0.2rem;
-    }
-    .viewer {
-        width: 50rem;
-        max-width: 95%;
     }
     .partially-hidden {
         transition: max-width 0.6s;
@@ -34,9 +32,9 @@
 
 {#if !echoItem && $echoInitialized}
     <p>Couldn't find an upload for this ID, did it get deleted?</p>
-    <p><Link href="/echo">Back to the uplaod list.</Link></p>
+    <p><Link href="/echo">Back to the upload list.</Link></p>
 {:else if echoItem}
-    <div class="panel bordered viewer">
+    <div class="page-content">
         <div class="f-row justify-content-between align-items-center">
             <h1>{echoItem.name}</h1>
             {#if hasOptionPermission}
@@ -89,16 +87,13 @@
         <p class="notes">
             {@html echoItem.notesRendered}
         </p>
-        {#if window.Booker.echo.download && !echoItem.uploading && $echoOnline}
-            <!-- [download] only works on same-origin URLs, which the echo server probably isn't,
-             so to prevent unwanted unloading of the app (and terminating of the websocket) we need
-             to tell it to open in a new tab. -->
-            <a target="_blank" href={`${echoItem.downloadUrl}?token=${$echoDownloadToken}`} class="fw-bold">
+        <EchoDownloadLink {echoItem}>
+            <span class="fw-bold">
                 <Icon icon="download" />
                 Download
                 (<FileSize {echoItem} />)
-            </a>
-        {/if}
+            </span>
+        </EchoDownloadLink>
     </div>
 {/if}
 
@@ -124,10 +119,11 @@
     import {Icon, MenuButton, Modal} from 'sheodox-ui';
     import {pageName} from "../stores/app";
     import {activeRouteParams} from "../stores/routing";
-    import {echoInitialized, echoItems, echoDownloadToken, echoOnline, echoOps} from "../stores/echo";
+    import {echoInitialized, echoItems, echoOps} from "../stores/echo";
     import FileSize from "./FileSize.svelte";
     import UserBubble from "../UserBubble.svelte";
     import Link from "../Link.svelte";
+    import EchoDownloadLink from "./EchoDownloadLink.svelte";
 
     const hasOptionPermission = window.Booker.echo.update || window.Booker.echo.delete
     let showDeleteConfirm = false;

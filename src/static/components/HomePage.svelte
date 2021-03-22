@@ -7,7 +7,7 @@
     }
 </style>
 
-<div class="panel bordered panel-body f-row f-wrap">
+<div class="f-row f-wrap">
     {#if window.Booker.echo.view}
         <div class="app-preview">
             <RecentUploads />

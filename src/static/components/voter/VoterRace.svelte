@@ -1,5 +1,5 @@
 <style>
-    .panel {
+    .page-content {
         margin: 1rem;
         max-width: 60rem;
     }
@@ -13,7 +13,7 @@
 
 {#if $voterSelectedRace}
     <div
-        class="page-content panel panel-body bordered f-column"
+        class="page-content f-column"
         on:mouseenter={() => $sortLocked = true}
         on:mouseleave={() => $sortLocked = false}
     >

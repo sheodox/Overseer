@@ -3,7 +3,7 @@
         display: flex;
         flex-direction: row;
     }
-    .panel {
+    .page-content {
         margin: 1rem;
         padding: 1rem;
     }
@@ -22,48 +22,46 @@
 </style>
 
 <div class="page-content">
-    <div class="panel bordered">
-        <form on:submit|preventDefault={submit}>
-            <h1>{echoItem ? echoItem.name : 'Echo Upload'}</h1>
-            <EchoFileSelect bind:file {mode} />
-            <div class="details">
-                <div class="column f-1">
-                    <label>
-                        Name
-                        <br>
-                        <input bind:value={name} required />
-                    </label>
+    <form on:submit|preventDefault={submit}>
+        <h1>{echoItem ? echoItem.name : 'Echo Upload'}</h1>
+        <EchoFileSelect bind:file {mode} />
+        <div class="details">
+            <div class="column f-1">
+                <label>
+                    Name
                     <br>
-                    <label>
-                        Tags
-                        <br>
-                        <input bind:value={tags} />
-                    </label>
+                    <input bind:value={name} required />
+                </label>
+                <br>
+                <label>
+                    Tags
                     <br>
-                    <TagCloud bind:tags />
-                </div>
-                <div class="column f-2">
-                    <label for="echo-notes">Notes</label>
-                    <br>
-                    <textarea id="echo-notes" bind:value={notes}></textarea>
-                    <p>
-                        <Icon icon="info-circle" /> Notes can use markdown!
-                    </p>
-                </div>
+                    <input bind:value={tags} />
+                </label>
+                <br>
+                <TagCloud bind:tags />
             </div>
-            <div class="f-row justify-content-end">
-                <button disabled={!name || (mode === 'upload' && !file)}>
-                    {#if mode === 'upload'}
-                        <Icon icon="upload" />
-                        Upload
-                    {:else}
-                        <Icon icon="save" />
-                        {file ? 'Update and upload' : 'Update'}
-                    {/if}
-                </button>
+            <div class="column f-2">
+                <label for="echo-notes">Notes</label>
+                <br>
+                <textarea id="echo-notes" bind:value={notes}></textarea>
+                <p>
+                    <Icon icon="info-circle" /> Notes can use markdown!
+                </p>
             </div>
-        </form>
-    </div>
+        </div>
+        <div class="f-row justify-content-end">
+            <button disabled={!name || (mode === 'upload' && !file)}>
+                {#if mode === 'upload'}
+                    <Icon icon="upload" />
+                    Upload
+                {:else}
+                    <Icon icon="save" />
+                    {file ? 'Update and upload' : 'Update'}
+                {/if}
+            </button>
+        </div>
+    </form>
 </div>
 
 <script>
