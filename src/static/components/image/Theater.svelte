@@ -1,6 +1,6 @@
 <style>
     .theater {
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.9);
         position: fixed;
         z-index: 100;
         top: 0;
@@ -36,19 +36,23 @@
         <Icon icon="times" />
         Close
     </button>
-    <img class="selected-image align-self-center"
-         src="/image/{selectedImage.id}/large"
-         alt={selectedImage.alt || ''} on:click={close}/>
-    <div class="other-images">
-        {#each images as image (image.id)}
-            <button
-                aria-pressed={selectedImage.id === image.id}
-                on:click|stopPropagation={() => selectedImage = image}
-            >
-                <img src="/image/{image.id}/small" alt={image.alt || ''} />
-                <span class="sr-only">View this image full size</span>
-            </button>
-        {/each}
+    <!-- space out the selected image and selection switcher so the switcher doesn't
+    move vertically based on the selected image's height -->
+    <div class="f-column justify-content-between f-1">
+        <img class="selected-image align-self-center"
+             src="/image/{selectedImage.id}/large"
+             alt={selectedImage.alt || ''} on:click={close}/>
+        <div class="other-images">
+            {#each images as image (image.id)}
+                <button
+                    aria-pressed={selectedImage.id === image.id}
+                    on:click|stopPropagation={() => selectedImage = image}
+                >
+                    <img src="/image/{image.id}/small" alt={image.alt || ''} />
+                    <span class="sr-only">View this image full size</span>
+                </button>
+            {/each}
+        </div>
     </div>
 </div>
 
@@ -69,7 +73,6 @@
     }
 
     function theaterKeyDown(e) {
-        console.log(e);
         switch (e.key) {
             case 'ArrowLeft':
                 selectImageByOffset(-1);
