@@ -1,5 +1,10 @@
 .idea
 node_modules
+.env
+public
+src/server/**/*.js
+src/shared/**/*.js
+
 config.json
 dist
 userdata.json
