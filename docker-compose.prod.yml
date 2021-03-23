@@ -17,7 +17,7 @@ services:
         read_only: true
       - ../certbot/conf:/etc/letsencrypt
       # mount certs in a static place that nginx can access without a dynamic config file
-      - ../certbot/conf/live/${LETSENCRYPT_DOMAIN}/:/etc/letsencrypt-overseer
+      - ../certbot/conf/live/${LETSENCRYPT_DOMAIN}/:/etc/letsencrypt/overseer/certs
       - ../certbot/www/:/var/www/certbot
     # this is an autorestart to get new certs https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
