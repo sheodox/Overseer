@@ -52,8 +52,14 @@ module.exports = function(io: Server) {
     io.on('connection', async socket => {
         const socketConduit = new SilverConduit(socket, 'voter'),
             singleUserNotifications = new SilverConduit(socket, 'notifications'),
-            user = await users.getUser(SilverConduit.getUserId(socket)),
-            userId = user.id,
+            userId = SilverConduit.getUserId(socket);
+
+        //don't attempt to let users who aren't signed in to connect to the websocket
+        if (!userId) {
+            return;
+        }
+
+        const user = await users.getUser(userId),
             displayName = user.displayName,
             checkPermission = createSafeWebsocketHandler(userId, voterBooker, socket, voterLogger);
 

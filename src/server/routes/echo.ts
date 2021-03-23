@@ -110,6 +110,11 @@ const clientListener = (socket: Socket) => {
     const socketConduit = new Conduit(socket, 'echo'),
         userId = SilverConduit.getUserId(socket);
 
+    //don't attempt to let users who aren't signed in to connect to the websocket
+    if (!userId) {
+        return;
+    }
+
     const checkPermission = createSafeWebsocketHandler(
         userId,
         echoBooker,
