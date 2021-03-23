@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  app:
+    build:
+      target: prod
+    volumes:
+      - type: bind
+        source: ./public
+        target: /usr/src/app/public
+    restart: always
+  nginx:
+    restart: always
+    volumes:
+      - type: bind
+        source: ./config/nginx/nginx.prod.conf.template
+        target: /etc/nginx/overseer.conf.template
+        read_only: true
+      - ../certbot/conf:/etc/letsencrypt
+      - ../certbot/www:/var/www/certbot
+    environment:
+      DOMAIN: $LETSENCRYPT_DOMAIN
+    # this command is a combination of
+    # environment variable substitution (for domains used in cert paths) https://stackoverflow.com/a/57891894/2675087
+    # and autorestart to get new certs https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
+    command: "/bin/sh -c 'envsubst < /etc/nginx/overseer.conf > /etc/nginx/conf.d/default.conf && while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+  postgres:
+    restart: always
+  redis:
+    restart: always
+  prometheus:
+    restart: always
+  grafana:
+    restart: always
+  certbot:
+    image: certbot/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    volumes:
+      - ../certbot/conf:/etc/letsencrypt
+      - ../certbot/www:/var/www/certbot
