@@ -26,7 +26,7 @@
         <label>
             Notes
             <br>
-            <textarea bind:value={notes} on:paste|preventDefault={notesPaste}></textarea>
+            <textarea bind:value={notes} on:paste={notesPaste}></textarea>
         </label>
         <p>
             <Icon icon="info-circle" />
@@ -76,6 +76,7 @@
     function notesPaste(e) {
         const file = e.clipboardData.files[0];
         if (file) {
+            e.preventDefault();
             if (['image/png', 'image/jpeg'].includes(file.type)) {
                 voterOps.candidate.uploadImage(candidate.id, file);
             } else {
