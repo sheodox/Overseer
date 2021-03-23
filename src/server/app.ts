@@ -80,7 +80,7 @@ server.on('listening', () => {
 \\__/  \\/  |___ |  \\ .__/ |___ |___ |  \\ 
                                         
 `);
-    console.log('Listening on ' + port);
+    appLogger.info('Overseer server started!');
 });
 
 initEchoRouter(io);
