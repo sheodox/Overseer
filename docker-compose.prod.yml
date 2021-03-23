@@ -12,17 +12,15 @@ services:
     restart: always
     volumes:
       - type: bind
-        source: ./config/nginx/nginx.prod.conf.template
-        target: /etc/nginx/overseer.conf.template
+        source: ./config/nginx/nginx.prod.conf
+        target: /etc/nginx/nginx.conf
         read_only: true
       - ../certbot/conf:/etc/letsencrypt
-      - ../certbot/www:/var/www/certbot
-    environment:
-      DOMAIN: $LETSENCRYPT_DOMAIN
-    # this command is a combination of
-    # environment variable substitution (for domains used in cert paths) https://stackoverflow.com/a/57891894/2675087
-    # and autorestart to get new certs https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
-    command: "/bin/sh -c 'envsubst < /etc/nginx/overseer.conf > /etc/nginx/conf.d/default.conf && while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+      # mount certs in a static place that nginx can access without a dynamic config file
+      - ../certbot/conf/live/${LETSENCRYPT_DOMAIN}:/etc/letsencrypt-overseer
+      - ../certbot/www/:/var/www/certbot
+    # this is an autorestart to get new certs https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
   postgres:
     restart: always
   redis:
