@@ -14,4 +14,4 @@ RUN npm run build:server:prod
 RUN npm run build:static:prod
 
 # need to build in the CMD, because assets are bind mounted and served by nginx instead
-CMD npx prisma migrate deploy && node src/server/app.js
+CMD npm run build:prod && npx prisma migrate deploy && node src/server/app.js

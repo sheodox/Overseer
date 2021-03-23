@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build:prod": "npm run build:static:prod && npm run build:server:prod",
     "build:static:prod": "webpack --mode production",
     "build:static:dev": "webpack --mode development --watch",
     "build:server:prod": "tsc",
