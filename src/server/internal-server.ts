@@ -25,7 +25,9 @@ app.get('/logs', (req: AppRequest, res, next) => {
             remoteTransport.flushBuffer()
         );
     }
-    next({status: 401});
+    else {
+        next({status: 401});
+    }
 });
 
 app.use((req, res, next) => {
