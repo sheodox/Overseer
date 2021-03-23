@@ -51,7 +51,7 @@ function entry(app?: string) {
             title: (moduleName ? `${moduleName} - ` : '') + 'Overseer',
             site: 'Overseer',
             module: moduleName,
-            description: 'LAN tools and home control.',
+            description: 'Overseer is a LAN control center!',
         };
 
         if (req.user) {
