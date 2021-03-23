@@ -58,7 +58,7 @@
         scopes = [],
         tokenInput;
 
-    const availableScopes = ['echo', 'voter'];
+    const availableScopes = ['echo', 'voter', 'logs'];
 
     function generate() {
         adminConduit.emit('generate-integration-token', name, scopes, (tkn) => {

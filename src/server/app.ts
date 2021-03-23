@@ -4,10 +4,14 @@ import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import favicon from 'serve-favicon';
+import {prisma} from "./db/prisma";
 import path from 'path';
 import expressSession from 'express-session';
 import {Server as SocketIOServer} from 'socket.io';
 import {createClient as createRedisClient} from 'redis';
+import {requestId} from "./util/request-id";
+import {appLogger} from "./util/logger";
+import {errorHandler} from "./util/error-handler";
 import connectRedis from 'connect-redis';
 
 const app = express(),
@@ -26,6 +30,7 @@ const app = express(),
     images = require('./routes/images'),
     bodySizeLimit = '15mb';
 
+app.use(requestId);
 app.use(bodyParser.raw({
     type: 'image/png',
     limit: bodySizeLimit
@@ -84,3 +89,21 @@ settings(io);
 app.use(admin(io));
 app.use(images);
 app.use(require('./routes'));
+
+app.use((req, res, next) => next({status: 404}))
+app.use(errorHandler(false));
+
+process.on('unhandledRejection', (error) => {
+    appLogger.error(`Unhandled rejection`, {
+        error
+    });
+});
+
+process.on('uncaughtException', async error => {
+    console.error('Unhandled Exception!', error);
+    await prisma.$disconnect();
+
+    process.exit(1);
+})
+
+import './internal-server'

@@ -10,6 +10,8 @@ import {Prisma} from '@prisma/client';
 import {SilverConduit} from "../util/silver-conduit";
 import {getManifest} from "../util/route-common";
 import {createIntegrationToken} from "../util/integrations";
+import {safeAsyncRoute} from "../util/error-handler";
+import {adminLogger} from "../util/logger";
 
 const router = Router(),
     bookers = {
@@ -30,11 +32,11 @@ router.use('/admin', (req: AppRequest, res, next) => {
     }
 });
 
-router.get('/admin', async (req, res) => {
+router.get('/admin', safeAsyncRoute(async (req, res) => {
     res.render('admin', {
         manifest: await getManifest()
     });
-});
+}));
 router.get('/admin/main.js', (req, res) => {
     res.sendFile(path.join(__dirname, '../admin/main.js'));
 });
@@ -42,33 +44,44 @@ router.get('/admin/main.js', (req, res) => {
 function bindAdminSocketListeners(socket: Socket) {
     const adminConduit = new Conduit(socket, 'admin');
 
+    function safeHandler(handler: (...args: any) => Promise<any>) {
+        return async (...args: any) => {
+            try {
+                await handler(...args);
+            } catch (error) {
+                adminLogger.error({
+                    error
+                });
+            }
+        }
+    }
     adminConduit.on({
-        init: async () => {
+        init: safeHandler(async () => {
             await dump(socket);
-        },
-        'new-role': async (module: BookerModule, roleName) => {
+        }),
+        'new-role': safeHandler(async (module: BookerModule, roleName) => {
             await bookers[module].newRole(roleName);
             await dump(socket);
-        },
-        'assign-role': async (module: BookerModule, userId, roleId) => {
+        }),
+        'assign-role': safeHandler(async (module: BookerModule, userId, roleId) => {
             await bookers[module].assignRole(userId, roleId);
             await dump(socket);
-        },
-        'toggle-action': async (module: BookerModule, roleId, action) => {
+        }),
+        'toggle-action': safeHandler(async (module: BookerModule, roleId, action) => {
             await bookers[module].toggleAction(roleId, action);
             await dump(socket);
-        },
-        'delete-role': async (module: BookerModule, roleId) => {
+        }),
+        'delete-role': safeHandler(async (module: BookerModule, roleId) => {
             await bookers[module].deleteRole(roleId);
             await dump(socket);
-        },
-        'rename-role': async (module: BookerModule, roleId, newName) => {
+        }),
+        'rename-role': safeHandler(async (module: BookerModule, roleId, newName) => {
             await bookers[module].renameRole(roleId, newName);
             await dump(socket);
-        },
-        'generate-integration-token': async (name: string, scopes: string[], done) => {
+        }),
+        'generate-integration-token': safeHandler(async (name: string, scopes: string[], done) => {
             done(createIntegrationToken(name, scopes));
-        }
+        })
      });
 }
 

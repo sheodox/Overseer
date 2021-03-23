@@ -5,6 +5,7 @@ import {isReqSuperUser} from "../util/superuser";
 import {AppRequest} from "../types";
 import {getManifest} from "../util/route-common";
 import {users} from "../db/users";
+import {safeAsyncRoute} from "../util/error-handler";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ for (const app of Object.keys(overseerApps)) {
 }
 
 function entry(app?: string) {
-    return async function entry(req: AppRequest, res: Response) {
+    return safeAsyncRoute(async function entry(req: AppRequest, res: Response) {
         const id = req.user ? req.user.id : null,
             permissions = serializeJavascript({
                 voter: await voterBooker.getUserPermissions(id),
@@ -73,7 +74,7 @@ function entry(app?: string) {
                 permissions
             });
         }
-    }
+    })
 }
 
 module.exports = router;

@@ -1,7 +1,7 @@
-import {AppRequest} from "../types";
-import {Router, Response} from 'express';
+import {Router} from 'express';
 import {imageStore} from "../db/image-store";
 import {voterBooker} from "../db/booker";
+import {safeAsyncRoute} from "../util/error-handler";
 
 const router = Router(),
 	//a mapping of a 'source' as stored in the image table to the booker for which it matches,
@@ -11,7 +11,7 @@ const router = Router(),
 		voter: voterBooker
 	};
 
-router.get('/image/:id/:size', async (req: AppRequest, res: Response) => {
+router.get('/image/:id/:size', safeAsyncRoute(async (req, res, next) => {
 	const {size, id} = req.params;
 
 	let image, imageSource;
@@ -33,9 +33,10 @@ router.get('/image/:id/:size', async (req: AppRequest, res: Response) => {
 		res.send(image);
 	}
 	else {
-		res.status(403)
-		res.send(`You don't have permissions to access that image`);
+		next({
+			status: 403
+		})
 	}
-});
+}));
 
 module.exports = router;

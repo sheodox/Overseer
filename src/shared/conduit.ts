@@ -1,7 +1,7 @@
 import {Server, Socket} from "socket.io";
 
 interface ConduitBindings {
-    [eventName: string]: (...args: any[]) => any
+    [eventName: string]: (...args: any) => any
 }
 
 export class Conduit {

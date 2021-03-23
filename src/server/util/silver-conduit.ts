@@ -1,5 +1,43 @@
 import {Conduit} from '../../shared/conduit';
 import {Server, Socket} from "socket.io";
+import {Booker} from "../db/booker";
+import {Logger} from "winston";
+import {ToastOptions} from "../types";
+
+export function createSafeWebsocketHandler(
+    userId: string,
+    booker: Booker,
+    socket: Socket,
+    logger: Logger
+) {
+    const notificationConduit = new Conduit(socket, 'notifications');
+
+    function errorToast(message: string) {
+        notificationConduit.emit('notification', {
+            variant: 'error',
+            title: 'Error',
+            message,
+        } as ToastOptions)
+    }
+
+    return (action: string, permittedHandler: (...args: any) => Promise<any>) => {
+        return async (...args: any) => {
+            try {
+                if (await booker.check(userId, action)) {
+                    await permittedHandler(...args);
+                } else {
+                    errorToast(`You don't have permission to do that.`)
+                }
+            } catch (e) {
+                logger.error(`Error occurred processing handler for action "${action}"`, {
+                    userId: userId,
+                    error: e
+                });
+                errorToast('Server error!');
+            }
+        };
+    }
+}
 
 /**
  * Back end socket helpers, "Silver" because silver is very conductive :D

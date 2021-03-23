@@ -1,5 +1,5 @@
 import {echo} from '../db/echo';
-import {SilverConduit} from '../util/silver-conduit';
+import {createSafeWebsocketHandler, SilverConduit} from '../util/silver-conduit';
 import {Server, Socket} from "socket.io";
 import {Conduit} from "../../shared/conduit";
 import {Echo as EchoItem} from "@prisma/client";
@@ -10,6 +10,7 @@ import {createIntegrationToken, verifyIntegrationToken} from "../util/integratio
 import {validate as uuidValidate} from 'uuid';
 import {users} from "../db/users";
 import MarkdownIt from "markdown-it";
+import {echoIntegrationLogger, echoLogger} from "../util/logger";
 const md = new MarkdownIt(),
     echoServerHost = process.env.ECHO_SERVER_HOST;
 
@@ -109,53 +110,46 @@ const clientListener = (socket: Socket) => {
     const socketConduit = new Conduit(socket, 'echo'),
         userId = SilverConduit.getUserId(socket);
 
+    const checkPermission = createSafeWebsocketHandler(
+        userId,
+        echoBooker,
+        socket,
+        echoLogger
+    );
+
     socketConduit.on({
-        delete: async (id: string) => {
-            if (await echoBooker.check(userId, 'delete')) {
-                echoServerSocket.emit('delete', id, async () => {
-                    await echo.delete(id)
-                    broadcast();
-                });
-            }
-        },
-        init: async () => {
-            if (await echoBooker.check(userId, 'view')) {
-                if (await echoBooker.check(userId, 'download')) {
-                    const downloadToken = createIntegrationToken(
-                        `Download token for user ${userId}`,
-                        ['echo-download']
-                    );
-                    socketConduit.emit('refresh', await prepareData());
-                    socketConduit.emit('downloadToken', downloadToken);
-                }
-                else {
-                    socketConduit.emit('refresh', await prepareData());
-                }
-            }
-        },
-        update: async (id, updatedData) => {
-            if (await echoBooker.check(userId, 'update')) {
-                await echo.update(id, updatedData);
+        delete: checkPermission('delete', async (id: string) => {
+            echoServerSocket.emit('delete', id, async () => {
+                await echo.delete(id)
                 broadcast();
-            }
-        },
-        downloaded: async id => {
+            });
+        }),
+        init: checkPermission('view', async () => {
+            socketConduit.emit('refresh', await prepareData());
+
+            // if they're able to download things, give them a download token!
             if (await echoBooker.check(userId, 'download')) {
-                await echo.downloaded(id);
+                const downloadToken = createIntegrationToken(
+                    `Download token for user ${userId}`,
+                    ['echo-download']
+                );
+                socketConduit.emit('downloadToken', downloadToken);
             }
-        },
-        new: async (data, done) => {
-            if (echoOnline && await echoBooker.check(userId, 'upload')) {
-                const item = await echo.new(data, userId);
-                //tell echo it can expect an upload with this ID, it will deny uploads for anything it's not expecting
-                echoServerSocket.emit('expect-upload', item.id, () => {
-                    done(item.id, `${echoServerHost}/upload/${item.id}`);
-                });
-                broadcast();
-            }
-        },
-        updateFile: async (id, data, done) => {
-            if (uuidValidate(id) && echoOnline && await echoBooker.check(userId, 'upload')) {
+        }),
+        update: checkPermission('update', async (id, updatedData) => {
+            await echo.update(id, updatedData);
+            broadcast();
+        }),
+        new: checkPermission('upload', async (data, done) => {
+            const item = await echo.new(data, userId);
+            //tell echo it can expect an upload with this ID, it will deny uploads for anything it's not expecting
+            echoServerSocket.emit('expect-upload', item.id, () => {
+                done(item.id, `${echoServerHost}/upload/${item.id}`);
+            });
+            broadcast();
+        }),
+        updateFile: checkPermission('upload', async (id, data, done) => {
+            if (uuidValidate(id) && echoOnline) {
                 await echo.updateFile(id, data);
                 broadcast();
                 //tell echo it can expect an upload with this ID, it will deny uploads for anything it's not expecting
@@ -163,37 +157,50 @@ const clientListener = (socket: Socket) => {
                     done(id, `${echoServerHost}/upload/${id}`);
                 });
             }
-        }
+        })
     });
 };
 
 //connection to echo server
 const echoListener = (socket: Socket) => {
-    console.log('Echo server connection established');
+    echoIntegrationLogger.info(`Echo server connection established at ${new Date().toLocaleString()}`);
     echoOnline = true;
     broadcast();
+
+    function safeHandler(handler: (...args: any) => Promise<any>) {
+        return async (...args: any) => {
+            try {
+                await handler(...args);
+            } catch (error) {
+                echoIntegrationLogger.error('Echo server error!', {
+                    error
+                })
+            }
+        }
+    }
 
     echoServerSocket = socket;
     echoServerSocket.on('disconnect', () => {
         echoOnline = false;
+        echoIntegrationLogger.info(`Echo server connection lost at ${new Date().toLocaleString()}`);
         broadcast();
     });
 
-    echoServerSocket.on('verify-download-token', async (token, id, done) => {
+    echoServerSocket.on('verify-download-token', safeHandler(async (token, id, done) => {
         const allowed = token && verifyIntegrationToken(token, 'echo-download');
 
         done({
             allowed,
             name: allowed ? (await echo.getItem(id))?.name : ''
         });
-    });
+    }));
 
-    echoServerSocket.on('downloaded', async id => {
+    echoServerSocket.on('downloaded', safeHandler(async id => {
         await echo.downloaded(id);
         broadcast();
-    })
+    }))
 
-    echoServerSocket.on('uploaded', async (id, data) => {
+    echoServerSocket.on('uploaded', safeHandler(async (id, data) => {
         //if it's a brand new game send a notification to everyone
         const uploadedItem = await echo.uploadFinished(id, data);
         if (uploadedItem) {
@@ -205,13 +212,13 @@ const echoListener = (socket: Socket) => {
             });
         }
         broadcast();
-    });
+    }));
 
     //on connection events make sure we're always up to date
-    echoServerSocket.on('refresh', async data => {
+    echoServerSocket.on('refresh', safeHandler(async data => {
         diskUsage = data.diskUsage;
         broadcast();
-    });
+    }));
 };
 
 module.exports = function (io: Server) {

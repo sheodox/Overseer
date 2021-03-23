@@ -1,9 +1,8 @@
 import {prisma} from "./prisma";
-import {cache} from "sharp";
 
 type BookerPermissions = {[action: string]: boolean}
 
-class Booker {
+export class Booker {
     moduleName: string;
     allowedActions: string[];
     private userPermissionsCache = new Map<string, BookerPermissions>();
@@ -146,6 +145,11 @@ class Booker {
                 where: {concern_userId}
             })
         }
+
+        //since we're changing a permission we need to start over with the cache,
+        //lookups are normally quick so no surgical precision needed, just empty and
+        //let it naturally rebuild
+        this.userPermissionsCache.clear();
     }
 
     /**

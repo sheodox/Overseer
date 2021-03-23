@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import {integrationsLogger} from "./logger";
 
 interface IntegrationJWT {
     scopes: string[]
@@ -11,15 +12,18 @@ export function verifyIntegrationToken(token: string, scope: string) {
         const payload = jwt.verify(token, process.env.INTEGRATION_SECRET) as IntegrationJWT,
             hasScope = payload.scopes.includes(scope);
 
-        console.log(`Integration validation for "${scope}"`, {
+        integrationsLogger[hasScope ? 'debug' : 'warning'](`Integration validation for "${scope}"`, {
             name: payload.name,
             scopes: payload.scopes,
-            issued: new Date(payload.issued).toLocaleString()
+            issued: new Date(payload.issued).toLocaleString(),
+            hasScope
         })
-        console.log(`Has scope ${scope}? ${hasScope}`);
         return hasScope;
-    } catch(e) {
-        console.log(`Invalid JWT provided for scope "${scope}": ${token}`);
+    } catch(error) {
+        integrationsLogger.error(`Invalid JWT provided for scope "${scope}"`, {
+            token,
+            error
+        });
         return false;
     }
 }

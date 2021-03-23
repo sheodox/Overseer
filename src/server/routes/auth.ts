@@ -4,6 +4,7 @@ import {OAuth2Strategy} from 'passport-google-oauth';
 import {User} from '@prisma/client';
 import passport from "passport";
 import {users} from "../db/users";
+import {authLogger} from "../util/logger";
 
 const router = Router();
 
@@ -14,6 +15,7 @@ passport.use(new OAuth2Strategy({
     },
     async function(accessToken, refreshToken, profile, done) {
         const user = await users.register(profile);
+        authLogger.info(`User logged in ${user.displayName}`);
         done(null, user);
     }
 ));
