@@ -4,7 +4,7 @@
         margin: 0;
     }
     .details {
-        margin-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
     }
 </style>
 

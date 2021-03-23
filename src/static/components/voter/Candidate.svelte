@@ -74,7 +74,7 @@
             </div>
         </div>
         {#if interactive}
-            <button on:click={() => showDetails = !showDetails} aria-expanded={showDetails}>
+            <button on:click={toggleDetails} aria-expanded={showDetails}>
                 <Icon icon="chevron-{showDetails ? 'up' : 'down'}" />
                 <span class="sr-only">Toggle Showing Details</span>
             </button>
@@ -86,17 +86,23 @@
 </div>
 
 <script>
+    import {createEventDispatcher} from 'svelte';
     import {Icon} from 'sheodox-ui';
     import {voterOps} from "../stores/voter";
     import CandidateVoteBar from "./CandidateVoteBar.svelte";
     import CandidateDetails from "./CandidateDetails.svelte";
+    const dispatch = createEventDispatcher();
+
+    function toggleDetails() {
+        dispatch('details', candidate.id);
+    }
 
     export let candidate;
     export let candidateImages;
     //if you can vote with this, we don't want that to happen on the the race dashboard
     export let interactive = true;
     export let raceMaxVotes;
-    let showDetails = false;
+    export let showDetails;
 
     $: votedUp = candidate.voted === 'up'
     $: votedDown = candidate.voted === 'down'

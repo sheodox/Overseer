@@ -9,9 +9,25 @@
     #new-candidate-form {
         margin: 1rem;
     }
+    .detail-hide-prompt {
+        position: fixed;
+        top: 0.5rem;
+        z-index: 99; /* below the theater */
+        background: var(--panel-bg);
+    }
+    input {
+        font-size: 0.9rem;
+    }
 </style>
 
 {#if $voterSelectedRace}
+    {#if $isViewingDetails}
+        <button class="detail-hide-prompt" on:click={hideAllDetails}>
+            <Icon icon="eye-slash" />
+            Hide details to re-enable automatic ranking.
+        </button>
+    {/if}
+
     <div
         class="page-content f-column"
         on:mouseenter={() => $sortLocked = true}
@@ -19,12 +35,25 @@
     >
         <div class="f-row justify-content-between align-items-center">
             <h1>{$voterSelectedRace?.name}</h1>
-            {#if hasRaceOptionPermissions}
-                <MenuButton>
+            <MenuButton>
                 <span slot="trigger">
                     Options <Icon icon="chevron-down" />
                 </span>
                     <ul slot="menu">
+                        <li>
+                            <button on:click={viewAllDetails}>
+                                <Icon icon="eye" />
+                                View All Details
+                            </button>
+                        </li>
+                        {#if $isViewingDetails}
+                            <li>
+                                <button on:click={hideAllDetails}>
+                                    <Icon icon="eye-slash" />
+                                    Close All Details
+                                </button>
+                            </li>
+                        {/if}
                         {#if window.Booker.voter.reset_votes}
                             <li>
                                 <button on:click={resetVotes}>
@@ -48,7 +77,6 @@
                         {/if}
                     </ul>
                 </MenuButton>
-            {/if}
         </div>
 
         {#if window.Booker.voter.add_candidate}
@@ -63,7 +91,13 @@
         {/if}
 
         {#each $candidates as candidate (candidate.id)}
-            <Candidate {candidate} {raceMaxVotes} candidateImages={$voterSelectedRace.candidateImages}/>
+            <Candidate
+                {candidate}
+                {raceMaxVotes}
+                candidateImages={$voterSelectedRace.candidateImages}
+                showDetails={$candidatesViewingDetails.includes(candidate.id)}
+                on:details={toggleViewingDetails}
+            />
         {/each}
     </div>
 {:else if $voterInitialized}
@@ -96,7 +130,7 @@
 
 <script>
     import {MenuButton, Icon, Modal} from 'sheodox-ui';
-    import {writable} from 'svelte/store';
+    import {writable, derived} from 'svelte/store';
     import {
         createRankedCandidateStore,
         getRaceMaxVotes,
@@ -110,9 +144,31 @@
     import Link from "../Link.svelte";
     import PromptModal from "../PromptModal.svelte";
 
+    const candidatesViewingDetails = writable([]),
+        isViewingDetails = derived(candidatesViewingDetails, candidates => {
+            return candidates.length;
+        });
+
+    function toggleViewingDetails(e) {
+        candidatesViewingDetails.update(viewingCandidates => {
+            return viewingCandidates.includes(e.detail)
+                ? viewingCandidates.filter(id => id !== e.detail)
+                : [...viewingCandidates, e.detail];
+        })
+    }
+
+    function viewAllDetails() {
+        candidatesViewingDetails.set($candidates.map(candidate => candidate.id));
+    }
+
+    function hideAllDetails() {
+        $candidatesViewingDetails = []
+    }
+
     const sortLocked = writable(false),
-        hasRaceOptionPermissions = ['rename_race', 'remove_race', 'reset_votes'].some(action => window.Booker.voter[action]),
-        candidates = createRankedCandidateStore(voterSelectedRace, sortLocked)
+        candidates = createRankedCandidateStore(voterSelectedRace, derived([sortLocked, isViewingDetails], ([locked, viewing]) => {
+            return locked || viewing;
+        }));
 
     let newCandidateName = '',
         showRaceRename = false,
