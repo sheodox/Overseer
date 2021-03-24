@@ -36,6 +36,7 @@ module.exports = {
 		new CopyPlugin([
 			{from: '**/*.svg', context: './src/static'},
 			{from: '**/*.glsl', context: './src/static'},
+			{from: 'robots.txt', context: './src/static'},
 			{from: 'assets/**.*', context: './src/static'},
 			//move fontawesome assets to where they can be served
 			{from: 'fontawesome-free/**/*.{woff,ttf,css,txt,woff2}', context: './node_modules/@fortawesome/'}
