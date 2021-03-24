@@ -168,7 +168,7 @@ const clientListener = (socket: Socket) => {
 
 //connection to echo server
 const echoListener = (socket: Socket) => {
-    echoIntegrationLogger.info(`Echo server connection established at ${new Date().toLocaleString()}`);
+    echoIntegrationLogger.info(`Echo server connection established`);
     echoOnline = true;
     broadcast();
 
