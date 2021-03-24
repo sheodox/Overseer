@@ -1,7 +1,6 @@
 <style>
-    .notes {
+    .notes :global(p) {
         white-space: pre-line;
-        margin: 0;
     }
     .details {
         margin-bottom: 4rem;
@@ -41,10 +40,10 @@
         {/if}
     </div>
 
-    <p class="notes">
+    <div class="notes">
         <!-- notes are markdown rendered HTML -->
         {@html candidate.notesRendered}
-    </p>
+    </div>
     <CandidateImages
         {candidate}
         {candidateImages}
