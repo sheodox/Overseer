@@ -75,7 +75,7 @@
 
     function notesPaste(e) {
         const file = e.clipboardData.files[0];
-        if (file) {
+        if (file && window.Booker.voter.add_image) {
             e.preventDefault();
             if (['image/png', 'image/jpeg'].includes(file.type)) {
                 voterOps.candidate.uploadImage(candidate.id, file);

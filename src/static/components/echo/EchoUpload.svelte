@@ -133,7 +133,7 @@
         }
 
         const file = e.clipboardData.files[0];
-        if (file) {
+        if (file && window.Booker.echo.add_image) {
             e.preventDefault();
             if (['image/png', 'image/jpeg'].includes(file.type)) {
                 echoOps.uploadImage(echoItem.id, file);
