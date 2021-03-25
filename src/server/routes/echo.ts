@@ -210,7 +210,7 @@ const echoListener = (socket: Socket) => {
     echoServerSocket = socket;
     echoServerSocket.on('disconnect', () => {
         echoOnline = false;
-        echoIntegrationLogger.info(`Echo server connection lost at ${new Date().toLocaleString()}`);
+        echoIntegrationLogger.info(`Echo server connection lost`);
         broadcast();
     });
 
