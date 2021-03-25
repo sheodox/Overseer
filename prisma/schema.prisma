@@ -16,7 +16,7 @@ model Echo {
   notes             String      @default("")
   tags              String      @default("")
   // size gets filled out by echo so we won't have it right away
-  size              Int         @default(0)
+  size              BigInt      @default(0)
   downloads         Int         @default(0)
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @default(now())
