@@ -4,6 +4,8 @@
     }
     img {
         width: 7rem;
+    }
+    img.can-zoom {
         cursor: zoom-in;
     }
     .edit-image-container {
@@ -21,6 +23,7 @@
     {#if mode === 'view'}
         {#each images as image (image.id)}
             <button
+                class="can-zoom"
                 on:click={() => albumImageClick(image)}
             >
                 <img src="/image/{image.id}/small" alt={image.alt || ''} />
