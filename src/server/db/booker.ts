@@ -182,7 +182,9 @@ export const echoBooker = new Booker('echo', [
     'upload',
     'download',
     'delete',
-    'update'
+    'update',
+    'add_image',
+    'remove_image',
 ]);
 
 export const voterBooker = new Booker('voter', [

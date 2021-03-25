@@ -5,14 +5,14 @@
     img {
         width: 7rem;
     }
-    img.can-zoom {
+    .can-zoom {
         cursor: zoom-in;
     }
-    .edit-image-container {
+    .image-container {
         position: relative;
         margin: 0.5rem;
     }
-    .edit-image-container button {
+    button.delete-image {
         position: absolute;
         top: 0.2rem;
         right: 0.2rem;
@@ -20,31 +20,26 @@
 </style>
 
 <div class="f-row f-wrap">
-    {#if mode === 'view'}
-        {#each images as image (image.id)}
+    {#each images as image (image.id)}
+        <div class="image-container">
             <button
                 class="can-zoom"
                 on:click={() => albumImageClick(image)}
             >
                 <img src="/image/{image.id}/small" alt={image.alt || ''} />
             </button>
-        {/each}
-    {/if}
-    {#if mode === 'edit'}
-        {#each images as image (image.id)}
-            <div class="edit-image-container">
-                <img src="/image/{image.id}/small" alt={image.alt || ''} />
+            {#if mode === 'edit'}
                 <button
-                    class="danger"
+                    class="danger delete-image"
                     title="Delete image"
                     on:click={() => deleteImage(image)}
                 >
                     <Icon icon="trash" noPadding={true} />
                     <span class="sr-only">Delete image</span>
                 </button>
-            </div>
-        {/each}
-    {/if}
+            {/if}
+        </div>
+    {/each}
 </div>
 
 {#if showTheater}

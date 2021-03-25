@@ -157,7 +157,9 @@ class Voter {
     }
     async uploadImage(candidateId: string, creatorId: string, image: Buffer, mimeType: string) {
         const candidate = await prisma.candidate.findUnique({
-                where: {id: candidateId}
+                where: {id: candidateId},
+                //make sure this candidate still exists before generating any images
+                rejectOnNotFound: true
             }),
             imageId = await imageStore.generate({
                 image,

@@ -2,6 +2,7 @@ import {tags as formatTags} from '../../shared/formatters';
 import {prisma} from "./prisma";
 import {Prisma} from '@prisma/client';
 import Ajv from 'ajv';
+import {imageStore} from "./image-store";
 const ajv = new Ajv();
 
 type EchoItem = Prisma.EchoGetPayload<{}>
@@ -37,7 +38,7 @@ class Echo {
      * @returns {Promise<void>}
      */
     async list() {
-        return (await prisma.echo.findMany()).sort((a, b) => {
+        return (await prisma.echo.findMany({include: {images: true}})).sort((a, b) => {
             //prisma doesn't yet support case insensitive sorting, so we need to make up for it
             const aName = a.name.toLowerCase(),
                 bName = b.name.toLowerCase();
@@ -77,9 +78,22 @@ class Echo {
         return await prisma.echo.create({data});
     }
     async delete(id: string) {
-        await prisma.echo.delete({
-            where: {id}
+        const images = await prisma.echoImage.findMany({
+            where: {echoId: id},
+            select: {imageId: true}
         });
+        const itemDelete = prisma.echo.delete({
+                where: {id}
+            }),
+            imagesDelete = prisma.echoImage.deleteMany({
+                where: {echoId: id}
+            });
+
+        await prisma.$transaction([
+            imagesDelete,
+            itemDelete
+        ]);
+        await Promise.all(images.map(image => imageStore.delete(image.imageId)))
     }
 
     async getItem(id: string) {
@@ -93,7 +107,6 @@ class Echo {
      * @returns {Promise<*>}
      */
     async update(id: string, data: Partial<EchoItem>) {
-        console.log(data);
         if (!validateUserEditableEchoData(data)) {
             throw new Error('Validation error!');
         }
@@ -143,6 +156,37 @@ class Echo {
                 downloads: {increment: 1}
             }
         })
+    }
+
+    async uploadImage(echoId: string, creatorId: string, image: Buffer, mimeType: string) {
+        //before trying to generate an image make sure this echo item exists.
+        //we won't be able to make the echoImage because of the foreign key constraint
+        //but we'd still be generating images that are immediately orphaned
+        const echoItem = await prisma.echo.findUnique({
+                where: {id: echoId},
+                rejectOnNotFound: true
+            }),
+            imageId = await imageStore.generate({
+                image,
+                mimeType,
+                source: 'echo',
+            });
+
+        await prisma.echoImage.create({
+            data: {
+                echoId,
+                creatorId,
+                imageId
+            }
+        })
+    }
+    async deleteImage(echoImageId: string) {
+        const echoImage = await prisma.echoImage.delete({
+            where: {
+                id: echoImageId
+            }
+        });
+        await imageStore.delete(echoImage.imageId);
     }
 }
 

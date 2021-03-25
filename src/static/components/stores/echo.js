@@ -6,6 +6,7 @@ import {createProgressToast, updateToast} from 'sheodox-ui';
 import {socket} from "../../socket";
 import page from 'page';
 import {activeQueryParams, activeRoute} from "./routing";
+import {uploadImage} from "./app";
 const echoConduit = new Conduit(socket, 'echo');
 
 export const echoInitialized = writable(false);
@@ -81,6 +82,16 @@ export const echoOps = {
     },
     update(id, updatedEchoProperties) {
         echoConduit.emit('update', id, updatedEchoProperties);
+    },
+    uploadImage: (id, file) => {
+        uploadImage(
+            'Echo Image Upload',
+            file,
+            `/echo/${id}/image-upload`
+        )
+    },
+    deleteImage: (id) => {
+        echoConduit.emit('deleteImage', id);
     },
     /**
      * Saves metadata changes and file changes, then resolves with an ID for this echo item.

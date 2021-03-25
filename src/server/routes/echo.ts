@@ -4,16 +4,35 @@ import {Server, Socket} from "socket.io";
 import {Conduit} from "../../shared/conduit";
 import {Echo as EchoItem} from "@prisma/client";
 import {echoBooker} from "../db/booker";
-import {ToastOptions} from "../types";
+import {AppRequest, ToastOptions} from "../types";
 import {tags as formatTags} from "../../shared/formatters";
 import {createIntegrationToken, verifyIntegrationToken} from "../util/integrations";
 import {validate as uuidValidate} from 'uuid';
 import {users} from "../db/users";
 import MarkdownIt from "markdown-it";
 import {echoIntegrationLogger, echoLogger} from "../util/logger";
+import {safeAsyncRoute} from "../util/error-handler";
+import {Response, Router} from "express";
 const md = new MarkdownIt(),
+    router = Router(),
     echoServerHost = process.env.ECHO_SERVER_HOST;
 
+router.post('/echo/:echoId/image-upload', safeAsyncRoute(async (req: AppRequest, res: Response, next) => {
+    const contentType = req.get('Content-Type');
+    if (req.user && await echoBooker.check(req.user.id, 'add_image')) {
+        await echo.uploadImage(
+            req.params.echoId,
+            req.user.id,
+            req.body,
+            contentType
+        );
+        res.send(null);
+        await broadcast();
+    }
+    else {
+        next({status: 401})
+    }
+}));
 let echoOnline = false,
     echoConduit: SilverConduit,
     notificationConduit: SilverConduit,
@@ -162,6 +181,10 @@ const clientListener = (socket: Socket) => {
                     done(id, `${echoServerHost}/upload/${id}`);
                 });
             }
+        }),
+        deleteImage: checkPermission('remove_image', async (id) => {
+            await echo.deleteImage(id);
+            broadcast();
         })
     });
 };
@@ -245,4 +268,6 @@ module.exports = function (io: Server) {
         .on('connection', (socket: Socket) => {
             echoListener(socket);
         });
+
+    return router;
 };

@@ -51,13 +51,24 @@
             <div class="column f-2">
                 <label for="echo-notes">Notes</label>
                 <br>
-                <textarea id="echo-notes" bind:value={notes}></textarea>
+                <textarea id="echo-notes" bind:value={notes} on:paste={notesPaste} ></textarea>
                 <p>
                     <Icon icon="info-circle" /> Notes can use markdown!
+                    {#if window.Booker.echo.add_image}
+                        {mode === 'edit' ? 'You can add images by pasting them into the Notes box.' : 'You can attach images after starting the upload.'}
+                    {/if}
                 </p>
             </div>
         </div>
         <div class="f-row justify-content-end">
+            {#if echoItem}
+                <Link href={echoItem.path}>
+                    <span class="button">
+                        <Icon icon="chevron-left" />
+                        Back
+                    </span>
+                </Link>
+            {/if}
             <button disabled={!name || (mode === 'upload' && !file)}>
                 {#if mode === 'upload'}
                     <Icon icon="upload" />
@@ -69,16 +80,22 @@
             </button>
         </div>
     </form>
+
+    {#if echoItem && window.Booker.echo.remove_image}
+        <EchoImages {echoItem} mode="edit" on:delete={deleteImage} />
+    {/if}
 </div>
 
 <script>
-    import {Icon} from 'sheodox-ui';
+    import {createAutoExpireToast, Icon} from 'sheodox-ui';
     import EchoFileSelect from "./EchoFileSelect.svelte";
-    import {echoItems, echoOps, submitChanges, submitNewUpload} from "../stores/echo";
+    import {echoItems, echoOps} from "../stores/echo";
     import {pageName} from "../stores/app";
     import {activeRouteParams} from "../stores/routing";
     import page from 'page';
     import TagCloud from "./TagCloud.svelte";
+    import EchoImages from "./EchoImages.svelte";
+    import Link from "../Link.svelte";
 
     export let mode; //'edit' | 'upload'
 
@@ -105,6 +122,34 @@
     function suggestName(fileName) {
         if (fileName && !name) {
             name = fileName.replace(/\.zip$/, '');
+        }
+    }
+
+    function notesPaste(e) {
+        // can't attach images until an item is created currently, you need an ID to attach them.
+        // this can be changed in the future
+        if (!echoItem) {
+            return;
+        }
+
+        const file = e.clipboardData.files[0];
+        if (file) {
+            e.preventDefault();
+            if (['image/png', 'image/jpeg'].includes(file.type)) {
+                echoOps.uploadImage(echoItem.id, file);
+            } else {
+                createAutoExpireToast({
+                    variant: 'error',
+                    title: 'Upload Error',
+                    messsage: 'Invalid file type!',
+                });
+            }
+        }
+    }
+
+    function deleteImage(e) {
+        if (confirm('Are you sure you want to delete this image?')) {
+            echoOps.deleteImage(e.detail);
         }
     }
 

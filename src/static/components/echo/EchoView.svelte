@@ -94,6 +94,8 @@
                 (<FileSize {echoItem} />)
             </span>
         </EchoDownloadLink>
+
+        <EchoImages mode="view" {echoItem} />
     </div>
 {/if}
 
@@ -124,6 +126,7 @@
     import UserBubble from "../UserBubble.svelte";
     import Link from "../Link.svelte";
     import EchoDownloadLink from "./EchoDownloadLink.svelte";
+    import EchoImages from "./EchoImages.svelte";
 
     const hasOptionPermission = window.Booker.echo.update || window.Booker.echo.delete
     let showDeleteConfirm = false;

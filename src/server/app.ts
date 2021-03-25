@@ -83,7 +83,7 @@ server.on('listening', () => {
     appLogger.info('Overseer server started!');
 });
 
-initEchoRouter(io);
+app.use(initEchoRouter(io));
 app.use(voter(io));
 settings(io);
 app.use(admin(io));
