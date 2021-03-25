@@ -5,9 +5,6 @@
         width: 50rem;
         max-width: 95%;
     }
-    .notes {
-        white-space: pre-line;
-    }
     ul button {
         width: 8rem;
     }
@@ -84,9 +81,9 @@
                 {/each}
             </span>
         </div>
-        <p class="notes">
+        <div class="notes">
             {@html echoItem.notesRendered}
-        </p>
+        </div>
         <EchoDownloadLink {echoItem}>
             <span class="fw-bold">
                 <Icon icon="download" />
