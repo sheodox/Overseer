@@ -43,7 +43,11 @@ let echoOnline = false,
         free: number
     };
 
-interface PreparedEchoItem extends EchoItem {
+interface PreparedEchoItem extends Omit<EchoItem, 'size'> {
+    //Echo stores this as a BigInt because an int in postgres is too small
+    //to handle files over about 2GB, but a regular number in JS is big enough,
+    //we have to convert it this otherwise JSON.stringify() will get mad
+    size: number
     //the url path to view this in Overseer
     path: string
     //the url path to edit this in Overseer
@@ -109,6 +113,7 @@ async function prepareData() {
         items: items.map(item => {
             return {
                 ...item,
+                size: Number(item.size),
                 path: `/echo/${item.id}`,
                 editPath: `/echo/${item.id}/edit`,
                 downloadUrl: `${echoServerHost}/download/${item.id}`,
