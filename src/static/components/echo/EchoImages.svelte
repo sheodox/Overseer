@@ -1,9 +1,11 @@
-<Album {images} {mode} on:delete />
+<Album {images} {mode} {size} {variant} on:delete />
 
 <script>
     import Album from "../image/Album.svelte";
     export let echoItem;
     export let mode;
+    export let size;
+    export let variant;
 
     $: images = echoItem.images
         .map(image => {

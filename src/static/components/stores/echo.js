@@ -106,7 +106,7 @@ export const echoOps = {
                 const formData = new FormData(),
                     startTime = Date.now(),
                     toastId = createProgressToast({
-                        title: 'Echo Upload',
+                        title: `Echo - ${metadata.name}`,
                         message: '',
                         min: 0,
                         max: file.size

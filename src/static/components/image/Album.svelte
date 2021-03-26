@@ -1,15 +1,14 @@
 <style>
     button {
-        padding: 0.2rem;
+        padding: 0;
     }
-    img {
-        width: 7rem;
-    }
-    .can-zoom {
+    .view-theater-button {
         cursor: zoom-in;
     }
     .image-container {
         position: relative;
+    }
+    .strip .image-container {
         margin: 0.5rem;
     }
     button.delete-image {
@@ -17,16 +16,19 @@
         top: 0.2rem;
         right: 0.2rem;
     }
+    .cover .view-theater-button {
+        margin: 0;
+    }
 </style>
 
-<div class="f-row f-wrap">
-    {#each images as image (image.id)}
-        <div class="image-container">
+<div class="f-row f-wrap {variant}">
+    {#each viewableImages as image (image.id)}
+        <div class="image-container {size}">
             <button
-                class="can-zoom"
+                class="view-theater-button"
                 on:click={() => albumImageClick(image)}
             >
-                <img src="/image/{image.id}/small" alt={image.alt || ''} />
+                <img src="/image/{image.id}/{size}" alt={image.alt || ''} />
             </button>
             {#if mode === 'edit'}
                 <button
@@ -53,7 +55,10 @@
     const dispatch = createEventDispatcher();
 
     export let mode = 'view';
+    export let size = 'small'; //ImageStore image size
+    export let variant = 'strip'; //cover (one image at a time) | strip (all images at once)
     export let images
+    $: viewableImages = variant === 'cover' ? images.slice(0, 1) : images;
 
     let selectedImage,
         showTheater = false;
