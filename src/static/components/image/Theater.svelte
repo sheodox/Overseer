@@ -26,6 +26,22 @@
     .other-images img {
         max-width: 7rem;
     }
+    .selected-image-container {
+        position: relative;
+    }
+    .prev {
+        left: 0;
+        cursor: w-resize;
+    }
+    .next {
+        right: 0;
+        cursor: e-resize;
+    }
+    .prev, .next {
+        position: absolute;
+        height: 100%;
+        width: 30vw;
+    }
 </style>
 
 <div
@@ -46,9 +62,18 @@
     <!-- space out the selected image and selection switcher so the switcher doesn't
     move vertically based on the selected image's height -->
     <div class="f-column justify-content-between f-1">
-        <img class="selected-image align-self-center"
-             src={selectedImage.src ? selectedImage.src : `/image/${selectedImage.id}/large`}
-             alt={selectedImage.alt || ''} on:click={close}/>
+        <div class="selected-image-container f-row justify-content-center">
+            <button type="button" class="prev" on:click|stopPropagation={() => selectImageByOffset(-1)}>
+                <span class="sr-only">View previous image</span>
+            </button>
+            <img class="selected-image"
+                 src={selectedImage.src ? selectedImage.src : `/image/${selectedImage.id}/large`}
+                 alt={selectedImage.alt || ''} on:click={close}
+            />
+            <button type="button" class="next" on:click|stopPropagation={() => selectImageByOffset(1)}>
+                <span class="sr-only">View previous image</span>
+            </button>
+        </div>
         <div class="other-images">
             {#each images as image (image.id)}
                 <button
