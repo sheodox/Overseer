@@ -1,4 +1,4 @@
-<Album {images} {mode} {size} {variant} on:delete />
+<Album {images} {mode} {size} {variant} on:delete placeholderText={echoItem.name} />
 
 <script>
     import Album from "../image/Album.svelte";
