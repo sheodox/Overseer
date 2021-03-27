@@ -23,7 +23,7 @@ export function uploadImage(toastTitle, file, postPath) {
         message
     });
 
-    post(postPath, file, {
+    return post(postPath, file, {
         headers: {
             'Content-type': file.type
         },

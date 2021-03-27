@@ -84,7 +84,7 @@ export const echoOps = {
         echoConduit.emit('update', id, updatedEchoProperties);
     },
     uploadImage: (id, file) => {
-        uploadImage(
+        return uploadImage(
             'Echo Image Upload',
             file,
             `/echo/${id}/image-upload`

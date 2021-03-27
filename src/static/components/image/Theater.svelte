@@ -13,6 +13,9 @@
     }
     .selected-image {
         max-width: 90%;
+        /* pending upload images that are in full resolution can be really big!
+         too big and it'll push the image selector off the page */
+        max-height: 75vh;
         cursor: zoom-out;
     }
     .other-images {

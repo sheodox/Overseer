@@ -194,12 +194,21 @@
             const id = await echoOps.upload(null, {
                 name, tags, notes
             }, file)
-
-            await Promise.all(
-                imagesPendingUpload.map(({file}) => echoOps.uploadImage(id, file))
-            )
-
             redirect(id);
+
+            if (!imagesPendingUpload.length) {
+                return;
+            }
+
+            for (const image of imagesPendingUpload) {
+                await echoOps.uploadImage(id, image.file)
+            }
+
+            createAutoExpireToast({
+                variant: 'info',
+                title: `Echo Upload - ${name}`,
+                message: 'All images uploaded!'
+            });
         } else if (file) {
             await echoOps.upload(echoItem.id, {
                 name, tags, notes
