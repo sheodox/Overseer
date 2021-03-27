@@ -55,7 +55,7 @@
                 <p>
                     <Icon icon="info-circle" /> Notes can use markdown!
                     {#if window.Booker.echo.add_image}
-                        {mode === 'edit' ? 'You can add images by pasting them into the Notes box.' : 'You can attach images after starting the upload.'}
+                        You can add images by pasting them into the Notes box.
                     {/if}
                 </p>
             </div>
@@ -81,6 +81,9 @@
         </div>
     </form>
 
+    {#if imagesPendingUpload.length}
+        <p class="text-align-center">{imagesPendingUpload.length} image{imagesPendingUpload.length === 1 ? '' : 's'} will be uploaded.</p>
+    {/if}
     {#if echoItem && window.Booker.echo.remove_image}
         <EchoImages {echoItem} mode="edit" on:delete={deleteImage} />
     {/if}
@@ -99,7 +102,9 @@
 
     export let mode; //'edit' | 'upload'
 
-    let name, tags, notes, file;
+    let name, tags, notes, file,
+        //`file` objects are attached here when attaching images when making a new upload
+        imagesPendingUpload = [];
 
     pageName.set(mode === 'upload' ? 'Upload' : 'Edit');
 
@@ -107,7 +112,6 @@
     $: echoItem = mode === 'edit' ? findItem($echoItems) : null
 
     let seededEditData = false;
-
     function findItem() {
         const item = $echoItems.find(({id}) => id === $activeRouteParams.echoId)
         if (!seededEditData && item) {
@@ -126,17 +130,19 @@
     }
 
     function notesPaste(e) {
-        // can't attach images until an item is created currently, you need an ID to attach them.
-        // this can be changed in the future
-        if (!echoItem) {
-            return;
-        }
-
         const file = e.clipboardData.files[0];
         if (file && window.Booker.echo.add_image) {
             e.preventDefault();
+
             if (['image/png', 'image/jpeg'].includes(file.type)) {
-                echoOps.uploadImage(echoItem.id, file);
+                if (!echoItem) {
+                    imagesPendingUpload = [
+                        ...imagesPendingUpload,
+                        file
+                    ]
+                } else {
+                    echoOps.uploadImage(echoItem.id, file);
+                }
             } else {
                 createAutoExpireToast({
                     variant: 'error',
@@ -162,11 +168,15 @@
         const redirect = id => page(`/echo/${id}`);
 
         if (mode === 'upload') {
-            redirect(
-                await echoOps.upload(null, {
-                    name, tags, notes
-                }, file)
-            );
+            const id = await echoOps.upload(null, {
+                name, tags, notes
+            }, file)
+
+            await Promise.all(
+                imagesPendingUpload.map(file => echoOps.uploadImage(id, file))
+            )
+
+            redirect(id);
         } else if (file) {
             await echoOps.upload(echoItem.id, {
                 name, tags, notes
