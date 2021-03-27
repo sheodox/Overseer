@@ -160,7 +160,7 @@
                 createAutoExpireToast({
                     variant: 'error',
                     title: 'Upload Error',
-                    messsage: 'Invalid file type!',
+                    message: 'Invalid file type!',
                 });
             }
         }
