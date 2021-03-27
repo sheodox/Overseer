@@ -36,5 +36,4 @@
     let files = [];
 
     $: file = files[0];
-    $: console.log(file);
 </script>
