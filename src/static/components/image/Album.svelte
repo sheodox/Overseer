@@ -1,9 +1,7 @@
 <style>
-    button {
-        padding: 0;
-    }
     .view-theater-button {
         cursor: zoom-in;
+        padding: 0;
     }
     .image-container {
         position: relative;
@@ -49,7 +47,7 @@
             </button>
             {#if mode === 'edit'}
                 <button
-                    class="danger delete-image"
+                    class="danger small delete-image"
                     title="Delete image"
                     on:click={() => deleteImage(image)}
                 >
