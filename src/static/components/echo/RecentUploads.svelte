@@ -32,11 +32,13 @@
         </ul>
         {#if hiddenUploads > 0}
             <p class="text-align-center">
-                {#if hiddenUploads === 1}
-                    And one other upload!
-                {:else}
-                    And {hiddenUploads} other uploads!
-                {/if}
+                <Link href="/echo">
+                    {#if hiddenUploads === 1}
+                        And one other upload!
+                    {:else}
+                        And {hiddenUploads} other uploads!
+                    {/if}
+                </Link>
             </p>
         {/if}
     {:else if $echoInitialized}
