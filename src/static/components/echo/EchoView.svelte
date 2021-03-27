@@ -91,8 +91,9 @@
                 (<FileSize {echoItem} />)
             </span>
         </EchoDownloadLink>
-
-        <EchoImages mode="view" {echoItem} />
+    </div>
+    <div class="f-row f-wrap justify-content-center">
+        <EchoImages mode="view" size="medium" {echoItem} />
     </div>
 {/if}
 
