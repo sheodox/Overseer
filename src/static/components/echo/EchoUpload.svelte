@@ -58,37 +58,36 @@
                         You can add images by pasting them into the Notes box.
                     {/if}
                 </p>
-            </div>
-        </div>
-        <div class="f-row justify-content-end">
-            {#if echoItem}
-                <Link href={echoItem.path}>
+                <div class="f-row justify-content-end">
+                    {#if echoItem}
+                        <Link href={echoItem.path}>
                     <span class="button">
                         <Icon icon="chevron-left" />
                         Back
                     </span>
-                </Link>
-            {/if}
-            <button disabled={!name || (mode === 'upload' && !file)}>
-                {#if mode === 'upload'}
-                    <Icon icon="upload" />
-                    Upload
-                {:else}
-                    <Icon icon="save" />
-                    {file ? 'Update and upload' : 'Update'}
+                        </Link>
+                    {/if}
+                    <button disabled={!name || (mode === 'upload' && !file) || uploading}>
+                        {#if mode === 'upload'}
+                            <Icon icon="upload" />
+                            Upload
+                        {:else}
+                            <Icon icon="save" />
+                            {file ? 'Update and upload' : 'Update'}
+                        {/if}
+                    </button>
+                </div>
+                {#if imagesPendingUpload.length}
+                    <div class="f-row justify-content-center f-wrap">
+                        <Album mode="edit" images={imagesPendingUpload} size="small" on:delete={cancelPendingImage} />
+                    </div>
                 {/if}
-            </button>
+                {#if echoItem && window.Booker.echo.remove_image}
+                    <EchoImages {echoItem} mode="edit" on:delete={deleteImage} />
+                {/if}
+            </div>
         </div>
     </form>
-
-    {#if imagesPendingUpload.length}
-        <div class="f-row justify-content-center f-wrap">
-            <Album mode="edit" images={imagesPendingUpload} size="small" on:delete={cancelPendingImage} />
-        </div>
-    {/if}
-    {#if echoItem && window.Booker.echo.remove_image}
-        <EchoImages {echoItem} mode="edit" on:delete={deleteImage} />
-    {/if}
 </div>
 
 <script>
@@ -106,6 +105,8 @@
     export let mode; //'edit' | 'upload'
 
     let name, tags, notes, file,
+        //used to disable the submit button and prevent double uploads
+        uploading = false,
         //used to generate a unique 'key' for each image pending upload
         pendingImageId = 0,
         //`file` objects are attached here when attaching images when making a new upload
@@ -183,6 +184,7 @@
     }
 
     async function submit() {
+        uploading = true;
         //update the item just so it updates the header
         if (echoItem) {
             echoItem.name = name;
