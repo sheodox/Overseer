@@ -38,7 +38,7 @@
     }
 </style>
 
-<div class="f-row f-wrap {variant} {size}">
+<div class="f-row f-wrap justify-content-center {variant} {size}">
     {#each viewableImages as image (image.id)}
         <div class="image-container">
             <button

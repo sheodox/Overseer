@@ -92,7 +92,7 @@
             </span>
         </EchoDownloadLink>
     </div>
-    <div class="f-row f-wrap justify-content-center">
+    <div class="f-row f-wrap">
         <EchoImages mode="view" size="medium" {echoItem} />
     </div>
 {/if}
