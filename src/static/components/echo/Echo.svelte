@@ -86,19 +86,21 @@
         {/if}
     </div>
 
-    {#if numResults > 0}
-        <div class={view === 'grid' ? "f-row f-wrap justify-content-center" : 'page-content'}>
-            {#each $echoSearchResults as item}
-                <EchoItemPreview {item} variant={view} />
-            {/each}
-        </div>
-        <p class="text-align-center">
-            {numResults === 1 ? 'one result' : `${numResults} results`}
-        </p>
-    {:else}
-        <p class="text-align-center">
-            No items matching this search.
-        </p>
+    {#if $echoInitialized}
+        {#if numResults > 0}
+            <div class={view === 'grid' ? "f-row f-wrap justify-content-center" : 'page-content'}>
+                {#each $echoSearchResults as item}
+                    <EchoItemPreview {item} variant={view} />
+                {/each}
+            </div>
+            <p class="text-align-center">
+                {numResults === 1 ? 'one result' : `${numResults} results`}
+            </p>
+        {:else}
+            <p class="text-align-center">
+                No items matching this search.
+            </p>
+        {/if}
     {/if}
 </div>
 
