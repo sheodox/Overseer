@@ -82,7 +82,11 @@
     </form>
 
     {#if imagesPendingUpload.length}
-        <p class="text-align-center">{imagesPendingUpload.length} image{imagesPendingUpload.length === 1 ? '' : 's'} will be uploaded.</p>
+        <div class="f-row justify-content-center f-wrap">
+            {#each imagesPendingUpload as pending (pending.id)}
+                <EchoPendingImage file={pending.file} on:delete={() => cancelPendingImage(pending.id)}/>
+            {/each}
+        </div>
     {/if}
     {#if echoItem && window.Booker.echo.remove_image}
         <EchoImages {echoItem} mode="edit" on:delete={deleteImage} />
@@ -99,10 +103,13 @@
     import TagCloud from "./TagCloud.svelte";
     import EchoImages from "./EchoImages.svelte";
     import Link from "../Link.svelte";
+    import EchoPendingImage from "./EchoPendingImage.svelte";
 
     export let mode; //'edit' | 'upload'
 
     let name, tags, notes, file,
+        //used to generate a unique 'key' for each image pending upload
+        pendingImageId = 0,
         //`file` objects are attached here when attaching images when making a new upload
         imagesPendingUpload = [];
 
@@ -112,6 +119,7 @@
     $: echoItem = mode === 'edit' ? findItem($echoItems) : null
 
     let seededEditData = false;
+
     function findItem() {
         const item = $echoItems.find(({id}) => id === $activeRouteParams.echoId)
         if (!seededEditData && item) {
@@ -129,6 +137,11 @@
         }
     }
 
+    function cancelPendingImage(id) {
+        imagesPendingUpload = imagesPendingUpload
+            .filter(image => image.id !== id);
+    }
+
     function notesPaste(e) {
         const file = e.clipboardData.files[0];
         if (file && window.Booker.echo.add_image) {
@@ -138,7 +151,7 @@
                 if (!echoItem) {
                     imagesPendingUpload = [
                         ...imagesPendingUpload,
-                        file
+                        {file, id: pendingImageId++}
                     ]
                 } else {
                     echoOps.uploadImage(echoItem.id, file);
@@ -173,7 +186,7 @@
             }, file)
 
             await Promise.all(
-                imagesPendingUpload.map(file => echoOps.uploadImage(id, file))
+                imagesPendingUpload.map(({file}) => echoOps.uploadImage(id, file))
             )
 
             redirect(id);
