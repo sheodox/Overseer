@@ -34,6 +34,9 @@
         width: var(--placeholder-width);
         height: calc(var(--placeholder-width) * (9 / 16));
     }
+    .strip img {
+        width: var(--placeholder-width);
+    }
 </style>
 
 <div class="f-row f-wrap justify-content-center {variant} {size}">
@@ -43,7 +46,7 @@
                 class="view-theater-button"
                 on:click={() => albumImageClick(image)}
             >
-                <img src="/image/{image.id}/{size}" alt={image.alt || ''} class="image"/>
+                <img src={image.src ? image.src : `/image/${image.id}/${size}`} alt={image.alt || ''} class="image"/>
             </button>
             {#if mode === 'edit'}
                 <button

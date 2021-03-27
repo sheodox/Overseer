@@ -20,6 +20,9 @@
         white-space: nowrap;
         text-align: center;
     }
+    .other-images img {
+        max-width: 7rem;
+    }
 </style>
 
 <div
@@ -40,7 +43,7 @@
     move vertically based on the selected image's height -->
     <div class="f-column justify-content-between f-1">
         <img class="selected-image align-self-center"
-             src="/image/{selectedImage.id}/large"
+             src={selectedImage.src ? selectedImage.src : `/image/${selectedImage.id}/large`}
              alt={selectedImage.alt || ''} on:click={close}/>
         <div class="other-images">
             {#each images as image (image.id)}
@@ -48,7 +51,7 @@
                     aria-pressed={selectedImage.id === image.id}
                     on:click|stopPropagation={() => selectedImage = image}
                 >
-                    <img src="/image/{image.id}/small" alt={image.alt || ''} />
+                    <img src={image.src ? image.src : `/image/${image.id}/small`} alt={image.alt || ''} />
                     <span class="sr-only">View this image full size</span>
                 </button>
             {/each}
