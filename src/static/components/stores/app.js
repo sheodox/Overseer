@@ -52,3 +52,7 @@ export function uploadImage(toastTitle, file, postPath) {
             }
         });
 }
+
+export function scrollPageToTop() {
+    window.scrollTo(0, 0);
+}

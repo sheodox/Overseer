@@ -117,7 +117,7 @@
 <script>
     import page from 'page';
     import {Icon, MenuButton, Modal} from 'sheodox-ui';
-    import {pageName} from "../stores/app";
+    import {pageName, scrollPageToTop} from "../stores/app";
     import {activeRouteParams} from "../stores/routing";
     import {echoInitialized, echoItems, echoOps} from "../stores/echo";
     import FileSize from "./FileSize.svelte";
@@ -128,6 +128,7 @@
 
     const hasOptionPermission = window.Booker.echo.update || window.Booker.echo.delete
     let showDeleteConfirm = false;
+    scrollPageToTop();
 
     $: echoItem = $echoItems.find(({id}) => id === $activeRouteParams.echoId);
     $: tags = processTags(echoItem?.tags);
