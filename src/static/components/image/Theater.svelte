@@ -36,6 +36,7 @@
     tabindex="-1"
 >
     <button
+        type="button"
         class="close"
         on:click={close}
     >
@@ -51,6 +52,7 @@
         <div class="other-images">
             {#each images as image (image.id)}
                 <button
+                    type="button"
                     aria-pressed={selectedImage.id === image.id}
                     on:click|stopPropagation={() => selectedImage = image}
                 >

@@ -43,6 +43,7 @@
     {#each viewableImages as image (image.id)}
         <div class="image-container">
             <button
+                type="button"
                 class="view-theater-button"
                 on:click={() => albumImageClick(image)}
             >
@@ -50,6 +51,7 @@
             </button>
             {#if mode === 'edit'}
                 <button
+                    type="button"
                     class="danger small delete-image"
                     title="Delete image"
                     on:click={() => deleteImage(image)}
