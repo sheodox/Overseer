@@ -1,10 +1,3 @@
-<style>
-    img {
-        width: 1.5rem;
-        height: 1.5rem;
-    }
-</style>
-
 <div class="panel">
     <table>
         <thead>
