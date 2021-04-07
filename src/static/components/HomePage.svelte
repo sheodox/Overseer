@@ -5,7 +5,7 @@
     }
 </style>
 
-<div class="page-content f-row f-wrap justify-content-center">
+<div class="f-row f-wrap justify-content-center">
     {#if window.Booker.events.view}
         <div class="app-preview">
             <EventsAppPreview />
