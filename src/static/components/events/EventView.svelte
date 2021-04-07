@@ -5,6 +5,7 @@
     }
     .details {
         flex-basis: 30rem;
+        background: none;
     }
     h1 {
         margin: 0;
