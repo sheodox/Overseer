@@ -49,4 +49,7 @@
     import {eventsInitialized, events, ongoingEvents, upcomingEvents, pastEvents} from "../stores/events";
     import EventPreview from "./EventPreview.svelte";
     import PageSpinner from "../PageSpinner.svelte";
+    import {pageName} from "../stores/app";
+
+    pageName.set('Events');
 </script>

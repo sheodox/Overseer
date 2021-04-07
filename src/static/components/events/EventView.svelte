@@ -103,6 +103,7 @@
 
 <script>
     import {MenuButton, Icon, Modal} from 'sheodox-ui';
+    import {pageName} from "../stores/app";
     import PageSpinner from "../PageSpinner.svelte";
     import {eventFromRoute, eventOps, eventsInitialized} from "../stores/events";
     import page from 'page';
@@ -122,6 +123,8 @@
     $: userRsvp = $eventFromRoute?.userRsvp
     $: isMultipleDays = $eventFromRoute?.eventDays.length > 1
     $: userGoing = userRsvp?.status === 'going'
+
+    $: $pageName = $eventFromRoute?.name ?? 'Events'
 
     function rsvpPrompt(e) {
         pendingStatus = e.detail;
