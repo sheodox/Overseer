@@ -8,12 +8,14 @@
     <div class="page-contents">
         <div class="f-row justify-content-between align-items-center">
             <h1>Events</h1>
-            <Link href="/events/create">
-            <span class="button">
-                <Icon icon="plus" />
-                Create Event
-            </span>
-            </Link>
+            {#if window.Booker.events.organize}
+                <Link href="/events/create">
+                    <span class="button">
+                        <Icon icon="plus" />
+                        Create Event
+                    </span>
+                </Link>
+            {/if}
         </div>
 
         {#if $ongoingEvents.length}
