@@ -1,9 +1,13 @@
 <style>
     .sub-panel {
-        margin: 0.5rem;
+        margin: 1rem 0.5rem;
+        padding: 1rem;
     }
     .details {
         flex-basis: 30rem;
+    }
+    h1 {
+        margin: 0;
     }
 </style>
 
@@ -14,35 +18,35 @@
     <p><Link href="/events">Back to the events list.</Link></p>
 {:else}
     <div class="page-content">
-        <div class="f-row justify-content-between align-items-center">
-            <h1>{$eventFromRoute.name}</h1>
-            {#if window.Booker.events.organize}
-                <MenuButton>
-                <span slot="trigger">
-                    Options
-                    <Icon icon="chevron-down" />
-                </span>
-                    <ul slot="menu">
-                        <li>
-                            <button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
-                                <Icon icon="edit" />
-                                Edit
-                            </button>
-                        </li>
-                        <li>
-                            <button on:click={() => showDeleteConfirm = true}>
-                                <Icon icon="trash" />
-                                Delete
-                            </button>
-                        </li>
-                    </ul>
-                </MenuButton>
-            {/if}
-        </div>
-
         <div class="f-row f-wrap justify-content-center align-items-start">
             <div class="f-1">
                 <div class="sub-panel details">
+                    <div class="f-row justify-content-between align-items-center">
+                        <h1>{$eventFromRoute.name}</h1>
+                        {#if window.Booker.events.organize}
+                            <MenuButton>
+                                <span slot="trigger">
+                                    Options
+                                    <Icon icon="chevron-down" />
+                                </span>
+                                <ul slot="menu">
+                                    <li>
+                                        <button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
+                                            <Icon icon="edit" />
+                                            Edit
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button on:click={() => showDeleteConfirm = true}>
+                                            <Icon icon="trash" />
+                                            Delete
+                                        </button>
+                                    </li>
+                                </ul>
+                            </MenuButton>
+                        {/if}
+                    </div>
+
                     <div class="f-row justify-content-between align-items-start f-wrap">
                         <div>
                             <p>
