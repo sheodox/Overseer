@@ -63,14 +63,14 @@
     move vertically based on the selected image's height -->
     <div class="f-column justify-content-between f-1">
         <div class="selected-image-container f-row justify-content-center">
-            <button type="button" class="prev" on:click|stopPropagation={() => selectImageByOffset(-1)}>
+            <button type="button" class="prev" on:click|stopPropagation|preventDefault={() => selectImageByOffset(-1)}>
                 <span class="sr-only">View previous image</span>
             </button>
             <img class="selected-image"
                  src={selectedImage.src ? selectedImage.src : `/image/${selectedImage.id}/large`}
                  alt={selectedImage.alt || ''} on:click={close}
             />
-            <button type="button" class="next" on:click|stopPropagation={() => selectImageByOffset(1)}>
+            <button type="button" class="next" on:click|stopPropagation|preventDefault={() => selectImageByOffset(1)}>
                 <span class="sr-only">View previous image</span>
             </button>
         </div>
@@ -79,7 +79,7 @@
                 <button
                     type="button"
                     aria-pressed={selectedImage.id === image.id}
-                    on:click|stopPropagation={() => selectedImage = image}
+                    on:click|stopPropagation|preventDefault={() => selectedImage = image}
                 >
                     <img src={image.src ? image.src : `/image/${image.id}/small`} alt={image.alt || ''} />
                     <span class="sr-only">View this image full size</span>
@@ -95,7 +95,10 @@
     export let images;
     export let selectedImage;
 
-    function close() {
+    function close(e) {
+        //Albums/Theaters are in side of a link in Echo, need to not leak clicks or it'll try and follow the link when just looking at images
+        e.stopPropagation();
+        e.preventDefault();
         visible = false;
     }
 

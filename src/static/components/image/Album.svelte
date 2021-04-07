@@ -39,7 +39,7 @@
     }
 </style>
 
-<div class="f-row f-wrap justify-content-center {variant} {size}">
+<div class="f-row f-wrap justify-content-center {variant} {size}" on:click|stopPropagation|preventDefault>
     {#each viewableImages as image (image.id)}
         <div class="image-container">
             <button
@@ -70,7 +70,9 @@
 </div>
 
 {#if showTheater}
-    <Theater {selectedImage} {images} bind:visible={showTheater} />
+    <div on:click|stopPropagation|preventDefault>
+        <Theater {selectedImage} {images} bind:visible={showTheater} />
+    </div>
 {/if}
 
 <script>

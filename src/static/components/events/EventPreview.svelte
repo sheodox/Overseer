@@ -1,32 +1,37 @@
 <style>
     .event {
-
+        color: white;
+    }
+    .sub-panel:hover {
+        background: var(--sub-panel-bg-light)
     }
 </style>
 
-<div class="event sub-panel">
-    <div class="f-row justify-content-between">
-        <Link href="/events/{event.id}">
-            <span>
+<Link href="/events/{event.id}" noHoverStyles={true}>
+    <div class="event">
+        <div class="sub-panel">
+            <div class="f-row justify-content-between">
+            <span class="fw-bold">
                 <AttendanceTypeBadge {event} />
                 {event.name}
             </span>
-        </Link>
-        <span title="{attendees} {attendees === 1 ? 'person' : 'people'} going">
-            <Icon icon="user-friends" /> {attendees} <span class="sr-only">People Going</span>
-        </span>
-    </div>
+                <span title="{attendees} {attendees === 1 ? 'person' : 'people'} going">
+                    <Icon icon="user-friends" /> {attendees} <span class="sr-only">People Going</span>
+                </span>
+            </div>
 
-    <EventTimes {event} />
+            <EventTimes {event} />
 
-    <div class="f-row justify-content-end">
-        {#if event.userRsvp}
-            <span>
-                <RSVPStatus status={event.userRsvp?.status} />
-            </span>
-        {/if}
+            <div class="f-row justify-content-end">
+                {#if event.userRsvp}
+                    <span>
+                        <RSVPStatus status={event.userRsvp?.status} />
+                    </span>
+                {/if}
+            </div>
+        </div>
     </div>
-</div>
+</Link>
 
 <script>
     import {Icon} from 'sheodox-ui';
