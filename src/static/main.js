@@ -1,5 +1,5 @@
 import '../../node_modules/sheodox-ui/style.scss';
-// import '../scss/style.scss';
+import './scss/style.scss';
 
 import './components/stores/routing'
 import App from './components/App.svelte';
