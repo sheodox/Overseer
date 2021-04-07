@@ -18,9 +18,6 @@
     h1 {
         margin: 0;
     }
-    .view-modes [aria-pressed="true"] {
-        color: var(--accent-pink);
-    }
 </style>
 
 <div class="f-column f-1 align-items-center">
@@ -74,11 +71,11 @@
                 {/if}
                 <div class="f-row justify-content-end view-modes">
                     <button class="small" on:click={() => view = 'list'} aria-pressed={view === 'list'}>
-                        <Icon icon="list" />
+                        <Icon icon="list" noPadding={true} />
                         <span class="sr-only">View as a list</span>
                     </button>
                     <button class="small" on:click={() => view = 'grid'} aria-pressed={view === 'grid'}>
-                        <Icon icon="th" />
+                        <Icon icon="th" noPadding={true} />
                         <span class="sr-only">View as a grid</span>
                     </button>
                 </div>

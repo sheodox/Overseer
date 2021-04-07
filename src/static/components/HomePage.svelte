@@ -6,6 +6,11 @@
 </style>
 
 <div class="page-content f-row f-wrap justify-content-center">
+    {#if window.Booker.events.view}
+        <div class="app-preview">
+            <EventsAppPreview />
+        </div>
+    {/if}
     {#if window.Booker.echo.view}
         <div class="app-preview">
             <RecentUploads />
@@ -22,6 +27,7 @@
     import RecentUploads from "./echo/RecentUploads.svelte";
     import VoterPreview from "./voter/VoterPreview.svelte";
     import {pageName} from "./stores/app";
+    import EventsAppPreview from "./events/EventsAppPreview.svelte";
 
     // clear old page names
     $pageName = '';

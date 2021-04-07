@@ -27,6 +27,7 @@ const app = express(),
     settings = require('./routes/settings'),
     voter = require('./routes/voter'),
     admin = require('./routes/admin'),
+    events = require('./routes/events'),
     images = require('./routes/images'),
     bodySizeLimit = '15mb';
 
@@ -87,6 +88,7 @@ app.use(initEchoRouter(io));
 app.use(voter(io));
 settings(io);
 app.use(admin(io));
+events(io);
 app.use(images);
 app.use(require('./routes'));
 

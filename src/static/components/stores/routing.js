@@ -21,6 +21,10 @@ function setRoute(app, routeId) {
     }
 }
 
+page(`/events`, setRoute('events', 'events'))
+page(`/events/create`, setRoute('events', 'events/create'))
+page(`/events/:eventId`, setRoute('events', 'events/view'))
+page(`/events/:eventId/edit`, setRoute('events', 'events/edit'))
 page(`/echo`, setRoute('echo', 'echo'))
 page(`/echo/upload`, setRoute('echo', 'echo/upload'))
 page(`/echo/:echoId`, setRoute('echo', 'echo/view'))
