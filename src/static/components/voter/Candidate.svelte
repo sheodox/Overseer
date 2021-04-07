@@ -9,12 +9,16 @@
         width: 2.5rem;
         opacity: 0.5;
         transition: opacity 0.2s;
+        border: none;
     }
     .vote-button:hover, .vote-button.voted {
         opacity: 1;
     }
     .vote-button.voted :global(i) {
         filter: drop-shadow(0 0 0.5rem);
+    }
+    .upvote {
+        color: var(--accent-blue);
     }
     .downvote {
         color: var(--accent-red);
