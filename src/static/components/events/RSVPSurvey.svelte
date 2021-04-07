@@ -59,7 +59,7 @@
         </label>
     </div>
     <div class="modal-footer">
-        <button disabled={!submittable} on:click={rsvp}>RSVP as {statusName}</button>
+        <button disabled={!submittable} on:click={rsvp}>Confirm</button>
     </div>
 </div>
 

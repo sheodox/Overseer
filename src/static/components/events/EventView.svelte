@@ -80,7 +80,7 @@
 {/if}
 
 {#if showSurvey}
-    <Modal bind:visible={showSurvey} title="RSVP Options" on:closed={() => pendingStatus = null}>
+    <Modal bind:visible={showSurvey} title={pendingStatusName} on:closed={() => pendingStatus = null}>
         <RSVPSurvey bind:pendingStatus bind:visible={showSurvey} />
     </Modal>
 {/if}
@@ -118,6 +118,7 @@
         showDeleteConfirm = false,
         showSurvey = false;
 
+    $: pendingStatusName = {going: 'Going', 'not-going': 'Not Going', maybe: 'Maybe'}[pendingStatus];
     $: userRsvp = $eventFromRoute?.userRsvp
     $: isMultipleDays = $eventFromRoute?.eventDays.length > 1
     $: userGoing = userRsvp?.status === 'going'
