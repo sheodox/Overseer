@@ -68,6 +68,7 @@ export const authLogger = createConcernLogger('auth');
 export const httpLogger = createConcernLogger('http');
 export const echoLogger = createConcernLogger('echo');
 export const voterLogger = createConcernLogger('voter');
+export const eventsLogger = createConcernLogger('events');
 export const adminLogger = createConcernLogger('admin');
 export const integrationsLogger = createConcernLogger('integrations');
 export const echoIntegrationLogger = createConcernLogger('echo-integration');

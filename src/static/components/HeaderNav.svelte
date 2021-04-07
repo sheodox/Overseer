@@ -12,7 +12,6 @@
                         class:active={link.app === $activeApp}
                         href={link.path}
                     >
-                        <Icon icon={link.icon} />
                         {link.text}
                     </a>
                 </li>
@@ -22,7 +21,6 @@
 </nav>
 
 <script>
-    import {Icon} from 'sheodox-ui';
     import {activeApp} from "./stores/routing";
     import page from 'page';
 
@@ -32,6 +30,12 @@
         app: 'home',
         text: 'Home',
         icon: 'home'
+    }, {
+        viewable: window.Booker.events.view,
+        path: '/events',
+        app: 'events',
+        text: 'Events',
+        icon: 'calendar-week'
     }, {
         viewable: window.Booker.echo.view,
         path: '/echo',

@@ -1,6 +1,6 @@
 import {Router, Response} from 'express';
 import serializeJavascript from "serialize-javascript";
-import {voterBooker, echoBooker} from "../db/booker";
+import {voterBooker, echoBooker, eventsBooker} from "../db/booker";
 import {isReqSuperUser} from "../util/superuser";
 import {AppRequest} from "../types";
 import {getManifest} from "../util/route-common";
@@ -10,6 +10,7 @@ import {safeAsyncRoute} from "../util/error-handler";
 const router = Router();
 
 const overseerApps = {
+    events: 'Events',
     echo: 'Echo',
     voter: 'Voter',
 };
@@ -27,6 +28,7 @@ function entry(app?: string) {
             permissions = serializeJavascript({
                 voter: await voterBooker.getUserPermissions(id),
                 echo: await echoBooker.getUserPermissions(id),
+                events: await eventsBooker.getUserPermissions(id),
             }),
             links = [
                 {href: '/auth/logout', text: 'Logout', icon: 'sign-out-alt'}
