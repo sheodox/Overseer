@@ -76,7 +76,9 @@ async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]
             });
 
         for (const rsvp of event.rsvps) {
-            if (!userCanOrganize) {
+            //users need to be able to see their own RSVP notes so they can change it after the fact
+            //but we want to hide anyone else's from them unless they're an organizer
+            if (!userCanOrganize && rsvp.userId !== userId) {
                 rsvp.notes = '';
             }
             rsvps.push(await maskRsvp(rsvp));
