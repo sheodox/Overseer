@@ -3,6 +3,10 @@
         max-width: 15rem;
         margin: 0.2rem;
     }
+    .notes {
+        overflow: auto;
+        max-height: 10rem;
+    }
 </style>
 
 {#if rsvps.length}
@@ -19,7 +23,7 @@
                                 </span>
                             </UserBubble>
                         </div>
-                        <p>{rsvp.notes}</p>
+                        <p class="notes">{rsvp.notes}</p>
                     </div>
                 {/if}
             {/each}
