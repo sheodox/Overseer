@@ -206,4 +206,8 @@ export const eventsBooker = new Booker('events', [
     'view',
     'organize',
     'rsvp',
-])
+]);
+
+export const appBooker = new Booker('app', [
+    'user_meta'
+]);

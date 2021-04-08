@@ -26,6 +26,7 @@ const app = express(),
     initEchoRouter = require('./routes/echo'),
     settings = require('./routes/settings'),
     voter = require('./routes/voter'),
+    userRouter = require('./routes/user'),
     admin = require('./routes/admin'),
     events = require('./routes/events'),
     images = require('./routes/images'),
@@ -90,7 +91,8 @@ settings(io);
 app.use(admin(io));
 events(io);
 app.use(images);
-app.use(require('./routes'));
+userRouter(io);
+app.use(require('./routes/index'));
 
 app.use((req, res, next) => next({status: 404}))
 app.use(errorHandler(false));

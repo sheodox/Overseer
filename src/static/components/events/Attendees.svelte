@@ -21,7 +21,7 @@
         <div>
             {#each rsvps as rsvp}
                 <div class="user">
-                    <UserBubble user={rsvp.user} />
+                    <UserBubble userId={rsvp.userId} />
                 </div>
             {:else}
                 <p class="text-align-center"><em>No RSPVs.</em></p>

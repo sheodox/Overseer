@@ -1,7 +1,10 @@
-import {writable} from 'svelte/store';
+import {writable, get} from 'svelte/store';
 import {createAutoExpireToast, createProgressToast, updateToast} from "sheodox-ui";
 import {post} from "axios";
 import {bytes as formatBytes} from "../../../shared/formatters";
+import {Conduit} from "../../../shared/conduit";
+import {socket} from "../../socket";
+const appConduit = new Conduit(socket, 'app');
 
 export const pageName = writable('');
 pageName.subscribe(page => {
@@ -51,6 +54,31 @@ export function uploadImage(toastTitle, file, postPath) {
                 errorToast(e.response.statusText);
             }
         });
+}
+
+export const userRegistry = writable({});
+
+export function requestUser(userId) {
+    const user = get(userRegistry)[userId];
+
+    if (!user) {
+        userRegistry.update(registry => {
+            registry[userId] = {
+                loading: true
+            };
+            return registry;
+        });
+
+        appConduit.emit('getUserMeta', userId, (meta) => {
+            userRegistry.update(registry => {
+                registry[userId] = {
+                    loading: false,
+                    ...meta
+                }
+                return registry;
+            });
+        });
+    }
 }
 
 export function scrollPageToTop() {

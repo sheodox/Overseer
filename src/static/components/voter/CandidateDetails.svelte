@@ -9,7 +9,7 @@
 
 <div class="details">
     <div class="f-row justify-content-between">
-        <UserBubble user={candidate.creator}>
+        <UserBubble userId={candidate.creatorId}>
             <em>Created {new Date(candidate.createdAt).toLocaleDateString()}</em>
         </UserBubble>
         {#if !candidate.deleted && (window.Booker.voter.update_candidate || canDelete)}

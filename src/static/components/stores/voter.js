@@ -1,10 +1,7 @@
 import {writable, derived, get} from 'svelte/store';
-import {post} from 'axios';
-import {createProgressToast, createAutoExpireToast, updateToast} from 'sheodox-ui';
 import {socket} from "../../socket";
 import {Conduit} from "../../../shared/conduit";
 import {activeRouteParams} from "./routing";
-import {bytes as formatBytes} from "../../../shared/formatters";
 import {uploadImage} from "./app";
 const voterConduit = new Conduit(socket, 'voter');
 
@@ -144,6 +141,20 @@ export function getRaceMaxVotes(race) {
 
 voterConduit.on({
     refresh: (races) => {
+        const userId = window.user.id;
+
+        for (const race of races) {
+            for (const candidate of race.candidates) {
+                candidate.created = userId === candidate.creatorId;
+                candidate.voted = false;
+                if (candidate.votedUp.includes(userId)) {
+                    candidate.voted = 'up'
+                }
+                else if (candidate.votedDown.includes(userId)) {
+                    candidate.voted = 'down'
+                }
+            }
+        }
         voterRaces.set(races);
         voterInitialized.set(true);
     }

@@ -18,8 +18,8 @@
     <div class="f-row {direction}" style="width: {votePercent}%">
         <div class="voters f-row">
             <span class="vote-count fw-bold">{votes}</span>
-            {#each voters as user (user)}
-                <UserBubble {user} mode="minimal" />
+            {#each voters as userId (userId)}
+                <UserBubble {userId} mode="minimal" />
             {/each}
         </div>
     </div>

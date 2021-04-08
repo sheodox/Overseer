@@ -3,7 +3,7 @@ import {User} from '@prisma/client';
 import {Profile} from "passport-google-oauth";
 import {ShortCache} from "../util/ShortCache";
 
-export type MaskedUser = Pick<User, 'displayName' | 'profileImage'>
+export type MaskedUser = Pick<User, 'id' | 'displayName' | 'profileImage'>
 
 class Users {
     maskCache: ShortCache<MaskedUser>
@@ -96,7 +96,8 @@ class Users {
             for (const user of users) {
                 const mask = {
                     displayName: user.displayName,
-                    profileImage: user.profileImage
+                    profileImage: user.profileImage,
+                    id: user.id
                 };
                 maskedMap.set(user.id, mask);
                 this.maskCache.set(user.id, mask);

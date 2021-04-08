@@ -5,7 +5,7 @@ import {users} from "../db/users";
 import {isReqSuperUser, isUserSuperUser} from '../util/superuser'
 import {AppRequest} from "../types";
 import {Server, Socket} from "socket.io";
-import {echoBooker, eventsBooker, voterBooker} from "../db/booker";
+import {appBooker, echoBooker, eventsBooker, voterBooker} from "../db/booker";
 import {Prisma} from '@prisma/client';
 import {SilverConduit} from "../util/silver-conduit";
 import {getManifest} from "../util/route-common";
@@ -18,6 +18,7 @@ const router = Router(),
         echo: echoBooker,
         voter: voterBooker,
         events: eventsBooker,
+        app: appBooker
     };
 
 type BookerModule = keyof typeof bookers

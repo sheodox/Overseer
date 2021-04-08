@@ -57,9 +57,12 @@ export const eventFromRoute = derived([events, activeRouteParams], ([events, rou
 
 eventConduit.on({
     refresh: data => {
+        const userId = window.user.id;
+
         data.forEach(event => {
             event.startDate = new Date(event.startDate);
             event.endDate = new Date(event.endDate);
+            event.userRsvp = event.rsvps.find(rsvp => rsvp.userId === userId) ?? null
         })
         events.set(data);
         eventsInitialized.set(true);

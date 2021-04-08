@@ -13,7 +13,7 @@
                 {#if rsvp.notes}
                     <div class="rsvp-notes sub-panel">
                         <div>
-                            <UserBubble user={rsvp.user}>
+                            <UserBubble userId={rsvp.userId}>
                                 <span>
                                     <RSVPStatus status={rsvp.status} />
                                 </span>

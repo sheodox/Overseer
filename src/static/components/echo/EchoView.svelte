@@ -63,13 +63,13 @@
         </div>
         <div class="f-row">
             <div class:partially-hidden={hasBeenUpdated}>
-                <UserBubble user={echoItem.initialUploader}>
+                <UserBubble userId={echoItem.initialUploaderId}>
                     <em>Added {new Date(echoItem.createdAt).toLocaleDateString()}</em>
                 </UserBubble>
             </div>
 
             {#if hasBeenUpdated}
-                <UserBubble user={echoItem.lastUploader}>
+                <UserBubble userId={echoItem.lastUploaderId}>
                     <em>Updated {new Date(echoItem.updatedAt).toLocaleDateString()}</em>
                 </UserBubble>
             {/if}

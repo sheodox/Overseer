@@ -1,4 +1,3 @@
-import {MaskedUser, users} from '../db/users';
 import {Prisma, Candidate, Vote} from '@prisma/client';
 import MarkdownIt from "markdown-it";
 const md = new MarkdownIt();
@@ -11,17 +10,11 @@ type Race = Prisma.RaceGetPayload<{
     }
 }>;
 
-// the database stores just 'up' or 'down', but the non-existence of a vote for this user gives us false here
-type VoteDirection = false | 'up' | 'down';
-
 interface MaskedCandidate extends Candidate {
-    creator: MaskedUser,
-    created: boolean,
     //markdown rendered notes, keep the original around for editing
     notesRendered: string,
-    voted: VoteDirection,
-    votedUp: MaskedUser[],
-    votedDown: MaskedUser[]
+    votedUp: string[],
+    votedDown: string[]
 }
 interface MaskedRace extends Race {
     candidates: MaskedCandidate[]
@@ -45,27 +38,14 @@ export const maskVoterSessions = async (races: Race[], userId: string): Promise<
         const maskedCandidates: MaskedCandidate[] = [];
 
         for (let candidate of race.candidates) {
-            const originalVotedUp = race.votes.filter(candidateVotes(candidate.id, 'up')).map(getUserFromVote),
-                originalVotedDown = race.votes.filter(candidateVotes(candidate.id, 'down')).map(getUserFromVote),
-                creatorId = candidate.creatorId;
-
-            let voted: VoteDirection = false;
-            if (originalVotedUp.includes(userId)) {
-                voted = 'up'
-            }
-            else if (originalVotedDown.includes(userId)) {
-                voted = 'down'
-            }
+            const votedUp = race.votes.filter(candidateVotes(candidate.id, 'up')).map(getUserFromVote),
+                votedDown = race.votes.filter(candidateVotes(candidate.id, 'down')).map(getUserFromVote);
 
             maskedCandidates.push({
                 ...candidate,
-                creator: (await users.getMasked([creatorId]))[0],
-                created: creatorId === userId,
                 notesRendered: md.render(candidate.notes),
-                voted: voted,
-                votedUp: await users.getMasked(originalVotedUp),
-                votedDown: await users.getMasked(originalVotedDown),
-                creatorId: undefined
+                votedUp,
+                votedDown,
             })
         }
 

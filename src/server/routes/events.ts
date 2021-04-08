@@ -1,12 +1,12 @@
 import {Server} from "socket.io";
 import {createSafeWebsocketHandler, SilverConduit} from "../util/silver-conduit";
 import {ToastOptions} from "../types";
-import {MaskedUser, users} from "../db/users";
 import {eventsBooker} from "../db/booker";
 import {eventsLogger} from "../util/logger";
 import {EventDay, EventList, events, getEventDays, RSVPStatus} from "../db/events";
 import {Event, Rsvp, RsvpDay} from "@prisma/client";
 import MarkdownIt from "markdown-it";
+import {users} from "../db/users";
 const md = new MarkdownIt();
 
 function cloneObject<T>(obj: T): T {
@@ -22,29 +22,20 @@ function pickProperties<Type, TProp extends keyof Type>(obj: Type, properties: T
 }
 
 type MaskedRsvpDay = Pick<RsvpDay, 'date' | 'stayingOvernight'>
-interface MaskedRsvp extends Pick<Rsvp, 'status' | 'notes'> {
-    user: MaskedUser,
+interface MaskedRsvp extends Pick<Rsvp, 'status' | 'notes' | 'userId'> {
     rsvpDays: MaskedRsvpDay[]
 }
 type RsvpStatusCounts = Record<RSVPStatus, number>;
 
-interface DayAttendee extends Pick<RsvpDay, 'stayingOvernight'> {
-    user: MaskedUser
-}
+type DayAttendee = Pick<RsvpDay, 'stayingOvernight' | 'userId'>;
 
-interface MaskedEvent extends Omit<Event, 'creatorId' | 'startDate' | 'endDate'> {
-    creator: MaskedUser,
+interface MaskedEvent extends Omit<Event, 'startDate' | 'endDate'> {
     startDate: number,
     endDate: number,
     notesRendered: string,
-    userRsvp?: MaskedRsvp,
     eventDays: EventDay[],
     rsvpStatusCounts: RsvpStatusCounts,
     attendeesByDay: (EventDay & {attendees: DayAttendee[]})[]
-}
-
-async function maskUser(userId: string) {
-    return (await users.getMasked([userId]))[0]
 }
 
 async function maskRsvp(rsvp: Rsvp & {rsvpDays: RsvpDay[]}) {
@@ -57,8 +48,7 @@ async function maskRsvp(rsvp: Rsvp & {rsvpDays: RsvpDay[]}) {
     }
 
     return {
-        ...pickProperties(rsvp, ['status', 'notes']),
-        user: await maskUser(rsvp.userId),
+        ...pickProperties(rsvp, ['status', 'notes', 'userId']),
         rsvpDays,
     }
 }
@@ -90,29 +80,23 @@ async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]
                 rsvp.notes = '';
             }
             rsvps.push(await maskRsvp(rsvp));
-            const maskedUser = await maskUser(rsvp.userId);
 
             for (const day of rsvp.rsvpDays) {
                 const eventDay = attendeesByDay.find(({date}) => date === day.date);
                 if (eventDay) {
                     eventDay.attendees.push({
-                        ...pickProperties(day, ['stayingOvernight']),
-                        user: maskedUser
+                        ...pickProperties(day, ['stayingOvernight', 'userId']),
                     });
                 }
             }
         }
 
-        const userRsvp = event.rsvps.find(rsvp => rsvp.userId === userId);
-
         maskedEvents.push({
             ...pickProperties(event, [
-                'id', 'notes', 'name', 'attendanceType', 'createdAt'
+                'id', 'notes', 'name', 'attendanceType', 'createdAt', 'creatorId'
             ]),
             startDate: event.startDate.getTime(),
             endDate: event.endDate.getTime(),
-            userRsvp: userRsvp ? await maskRsvp(userRsvp) : null,
-            creator: await maskUser(event.creatorId),
             notesRendered: md.render(event.notes),
             attendeesByDay,
             eventDays,

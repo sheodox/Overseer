@@ -100,13 +100,6 @@ async function prepareData() {
         });
     sortableTags.sort((a, b) => b.count - a.count);
 
-    const allUserIds = new Set<string>();
-    items.forEach(item => {
-        allUserIds.add(item.lastUploaderId);
-        allUserIds.add(item.initialUploaderId);
-    });
-    const maskedUserMap = await users.getMaskedMap(Array.from(allUserIds));
-
     return {
         echoServerHost,
         tagCloud: sortableTags.map(countInfo => countInfo.tag),
@@ -117,12 +110,7 @@ async function prepareData() {
                 path: `/echo/${item.id}`,
                 editPath: `/echo/${item.id}/edit`,
                 downloadUrl: `${echoServerHost}/download/${item.id}`,
-                lastUploader: maskedUserMap.get(item.lastUploaderId),
-                initialUploader: maskedUserMap.get(item.initialUploaderId),
                 notesRendered: md.render(item.notes),
-                //don't leak other user IDs, these will get removed when stringified
-                lastUploaderId: undefined,
-                initialUploaderId: undefined,
             }
         }) as PreparedEchoItem[],
         diskUsage,
