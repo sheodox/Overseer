@@ -1,7 +1,8 @@
 <style>
     .panel {
-        min-width: 30rem;
-        max-width: 95%;
+        width: 30rem;
+        max-width: 95vw;
+        overflow: auto;
     }
     h2 {
         text-transform: capitalize;
@@ -13,7 +14,7 @@
     }
 </style>
 
-<div class="bookers">
+<div class="bookers f-row f-wrap justify-content-center">
     {#each $bookers as booker}
         <div class="panel f-column">
             <div class="f-row justify-content-between">

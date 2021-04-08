@@ -10,16 +10,16 @@
     <div class="f-row justify-content-center">
         <TabList {tabs} bind:selectedTab />
     </div>
-    <Tab tabId="roles" {selectedTab}>
-        <div class="f-column align-items-center">
-            <h1>Roles</h1>
-            <Roles />
-        </div>
-    </Tab>
     <Tab tabId="assignments" {selectedTab}>
         <div class="f-column align-items-center">
             <h1>Assignments</h1>
             <Assignments />
+        </div>
+    </Tab>
+    <Tab tabId="roles" {selectedTab}>
+        <div class="f-column align-items-center">
+            <h1>Roles</h1>
+            <Roles />
         </div>
     </Tab>
     <Tab tabId="integrations" {selectedTab}>
@@ -43,11 +43,11 @@
     $: $pageName = 'Admin';
 
     const tabs = [{
-        id: 'roles',
-        title: 'Roles'
-    }, {
         id: 'assignments',
         title: 'Assignments'
+    }, {
+        id: 'roles',
+        title: 'Roles'
     }, {
         id: 'integrations',
         title: 'Integrations'

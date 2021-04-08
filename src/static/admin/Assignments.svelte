@@ -1,3 +1,10 @@
+<style>
+    .panel {
+        max-width: 95vw;
+        overflow: auto;
+    }
+</style>
+
 <div class="panel">
     <table>
         <thead>

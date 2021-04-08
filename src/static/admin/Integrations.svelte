@@ -1,6 +1,8 @@
 <style>
     .panel {
         width: 30rem;
+        max-width: 95vw;
+        overflow: auto;
     }
     #token-copy-input {
         flex: 1;
@@ -34,12 +36,14 @@
         </label>
         <fieldset>
             <legend>Scopes</legend>
-            {#each availableScopes as scope}
-                <label>
-                    <input type="checkbox" bind:group={scopes} value={scope} />
-                    {scope}
-                </label>
-            {/each}
+            <div class="f-row f-wrap">
+                {#each availableScopes as scope}
+                    <label>
+                        <input type="checkbox" bind:group={scopes} value={scope} />
+                        {scope}
+                    </label>
+                {/each}
+            </div>
         </fieldset>
         <button
             on:click={generate}
