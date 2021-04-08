@@ -39,6 +39,8 @@
     import Integrations from "./Integrations.svelte";
     import Roles from "./Roles.svelte";
     import Assignments from "./Assignments.svelte";
+    import {pageName} from "../components/stores/app";
+    $: $pageName = 'Admin';
 
     const tabs = [{
         id: 'roles',
