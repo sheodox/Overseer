@@ -10,17 +10,21 @@ type Race = Prisma.RaceGetPayload<{
     }
 }>;
 
-interface MaskedCandidate extends Candidate {
+interface MaskedCandidate extends Omit<Candidate, 'votes'> {
     //markdown rendered notes, keep the original around for editing
     notesRendered: string,
     votedUp: string[],
     votedDown: string[]
+    //the votes are only necessary in votedUp/votedDown, these big 'votes'
+    //arrays otherwise complicate and bloat the diffs sent over the socket
+    votes: undefined
 }
-interface MaskedRace extends Race {
+export interface MaskedRace extends Omit<Race, 'votes'> {
     candidates: MaskedCandidate[]
+    votes: undefined
 }
 
-export const maskVoterSessions = async (races: Race[], userId: string): Promise<MaskedRace[]> => {
+export const maskVoterSessions = async (races: Race[]): Promise<MaskedRace[]> => {
     races = JSON.parse(JSON.stringify(races));
     const maskedRaces: MaskedRace[] = [];
 
@@ -46,14 +50,14 @@ export const maskVoterSessions = async (races: Race[], userId: string): Promise<
                 notesRendered: md.render(candidate.notes),
                 votedUp,
                 votedDown,
+                votes: undefined
             })
         }
 
         maskedRaces.push({
             ...race,
             candidates: maskedCandidates,
-            //might mask this in the future, but for now don't expose other people's user IDs
-            creatorId: undefined,
+            votes: undefined
         })
     }
     return maskedRaces;

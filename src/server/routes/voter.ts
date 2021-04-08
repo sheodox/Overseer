@@ -4,10 +4,11 @@ import {voterBooker} from "../db/booker";
 import {voter} from '../db/voter';
 import {AppRequest, ToastOptions} from "../types";
 import {Router, Response} from "express";
-import {maskVoterSessions} from "../util/maskVoterSessions";
+import {MaskedRace, maskVoterSessions} from "../util/maskVoterSessions";
 import {users} from "../db/users";
 import {safeAsyncRoute} from "../util/error-handler";
 import {voterLogger} from "../util/logger";
+import {diff} from "deep-diff";
 
 const router = Router();
 
@@ -33,11 +34,20 @@ module.exports = function(io: Server) {
         }
     }));
 
+    //cache what the races used to be, so we can get a diff of minimal changes to broadcast to
+    //users for easy and efficient updates
+    let lastData: MaskedRace[];
+
     async function broadcast() {
-        const raceData = await voter.list();
-        ioConduit.filteredBroadcast('refresh', async userId => {
+        const raceData = await voter.list(),
+            data = await maskVoterSessions(raceData),
+            changes = diff(lastData, data);
+
+        lastData = data;
+
+        ioConduit.filteredBroadcast('diff', async userId => {
             if (await voterBooker.check(userId, 'view')) {
-                return await maskVoterSessions(raceData, userId);
+                return changes;
             }
         });
     }
@@ -59,6 +69,11 @@ module.exports = function(io: Server) {
             return;
         }
 
+        // prime `lastData` if it hasn't been set yet so it can give accurate diffs from the start
+        if (!lastData) {
+            lastData = await maskVoterSessions(await voter.list());
+        }
+
         const user = await users.getUser(userId),
             displayName = user.displayName,
             checkPermission = createSafeWebsocketHandler(userId, voterBooker, socket, voterLogger);
@@ -72,9 +87,8 @@ module.exports = function(io: Server) {
         };
 
         socketConduit.on({
-            init: checkPermission('view', async () => {
-                const raceData = await voter.list();
-                socketConduit.emit('refresh', await maskVoterSessions(raceData, userId));
+            init: checkPermission('view', async (done) => {
+                done(lastData);
             }),
             newRace: checkPermission('add_race', async (name: string) => {
                 const raceData = await voter.addRace(name, userId);

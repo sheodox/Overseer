@@ -1,4 +1,5 @@
 import {writable, derived, get} from 'svelte/store';
+import {applyChange} from "deep-diff";
 import {socket} from "../../socket";
 import {Conduit} from "../../../shared/conduit";
 import {activeRouteParams} from "./routing";
@@ -6,13 +7,55 @@ import {uploadImage} from "./app";
 const voterConduit = new Conduit(socket, 'voter');
 
 export const voterInitialized = writable(false);
+
+let untouchedVoterData;
 export const voterRaces = writable([], () => {
     if (!Booker.voter.view) {
         return;
     }
 
-    voterConduit.emit('init');
+    voterConduit.emit('init', races => {
+        untouchedVoterData = races;
+        setVoterData(races);
+    });
 });
+
+voterConduit.on({
+    diff: (changes) => {
+        if (get(voterInitialized)) {
+            for (const change of changes) {
+                applyChange(untouchedVoterData, change);
+            }
+            setVoterData(untouchedVoterData);
+        }
+    }
+})
+
+function setVoterData(races) {
+    const userId = window.user.id;
+
+    voterRaces.set(races.map(race => {
+        return {
+            ...race,
+            candidates: race.candidates.map(candidate => {
+                const created = userId === candidate.creatorId;
+                let voted = false;
+                if (candidate.votedUp.includes(userId)) {
+                    voted = 'up'
+                }
+                else if (candidate.votedDown.includes(userId)) {
+                    voted = 'down'
+                }
+                return {
+                    ...candidate,
+                    voted,
+                    created
+                }
+            })
+        }
+    }));
+    voterInitialized.set(true);
+}
 export const voterSelectedRace = derived([voterRaces, activeRouteParams], ([races, params]) => {
     return races.find(({id}) => id === params.raceId)
 });
@@ -138,24 +181,3 @@ export function getRaceMaxVotes(race) {
         }))
     );
 }
-
-voterConduit.on({
-    refresh: (races) => {
-        const userId = window.user.id;
-
-        for (const race of races) {
-            for (const candidate of race.candidates) {
-                candidate.created = userId === candidate.creatorId;
-                candidate.voted = false;
-                if (candidate.votedUp.includes(userId)) {
-                    candidate.voted = 'up'
-                }
-                else if (candidate.votedDown.includes(userId)) {
-                    candidate.voted = 'down'
-                }
-            }
-        }
-        voterRaces.set(races);
-        voterInitialized.set(true);
-    }
-})
