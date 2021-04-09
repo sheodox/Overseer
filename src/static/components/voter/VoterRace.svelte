@@ -98,6 +98,8 @@
                 showDetails={$candidatesViewingDetails.includes(candidate.id)}
                 on:details={toggleViewingDetails}
             />
+        {:else}
+            <p class="text-align-center"><em>There aren't any candidates yet.</em></p>
         {/each}
     </div>
 {:else if $voterInitialized}
