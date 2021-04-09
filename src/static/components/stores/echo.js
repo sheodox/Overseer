@@ -1,4 +1,4 @@
-import {readable, writable, derived, get} from "svelte/store";
+import {writable, derived, get} from "svelte/store";
 import {Conduit} from "../../../shared/conduit";
 import {post} from "axios";
 import {bytes, tags as formatTags} from "../../../shared/formatters";
@@ -7,15 +7,20 @@ import {socket} from "../../socket";
 import page from 'page';
 import {activeQueryParams, activeRoute} from "./routing";
 import {uploadImage} from "./app";
+import {applyChange} from "deep-diff";
 const echoConduit = new Conduit(socket, 'echo');
 
+let untouchedEchoData;
 export const echoInitialized = writable(false);
 export const echoItems = writable([], () => {
-    if (!Booker.echo.view) {
+    //if they don't have echo permissions, or they've already initialized, don't try and initialize anymore
+    if (!Booker.echo.view || get(echoInitialized)) {
         return;
     }
 
-    echoConduit.emit('init');
+    echoConduit.emit('init', data => {
+        setEchoData(data);
+    });
 });
 export const echoDiskUsage = writable(null)
 export const echoDownloadToken = writable('');
@@ -63,13 +68,24 @@ export const echoSearchResults = derived([echoItems, echoSearch], ([list, search
     }
 });
 
+function setEchoData(data) {
+    untouchedEchoData = data;
+
+    echoItems.set(data.items);
+    echoDiskUsage.set(data.diskUsage);
+    echoOnline.set(data.echoOnline);
+    echoTagCloud.set(data.tagCloud);
+    echoInitialized.set(true);
+}
+
 echoConduit.on({
-    refresh: (data) => {
-        echoItems.set(data.items);
-        echoDiskUsage.set(data.diskUsage);
-        echoOnline.set(data.echoOnline);
-        echoTagCloud.set(data.tagCloud);
-        echoInitialized.set(true);
+    diff: (changes) => {
+        if (get(echoInitialized)) {
+            for (const change of changes) {
+                applyChange(untouchedEchoData, change);
+            }
+            setEchoData(untouchedEchoData)
+        }
     },
     downloadToken: token => {
         echoDownloadToken.set(token);
@@ -149,8 +165,4 @@ export const echoOps = {
             }
         });
     }
-}
-
-
-export function submitNewUpload(updatingId, metadata, file) {
 }

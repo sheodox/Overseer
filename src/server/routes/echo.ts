@@ -8,11 +8,11 @@ import {AppRequest, ToastOptions} from "../types";
 import {tags as formatTags} from "../../shared/formatters";
 import {createIntegrationToken, verifyIntegrationToken} from "../util/integrations";
 import {validate as uuidValidate} from 'uuid';
-import {users} from "../db/users";
 import MarkdownIt from "markdown-it";
 import {echoIntegrationLogger, echoLogger} from "../util/logger";
 import {safeAsyncRoute} from "../util/error-handler";
 import {Response, Router} from "express";
+import {diff} from "deep-diff";
 const md = new MarkdownIt(),
     router = Router(),
     echoServerHost = process.env.ECHO_SERVER_HOST;
@@ -58,19 +58,27 @@ interface PreparedEchoItem extends Omit<EchoItem, 'size'> {
     notesRendered: string
 }
 
+let lastData: any; // this is the resolved data of prepareData
+prepareData().then(data => {
+    lastData = data;
+});
 /**
  * Emit data about all games to all connected authorized clients
  */
 async function broadcast() {
-    const data = await prepareData();
-    echoConduit.filteredBroadcast('refresh', async (userId: string) => {
+    const data = await prepareData(),
+        changes = diff(lastData, data);
+
+    lastData = data;
+
+    echoConduit.filteredBroadcast('diff', async (userId: string) => {
         //if they're not logged in, don't even check permissions
         if (!userId) {
             return;
         }
         const allowed = await echoBooker.check(userId, 'view');
         if (allowed) {
-            return data;
+            return changes;
         }
     });
 }
@@ -141,8 +149,8 @@ const clientListener = (socket: Socket) => {
                 broadcast();
             });
         }),
-        init: checkPermission('view', async () => {
-            socketConduit.emit('refresh', await prepareData());
+        init: checkPermission('view', async done => {
+            done(await prepareData());
 
             // if they're able to download things, give them a download token!
             if (await echoBooker.check(userId, 'download')) {

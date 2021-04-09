@@ -10,7 +10,8 @@ export const voterInitialized = writable(false);
 
 let untouchedVoterData;
 export const voterRaces = writable([], () => {
-    if (!Booker.voter.view) {
+    //if they don't have voter permissions, or they've already initialized, don't try and initialize anymore
+    if (!Booker.voter.view || get(voterInitialized)) {
         return;
     }
 
