@@ -27,7 +27,7 @@
                 <input bind:value={name} required />
             </label>
 
-            <div class="f-row">
+            <div class="f-row f-wrap">
                 <fieldset>
                     <legend>Attendance Type</legend>
 

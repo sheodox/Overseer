@@ -16,7 +16,7 @@
     textarea {
         width: 30rem;
         height: 6rem;
-        max-width: 90vw;
+        max-width: 100%;
         resize: vertical;
     }
     .disabled {
