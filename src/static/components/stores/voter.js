@@ -1,4 +1,5 @@
 import {writable, derived, get} from 'svelte/store';
+import page from 'page';
 import {applyChange} from "deep-diff";
 import {socket} from "../../socket";
 import {Conduit} from "../../../shared/conduit";
@@ -64,10 +65,13 @@ export const voterSelectedRace = derived([voterRaces, activeRouteParams], ([race
 export const voterOps = {
     race: {
         new: name => {
-            voterConduit.emit('newRace', name);
+            voterConduit.emit('newRace', name, id => {
+                page(`/voter/${id}`)
+            });
         },
         delete: raceId => {
             voterConduit.emit('removeRace', raceId);
+            page(`/voter`)
         },
         resetVotes: raceId => {
             voterConduit.emit('resetVotes', raceId);

@@ -90,12 +90,13 @@ module.exports = function(io: Server) {
             init: checkPermission('view', async (done) => {
                 done(lastData);
             }),
-            newRace: checkPermission('add_race', async (name: string) => {
+            newRace: checkPermission('add_race', async (name: string, done) => {
                 const raceData = await voter.addRace(name, userId);
 
                 if ('error' in raceData) {
                     singleUserError(raceData.error);
                 } else {
+                    done(raceData.id);
                     broadcast();
                     notificationBroadcast({
                         variant: 'info',
