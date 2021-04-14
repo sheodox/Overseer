@@ -43,7 +43,7 @@ export const relativeDate = (dateStr: string) => {
                 }
                 return `${floor} ${unit} ago`
             }
-            return `${num} ${unit} ago`;
+            return `${floor} ${unit} ago`;
         };
 
     if (years > 1) {
