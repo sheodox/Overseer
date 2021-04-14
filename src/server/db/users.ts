@@ -2,6 +2,7 @@ import {prisma} from "./prisma";
 import {User} from '@prisma/client';
 import {Profile} from "passport-google-oauth";
 import {ShortCache} from "../util/ShortCache";
+import {createNotificationForSuperUser} from "../util/create-notifications";
 
 export type MaskedUser = Pick<User, 'id' | 'displayName' | 'profileImage'>
 
@@ -33,6 +34,11 @@ class Users {
         if (!user) {
             user = await prisma.user.create({
                 data: userData
+            });
+            createNotificationForSuperUser({
+                title: "Admin",
+                message: `New user "${user.displayName}"`,
+                href: '/admin'
             })
         }
         else {
