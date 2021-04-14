@@ -12,6 +12,27 @@ export class Booker {
         this.allowedActions = allowedActions;
     }
 
+    //get an array of userIds of users who are assigned a role that allows the specified action
+    async getUsersWithPermission(action: string) {
+        const permittedRoles = (await prisma.bookerRole.findMany({
+                where: {
+                    concern: this.moduleName
+                }
+            })).filter(role => {
+                return !!(role.permissions as BookerPermissions)[action]
+            }),
+            assignments = await prisma.bookerAssignment.findMany({
+                where: {
+                    roleId: {
+                        in: permittedRoles.map(role => role.id)
+                    }
+                }
+            });
+
+        return assignments.map(assignment => assignment.userId);
+    }
+
+
     async getUserPermissions(userId: string): Promise<BookerPermissions> {
         if (!userId) {
             return this.denyAll();
@@ -209,5 +230,6 @@ export const eventsBooker = new Booker('events', [
 ]);
 
 export const appBooker = new Booker('app', [
-    'user_meta'
+    'user_meta',
+    'notifications'
 ]);
