@@ -2,9 +2,9 @@ import {writable, get} from 'svelte/store';
 import {createAutoExpireToast, createProgressToast, updateToast} from "sheodox-ui";
 import {post} from "axios";
 import {bytes as formatBytes} from "../../../shared/formatters";
-import {Conduit} from "../../../shared/conduit";
+import {Envoy} from "../../../shared/envoy";
 import {socket} from "../../socket";
-const appConduit = new Conduit(socket, 'app');
+const appEnvoy = new Envoy(socket, 'app');
 
 export const pageName = writable('');
 pageName.subscribe(page => {
@@ -69,7 +69,7 @@ export function requestUser(userId) {
             return registry;
         });
 
-        appConduit.emit('getUserMeta', userId, (meta) => {
+        appEnvoy.emit('getUserMeta', userId, (meta) => {
             userRegistry.update(registry => {
                 registry[userId] = {
                     loading: false,

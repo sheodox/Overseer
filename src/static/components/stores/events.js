@@ -1,9 +1,9 @@
 import {writable, derived, get} from "svelte/store";
 import {socket} from "../../socket";
 import page from 'page';
-import {Conduit} from "../../../shared/conduit";
+import {Envoy} from "../../../shared/envoy";
 import {activeRouteParams} from "./routing";
-const eventConduit = new Conduit(socket, 'events');
+const eventsEnvoy = new Envoy(socket, 'events');
 
 export const eventsInitialized = writable(false);
 export const events = writable([], set => {
@@ -12,7 +12,7 @@ export const events = writable([], set => {
     }
 
     if (!get(eventsInitialized)) {
-        eventConduit.emit('init');
+        eventsEnvoy.emit('init');
     }
 });
 function sortAsc(events) {
@@ -55,7 +55,7 @@ export const eventFromRoute = derived([events, activeRouteParams], ([events, rou
     })
 })
 
-eventConduit.on({
+eventsEnvoy.on({
     refresh: data => {
         const userId = window.user.id;
 
@@ -76,24 +76,24 @@ export function getDayOfWeekName(dayIndex) {
 
 export const eventOps = {
     createEvent: (data) => {
-        eventConduit.emit('createEvent', data, id => {
+        eventsEnvoy.emit('createEvent', data, id => {
             if (id) {
                 page(`/events/${id}`);
             }
         })
     },
     updateEvent: (id, data) => {
-        eventConduit.emit('updateEvent', id, data, id => {
+        eventsEnvoy.emit('updateEvent', id, data, id => {
             if (id) {
                 page(`/events/${id}`);
             }
         })
     },
     deleteEvent: (id) => {
-        eventConduit.emit('deleteEvent', id);
+        eventsEnvoy.emit('deleteEvent', id);
         page('/events')
     },
     rsvp: (eventId, rsvpStatus, survey) => {
-        eventConduit.emit('rsvp', eventId, rsvpStatus, survey);
+        eventsEnvoy.emit('rsvp', eventId, rsvpStatus, survey);
     }
 }
