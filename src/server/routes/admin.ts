@@ -1,13 +1,13 @@
 import {Router} from "express";
 import path from 'path';
-import {Conduit} from "../../shared/conduit";
+import {Envoy} from "../../shared/envoy";
 import {users} from "../db/users";
 import {isReqSuperUser, isUserSuperUser} from '../util/superuser'
 import {AppRequest} from "../types";
 import {Server, Socket} from "socket.io";
 import {appBooker, echoBooker, eventsBooker, voterBooker} from "../db/booker";
 import {Prisma} from '@prisma/client';
-import {SilverConduit} from "../util/silver-conduit";
+import {Harbinger} from "../util/harbinger";
 import {getManifest} from "../util/route-common";
 import {createIntegrationToken} from "../util/integrations";
 import {safeAsyncRoute} from "../util/error-handler";
@@ -44,7 +44,7 @@ router.get('/admin/main.js', (req, res) => {
 });
 
 function bindAdminSocketListeners(socket: Socket) {
-    const adminConduit = new Conduit(socket, 'admin');
+    const adminConduit = new Envoy(socket, 'admin');
 
     function safeHandler(handler: (...args: any) => Promise<any>) {
         return async (...args: any) => {
@@ -108,7 +108,7 @@ async function dump(socket: Socket) {
 module.exports = function(i: Server) {
     io = i;
     io.on('connection', socket => {
-        const userId = SilverConduit.getUserId(socket);
+        const userId = Harbinger.getUserId(socket);
 
         if (isUserSuperUser(userId)) {
             bindAdminSocketListeners(socket);
