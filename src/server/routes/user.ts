@@ -1,14 +1,14 @@
 import {Server} from "socket.io";
-import {createSafeWebsocketHandler, SilverConduit} from "../util/silver-conduit";
+import {createSafeWebsocketHandler, Harbinger} from "../util/harbinger";
 import {users} from "../db/users";
 import {appBooker} from "../db/booker";
 import {appLogger} from "../util/logger";
+import {Envoy} from "../../shared/envoy";
 
 module.exports = (io: Server) => {
     io.on('connection', async socket => {
-        const socketConduit = new SilverConduit(socket, 'app'),
-            singleUserNotifications = new SilverConduit(socket, 'notifications'),
-            userId = SilverConduit.getUserId(socket);
+        const socketConduit = new Envoy(socket, 'app'),
+            userId = Harbinger.getUserId(socket);
 
         //don't attempt to let users who aren't signed in to connect to the websocket
         if (!userId) {
