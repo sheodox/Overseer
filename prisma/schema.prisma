@@ -49,6 +49,7 @@ model User {
   rsvps            Rsvp[]
   events           Event[]
   rsvpDays         RsvpDay[]
+  notifications    Notification[]
 }
 
 model Image {
@@ -178,4 +179,17 @@ model RsvpDay {
 
   @@unique([eventId, userId, date])
   @@index([eventId, date])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  read      Boolean  @default(false)
+  title     String
+  message   String
+  href      String
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
 }
