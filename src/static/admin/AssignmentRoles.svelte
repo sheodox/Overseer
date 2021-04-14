@@ -12,7 +12,7 @@
 </label>
 
 <script>
-    import {adminConduit} from "./admin-common";
+    import {adminEnvoy} from "./admin-common";
 
     export let booker;
     export let user;
@@ -26,6 +26,6 @@
     }
 
     function assign(moduleName, userId, roleId) {
-        adminConduit.emit('assign-role', moduleName, userId, roleId);
+        adminEnvoy.emit('assign-role', moduleName, userId, roleId);
     }
 </script>
