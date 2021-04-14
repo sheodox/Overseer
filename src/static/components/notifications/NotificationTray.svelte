@@ -1,0 +1,79 @@
+<style>
+    .tray {
+        width: 20rem;
+        max-width: 95vw;
+        padding: 0.5rem;
+    }
+    ul {
+        height: 30rem;
+        max-height: 50vh;
+        overflow: auto;
+    }
+    h1, p {
+        margin: 0;
+    }
+    .time {
+        font-size: 0.8rem;
+    }
+    li :global(a) {
+        display: block;
+    }
+    .unread-indicator {
+        color: var(--accent-blue);
+        font-size: 0.5rem;
+    }
+</style>
+
+<div class="tray">
+    <div class="toolbar f-row justify-content-between align-items-center">
+        <h1>Notifications</h1>
+        <button on:click={notificationOps.markAllRead}>
+            Mark All Read
+        </button>
+    </div>
+    <ul>
+        {#each $notifications as notification}
+            <li>
+                <div class="f-row align-items-center">
+                    {#if !notification.read}
+                        <div class="unread-indicator">
+                            <Icon icon="circle" />
+                        </div>
+                    {/if}
+                    <Link
+                        href={notification.href}
+                        noHoverStyles={true}
+                        on:followed={() => markRead(notification)}
+                    >
+                        <div class="f-column">
+                            <p class="message">{notification.message}</p>
+                            <div class="time muted f-row justify-content-between">
+                                <span>{notification.title}</span>
+                                <span>{relativeDate(notification.createdAt)}</span>
+                            </div>
+                        </div>
+                    </Link>
+                </div>
+            </li>
+        {:else}
+            <li>
+                <p class="text-align-center">
+                    <em>No notifications.</em>
+                </p>
+            </li>
+        {/each}
+    </ul>
+</div>
+
+<script>
+    import {Icon} from 'sheodox-ui';
+    import {notificationsInitialized, notifications, notificationOps} from "../stores/notifications";
+    import {relativeDate} from "../../../shared/formatters";
+    import Link from "../Link.svelte";
+
+    function markRead(notification) {
+        if (!notification.read) {
+            notificationOps.markRead(notification.id);
+        }
+    }
+</script>

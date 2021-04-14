@@ -17,12 +17,16 @@
                 </li>
             {/if}
         {/each}
+        {#if window.Booker.app.notifications}
+            <NotificationTrigger />
+        {/if}
     </ul>
 </nav>
 
 <script>
     import {activeApp} from "./stores/routing";
     import page from 'page';
+    import NotificationTrigger from "./notifications/NotificationTrigger.svelte";
 
     const links = [{
         viewable: window.Booker.echo.view || window.Booker.voter.view,
