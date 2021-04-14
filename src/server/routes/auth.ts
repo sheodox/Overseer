@@ -1,12 +1,23 @@
 import {AppRequest} from "../types";
-import {Router, Response} from 'express';
+import {Router, Response, NextFunction} from 'express';
 import {OAuth2Strategy} from 'passport-google-oauth';
 import {User} from '@prisma/client';
 import passport from "passport";
 import {users} from "../db/users";
 import {authLogger} from "../util/logger";
 
-const router = Router();
+export const router = Router();
+
+export function requireAuth(req: AppRequest, res: Response, next: NextFunction) {
+    if (req.user) {
+        next();
+    }
+    else {
+        next({
+            status: 401
+        })
+    }
+}
 
 passport.use(new OAuth2Strategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
@@ -44,4 +55,3 @@ router.get('/logout', (req: AppRequest, res: Response) => {
     req.logout();
     res.redirect('/');
 });
-module.exports = router;
