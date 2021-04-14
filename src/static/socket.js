@@ -1,13 +1,13 @@
 import {io} from 'socket.io-client';
 import {createAutoExpireToast} from 'sheodox-ui';
-import {Conduit} from "../shared/conduit";
+import {Envoy} from "../shared/envoy";
 
 export const socket = io();
 
-const notificationConduit = new Conduit(socket, 'notifications');
+const toastEnvoy = new Envoy(socket, 'toasts');
 
-notificationConduit.on({
-    notification: (toastOptions) => {
+toastEnvoy.on({
+    toast: (toastOptions) => {
         createAutoExpireToast(toastOptions);
     }
 });
