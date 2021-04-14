@@ -1,6 +1,6 @@
 import {Router, Response} from 'express';
 import serializeJavascript from "serialize-javascript";
-import {voterBooker, echoBooker, eventsBooker} from "../db/booker";
+import {voterBooker, echoBooker, eventsBooker, appBooker} from "../db/booker";
 import {isReqSuperUser} from "../util/superuser";
 import {AppRequest} from "../types";
 import {getManifest} from "../util/route-common";
@@ -29,6 +29,7 @@ function entry(app?: string) {
                 voter: await voterBooker.getUserPermissions(id),
                 echo: await echoBooker.getUserPermissions(id),
                 events: await eventsBooker.getUserPermissions(id),
+                app: await appBooker.getUserPermissions(id),
             }),
             links = [
                 {href: '/auth/logout', text: 'Logout', icon: 'sign-out-alt'}
