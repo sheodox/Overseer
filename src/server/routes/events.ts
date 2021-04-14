@@ -1,24 +1,18 @@
 import {Server} from "socket.io";
-import {createSafeWebsocketHandler, SilverConduit} from "../util/silver-conduit";
-import {ToastOptions} from "../types";
+import {createSafeWebsocketHandler, Harbinger} from "../util/harbinger";
 import {eventsBooker} from "../db/booker";
 import {eventsLogger} from "../util/logger";
 import {EventDay, EventList, events, getEventDays, RSVPStatus} from "../db/events";
 import {Event, Rsvp, RsvpDay} from "@prisma/client";
 import MarkdownIt from "markdown-it";
 import {users} from "../db/users";
+import {pickProperties} from "../util/object-manipulation";
+import {Envoy} from "../../shared/envoy";
+import {createNotificationsForPermittedUsers, sendToastToUser} from "../util/create-notifications";
 const md = new MarkdownIt();
 
 function cloneObject<T>(obj: T): T {
     return JSON.parse(JSON.stringify(obj));
-}
-
-function pickProperties<Type, TProp extends keyof Type>(obj: Type, properties: TProp[]): Pick<Type, TProp> {
-    const picked: any = {}
-    for (const prop of properties)  {
-        picked[prop] = obj[prop];
-    }
-    return picked;
 }
 
 type MaskedRsvpDay = Pick<RsvpDay, 'date' | 'stayingOvernight'>
@@ -113,13 +107,11 @@ async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]
 }
 
 module.exports = function(io: Server) {
-    const ioConduit = new SilverConduit(io, 'events'),
-        notificationConduit = new SilverConduit(io, 'notifications');
+    const eventsHarbinger = new Harbinger('events');
 
     io.on('connection', async socket => {
-        const socketConduit = new SilverConduit(socket, 'events'),
-            singleUserNotifications = new SilverConduit(socket, 'notifications'),
-            userId = SilverConduit.getUserId(socket);
+        const eventsEnvoy = new Envoy(socket, 'events'),
+            userId = Harbinger.getUserId(socket);
 
         if (!userId) {
             return;
@@ -128,7 +120,7 @@ module.exports = function(io: Server) {
         async function broadcast() {
             const eventData = await events.list()
 
-            ioConduit.filteredBroadcast('refresh', async userId => {
+            eventsHarbinger.filteredBroadcast('refresh', async userId => {
                 if (await eventsBooker.check(userId, 'view')) {
                     return maskEvent(eventData, userId);
                 }
@@ -140,16 +132,16 @@ module.exports = function(io: Server) {
             checkPermission = createSafeWebsocketHandler(userId, eventsBooker, socket, eventsLogger);
 
         const singleUserError = (message: string) => {
-            singleUserNotifications.emit('notification', {
+            sendToastToUser(userId, {
                 variant: 'error',
                 title: 'Event Error',
                 message,
-            } as ToastOptions);
+            });
         };
 
-        socketConduit.on({
+        eventsEnvoy.on({
             init: checkPermission('view', async () => {
-                socketConduit.emit('refresh',
+                eventsEnvoy.emit('refresh',
                     await maskEvent(await events.list(), userId)
                 );
             }),
@@ -161,6 +153,12 @@ module.exports = function(io: Server) {
 
                 done(event.id);
                 broadcast();
+
+                createNotificationsForPermittedUsers(eventsBooker, 'view', {
+                    title: 'Events',
+                    message: `New event "${event.name}" starting ${event.startDate.toLocaleString()}.`,
+                    href: `/events/${event.id}`,
+                })
             }),
             updateEvent: checkPermission('organize', async (id, data, done) => {
                 const event = await events.updateEvent(id, data);

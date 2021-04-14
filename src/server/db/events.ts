@@ -127,9 +127,6 @@ class Events {
             data: {
                 ...data,
                 creatorId: userId
-            },
-            select: {
-                id: true
             }
         })
     }
