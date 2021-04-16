@@ -20,6 +20,9 @@
         {#if window.Booker.app.notifications}
             <NotificationTrigger />
         {/if}
+        {#if window.user}
+            <HeaderUserDropdown />
+        {/if}
     </ul>
 </nav>
 
@@ -27,14 +30,9 @@
     import {activeApp} from "./stores/routing";
     import page from 'page';
     import NotificationTrigger from "./notifications/NotificationTrigger.svelte";
+    import HeaderUserDropdown from "./HeaderUserDropdown.svelte";
 
     const links = [{
-        viewable: window.Booker.echo.view || window.Booker.voter.view,
-        path: '/',
-        app: 'home',
-        text: 'Home',
-        icon: 'home'
-    }, {
         viewable: window.Booker.events.view,
         path: '/events',
         app: 'events',

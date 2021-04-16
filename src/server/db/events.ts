@@ -2,6 +2,8 @@ import Ajv from 'ajv';
 import {Event, Rsvp, RsvpDay} from '@prisma/client';
 import {prisma} from "./prisma";
 import {name as validName} from "../util/validator";
+import {createNotificationForUser} from "../util/create-notifications";
+import {eventsBooker} from "./booker";
 const ajv = new Ajv(),
     rsvpStatuses = ['going', 'not-going', 'maybe'] as const,
     validateEventEditable = ajv.compile({
@@ -18,7 +20,9 @@ const ajv = new Ajv(),
     validateRSPVStatus = ajv.compile({
         enum: rsvpStatuses
     }),
-    DAY_MS = 1000 * 60 * 60 * 24;
+    HOUR_MS = 1000 * 60 * 60,
+    DAY_MS = HOUR_MS * 24,
+    UPCOMING_REMINDER_CHECK_MS = 1000 * 60;
 
 export type RSVPStatus = typeof rsvpStatuses[number];
 type EventEditable = Pick<Event, 'name' | 'notes' | 'attendanceType' | 'startDate' | 'endDate'>
@@ -82,6 +86,94 @@ function getMissingDays(oldDays: EventDay[], newDays: EventDay[]) {
     }).map(({date}) => date);
 }
 
+async function notifyUpcoming() {
+    const upcomingEvents = await prisma.event.findMany({
+        where: {
+            startDate: {
+                //find events that start within a day from now
+                gt: new Date(),
+                lt: new Date(Date.now() + DAY_MS)
+            }
+        }
+    });
+
+    if (!upcomingEvents.length) {
+        return;
+    }
+
+    const possibleAttendees = await eventsBooker.getUsersWithPermission('view');
+
+    await Promise.all(upcomingEvents.map(async event => {
+        //by virtue of appearing in the results we queried we know it's within range to send one day notifications
+        if (!event.remindedOneDay) {
+            await prisma.event.update({
+                where: {id: event.id},
+                data: {remindedOneDay: true}
+            });
+
+            for (const userId of possibleAttendees) {
+                const rsvp = await prisma.rsvp.findUnique({
+                    where: {
+                        eventId_userId: {
+                            eventId: event.id,
+                            userId: userId
+                        }
+                    }
+                });
+
+                //don't send reminders to people who have already said they're not going
+                if (!rsvp || rsvp.status !== 'not-going') {
+                    const rsvpEncouragement = !rsvp ? ` Don't forget to RSVP.`: '';
+                    createNotificationForUser(
+                        userId,
+                        {
+                            title: `Events`,
+                            message: `"${event.name}" starts a day from now!${rsvpEncouragement}`,
+                            href: `/events/${event.id}`
+
+                        }, 'notifyEventReminders'
+                    )
+                }
+            }
+        }
+
+        const startsSoon = event.startDate.getTime() - Date.now() < HOUR_MS;
+        if (!event.remindedOneHour && startsSoon) {
+            await prisma.event.update({
+                where: {id: event.id},
+                data: {remindedOneHour: true}
+            });
+
+            for (const userId of possibleAttendees) {
+                const rsvp = await prisma.rsvp.findUnique({
+                    where: {
+                        eventId_userId: {
+                            eventId: event.id,
+                            userId: userId
+                        }
+                    }
+                });
+
+                //don't send reminders to people who have already said they're not going
+                if (!rsvp || rsvp.status !== 'not-going') {
+                    const rsvpEncouragement = !rsvp ? ` Don't forget to RSVP.`: '';
+                    createNotificationForUser(
+                        userId,
+                        {
+                            title: `Events`,
+                            message: `"${event.name}" starts in an hour!${rsvpEncouragement}`,
+                            href: `/events/${event.id}`
+
+                        }, 'notifyEventReminders'
+                    )
+                }
+            }
+        }
+    }));
+}
+notifyUpcoming();
+setInterval(notifyUpcoming, UPCOMING_REMINDER_CHECK_MS)
+
 class Events {
     constructor() {}
 
@@ -123,10 +215,18 @@ class Events {
 
         data.startDate = new Date(data.startDate);
         data.endDate = new Date(data.endDate);
+
+        const startTime = data.startDate.getTime();
+
         return await prisma.event.create({
             data: {
                 ...data,
-                creatorId: userId
+                creatorId: userId,
+                //if the event is starting pretty soon there's no reason to notify them right away
+                //when the 'new event' notification is fresh in their mind. if an event is created
+                //that starts immediately you'd otherwise get all three created/reminder notifications at once
+                remindedOneDay: startTime - Date.now() < 2 * DAY_MS,
+                remindedOneHour: startTime - Date.now() < 2 * HOUR_MS,
             }
         })
     }

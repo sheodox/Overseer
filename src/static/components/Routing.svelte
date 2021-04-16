@@ -18,6 +18,8 @@
     <EventsEdit mode="edit" />
 {:else if $activeRoute === 'events/view' && events.view}
     <EventView />
+{:else if $activeRoute === 'settings'}
+    <Settings />
 {:else if !echo.view && !voter.view && !events.view}
     <NoAccess />
 {:else}
@@ -35,6 +37,7 @@
     import NoAccess from "./NoAccess.svelte";
     import HomePage from "./HomePage.svelte";
     import EventView from "./events/EventView.svelte";
+    import Settings from "./settings/Settings.svelte";
 
     //shortcuts to permissions!
     const echo = window.Booker.echo,

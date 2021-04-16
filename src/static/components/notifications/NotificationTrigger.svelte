@@ -1,15 +1,14 @@
 <style>
-
+    .has-unread {
+        color: var(--accent-blue);
+    }
 </style>
 
 <li>
     <NavDropdown showOpenIcon={false}>
-    <span slot="button">
+    <span slot="button" class:has-unread={$unreadNotificationCount}>
         <Icon icon="bell" />
         <span class="sr-only">Notifications</span>
-        <span class="unread-count">
-            {$unreadNotificationCount}
-        </span>
     </span>
         <div slot="menu">
             <NotificationTray />

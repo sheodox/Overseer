@@ -6,6 +6,7 @@ import {createSafeWebsocketHandler, Harbinger} from "../util/harbinger";
 import {appBooker} from "../db/booker";
 import {appLogger} from "../util/logger";
 import {io} from '../server';
+import {sendToastToUser} from "../util/create-notifications";
 
 export const router = Router();
 
@@ -48,6 +49,18 @@ io.on('connection', socket => {
         markAllRead: checkPermission('notifications', async () => {
             await notifications.markAllRead(userId);
             notificationHarbinger.broadcastToUser('markedAllRead', userId);
+        }),
+        registerPushSubscription: checkPermission('notifications', async (subscription) => {
+            const subbed = await notifications.registerPushSubscription(userId, subscription);
+
+            if ('error' in subbed) {
+                sendToastToUser(userId, {
+                    variant: 'error',
+                    title: 'Notifications',
+                    message: subbed.error
+                })
+            }
+
         })
     });
 })

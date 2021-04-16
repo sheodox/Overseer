@@ -6,6 +6,8 @@ import {AppRequest} from "../types";
 import {getManifest} from "../util/route-common";
 import {users} from "../db/users";
 import {safeAsyncRoute} from "../util/error-handler";
+import {prisma} from "../db/prisma";
+import {vapidMetadataKeys} from "../util/create-notifications";
 
 const router = Router();
 
@@ -13,6 +15,7 @@ const overseerApps = {
     events: 'Events',
     echo: 'Echo',
     voter: 'Voter',
+    settings: 'Settings',
 };
 
 /* GET home page for / and any client side routing urls */
@@ -35,10 +38,12 @@ function entry(app?: string) {
                 {href: '/auth/logout', text: 'Logout', icon: 'sign-out-alt'}
             ],
             manifest = await getManifest();
+        let settings;
 
         if (id) {
             // don't need to wait for this to serve the page
             users.touch(id);
+            settings = await users.getSettings(id);
         }
 
         if (isReqSuperUser(req)) {
@@ -58,6 +63,12 @@ function entry(app?: string) {
         };
 
         if (req.user) {
+            const publicKey = await prisma.appMetadata.findFirst({
+                where: {
+                    key: vapidMetadataKeys.publicKey
+                }
+            });
+
             res.render('index', {
                 manifest,
                 ...social,
@@ -65,7 +76,11 @@ function entry(app?: string) {
                     id: req.user.id,
                     displayName: req.user.displayName,
                     profileImage: req.user.profileImage,
-                    links
+                    links,
+                    settings
+                }),
+                serverMetadata: serializeJavascript({
+                    pushVapidPublicKey: publicKey?.value
                 }),
                 permissions
             });
@@ -74,6 +89,7 @@ function entry(app?: string) {
                 manifest,
                 ...social,
                 user: serializeJavascript(false),
+                serverMetadata: serializeJavascript({}),
                 permissions
             });
         }

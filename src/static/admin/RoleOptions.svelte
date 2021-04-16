@@ -15,6 +15,16 @@
                     <Icon icon="times" /> Delete
                 </button>
             </li>
+            <li>
+                <button on:click={allowAll}>
+                    <Icon icon="thumbs-up"/> Allow All
+                </button>
+            </li>
+            <li>
+                <button on:click={denyAll}>
+                    <Icon icon="thumbs-down"/> Deny All
+                </button>
+            </li>
         </ul>
     </MenuButton>
 </div>
@@ -37,5 +47,13 @@
         if (confirm(`Are you sure you want to remove ${role.name}?`)) {
             adminEnvoy.emit('delete-role', moduleName, role.id);
         }
+    }
+
+    function allowAll() {
+        adminEnvoy.emit('set-all-allowed', moduleName, role.id);
+    }
+
+    function denyAll() {
+        adminEnvoy.emit('set-all-denied', moduleName, role.id);
     }
 </script>

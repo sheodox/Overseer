@@ -55,5 +55,8 @@ export const notificationOps = {
     },
     markAllRead: () => {
         notificationsEnvoy.emit('markAllRead');
+    },
+    registerPushSubscription: subscription => {
+        notificationsEnvoy.emit('registerPushSubscription', subscription);
     }
 }

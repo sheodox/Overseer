@@ -23,7 +23,7 @@ type RsvpStatusCounts = Record<RSVPStatus, number>;
 
 type DayAttendee = Pick<RsvpDay, 'stayingOvernight' | 'userId'>;
 
-interface MaskedEvent extends Omit<Event, 'startDate' | 'endDate'> {
+interface MaskedEvent extends Omit<Event, 'startDate' | 'endDate' | 'remindedOneDay' | 'remindedOneHour'> {
     startDate: number,
     endDate: number,
     notesRendered: string,
@@ -158,7 +158,7 @@ module.exports = function(io: Server) {
                     title: 'Events',
                     message: `New event "${event.name}" starting ${event.startDate.toLocaleString()}.`,
                     href: `/events/${event.id}`,
-                })
+                }, 'notifyNewEvents')
             }),
             updateEvent: checkPermission('organize', async (id, data, done) => {
                 const event = await events.updateEvent(id, data);

@@ -18,6 +18,10 @@
             {/if}
         </div>
 
+        {#if !$pushSubscribed && !dontWantReminders}
+            <EventNotificationReminder on:refused={() => dontWantReminders = true} />
+        {/if}
+
         {#if $ongoingEvents.length}
             <h2>Ongoing</h2>
             {#each $ongoingEvents as event}
@@ -50,6 +54,10 @@
     import EventPreview from "./EventPreview.svelte";
     import PageSpinner from "../PageSpinner.svelte";
     import {pageName} from "../stores/app";
+    import EventNotificationReminder from "./EventNotificationReminder.svelte";
+    import {pushSubscribed} from "../stores/app";
+
+    let dontWantReminders = localStorage.getItem('dont-prompt-event-notifications') === 'true';
 
     pageName.set('Events');
 </script>

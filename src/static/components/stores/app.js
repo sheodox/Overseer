@@ -11,6 +11,27 @@ pageName.subscribe(page => {
     const app = 'Overseer';
     document.title = page ? `${page} - ${app}` : app;
 });
+export const pushSubscribed = writable(false, set => {
+    navigator.serviceWorker.ready
+        .then(sw => {
+            return sw.pushManager.getSubscription();
+        })
+        .then(pushSubscription => {
+            set(!!pushSubscription);
+        })
+});
+
+export let settings = writable(window.user?.settings);
+
+let settingsSubscriptionInitialized = false;
+settings.subscribe(settings => {
+    //skip the first run of this, we only care about changes to the settings, not its initial value
+    if (!settingsSubscriptionInitialized) {
+        settingsSubscriptionInitialized = true;
+        return;
+    }
+    appEnvoy.emit('updateSettings', settings);
+});
 
 export function uploadImage(toastTitle, file, postPath) {
     const progressToastId = createProgressToast({

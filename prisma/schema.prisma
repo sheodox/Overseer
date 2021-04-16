@@ -39,17 +39,43 @@ model EchoImage {
 }
 
 model User {
-  id               String             @id @default(uuid())
-  oauthId          String             @unique
-  displayName      String
-  profileImage     String
-  bookerAssignment BookerAssignment[]
-  createdAt        DateTime           @default(now())
-  lastActiveAt     DateTime           @default(now())
-  rsvps            Rsvp[]
-  events           Event[]
-  rsvpDays         RsvpDay[]
-  notifications    Notification[]
+  id                String                 @id @default(uuid())
+  oauthId           String                 @unique
+  displayName       String
+  profileImage      String
+  bookerAssignment  BookerAssignment[]
+  createdAt         DateTime               @default(now())
+  lastActiveAt      DateTime               @default(now())
+  rsvps             Rsvp[]
+  events            Event[]
+  rsvpDays          RsvpDay[]
+  notifications     Notification[]
+  pushSubscriptions UserPushSubscription[]
+  settingsId        String?
+  settings          UserSettings?          @relation(fields: [settingsId], references: [id])
+}
+
+model UserSettings {
+  id                      String  @id @default(uuid())
+  userId                  String
+  pushNotifications       Boolean @default(true)
+  notifyNewEvents         Boolean @default(true)
+  notifyEventReminders    Boolean @default(true)
+  notifyEchoUploads       Boolean @default(false)
+  notifySiteAnnouncements Boolean @default(true)
+
+  user User?
+  @@unique([userId])
+}
+
+model UserPushSubscription {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  subscription Json
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Image {
@@ -140,17 +166,19 @@ model BookerAssignment {
 }
 
 model Event {
-  id             String    @id @default(uuid())
-  name           String
-  notes          String    @default("")
-  attendanceType String
-  startDate      DateTime
-  endDate        DateTime
-  creatorId      String
-  creator        User      @relation(fields: [creatorId], references: [id])
-  createdAt      DateTime  @default(now())
-  rsvps          Rsvp[]
-  rsvpDays       RsvpDay[]
+  id              String    @id @default(uuid())
+  name            String
+  notes           String    @default("")
+  attendanceType  String
+  startDate       DateTime
+  endDate         DateTime
+  creatorId       String
+  creator         User      @relation(fields: [creatorId], references: [id])
+  createdAt       DateTime  @default(now())
+  rsvps           Rsvp[]
+  rsvpDays        RsvpDay[]
+  remindedOneDay  Boolean   @default(false)
+  remindedOneHour Boolean   @default(false)
 }
 
 model Rsvp {
@@ -192,4 +220,12 @@ model Notification {
   createdAt DateTime @default(now())
 
   @@index([userId, read])
+}
+
+model AppMetadata {
+  id    String @id @default(uuid())
+  key   String
+  value String
+
+  @@unique([key])
 }

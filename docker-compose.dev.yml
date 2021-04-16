@@ -24,6 +24,7 @@ services:
         source: ./public
         target: /var/www/static
         read_only: true
+      - .dev-certs/:/etc/letsencrypt/overseer/certs
     logging:
       options:
         max-size: "1m"

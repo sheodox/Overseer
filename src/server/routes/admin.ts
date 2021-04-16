@@ -12,6 +12,7 @@ import {getManifest} from "../util/route-common";
 import {createIntegrationToken} from "../util/integrations";
 import {safeAsyncRoute} from "../util/error-handler";
 import {adminLogger} from "../util/logger";
+import {createNotificationsForPermittedUsers} from "../util/create-notifications";
 
 const router = Router(),
     bookers = {
@@ -51,7 +52,7 @@ function bindAdminSocketListeners(socket: Socket) {
             try {
                 await handler(...args);
             } catch (error) {
-                adminLogger.error({
+                adminLogger.error('Error', {
                     error
                 });
             }
@@ -83,8 +84,23 @@ function bindAdminSocketListeners(socket: Socket) {
         }),
         'generate-integration-token': safeHandler(async (name: string, scopes: string[], done) => {
             done(createIntegrationToken(name, scopes));
+        }),
+        'create-announcement': safeHandler(async (title: string, message: string, href: string) => {
+            createNotificationsForPermittedUsers(appBooker, 'notifications', {
+                title,
+                message,
+                href
+            }, 'notifySiteAnnouncements')
+        }),
+        'set-all-allowed': safeHandler(async (module: BookerModule, roleId: string) => {
+            await bookers[module].setAllAllowed(roleId);
+            await dump(socket);
+        }),
+        'set-all-denied': safeHandler(async (module: BookerModule, roleId: string) => {
+            await bookers[module].setAllDenied(roleId);
+            await dump(socket);
         })
-     });
+    });
 }
 
 async function dump(socket: Socket) {
