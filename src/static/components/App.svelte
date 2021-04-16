@@ -6,6 +6,11 @@
     :global(header h1) {
         font-family: "Kanit", sans-serif;
     }
+    :global(header) {
+        position: sticky;
+        z-index: 100;
+        top: 0;
+    }
 </style>
 
 <Header
