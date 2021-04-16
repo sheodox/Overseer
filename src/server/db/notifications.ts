@@ -68,7 +68,10 @@ class Notifications {
     }
     async registerPushSubscription(userId: string, subscription: PushSubscriptionJSON) {
         if (!validatePushSubscription(subscription)) {
-            appLogger.error('Invalid push subscription', validatePushSubscription.errors);
+            appLogger.error('Invalid push subscription', {
+                error: validatePushSubscription.errors,
+                subscription
+            });
             return {error: 'Invalid subscription!'}
         }
 
