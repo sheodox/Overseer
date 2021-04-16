@@ -4,12 +4,14 @@
     </span>
     <div slot="menu">
         <ul>
-            <li>
-                <Link href="/settings" classes="button">
-                    <Icon icon="cog" />
-                    Settings
-                </Link>
-            </li>
+            {#if window.Booker.app.settings}
+                <li>
+                    <Link href="/settings" classes="button">
+                        <Icon icon="cog" />
+                        Settings
+                    </Link>
+                </li>
+            {/if}
             {#each footerLinks as link}
                 <li>
                     <a href={link.href} class="button">
