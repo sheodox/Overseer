@@ -1,7 +1,7 @@
 <style>
     .sub-panel {
         width: 30rem;
-        max-width: 95vw;
+        max-width: 90vw;
     }
     h1 {
         margin: 0;
