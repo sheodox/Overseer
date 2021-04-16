@@ -19,6 +19,10 @@
     <p><Link href="/events">Back to the events list.</Link></p>
 {:else}
     <div class="page-content">
+        <div class="f-row justify-content-center">
+            <EventNotificationReminder />
+        </div>
+
         <div class="f-row f-wrap justify-content-center align-items-start">
             <div class="f-1">
                 <div class="sub-panel details">
@@ -119,6 +123,7 @@
     import Attendees from "./Attendance.svelte";
     import EventTimes from "./EventTimes.svelte";
     import RSVPNotes from "./RSVPNotes.svelte";
+    import EventNotificationReminder from "./EventNotificationReminder.svelte";
 
     let pendingStatus,
         showDeleteConfirm = false,

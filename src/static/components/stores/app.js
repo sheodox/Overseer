@@ -11,7 +11,7 @@ pageName.subscribe(page => {
     const app = 'Overseer';
     document.title = page ? `${page} - ${app}` : app;
 });
-export const pushSubscribed = writable(false, set => {
+export const pushSubscribed = writable(true, set => {
     navigator.serviceWorker.ready
         .then(sw => {
             return sw.pushManager.getSubscription();
