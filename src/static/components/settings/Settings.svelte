@@ -6,15 +6,15 @@
 </style>
 
 <div class="page-content">
-    <h1>Notifications</h1>
-
+    <h1>Settings</h1>
+    <h2>Notifications</h2>
     <label>
         <input type="checkbox" bind:checked={$settings.pushNotifications}>
         Send Push Notifications
     </label>
 
     <div class="sub-panel">
-        <h2>Push Permissions</h2>
+        <h3>Push Permissions</h3>
         {#if $pushSubscribed}
             <p>You're set up to get push notifications on this device!</p>
         {:else}
@@ -24,8 +24,7 @@
         {/if}
     </div>
 
-    <h1>Desired Notifications</h1>
-
+    <h2>Desired Notifications</h2>
     <div class="f-column">
         {#if window.Booker.events.view}
             <label>
