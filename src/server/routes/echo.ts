@@ -233,7 +233,7 @@ const echoListener = (socket: Socket) => {
             title: 'Echo',
             message: `"${uploadedItem.name}" was uploaded.`,
             href: `/echo/${uploadedItem.id}`
-        }, 'notifyNewEvents')
+        }, 'notifyEchoUploads')
         broadcast();
     }));
 
