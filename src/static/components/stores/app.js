@@ -63,7 +63,7 @@ export function uploadImage(toastTitle, file, postPath) {
             updateToast(progressToastId, {
                 value: e.loaded,
                 max: e.total,
-                messaage: `${formatBytes(e.loaded, 'mb')} mb / ${formatBytes(e.total, 'mb')} mb`
+                message: `${formatBytes(e.loaded, 'mb')} mb / ${formatBytes(e.total, 'mb')} mb`
             })
         }
     })
