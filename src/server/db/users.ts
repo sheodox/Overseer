@@ -1,9 +1,29 @@
 import {prisma} from "./prisma";
-import {User} from '@prisma/client';
+import {User, UserSettings} from '@prisma/client';
 import {Profile} from "passport-google-oauth";
 import {ShortCache} from "../util/ShortCache";
+import {createNotificationForSuperUser} from "../util/create-notifications";
+import Ajv from 'ajv';
 
 export type MaskedUser = Pick<User, 'id' | 'displayName' | 'profileImage'>
+
+const userBooleanSettings = [
+    'pushNotifications',
+    'notifyNewEvents',
+    'notifyEventReminders',
+    'notifyEchoUploads',
+    'notifySiteAnnouncements'
+] as const;
+export type EditableSettings = keyof Pick<UserSettings, typeof userBooleanSettings[number]>
+
+const ajv = new Ajv(),
+    validateUserSettings = ajv.compile({
+        type: 'object',
+        properties: userBooleanSettings.reduce((props, settingName) => {
+            props[settingName] = {type: 'boolean'};
+            return props;
+        }, {} as Record<string, {type: 'boolean'}>)
+    })
 
 class Users {
     maskCache: ShortCache<MaskedUser>
@@ -33,6 +53,11 @@ class Users {
         if (!user) {
             user = await prisma.user.create({
                 data: userData
+            });
+            createNotificationForSuperUser({
+                title: "Admin",
+                message: `New user "${user.displayName}"`,
+                href: '/admin'
             })
         }
         else {
@@ -115,6 +140,33 @@ class Users {
                 lastActiveAt: new Date()
             }
         })
+    }
+
+    async getSettings(userId: string) {
+        let settings = await prisma.userSettings.findUnique({
+            where: {userId}
+        });
+
+        if (!settings) {
+            //we just need settings for this user, all settings have default column values
+            //so no need to specify any of them right here!
+            settings = await prisma.userSettings.create({
+                data: {userId}
+            });
+        }
+
+        return settings;
+    }
+
+    async updateSettings(userId: string, settings: EditableSettings) {
+        if (!validateUserSettings(settings)) {
+            return {error: 'Invalid settings!'};
+        }
+
+        return await prisma.userSettings.update({
+            where: {userId},
+            data: settings
+        });
     }
 }
 

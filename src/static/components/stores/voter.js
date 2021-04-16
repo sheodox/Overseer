@@ -2,10 +2,10 @@ import {writable, derived, get} from 'svelte/store';
 import page from 'page';
 import {applyChange} from "deep-diff";
 import {socket} from "../../socket";
-import {Conduit} from "../../../shared/conduit";
+import {Envoy} from "../../../shared/envoy";
 import {activeRouteParams} from "./routing";
 import {uploadImage} from "./app";
-const voterConduit = new Conduit(socket, 'voter');
+const voterEnvoy = new Envoy(socket, 'voter');
 
 export const voterInitialized = writable(false);
 
@@ -16,13 +16,13 @@ export const voterRaces = writable([], () => {
         return;
     }
 
-    voterConduit.emit('init', races => {
+    voterEnvoy.emit('init', races => {
         untouchedVoterData = races;
         setVoterData(races);
     });
 });
 
-voterConduit.on({
+voterEnvoy.on({
     diff: (changes) => {
         if (get(voterInitialized)) {
             for (const change of changes) {
@@ -65,33 +65,33 @@ export const voterSelectedRace = derived([voterRaces, activeRouteParams], ([race
 export const voterOps = {
     race: {
         new: name => {
-            voterConduit.emit('newRace', name, id => {
+            voterEnvoy.emit('newRace', name, id => {
                 page(`/voter/${id}`)
             });
         },
         delete: raceId => {
-            voterConduit.emit('removeRace', raceId);
+            voterEnvoy.emit('removeRace', raceId);
             page(`/voter`)
         },
         resetVotes: raceId => {
-            voterConduit.emit('resetVotes', raceId);
+            voterEnvoy.emit('resetVotes', raceId);
         },
         rename: (raceId, name) => {
-            voterConduit.emit('renameRace', raceId, name);
+            voterEnvoy.emit('renameRace', raceId, name);
         }
     },
     candidate: {
         new: (raceId, name) => {
-            voterConduit.emit('newCandidate', raceId, name);
+            voterEnvoy.emit('newCandidate', raceId, name);
         },
         vote: (candidateId, direction) => {
-            voterConduit.emit('vote', candidateId, direction);
+            voterEnvoy.emit('vote', candidateId, direction);
         },
         delete: (candidateId) => {
-            voterConduit.emit('removeCandidate', candidateId);
+            voterEnvoy.emit('removeCandidate', candidateId);
         },
         update: (candidateId, name, notes) => {
-            voterConduit.emit('updateCandidate', candidateId, name, notes);
+            voterEnvoy.emit('updateCandidate', candidateId, name, notes);
         },
         uploadImage(candidateId, file) {
             uploadImage(
@@ -101,7 +101,7 @@ export const voterOps = {
             )
         },
         deleteImage: id => {
-            voterConduit.emit('removeImage', id);
+            voterEnvoy.emit('removeImage', id);
         }
     },
 }

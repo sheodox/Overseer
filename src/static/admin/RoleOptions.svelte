@@ -15,13 +15,23 @@
                     <Icon icon="times" /> Delete
                 </button>
             </li>
+            <li>
+                <button on:click={allowAll}>
+                    <Icon icon="thumbs-up"/> Allow All
+                </button>
+            </li>
+            <li>
+                <button on:click={denyAll}>
+                    <Icon icon="thumbs-down"/> Deny All
+                </button>
+            </li>
         </ul>
     </MenuButton>
 </div>
 
 <script>
     import {MenuButton, Icon} from 'sheodox-ui';
-    import {adminConduit} from "./admin-common";
+    import {adminEnvoy} from "./admin-common";
 
     export let role;
     export let moduleName;
@@ -29,13 +39,21 @@
     function rename() {
         const newName = prompt('Enter a role name', role.name)?.trim();
         if (newName) {
-            adminConduit.emit('rename-role', moduleName, role.id, newName);
+            adminEnvoy.emit('rename-role', moduleName, role.id, newName);
         }
     }
 
     function remove() {
         if (confirm(`Are you sure you want to remove ${role.name}?`)) {
-            adminConduit.emit('delete-role', moduleName, role.id);
+            adminEnvoy.emit('delete-role', moduleName, role.id);
         }
+    }
+
+    function allowAll() {
+        adminEnvoy.emit('set-all-allowed', moduleName, role.id);
+    }
+
+    function denyAll() {
+        adminEnvoy.emit('set-all-denied', moduleName, role.id);
     }
 </script>

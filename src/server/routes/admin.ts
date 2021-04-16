@@ -1,17 +1,18 @@
 import {Router} from "express";
 import path from 'path';
-import {Conduit} from "../../shared/conduit";
+import {Envoy} from "../../shared/envoy";
 import {users} from "../db/users";
 import {isReqSuperUser, isUserSuperUser} from '../util/superuser'
 import {AppRequest} from "../types";
 import {Server, Socket} from "socket.io";
 import {appBooker, echoBooker, eventsBooker, voterBooker} from "../db/booker";
 import {Prisma} from '@prisma/client';
-import {SilverConduit} from "../util/silver-conduit";
+import {Harbinger} from "../util/harbinger";
 import {getManifest} from "../util/route-common";
 import {createIntegrationToken} from "../util/integrations";
 import {safeAsyncRoute} from "../util/error-handler";
 import {adminLogger} from "../util/logger";
+import {createNotificationsForPermittedUsers} from "../util/create-notifications";
 
 const router = Router(),
     bookers = {
@@ -44,14 +45,14 @@ router.get('/admin/main.js', (req, res) => {
 });
 
 function bindAdminSocketListeners(socket: Socket) {
-    const adminConduit = new Conduit(socket, 'admin');
+    const adminConduit = new Envoy(socket, 'admin');
 
     function safeHandler(handler: (...args: any) => Promise<any>) {
         return async (...args: any) => {
             try {
                 await handler(...args);
             } catch (error) {
-                adminLogger.error({
+                adminLogger.error('Error', {
                     error
                 });
             }
@@ -83,8 +84,23 @@ function bindAdminSocketListeners(socket: Socket) {
         }),
         'generate-integration-token': safeHandler(async (name: string, scopes: string[], done) => {
             done(createIntegrationToken(name, scopes));
+        }),
+        'create-announcement': safeHandler(async (title: string, message: string, href: string) => {
+            createNotificationsForPermittedUsers(appBooker, 'notifications', {
+                title,
+                message,
+                href
+            }, 'notifySiteAnnouncements')
+        }),
+        'set-all-allowed': safeHandler(async (module: BookerModule, roleId: string) => {
+            await bookers[module].setAllAllowed(roleId);
+            await dump(socket);
+        }),
+        'set-all-denied': safeHandler(async (module: BookerModule, roleId: string) => {
+            await bookers[module].setAllDenied(roleId);
+            await dump(socket);
         })
-     });
+    });
 }
 
 async function dump(socket: Socket) {
@@ -108,7 +124,7 @@ async function dump(socket: Socket) {
 module.exports = function(i: Server) {
     io = i;
     io.on('connection', socket => {
-        const userId = SilverConduit.getUserId(socket);
+        const userId = Harbinger.getUserId(socket);
 
         if (isUserSuperUser(userId)) {
             bindAdminSocketListeners(socket);

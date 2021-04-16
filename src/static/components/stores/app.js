@@ -2,14 +2,35 @@ import {writable, get} from 'svelte/store';
 import {createAutoExpireToast, createProgressToast, updateToast} from "sheodox-ui";
 import {post} from "axios";
 import {bytes as formatBytes} from "../../../shared/formatters";
-import {Conduit} from "../../../shared/conduit";
+import {Envoy} from "../../../shared/envoy";
 import {socket} from "../../socket";
-const appConduit = new Conduit(socket, 'app');
+const appEnvoy = new Envoy(socket, 'app');
 
 export const pageName = writable('');
 pageName.subscribe(page => {
     const app = 'Overseer';
     document.title = page ? `${page} - ${app}` : app;
+});
+export const pushSubscribed = writable(false, set => {
+    navigator.serviceWorker.ready
+        .then(sw => {
+            return sw.pushManager.getSubscription();
+        })
+        .then(pushSubscription => {
+            set(!!pushSubscription);
+        })
+});
+
+export let settings = writable(window.user?.settings);
+
+let settingsSubscriptionInitialized = false;
+settings.subscribe(settings => {
+    //skip the first run of this, we only care about changes to the settings, not its initial value
+    if (!settingsSubscriptionInitialized) {
+        settingsSubscriptionInitialized = true;
+        return;
+    }
+    appEnvoy.emit('updateSettings', settings);
 });
 
 export function uploadImage(toastTitle, file, postPath) {
@@ -69,7 +90,7 @@ export function requestUser(userId) {
             return registry;
         });
 
-        appConduit.emit('getUserMeta', userId, (meta) => {
+        appEnvoy.emit('getUserMeta', userId, (meta) => {
             userRegistry.update(registry => {
                 registry[userId] = {
                     loading: false,

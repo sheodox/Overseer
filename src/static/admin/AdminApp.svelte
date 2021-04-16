@@ -28,6 +28,12 @@
             <Integrations />
         </div>
     </Tab>
+    <Tab tabId="announcements" {selectedTab}>
+        <div class="f-column align-items-center">
+            <h1>Announcements</h1>
+            <CreateAnnouncement />
+        </div>
+    </Tab>
 </main>
 <Footer>
 
@@ -40,6 +46,8 @@
     import Roles from "./Roles.svelte";
     import Assignments from "./Assignments.svelte";
     import {pageName} from "../components/stores/app";
+    import CreateAnnouncement from "./CreateAnnouncement.svelte";
+
     $: $pageName = 'Admin';
 
     const tabs = [{
@@ -51,6 +59,9 @@
     }, {
         id: 'integrations',
         title: 'Integrations'
+    }, {
+        id: 'announcements',
+        title: 'Announcements'
     }]
     let selectedTab;
 </script>

@@ -1,5 +1,5 @@
 import {Server} from "socket.io";
-import {createSafeWebsocketHandler, SilverConduit} from "../util/silver-conduit";
+import {createSafeWebsocketHandler, Harbinger} from "../util/harbinger";
 import {voterBooker} from "../db/booker";
 import {voter} from '../db/voter';
 import {AppRequest, ToastOptions} from "../types";
@@ -9,12 +9,13 @@ import {users} from "../db/users";
 import {safeAsyncRoute} from "../util/error-handler";
 import {voterLogger} from "../util/logger";
 import {diff} from "deep-diff";
+import {Envoy} from "../../shared/envoy";
+import {broadcastToast, sendToastToUser} from "../util/create-notifications";
 
 const router = Router();
 
 module.exports = function(io: Server) {
-    const ioConduit = new SilverConduit(io, 'voter'),
-        notificationConduit = new SilverConduit(io, 'notifications');
+    const voterHarbinger = new Harbinger('voter');
 
     router.post('/voter/:candidateId/upload', safeAsyncRoute(async (req: AppRequest, res: Response, next) => {
         const contentType = req.get('Content-Type');
@@ -45,24 +46,23 @@ module.exports = function(io: Server) {
 
         lastData = data;
 
-        ioConduit.filteredBroadcast('diff', async userId => {
+        voterHarbinger.filteredBroadcast('diff', async userId => {
             if (await voterBooker.check(userId, 'view')) {
                 return changes;
             }
         });
     }
     async function notificationBroadcast(notificationData: ToastOptions) {
-        notificationConduit.filteredBroadcast('notification', async user_id => {
-            if (await voterBooker.check(user_id, 'view')) {
+        broadcastToast(async userId => {
+            if (await voterBooker.check(userId, 'view')) {
                 return notificationData;
             }
         });
     }
 
     io.on('connection', async socket => {
-        const socketConduit = new SilverConduit(socket, 'voter'),
-            singleUserNotifications = new SilverConduit(socket, 'notifications'),
-            userId = SilverConduit.getUserId(socket);
+        const voterEnvoy = new Envoy(socket, 'voter'),
+            userId = Harbinger.getUserId(socket);
 
         //don't attempt to let users who aren't signed in to connect to the websocket
         if (!userId) {
@@ -79,14 +79,14 @@ module.exports = function(io: Server) {
             checkPermission = createSafeWebsocketHandler(userId, voterBooker, socket, voterLogger);
 
         const singleUserError = (message: string) => {
-            singleUserNotifications.emit('notification', {
+            sendToastToUser(userId, {
                 variant: 'error',
                 title: 'Voter Error',
                 message,
-            } as ToastOptions);
+            });
         };
 
-        socketConduit.on({
+        voterEnvoy.on({
             init: checkPermission('view', async (done) => {
                 done(lastData);
             }),

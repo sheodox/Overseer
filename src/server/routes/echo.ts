@@ -1,7 +1,7 @@
 import {echo} from '../db/echo';
-import {createSafeWebsocketHandler, SilverConduit} from '../util/silver-conduit';
+import {createSafeWebsocketHandler, Harbinger} from '../util/harbinger';
 import {Server, Socket} from "socket.io";
-import {Conduit} from "../../shared/conduit";
+import {Envoy} from "../../shared/envoy";
 import {Echo as EchoItem} from "@prisma/client";
 import {echoBooker} from "../db/booker";
 import {AppRequest, ToastOptions} from "../types";
@@ -13,6 +13,9 @@ import {echoIntegrationLogger, echoLogger} from "../util/logger";
 import {safeAsyncRoute} from "../util/error-handler";
 import {Response, Router} from "express";
 import {diff} from "deep-diff";
+import {createNotificationsForPermittedUsers} from "../util/create-notifications";
+import {io} from "../server";
+
 const md = new MarkdownIt(),
     router = Router(),
     echoServerHost = process.env.ECHO_SERVER_HOST;
@@ -34,8 +37,7 @@ router.post('/echo/:echoId/image-upload', safeAsyncRoute(async (req: AppRequest,
     }
 }));
 let echoOnline = false,
-    echoConduit: SilverConduit,
-    notificationConduit: SilverConduit,
+    echoHarbinger = new Harbinger('echo'),
     echoServerSocket: Socket,
     diskUsage: {
         total: number,
@@ -71,7 +73,7 @@ async function broadcast() {
 
     lastData = data;
 
-    echoConduit.filteredBroadcast('diff', async (userId: string) => {
+    echoHarbinger.filteredBroadcast('diff', async (userId: string) => {
         //if they're not logged in, don't even check permissions
         if (!userId) {
             return;
@@ -79,13 +81,6 @@ async function broadcast() {
         const allowed = await echoBooker.check(userId, 'view');
         if (allowed) {
             return changes;
-        }
-    });
-}
-async function notificationBroadcast(notificationData: ToastOptions) {
-    notificationConduit.filteredBroadcast('notification', async userId => {
-        if (await echoBooker.check(userId, 'view')) {
-            return notificationData;
         }
     });
 }
@@ -125,10 +120,11 @@ async function prepareData() {
         echoOnline: echoOnline,
     };
 }
+
 //connection to overseer clients
-const clientListener = (socket: Socket) => {
-    const socketConduit = new Conduit(socket, 'echo'),
-        userId = SilverConduit.getUserId(socket);
+io.on('connection', (socket: Socket) => {
+    const echoEnvoy = new Envoy(socket, 'echo'),
+        userId = Harbinger.getUserId(socket);
 
     //don't attempt to let users who aren't signed in to connect to the websocket
     if (!userId) {
@@ -142,7 +138,7 @@ const clientListener = (socket: Socket) => {
         echoLogger
     );
 
-    socketConduit.on({
+    echoEnvoy.on({
         delete: checkPermission('delete', async (id: string) => {
             echoServerSocket.emit('delete', id, async () => {
                 await echo.delete(id)
@@ -158,7 +154,7 @@ const clientListener = (socket: Socket) => {
                     `Download token for user ${userId}`,
                     ['echo-download']
                 );
-                socketConduit.emit('downloadToken', downloadToken);
+                echoEnvoy.emit('downloadToken', downloadToken);
             }
         }),
         update: checkPermission('update', async (id, updatedData) => {
@@ -188,7 +184,7 @@ const clientListener = (socket: Socket) => {
             broadcast();
         })
     });
-};
+});
 
 //connection to echo server
 const echoListener = (socket: Socket) => {
@@ -232,14 +228,12 @@ const echoListener = (socket: Socket) => {
     echoServerSocket.on('uploaded', safeHandler(async (id, data) => {
         //if it's a brand new game send a notification to everyone
         const uploadedItem = await echo.uploadFinished(id, data);
-        if (uploadedItem) {
-            notificationBroadcast({
-                title: 'Echo - New Upload!',
-                variant: 'info',
-                message: uploadedItem.name,
-                href: `/w/game-echo/details/${uploadedItem.id}`
-            });
-        }
+
+        createNotificationsForPermittedUsers(echoBooker, 'view', {
+            title: 'Echo',
+            message: `"${uploadedItem.name}" was uploaded.`,
+            href: `/echo/${uploadedItem.id}`
+        }, 'notifyNewEvents')
         broadcast();
     }));
 
@@ -250,25 +244,17 @@ const echoListener = (socket: Socket) => {
     }));
 };
 
-module.exports = function (io: Server) {
-    io.on('connection', (socket: Socket) => {
-        clientListener(socket);
+io.of((name, query, next) => {
+    if (name === '/echo-server') {
+        //only allow clients with a valid signed JWT token to connect to this
+        next(null, verifyIntegrationToken(query.token, 'echo'));
+    }
+    else {
+        next(null, true);
+    }
+})
+    .on('connection', (socket: Socket) => {
+        echoListener(socket);
     });
-    echoConduit = new SilverConduit(io, 'echo');
-    notificationConduit = new SilverConduit(io, 'notifications');
 
-    io.of((name, query, next) => {
-        if (name === '/echo-server') {
-            //only allow clients with a valid signed JWT token to connect to this
-            next(null, verifyIntegrationToken(query.token, 'echo'));
-        }
-        else {
-            next(null, true);
-        }
-    })
-        .on('connection', (socket: Socket) => {
-            echoListener(socket);
-        });
-
-    return router;
-};
+module.exports = router;

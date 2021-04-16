@@ -68,18 +68,18 @@
 
 <script>
     import {Icon} from 'sheodox-ui';
-    import {adminConduit, bookers, users} from "./admin-common";
+    import {adminEnvoy, bookers, users} from "./admin-common";
     import RoleOptions from "./RoleOptions.svelte";
 
     function newRole(moduleName) {
         const roleName = prompt(`What do you want to call the new role for ${moduleName}?`)?.trim();
 
         if (roleName) {
-            adminConduit.emit('new-role', moduleName, roleName);
+            adminEnvoy.emit('new-role', moduleName, roleName);
         }
     }
 
     function togglePermission(moduleName, roleId, action) {
-        adminConduit.emit('toggle-action', moduleName, roleId, action);
+        adminEnvoy.emit('toggle-action', moduleName, roleId, action);
     }
 </script>

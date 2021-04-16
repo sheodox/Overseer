@@ -8,7 +8,12 @@
     }
 </style>
 
-<Header appName="Overseer" pageName={$pageName}>
+<Header
+    appName="Overseer"
+    on:titleclick={titleClick}
+    titleClickPreventDefault={true}
+    href="/"
+>
     <SVG svgId="logo" slot="logo" />
     <HeaderNav slot="nav" />
 </Header>
@@ -42,6 +47,11 @@
     import Routing from "./Routing.svelte";
     import LoginRequired from "./LoginRequired.svelte";
     import HeaderNav from "./HeaderNav.svelte";
+    import page from 'page';
 
     const footerLinks = window.user?.links || [];
+
+    function titleClick() {
+        page('/')
+    }
 </script>

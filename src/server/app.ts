@@ -1,5 +1,6 @@
 require('dotenv').config();
-import express, {NextFunction, Request, Response} from 'express';
+import {app, io, server} from "./server";
+import {NextFunction, Request, Response} from 'express';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
@@ -7,23 +8,20 @@ import favicon from 'serve-favicon';
 import {prisma} from "./db/prisma";
 import path from 'path';
 import expressSession from 'express-session';
-import {Server as SocketIOServer} from 'socket.io';
 import {createClient as createRedisClient} from 'redis';
 import {requestId} from "./util/request-id";
 import {appLogger} from "./util/logger";
 import {errorHandler} from "./util/error-handler";
 import connectRedis from 'connect-redis';
+import {router as authRouter} from './routes/auth';
+import {router as notificationRouter} from './routes/notifications';
 
-const app = express(),
-    port = 4000,
-    server = require('http').createServer(app),
-    io = new SocketIOServer(server),
+const port = 4000,
     redisClient = createRedisClient({
         host: 'redis'
     }),
-    auth = require('./routes/auth'),
     logger = require('morgan'),
-    initEchoRouter = require('./routes/echo'),
+    echoRouter = require('./routes/echo'),
     settings = require('./routes/settings'),
     voter = require('./routes/voter'),
     userRouter = require('./routes/user'),
@@ -69,7 +67,7 @@ io.use((socket, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/auth', auth);
+app.use('/auth', authRouter);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -85,13 +83,14 @@ server.on('listening', () => {
     appLogger.info('Overseer server started!');
 });
 
-app.use(initEchoRouter(io));
+app.use(echoRouter);
 app.use(voter(io));
 settings(io);
 app.use(admin(io));
 events(io);
 app.use(images);
 userRouter(io);
+app.use(notificationRouter);
 app.use(require('./routes/index'));
 
 app.use((req, res, next) => next({status: 404}))

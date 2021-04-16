@@ -12,6 +12,27 @@ export class Booker {
         this.allowedActions = allowedActions;
     }
 
+    //get an array of userIds of users who are assigned a role that allows the specified action
+    async getUsersWithPermission(action: string) {
+        const permittedRoles = (await prisma.bookerRole.findMany({
+                where: {
+                    concern: this.moduleName
+                }
+            })).filter(role => {
+                return !!(role.permissions as BookerPermissions)[action]
+            }),
+            assignments = await prisma.bookerAssignment.findMany({
+                where: {
+                    roleId: {
+                        in: permittedRoles.map(role => role.id)
+                    }
+                }
+            });
+
+        return assignments.map(assignment => assignment.userId);
+    }
+
+
     async getUserPermissions(userId: string): Promise<BookerPermissions> {
         if (!userId) {
             return this.denyAll();
@@ -41,7 +62,31 @@ export class Booker {
         })
         return permissions;
     }
+    allowAll() {
+        const permissions: BookerPermissions = {};
+        this.allowedActions.forEach(action => {
+            permissions[action] = true;
+        })
+        return permissions;
+    }
 
+    async setAllAllowed(roleId: string) {
+        await prisma.bookerRole.update({
+            where: {id: roleId},
+            data: {
+                permissions: this.allowAll()
+            }
+        })
+    }
+
+    async setAllDenied(roleId: string) {
+        await prisma.bookerRole.update({
+            where: {id: roleId},
+            data: {
+                permissions: this.denyAll()
+            }
+        })
+    }
     // check if the user has permissions to do this action
     async check(userId: string, action: string) {
         const cachedPermissions = this.userPermissionsCache.get(userId);
@@ -209,5 +254,7 @@ export const eventsBooker = new Booker('events', [
 ]);
 
 export const appBooker = new Booker('app', [
-    'user_meta'
+    'user_meta',
+    'notifications',
+    'settings'
 ]);

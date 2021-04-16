@@ -38,7 +38,7 @@
 </div>
 
 <script>
-    import {users, bookers, adminConduit} from "./admin-common";
+    import {users, bookers, adminEnvoy} from "./admin-common";
     import AssignmentRoles from "./AssignmentRoles.svelte";
     import UserBubble from "../components/UserBubble.svelte";
 

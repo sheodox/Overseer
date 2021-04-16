@@ -1,5 +1,5 @@
 import {writable, derived, get} from "svelte/store";
-import {Conduit} from "../../../shared/conduit";
+import {Envoy} from "../../../shared/envoy";
 import {post} from "axios";
 import {bytes, tags as formatTags} from "../../../shared/formatters";
 import {createProgressToast, updateToast} from 'sheodox-ui';
@@ -8,7 +8,7 @@ import page from 'page';
 import {activeQueryParams, activeRoute} from "./routing";
 import {uploadImage} from "./app";
 import {applyChange} from "deep-diff";
-const echoConduit = new Conduit(socket, 'echo');
+const echoEnvoy = new Envoy(socket, 'echo');
 
 let untouchedEchoData;
 export const echoInitialized = writable(false);
@@ -18,7 +18,7 @@ export const echoItems = writable([], () => {
         return;
     }
 
-    echoConduit.emit('init', data => {
+    echoEnvoy.emit('init', data => {
         setEchoData(data);
     });
 });
@@ -78,7 +78,7 @@ function setEchoData(data) {
     echoInitialized.set(true);
 }
 
-echoConduit.on({
+echoEnvoy.on({
     diff: (changes) => {
         if (get(echoInitialized)) {
             for (const change of changes) {
@@ -94,10 +94,10 @@ echoConduit.on({
 
 export const echoOps = {
     delete: id => {
-        echoConduit.emit('delete', id);
+        echoEnvoy.emit('delete', id);
     },
     update(id, updatedEchoProperties) {
-        echoConduit.emit('update', id, updatedEchoProperties);
+        echoEnvoy.emit('update', id, updatedEchoProperties);
     },
     uploadImage: (id, file) => {
         return uploadImage(
@@ -107,7 +107,7 @@ export const echoOps = {
         )
     },
     deleteImage: (id) => {
-        echoConduit.emit('deleteImage', id);
+        echoEnvoy.emit('deleteImage', id);
     },
     /**
      * Saves metadata changes and file changes, then resolves with an ID for this echo item.
@@ -159,9 +159,9 @@ export const echoOps = {
             };
 
             if (updatingId) {
-                echoConduit.emit('updateFile', updatingId, metadata, uploadFile)
+                echoEnvoy.emit('updateFile', updatingId, metadata, uploadFile)
             } else {
-                echoConduit.emit('new', metadata, uploadFile)
+                echoEnvoy.emit('new', metadata, uploadFile)
             }
         });
     }

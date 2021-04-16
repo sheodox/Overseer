@@ -55,7 +55,7 @@
 
 <script>
     import {Icon} from 'sheodox-ui';
-    import {adminConduit} from "./admin-common";
+    import {adminEnvoy} from "./admin-common";
 
     let name = '',
         token = '',
@@ -65,7 +65,7 @@
     const availableScopes = ['echo', 'voter', 'logs'];
 
     function generate() {
-        adminConduit.emit('generate-integration-token', name, scopes, (tkn) => {
+        adminEnvoy.emit('generate-integration-token', name, scopes, (tkn) => {
             //if they didn't fill out everything they won't get a token back
             if (tkn) {
                 token = tkn;

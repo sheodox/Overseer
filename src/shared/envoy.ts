@@ -1,31 +1,27 @@
-import {Server, Socket} from "socket.io";
+import {Socket} from "socket.io";
 
-interface ConduitBindings {
+interface EnvoyBindings {
     [eventName: string]: (...args: any) => any
 }
 
-export class Conduit {
-    name: string
-    socket: Socket | Server
-    subs: Conduit[]
+/**
+ * Envoy is a wrapper around an individual socket connection with namespaced event names.
+ */
+export class Envoy {
+    private readonly namespace: string
+    private readonly socket: Socket
     bindings: [eventName: string, callback: any][];
 
-    constructor(socket: Socket | Server, name: string) {
-        this.name = name;
+    constructor(socket: Socket, namespace: string) {
+        this.namespace = namespace;
         this.socket = socket;
-        this.subs = [];
         //store event handler settings for removing listeners later
         this.bindings = []
     }
-    sub(subname: string) {
-        const sub =  new Conduit(this.socket, this.name + '/' + subname);
-        this.subs.push(sub);
-        return sub;
-    }
-    on(bindings: ConduitBindings) {
+    on(bindings: EnvoyBindings) {
         for (let rawName in bindings) {
             if (bindings.hasOwnProperty(rawName)) {
-                const eventName = this.name + ':' + rawName,
+                const eventName = this.namespace + ':' + rawName,
                     fn = bindings[rawName];
                 // @ts-ignore -- it doesn't like this line, todo fix this
                 this.socket.on(eventName, fn);
@@ -41,22 +37,18 @@ export class Conduit {
      * @param args
      * @private
      */
-    _send(socket: Socket | Server, eventName: string, ...args: any) {
-        const event = this.name + ':' + eventName;
+    _send(socket: Socket, eventName: string, ...args: any) {
+        const event = this.namespace + ':' + eventName;
         socket.emit(event, ...args);
     }
     emit(eventName: string, ...args: any) {
         this._send(this.socket, eventName, ...args);
     }
     destroy() {
-        this.subs.forEach((sub) => {
-            sub.destroy();
-        });
         this.bindings.forEach(binding => {
             const [name, fn] = binding;
             this.socket.off(name, fn);
         });
         this.bindings = [];
-        this.subs = [];
     }
 }

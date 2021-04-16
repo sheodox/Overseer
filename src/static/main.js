@@ -11,3 +11,7 @@ new App({
     target: document.getElementById('app-root')
 })
 
+
+addEventListener('load', async () => {
+    const sw = navigator.serviceWorker.register('/sw.js');
+})
