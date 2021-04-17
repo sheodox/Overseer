@@ -54,7 +54,7 @@
             <br>
             <textarea
                 bind:value={notes}
-                placeholder="{getNotesPlaceholder(pendingStatus, $eventFromRoute.attendanceType)} Anything you think the organizer should know."
+                placeholder={getNotesPlaceholder(pendingStatus, $eventFromRoute.attendanceType)}
             ></textarea>
         </label>
     </div>
@@ -104,12 +104,14 @@
     }
 
     function getNotesPlaceholder(status, attendanceType) {
+        const generalAdvice = 'Anything you think the organizer should know.';
+        let placeholder = ''
         if (status === 'going') {
-            attendanceType === 'virtual' ?
+            placeholder = attendanceType === 'virtual' ?
                 `Times you're not available during the event, requests, etc.` :
                 'Arrival times, special accommodations needed, food/games you plan to bring bring, etc.';
         }
-        return '';
+        return `${placeholder} ${generalAdvice}`.trim();
     }
     function rsvp() {
         eventOps.rsvp($eventFromRoute.id, pendingStatus, {
