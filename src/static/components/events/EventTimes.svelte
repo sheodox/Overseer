@@ -2,11 +2,14 @@
     p::first-letter {
         text-transform: capitalize;
     }
+    p {
+        white-space: nowrap;
+    }
 </style>
 
 <p>
     {#if event.eventDays.length === 1}
-        {event.startDate.toLocaleDateString()} from {prettyTime(event.startDate)} to {prettyTime(event.endDate)}
+        {dateNoTime(event.startDate)} from {prettyTime(event.startDate)} to {prettyTime(event.endDate)}
     {:else}
         {prettyDate(event.startDate)} to {prettyDate(event.endDate)}
     {/if}
@@ -30,9 +33,16 @@
         clearInterval(interval);
     })
 
+    function isDateToday(date) {
+        return date.toLocaleDateString() === new Date().toLocaleDateString();
+    }
+
+    function dateNoTime(date) {
+        return isDateToday(date) ? 'today' : date.toLocaleDateString();
+    }
+
     function prettyDate(date) {
-        const isToday = date.toLocaleDateString() === new Date().toLocaleDateString();
-        return isToday ? `today at ${prettyTime(date)}` : dateFormat.format(date);
+        return isDateToday(date) ? `today at ${prettyTime(date)}` : dateFormat.format(date);
     }
 
     function prettyTime(date) {
