@@ -23,7 +23,7 @@ export const date = (dateStr: string) => {
 };
 export const relativeDate = (dateStr: string) => {
     const d = new Date(dateStr),
-        delta = Date.now() - d.getTime(),
+        delta = Math.abs(Date.now() - d.getTime()),
         years = delta / ms.year,
         months = delta / ms.month,
         weeks = delta / ms.week,
@@ -33,17 +33,12 @@ export const relativeDate = (dateStr: string) => {
         seconds = delta / ms.second,
         format = (num: number, unit: string) => {
             num = parseFloat(num.toFixed(1));
-            const floor = Math.floor(num),
-                decimal = num - floor;
-            //toFixed will round, so 2.96 turns into 3.0 and it will fail the 'if' condition otherwise, make it round first
-            if (decimal < 0.1) {
-                if (floor === 1) {
-                    //strip plural
-                    unit = unit.replace(/s$/, '');
-                }
-                return `${floor} ${unit} ago`
+            const floor = Math.floor(num);
+            if (floor === 1) {
+                //strip plural
+                unit = unit.replace(/s$/, '');
             }
-            return `${floor} ${unit} ago`;
+            return `${floor} ${unit}`
         };
 
     if (years > 1) {
