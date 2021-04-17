@@ -49,7 +49,7 @@
                             <p class="message">{notification.message}</p>
                             <div class="time muted f-row justify-content-between">
                                 <span>{notification.title}</span>
-                                <span>{relativeDate(notification.createdAt)}</span>
+                                <span>{relativeDate(notification.createdAt)} ago</span>
                             </div>
                         </div>
                     </Link>
