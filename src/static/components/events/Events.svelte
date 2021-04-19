@@ -18,7 +18,7 @@
             {/if}
         </div>
 
-        <EventNotificationReminder on:refused={() => dontWantReminders = true} />
+        <EventNotificationReminder />
 
         {#if $ongoingEvents.length}
             <h2>Ongoing</h2>
