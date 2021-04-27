@@ -32,7 +32,7 @@
     "passport": "^0.4.0",
     "passport-google-oauth": "^2.0.0",
     "pug": "^3.0.2",
-    "redis": "^3.0.2",
+    "redis": "^3.1.1",
     "sass-loader": "^11.0.1",
     "serialize-javascript": "^5.0.1",
     "serve-favicon": "^2.5.0",
