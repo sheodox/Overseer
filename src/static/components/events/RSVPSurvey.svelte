@@ -19,9 +19,6 @@
         max-width: 100%;
         resize: vertical;
     }
-    .disabled {
-        opacity: 0;
-    }
 </style>
 
 <div class="modal-body">
@@ -32,16 +29,13 @@
                 <div class="eventDay" class:going={day.going}>
                     <fieldset>
                         <legend><strong>{getDayOfWeekName(day.dayOfWeek)}</strong> {day.date}</legend>
-                        <label>
-                            <input bind:checked={day.going} type="checkbox"/>
+                        <Checkbox bind:checked={day.going} id="day-{day.date}-going">
                             Going
-                        </label>
-                        <br>
-                        {#if $eventFromRoute.attendanceType === 'real' && index !== days.length - 1}
-                            <label class:disabled={!day.going}>
-                                <input bind:checked={day.stayingOvernight} type="checkbox" disabled={!day.going} />
+                        </Checkbox>
+                        {#if $eventFromRoute.attendanceType === 'real' && index !== days.length - 1 && day.going}
+                            <Checkbox bind:checked={day.stayingOvernight} id="day-{day.date}-staying-overnight">
                                 Staying overnight
-                            </label>
+                            </Checkbox>
                         {/if}
                     </fieldset>
                 </div>
@@ -64,6 +58,7 @@
 </div>
 
 <script>
+    import {Checkbox} from 'sheodox-ui';
     import {eventFromRoute, eventOps, getDayOfWeekName} from "../stores/events";
 
     export let pendingStatus;
