@@ -1,4 +1,4 @@
-import '../../node_modules/sheodox-ui/style.scss';
+import {styles} from 'sheodox-ui';
 import './scss/style.scss';
 
 import './components/stores/routing'

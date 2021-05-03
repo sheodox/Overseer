@@ -8,10 +8,9 @@
 <div class="page-content">
     <h1>Settings</h1>
     <h2>Notifications</h2>
-    <label>
-        <input type="checkbox" bind:checked={$settings.pushNotifications}>
+    <Checkbox id="push-notifications" bind:checked={$settings.pushNotifications}>
         Send Push Notifications
-    </label>
+    </Checkbox>
 
     <div class="sub-panel">
         <h3>Push Permissions</h3>
@@ -27,31 +26,27 @@
     <h2>Desired Notifications</h2>
     <div class="f-column">
         {#if window.Booker.events.view}
-            <label>
-                <input type="checkbox" bind:checked={$settings.notifyNewEvents}>
+            <Checkbox id="notify-new-events"bind:checked={$settings.notifyNewEvents}>
                 New Events
-            </label>
+            </Checkbox>
 
-            <label>
-                <input type="checkbox" bind:checked={$settings.notifyEventReminders}>
+            <Checkbox id="notify-event-reminders" bind:checked={$settings.notifyEventReminders}>
                 Event Reminders
-            </label>
+            </Checkbox>
         {/if}
         {#if window.Booker.echo.view}
-            <label>
-                <input type="checkbox" bind:checked={$settings.notifyEchoUploads}>
+            <Checkbox id="notify-echo-uploads" bind:checked={$settings.notifyEchoUploads}>
                 Echo Uploads
-            </label>
+            </Checkbox>
         {/if}
-        <label>
-            <input type="checkbox" bind:checked={$settings.notifySiteAnnouncements}>
+        <Checkbox id="notify-site-announcements" bind:checked={$settings.notifySiteAnnouncements}>
             Site Announcements
-        </label>
+        </Checkbox>
     </div>
 </div>
 
 <script>
-    import {Icon} from 'sheodox-ui';
+    import {Checkbox, Icon} from 'sheodox-ui';
     import {settings, pushSubscribed, pageName} from "../stores/app";
     import PushNotificationSubscribe from "../notifications/PushNotificationSubscribe.svelte";
 

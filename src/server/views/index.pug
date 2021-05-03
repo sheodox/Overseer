@@ -5,12 +5,4 @@ block content
         window.user = !{user};
         window.serverMetadata = !{serverMetadata};
         window.Booker = !{permissions};
-    script(type=text/glsl)#tm-frag
-        include ../../static/assets/tm-frag.glsl
-    script(type=text/glsl)#tm-vert
-        include ../../static/assets/tm-vert.glsl
-    script(type=text/glsl)#snoise
-        include ../../static/assets/snoise.glsl
-    script(type=text/glsl)#loading-frag
-        include ../../static/assets/loading-frag.glsl
     script(src='/' + manifest['main.js'])

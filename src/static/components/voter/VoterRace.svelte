@@ -15,6 +15,9 @@
         z-index: 99; /* below the theater */
         background: var(--panel-bg);
     }
+    .input-group label {
+        padding: 0.5rem;
+    }
     input {
         font-size: 0.9rem;
     }
