@@ -6,7 +6,7 @@
         display: none;
     }
     input:checked + label {
-        color: var(--muted);
+        color: var(--shdx-muted);
     }
 </style>
 

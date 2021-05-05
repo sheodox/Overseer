@@ -15,7 +15,7 @@
         display: flex;
     }
     .column {
-        margin: 0.2rem;
+        margin: 0.5rem;
     }
     textarea {
         width: 100%;
@@ -23,8 +23,8 @@
         font-size: 0.9rem;
         resize: vertical;
     }
-    input {
-        width: 100%;
+    .field {
+        margin: 1rem 0;
     }
 </style>
 
@@ -34,18 +34,16 @@
         <EchoFileSelect bind:file {mode} />
         <div class="details">
             <div class="column f-1">
-                <label>
-                    Name
-                    <br>
-                    <input bind:value={name} required />
-                </label>
-                <br>
-                <label>
-                    Tags
-                    <br>
-                    <input bind:value={tags} />
-                </label>
-                <br>
+                <div class="field">
+                    <TextInput bind:value={name} id="echo-name">
+                        Name
+                    </TextInput>
+                </div>
+                <div class="field">
+                    <TextInput bind:value={tags} id="echo-tags" >
+                        Tags
+                    </TextInput>
+                </div>
                 <TagCloud bind:tags />
             </div>
             <div class="column f-2">
@@ -91,7 +89,7 @@
 </div>
 
 <script>
-    import {createAutoExpireToast, Icon} from 'sheodox-ui';
+    import {createAutoExpireToast, Icon, TextInput} from 'sheodox-ui';
     import EchoFileSelect from "./EchoFileSelect.svelte";
     import {echoItems, echoOps} from "../stores/echo";
     import {pageName} from "../stores/app";

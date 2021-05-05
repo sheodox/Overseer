@@ -14,6 +14,9 @@
     form :global(legend) {
         font-size: 1.2rem;
     }
+    .field {
+        margin: 1rem;
+    }
 </style>
 
 {#if mode === 'create' || $eventFromRoute}
@@ -21,14 +24,12 @@
         <h1>{name || 'New Event'}</h1>
 
         <form on:submit|preventDefault={submit}>
-            <label>
+            <TextInput bind:value={name} id="event-name">
                 Event Name
-                <br />
-                <input bind:value={name} required />
-            </label>
+            </TextInput>
 
             <div class="f-row f-wrap">
-                <fieldset>
+                <fieldset class="field">
                     <legend>Attendance Type</legend>
 
                     <label>
@@ -42,8 +43,12 @@
                     </label>
                 </fieldset>
 
-                <DateTimeInput label="Start" bind:date={startDate} />
-                <DateTimeInput label="End" bind:date={endDate} />
+                <div class="field">
+                    <DateTimeInput label="Start" bind:date={startDate} />
+                </div>
+                <div class="field">
+                    <DateTimeInput label="End" bind:date={endDate} />
+                </div>
             </div>
             <br>
             <label>
@@ -72,7 +77,7 @@
 {/if}
 
 <script>
-    import {createAutoExpireToast, Icon} from 'sheodox-ui';
+    import {createAutoExpireToast, Icon, TextInput} from 'sheodox-ui';
     import DateTimeInput from "./DateTimeInput.svelte";
     import {eventFromRoute, eventOps} from "../stores/events";
     import PageSpinner from "../PageSpinner.svelte";
@@ -106,6 +111,9 @@
     }
 
     function submit() {
+        if (!name) {
+            return validationToast('Enter a name!');
+        }
         if (!startDate) {
             return validationToast('Enter a start date and time!');
         }

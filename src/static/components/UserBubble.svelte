@@ -8,7 +8,7 @@
         width: var(--image-size);
         border-radius: 50%;
         margin-right: 0.2rem;
-        background: var(--bg);
+        background: var(--shdx-bg);
     }
 </style>
 <div class="user-bubble f-row">

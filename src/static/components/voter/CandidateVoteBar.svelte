@@ -1,9 +1,9 @@
 <style>
     .up {
-        background: var(--accent-blue);
+        background: var(--shdx-accent-blue);
     }
     .down {
-        background: var(--accent-red);
+        background: var(--shdx-accent-red);
     }
     .voters {
         position: absolute;

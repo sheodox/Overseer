@@ -24,7 +24,7 @@
         --placeholder-width: 34rem;
     }
     .image {
-        background: var(--panel-header-bg-dark);
+        background: var(--shdx-panel-header-bg-dark);
         --placeholder-max-width: 90vw;
         max-width: var(--placeholder-max-width);
         max-height: calc(var(--placeholder-max-width) * (9/16));

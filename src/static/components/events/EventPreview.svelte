@@ -3,7 +3,7 @@
         color: white;
     }
     .sub-panel:hover {
-        background: var(--sub-panel-bg-light)
+        background: var(--shdx-sub-panel-bg-light)
     }
 </style>
 

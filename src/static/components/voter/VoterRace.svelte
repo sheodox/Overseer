@@ -13,13 +13,7 @@
         position: fixed;
         top: 0.5rem;
         z-index: 99; /* below the theater */
-        background: var(--panel-bg);
-    }
-    .input-group label {
-        padding: 0.5rem;
-    }
-    input {
-        font-size: 0.9rem;
+        background: var(--shdx-panel-bg);
     }
 </style>
 
@@ -84,11 +78,10 @@
 
         {#if window.Booker.voter.add_candidate}
             <form on:submit|preventDefault={addCandidate} class="align-self-center" id="new-candidate-form">
-                <div class="input-group align-self-center">
-                    <label for="new-candidate">
+                <div class="align-self-center">
+                    <TextInput id="new-candidate" bind:value={newCandidateName}>
                         New candidate
-                    </label>
-                    <input id="new-candidate" placeholder="add something to vote for" bind:value={newCandidateName} />
+                    </TextInput>
                 </div>
             </form>
         {/if}
@@ -134,7 +127,7 @@
 {/if}
 
 <script>
-    import {MenuButton, Icon, Modal} from 'sheodox-ui';
+    import {MenuButton, Icon, Modal, TextInput} from 'sheodox-ui';
     import {writable, derived} from 'svelte/store';
     import {
         createRankedCandidateStore,

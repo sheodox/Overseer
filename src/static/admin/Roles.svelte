@@ -44,15 +44,13 @@
                                 </th>
                                 {#each booker.roles as role}
                                     <td>
-                                        <label>
-                                            <input
-                                                title={action}
-                                                type="checkbox"
-                                                checked={role.permissions[action]}
-                                                on:change={() => togglePermission(booker.moduleName, role.id, action)}
-                                            />
+                                        <Checkbox
+                                            id="role-{role.id}-action-{action}"
+                                            checked={role.permissions[action]}
+                                            on:change={() => togglePermission(booker.moduleName, role.id, action)}
+                                        >
                                             <span class="sr-only">{action}</span>
-                                        </label>
+                                        </Checkbox>
                                     </td>
                                 {/each}
                             </tr>
@@ -67,7 +65,7 @@
 </div>
 
 <script>
-    import {Icon} from 'sheodox-ui';
+    import {Icon, Checkbox} from 'sheodox-ui';
     import {adminEnvoy, bookers, users} from "./admin-common";
     import RoleOptions from "./RoleOptions.svelte";
 
