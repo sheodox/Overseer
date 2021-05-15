@@ -1,8 +1,6 @@
 <style>
-    .attendance-type {
-        font-weight: bold;
-    }
 </style>
+
 <span class="attendance-type" title={showText ? '' : matchingType.text}>
     <Icon icon={matchingType.icon} />
     {#if showText}

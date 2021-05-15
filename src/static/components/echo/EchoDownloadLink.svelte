@@ -5,6 +5,10 @@
     <a on:click|stopPropagation target="_blank" href={`${echoItem.downloadUrl}?token=${$echoDownloadToken}`}>
         <slot />
     </a>
+{:else}
+    <span>
+        <slot name="unavailable" />
+    </span>
 {/if}
 
 <script>

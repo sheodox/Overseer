@@ -1,29 +1,14 @@
 <style>
-    h1 {
-        margin: 0 1rem 0 0;
-    }
     .centered {
         text-align: center;
-    }
-    ul {
-        list-style: none;
-        padding: 0;
     }
 </style>
 
 <div>
-    <div class="f-row justify-content-between align-items-center">
-        <h1>Voter - Preview</h1>
-        <Link href="/voter">
-            <span class="fw-bold">
-                Check out Voter
-                <Icon icon="chevron-right" />
-            </span>
-        </Link>
-    </div>
+    <HomePageAppTitle title="Voter - Preview" href="/voter" />
 
     {#if races.length}
-        <ul>
+        <div class="f-column gap-3">
             {#each races as race (race.id)}
                 <RacePreview {race} />
             {/each}
@@ -36,7 +21,7 @@
                     {/if}
                 </p>
             {/if}
-        </ul>
+        </div>
     {:else if $voterInitialized}
         <p class="centered">There aren't any races!</p>
     {:else}
@@ -53,6 +38,7 @@
     import {voterRaces, voterInitialized} from '../stores/voter';
     import SpikeSpinner from "../SpikeSpinner.svelte";
     import RacePreview from "./RacePreview.svelte";
+    import HomePageAppTitle from "../HomePageAppTitle.svelte";
 
     const racePreviewMax = 3;
 

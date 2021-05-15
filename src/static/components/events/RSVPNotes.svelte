@@ -1,7 +1,7 @@
 <style>
     .rsvp-notes {
         max-width: 15rem;
-        margin: 0.2rem;
+        background: var(--shdx-gray-600);
     }
     .notes {
         overflow: auto;
@@ -15,7 +15,7 @@
         <div class="f-row f-wrap">
             {#each rsvps as rsvp}
                 {#if rsvp.notes}
-                    <div class="rsvp-notes sub-panel">
+                    <div class="rsvp-notes m-3 p-3">
                         <div>
                             <UserBubble userId={rsvp.userId}>
                                 <span>

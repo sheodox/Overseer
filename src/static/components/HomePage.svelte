@@ -1,7 +1,7 @@
 <style>
     .app-preview {
         margin: 1rem;
-        max-width: 95vw
+        max-width: 85vw;
     }
 </style>
 

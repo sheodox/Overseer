@@ -2,17 +2,10 @@
     p::first-letter {
         text-transform: capitalize;
     }
-    p {
-        white-space: nowrap;
-    }
 </style>
 
-<p>
-    {#if event.eventDays.length === 1}
-        {dateNoTime(event.startDate)} from {prettyTime(event.startDate)} to {prettyTime(event.endDate)}
-    {:else}
-        {prettyDate(event.startDate)} to {prettyDate(event.endDate)}
-    {/if}
+<p class="m-0">
+    {eventTime(event.startDate, event.endDate, event.eventDays.length)}
 </p>
 <script>
     import {onDestroy} from 'svelte';
@@ -33,19 +26,45 @@
         clearInterval(interval);
     })
 
+    function eventTime(start, end, numDays) {
+        if (numDays === 1) {
+            return `${dateString(start)} from ${prettyTime(start)} to ${prettyTime(end)}`;
+        }
+        else {
+            return `${prettyDate(start)} to ${prettyDate(end)}`
+        }
+    }
+
+    function dateString(date) {
+        if (isDateToday(date)) {
+            return 'today';
+        }
+        return `${getMonth(date)} ${date.getDate()}` + (isDateThisYear(date) ? '' : `, ${date.getFullYear()}`);
+    }
+
+    function getMonth(date) {
+        return [
+            'January', 'February', 'March',
+            'April', 'May', 'June', 'July',
+            'August', 'September', 'October',
+            'November', 'December'
+        ][date.getMonth()]
+    }
+
+    function isDateThisYear(date) {
+        return new Date().getFullYear() === date.getFullYear();
+    }
+
     function isDateToday(date) {
         return date.toLocaleDateString() === new Date().toLocaleDateString();
     }
 
-    function dateNoTime(date) {
-        return isDateToday(date) ? 'today' : date.toLocaleDateString();
-    }
-
     function prettyDate(date) {
-        return isDateToday(date) ? `today at ${prettyTime(date)}` : dateFormat.format(date);
+        return `${dateString(date)}, ${prettyTime(date)}`;
     }
 
     function prettyTime(date) {
-        return timeFormat.format(date);
+        //if the time is an exact hour just get rid of the minutes from the string
+        return timeFormat.format(date).replace(':00', '');
     }
 </script>

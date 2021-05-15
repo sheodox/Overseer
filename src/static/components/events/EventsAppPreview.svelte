@@ -1,31 +1,21 @@
 <style>
-    h1 {
-        margin: 0 1rem 0 0;
-    }
 </style>
 
-<div>
-    <div class="f-row justify-content-center align-items-center">
-        <h1>{eventTitle}</h1>
-        <Link href="/events">
-            <span class="fw-bold">
-                Check out Events
-                <Icon icon="chevron-right" />
-            </span>
-        </Link>
-    </div>
-    {#if $eventsInitialized}
-        {#if mostRelevantEvent}
-            <EventPreview event={mostRelevantEvent} />
+{#if mostRelevantEvent !== null}
+    <div>
+        <HomePageAppTitle title={eventTitle} href="/events" />
+
+        {#if $eventsInitialized}
+            {#if mostRelevantEvent}
+                <EventPreview event={mostRelevantEvent} />
+            {/if}
         {:else}
-            <p class="text-align-center"><em>No events.</em></p>
+            <div class="text-align-center">
+                <SpikeSpinner size="medium" />
+            </div>
         {/if}
-    {:else}
-        <div class="text-align-center">
-            <SpikeSpinner size="medium" />
-        </div>
-    {/if}
-</div>
+    </div>
+{/if}
 
 <script>
     import {Icon} from 'sheodox-ui';
@@ -33,6 +23,7 @@
     import EventPreview from "./EventPreview.svelte";
     import SpikeSpinner from "../SpikeSpinner.svelte";
     import Link from "../Link.svelte";
+    import HomePageAppTitle from "../HomePageAppTitle.svelte";
 
     let eventTitle = 'Events',
         mostRelevantEvent;
@@ -43,14 +34,11 @@
         if (ongoing.length) {
             mostRelevantEvent = ongoing[0];
             eventTitle = 'Ongoing Event'
-        }
-        else if (upcoming.length) {
+        } else if (upcoming.length) {
             mostRelevantEvent = upcoming[0];
             eventTitle = 'Upcoming Event'
-        }
-        else if (past.length) {
-            mostRelevantEvent = past[0];
-            eventTitle = 'Past Event'
+        } else if (past.length) {
+            mostRelevantEvent = null;
         }
     }
 </script>

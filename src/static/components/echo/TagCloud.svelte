@@ -5,15 +5,12 @@
     input {
         display: none;
     }
-    input:checked + label {
-        color: var(--shdx-muted);
-    }
 </style>
 
 <div class="f-row f-wrap">
     {#each $echoTagCloud as tag}
         <input type="checkbox" id="tag-cloud-{tag}" checked={tagArray.includes(tag)} on:change={() => toggleTag(tag)}/>
-        <label class="button small" for="tag-cloud-{tag}">
+        <label class="button small" for="tag-cloud-{tag}" aria-pressed={tagArray.includes(tag)}>
             {tag}
         </label>
     {/each}

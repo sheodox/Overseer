@@ -5,10 +5,24 @@
     }
     .details {
         flex-basis: 30rem;
-        background: none;
+        background: var(--shdx-gray-600);
+        padding: var(--shdx-spacing-6);
     }
     h1 {
         margin: 0;
+        font-size: var(--shdx-font-size-9);
+    }
+    .notes {
+        max-width: 40em;
+        line-height: 1.6;
+    }
+    @media (max-width: 800px) {
+        h1 {
+            font-size: var(--shdx-font-size-6);
+        }
+        .details {
+            padding: var(--shdx-spacing-5);
+        }
     }
 </style>
 
@@ -24,42 +38,33 @@
         </div>
 
         <div class="f-row f-wrap justify-content-center align-items-start">
-            <div class="f-1">
+            <div>
                 <div class="sub-panel details">
-                    <div class="f-row justify-content-between align-items-center">
-                        <h1>{$eventFromRoute.name}</h1>
-                        {#if window.Booker.events.organize}
-                            <MenuButton>
+                    <div class="f-row justify-content-between align-items-baseline gap-6">
+                        <div class="f-row align-items-baseline">
+                            <h1 class="f-1">{$eventFromRoute.name}</h1>
+                            {#if window.Booker.events.organize}
+                                <MenuButton>
                                 <span slot="trigger">
-                                    Options
                                     <Icon icon="chevron-down" />
                                 </span>
-                                <ul slot="menu">
-                                    <li>
-                                        <button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
-                                            <Icon icon="edit" />
-                                            Edit
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button on:click={() => showDeleteConfirm = true}>
-                                            <Icon icon="trash" />
-                                            Delete
-                                        </button>
-                                    </li>
-                                </ul>
-                            </MenuButton>
-                        {/if}
-                    </div>
-
-                    <div class="f-row justify-content-between align-items-start f-wrap">
-                        <div>
-                            <p>
-                                <AttendanceTypeBadge event={$eventFromRoute} showText={true} />
-                            </p>
-                            <EventTimes event={$eventFromRoute} />
+                                    <ul slot="menu">
+                                        <li>
+                                            <button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
+                                                <Icon icon="edit" />
+                                                Edit
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button on:click={() => showDeleteConfirm = true}>
+                                                <Icon icon="trash" />
+                                                Delete
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </MenuButton>
+                            {/if}
                         </div>
-
                         {#if window.Booker.events.rsvp}
                             <RSVP
                                 highlight={pendingStatus}
@@ -69,12 +74,16 @@
                             />
                         {/if}
                     </div>
+                    <div class="f-row f-wrap gap-4 shdx-font-size-4">
+                        <AttendanceTypeBadge event={$eventFromRoute} showText={true} />
+                        <EventTimes event={$eventFromRoute} />
+                    </div>
 
-                    <div class="notes">
+                    <div class="notes has-inline-links">
                         {@html $eventFromRoute.notesRendered}
                     </div>
                 </div>
-                <div class="f-row f-wrap justify-content-between">
+                <div class="f-row f-wrap justify-content-between m-5">
                     {#if window.Booker.events.organize}
                         <RSVPNotes rsvps={$eventFromRoute.rsvps} />
                     {/if}

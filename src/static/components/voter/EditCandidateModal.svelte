@@ -49,7 +49,7 @@
     </div>
     <div class="modal-footer">
         <button on:click={() => visible = false}>Cancel</button>
-        <button on:click={save} disabled={name === candidate.name && notes === candidate.notes}>
+        <button on:click={save} disabled={name === candidate.name && notes === candidate.notes} class="primary">
             <Icon icon="save" />
             Save
         </button>

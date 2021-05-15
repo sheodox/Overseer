@@ -24,7 +24,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" on:click={() => visible = false}>Cancel</button>
-            <button><Icon icon="save" />Save</button>
+            <button class="primary"><Icon icon="save" />Save</button>
         </div>
     </form>
 </Modal>

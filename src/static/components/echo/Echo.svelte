@@ -29,7 +29,7 @@
                 <div class="f-row justify-content-between">
                     <h1>Uploads</h1>
                     {#if $echoOnline && window.Booker.echo.upload}
-                        <button on:click={() => page('/echo/upload')}>
+                        <button on:click={() => page('/echo/upload')} class="primary">
                             <Icon icon="upload" />
                             New Upload
                         </button>
@@ -85,7 +85,7 @@
 
     {#if $echoInitialized}
         {#if numResults > 0}
-            <div class={view === 'grid' ? "f-row f-wrap justify-content-center" : 'page-content'}>
+            <div class={view === 'grid' ? "gap-3 f-row f-wrap justify-content-center" : 'page-content f-column gap-3'}>
                 {#each $echoSearchResults as item}
                     <EchoItemPreview {item} variant={view} />
                 {/each}

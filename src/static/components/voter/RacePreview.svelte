@@ -3,9 +3,9 @@
         margin: 0.5rem;
     }
     .preview {
-        margin: 1rem 1rem 3rem;
         width: 35rem;
         max-width: 95%;
+        border-radius: 3px;
     }
     ol {
         padding: 0;
@@ -13,38 +13,37 @@
     }
     .extra-message {
         margin-top: 0;
+        color: var(--shdx-gray-75);
     }
 </style>
 
-<div class="preview">
-    <div class="f-row justify-content-between align-items-center">
-        <h2>{race.name}</h2>
-        <Link href={raceHref}>
-            <span class="fw-bold">Vote</span>
-            <Icon icon="chevron-right" />
-        </Link>
-    </div>
-    <div class="panel-body">
-        {#if candidateSlice.length}
-            <ol>
-                {#each candidateSlice as candidate, index}
-                    <li>
-                        <Candidate interactive={false} {candidate} {raceMaxVotes} />
-                    </li>
-                {/each}
-            </ol>
-        {:else}
-            <p class="text-align-center"><em>No candidates!</em></p>
-        {/if}
-        {#if extraCandidates > 0}
-            <Link href={raceHref}>
+<Link href={raceHref}>
+    <div class="preview card clickable px-3">
+        <div class="f-row justify-content-between align-items-center">
+            <h2>
+                {race.name}
+            </h2>
+        </div>
+        <div class="panel-body">
+            {#if candidateSlice.length}
+                <ol>
+                    {#each candidateSlice as candidate, index}
+                        <li>
+                            <Candidate interactive={false} {candidate} {raceMaxVotes} />
+                        </li>
+                    {/each}
+                </ol>
+            {:else}
+                <p class="text-align-center"><em>No candidates!</em></p>
+            {/if}
+            {#if extraCandidates > 0}
                 <p class="text-align-center extra-message">
                     And {extraCandidates} other candidate{extraCandidates === 1 ? '' : 's'}!
                 </p>
-            </Link>
-        {/if}
+            {/if}
+        </div>
     </div>
-</div>
+</Link>
 
 <script>
     import {Icon} from 'sheodox-ui';

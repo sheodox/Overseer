@@ -24,7 +24,7 @@
                     <UserBubble userId={rsvp.userId} />
                 </div>
             {:else}
-                <p class="text-align-center"><em>No RSPVs.</em></p>
+                <p class="text-align-center muted"><em>No RSPVs.</em></p>
             {/each}
         </div>
     </div>

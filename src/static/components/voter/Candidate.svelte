@@ -18,10 +18,10 @@
         filter: drop-shadow(0 0 0.5rem);
     }
     .upvote {
-        color: var(--shdx-accent-blue);
+        color: var(--shdx-blue-400);
     }
     .downvote {
-        color: var(--shdx-accent-red);
+        color: var(--shdx-red-400);
     }
     .candidate-name {
         padding: 0.2rem;

@@ -68,7 +68,7 @@
                         </span>
                     </Link>
                 {/if}
-                <button>{mode === 'create' ? 'Create' : 'Update'} Event</button>
+                <button class="primary">{mode === 'create' ? 'Create' : 'Update'} Event</button>
             </div>
         </form>
     </div>

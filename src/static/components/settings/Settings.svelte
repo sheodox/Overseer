@@ -1,5 +1,6 @@
 <style>
     .sub-panel {
+        background: var(--shdx-gray-500);
         width: 20rem;
         max-width: 95vw;
     }

@@ -1,29 +1,17 @@
 <style>
-    h1 {
-        margin: 0 1rem 0 0;
-    }
     .centered {
         text-align: center;
     }
     ul {
         list-style: none;
-        padding: 0;
     }
 </style>
 
 <div>
-    <div class="f-row justify-content-between align-items-center">
-        <h1>Echo - Recent Uploads</h1>
-        <Link href="/echo">
-            <span class="fw-bold">
-                Check out Echo
-                <Icon icon="chevron-right" />
-            </span>
-        </Link>
-    </div>
+    <HomePageAppTitle title="Recent Echo Uploads" href="/echo" />
 
     {#if recentUploads.length}
-        <ul>
+        <ul class="f-column gap-3 m-0 p-0">
             {#each recentUploads as item (item.id)}
                 <li>
                     <EchoItemPreview {item} />
@@ -57,6 +45,7 @@
     import {echoItems, echoInitialized} from '../stores/echo';
     import SpikeSpinner from "../SpikeSpinner.svelte";
     import EchoItemPreview from "./EchoItemPreview.svelte";
+    import HomePageAppTitle from "../HomePageAppTitle.svelte";
 
     const maxRecentUploads = 10;
 

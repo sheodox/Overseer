@@ -2,27 +2,29 @@
     .event {
         color: white;
     }
-    .sub-panel:hover {
-        background: var(--shdx-sub-panel-bg-light)
+    .card {
+        border-radius: 3px;
     }
 </style>
 
 <Link href="/events/{event.id}" noHoverStyles={true}>
     <div class="event">
-        <div class="sub-panel">
-            <div class="f-row justify-content-between">
-            <span class="fw-bold">
-                <AttendanceTypeBadge {event} />
-                {event.name}
-            </span>
-                <span title="{attendees} {attendees === 1 ? 'person' : 'people'} going">
-                    <Icon icon="user-friends" /> {attendees} <span class="sr-only">People Going</span>
+        <div class="card clickable p-4">
+            <div class="f-row justify-content-between align-items-baseline">
+                <span class="shdx-font-size-5">
+                    {event.name}
                 </span>
             </div>
 
-            <EventTimes {event} />
+            <p class="my-3">
+                <EventTimes {event} />
+            </p>
 
-            <div class="f-row justify-content-end">
+            <div class="f-row justify-content-between">
+                <span title="{attendees} {attendees === 1 ? 'person' : 'people'} going">
+                    <Icon icon="user-friends" /> {attendees} <span class="sr-only">People Going</span>
+                </span>
+
                 {#if event.userRsvp}
                     <span>
                         <RSVPStatus status={event.userRsvp?.status} />
@@ -36,7 +38,6 @@
 <script>
     import {Icon} from 'sheodox-ui';
     import Link from "../Link.svelte";
-    import AttendanceTypeBadge from "./AttendanceTypeBadge.svelte";
     import EventTimes from "./EventTimes.svelte";
     import RSVPStatus from "./RSVPStatus.svelte";
 

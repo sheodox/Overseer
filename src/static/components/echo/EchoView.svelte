@@ -75,13 +75,13 @@
             {/if}
         </div>
         <div class="f-row justify-content-between">
-            <span>
+            <span class="has-inline-links">
                 {#each tags as tag}
                     <a href={tag.path} on:click|preventDefault={() => page(tag.path)} class="tag">{tag.text}</a>
                 {/each}
             </span>
         </div>
-        <div class="notes">
+        <div class="notes has-inline-links">
             {@html echoItem.notesRendered}
         </div>
         <EchoDownloadLink {echoItem}>

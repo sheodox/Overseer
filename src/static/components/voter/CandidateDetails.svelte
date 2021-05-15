@@ -40,7 +40,7 @@
         {/if}
     </div>
 
-    <div class="notes">
+    <div class="notes has-inline-links">
         <!-- notes are markdown rendered HTML -->
         {@html candidate.notesRendered}
     </div>

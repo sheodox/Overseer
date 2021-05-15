@@ -1,6 +1,6 @@
 <style>
-    .page-content {
-        margin: 1rem;
+    .voter {
+        max-width: 95vw;
     }
 
     h1 {
@@ -10,19 +10,19 @@
 {#if !$voterInitialized}
     <PageSpinner />
 {:else}
-    <div class="page-content">
+    <div class="voter m-3">
         <div class="f-row justify-content-between align-items-center">
             <h1>
                 Races
             </h1>
             {#if window.Booker.voter.add_race}
-                <button on:click={() => showAddRace = true}>
+                <button on:click={() => showAddRace = true} class="primary">
                     <Icon icon="plus" />
                     Add Race
                 </button>
             {/if}
         </div>
-        <div class="f-row f-wrap justify-content-center">
+        <div class="f-row f-wrap justify-content-center gap-3">
             {#each $voterRaces as race}
                 <RacePreview {race} />
             {/each}

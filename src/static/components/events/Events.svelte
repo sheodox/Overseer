@@ -10,7 +10,7 @@
             <h1>Events</h1>
             {#if window.Booker.events.organize}
                 <Link href="/events/create">
-                    <span class="button">
+                    <span class="button primary">
                         <Icon icon="plus" />
                         Create Event
                     </span>
@@ -22,21 +22,27 @@
 
         {#if $ongoingEvents.length}
             <h2>Ongoing</h2>
-            {#each $ongoingEvents as event}
-                <EventPreview {event} showRSVP={true} />
-            {/each}
+            <div class="f-column gap-3">
+                {#each $ongoingEvents as event}
+                    <EventPreview {event} showRSVP={true} />
+                {/each}
+            </div>
         {/if}
         {#if $upcomingEvents.length}
             <h2>Upcoming</h2>
-            {#each $upcomingEvents as event}
-                <EventPreview {event} showRSVP={true} />
-            {/each}
+            <div class="f-column gap-3">
+                {#each $upcomingEvents as event}
+                    <EventPreview {event} showRSVP={true} />
+                {/each}
+            </div>
         {/if}
         {#if $pastEvents.length}
             <h2>Past</h2>
-            {#each $pastEvents as event}
-                <EventPreview {event} />
-            {/each}
+            <div class="f-column gap-3">
+                {#each $pastEvents as event}
+                    <EventPreview {event} />
+                {/each}
+            </div>
         {/if}
 
         {#if $events.length === 0}

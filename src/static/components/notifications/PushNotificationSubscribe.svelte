@@ -1,4 +1,4 @@
-<button on:click={pushSubscribe}>
+<button on:click={pushSubscribe} class="primary">
     <Icon icon="bell" />
     Get Notifications
 </button>

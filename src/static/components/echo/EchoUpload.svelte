@@ -65,7 +65,7 @@
                     </span>
                         </Link>
                     {/if}
-                    <button disabled={!name || (mode === 'upload' && !file) || uploading}>
+                    <button disabled={!name || (mode === 'upload' && !file) || uploading} class="primary">
                         {#if mode === 'upload'}
                             <Icon icon="upload" />
                             Upload
