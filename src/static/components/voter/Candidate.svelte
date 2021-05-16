@@ -29,7 +29,7 @@
     }
     .candidate-name-container {
         position: relative;
-        background: var(--shdx-sub-panel-bg);
+        background: var(--shdx-gray-600);
         border-radius: 3px;
         overflow: hidden;
     }
