@@ -74,7 +74,7 @@
                             />
                         {/if}
                     </div>
-                    <div class="f-row f-wrap gap-4 shdx-font-size-4">
+                    <div class="f-row f-wrap gap-4 shdx-font-size-4 mb-6">
                         <AttendanceTypeBadge event={$eventFromRoute} showText={true} />
                         <EventTimes event={$eventFromRoute} />
                     </div>
