@@ -11,7 +11,7 @@
     <PageSpinner />
 {:else}
     <div class="voter m-3">
-        <div class="f-row justify-content-between align-items-center">
+        <div class="f-row justify-content-between align-items-baseline mb-2">
             <h1>
                 Races
             </h1>

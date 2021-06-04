@@ -4,7 +4,7 @@
     }
     .preview {
         width: 35rem;
-        max-width: 95%;
+        max-width: 95vw;
         border-radius: 3px;
     }
     ol {
