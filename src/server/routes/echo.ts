@@ -16,8 +16,9 @@ import {diff} from "deep-diff";
 import {createNotificationsForPermittedUsers} from "../util/create-notifications";
 import {io} from "../server";
 
+export const router = Router();
+
 const md = new MarkdownIt(),
-    router = Router(),
     echoServerHost = process.env.ECHO_SERVER_HOST;
 
 router.post('/echo/:echoId/image-upload', safeAsyncRoute(async (req: AppRequest, res: Response, next) => {
@@ -60,15 +61,15 @@ interface PreparedEchoItem extends Omit<EchoItem, 'size'> {
     notesRendered: string
 }
 
-let lastData: any; // this is the resolved data of prepareData
-prepareData().then(data => {
+let lastData: any; // this is the resolved data of getEchoData
+getEchoData().then(data => {
     lastData = data;
 });
 /**
  * Emit data about all games to all connected authorized clients
  */
 async function broadcast() {
-    const data = await prepareData(),
+    const data = await getNewestEchoData(),
         changes = diff(lastData, data);
 
     lastData = data;
@@ -85,7 +86,7 @@ async function broadcast() {
     });
 }
 
-async function prepareData() {
+async function getNewestEchoData() {
     const allTags: {[tag: string]: number} = {},
         items = await echo.list();
 
@@ -121,6 +122,13 @@ async function prepareData() {
     };
 }
 
+export async function getEchoData() {
+	if (!lastData) {
+		lastData = await getNewestEchoData();
+	}
+	return lastData;
+}
+
 //connection to overseer clients
 io.on('connection', (socket: Socket) => {
     const echoEnvoy = new Envoy(socket, 'echo'),
@@ -146,7 +154,7 @@ io.on('connection', (socket: Socket) => {
             });
         }),
         init: checkPermission('view', async done => {
-            done(await prepareData());
+            done(await getEchoData());
 
             // if they're able to download things, give them a download token!
             if (await echoBooker.check(userId, 'download')) {
@@ -256,5 +264,3 @@ io.of((name, query, next) => {
     .on('connection', (socket: Socket) => {
         echoListener(socket);
     });
-
-module.exports = router;

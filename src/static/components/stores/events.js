@@ -5,8 +5,9 @@ import {Envoy} from "../../../shared/envoy";
 import {activeRouteParams} from "./routing";
 const eventsEnvoy = new Envoy(socket, 'events');
 
-export const eventsInitialized = writable(false);
-export const events = writable([], set => {
+const initialEventsData = __INITIAL_STATE__.events;
+export const eventsInitialized = writable(!!initialEventsData);
+export const events = writable(initialEventsData ? parseEventsData(initialEventsData) : [], set => {
     if (!window.Booker.events.view) {
         return;
     }
@@ -15,6 +16,25 @@ export const events = writable([], set => {
         eventsEnvoy.emit('init');
     }
 });
+eventsEnvoy.on({
+    refresh: data => {
+		data = parseEventsData(data);
+        events.set(data);
+        eventsInitialized.set(true);
+    }
+})
+
+function parseEventsData(data) {
+	const userId = window.user.id;
+
+	return data.map(event => {
+		event.startDate = new Date(event.startDate);
+		event.endDate = new Date(event.endDate);
+		event.userRsvp = event.rsvps.find(rsvp => rsvp.userId === userId) ?? null
+		return event;
+	})
+}
+
 function sortAsc(events) {
     events.sort((a, b) => {
         return a.startDate.getTime() - b.startDate.getTime();
@@ -53,20 +73,6 @@ export const eventFromRoute = derived([events, activeRouteParams], ([events, rou
     return events.find(event => {
         return event.id === routeParams.eventId;
     })
-})
-
-eventsEnvoy.on({
-    refresh: data => {
-        const userId = window.user.id;
-
-        data.forEach(event => {
-            event.startDate = new Date(event.startDate);
-            event.endDate = new Date(event.endDate);
-            event.userRsvp = event.rsvps.find(rsvp => rsvp.userId === userId) ?? null
-        })
-        events.set(data);
-        eventsInitialized.set(true);
-    }
 })
 
 const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

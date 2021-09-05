@@ -10,8 +10,9 @@ import {uploadImage} from "./app";
 import {applyChange} from "deep-diff";
 const echoEnvoy = new Envoy(socket, 'echo');
 
-let untouchedEchoData;
-export const echoInitialized = writable(false);
+const initialEchoData = __INITIAL_STATE__.echo;
+let untouchedEchoData = initialEchoData;
+export const echoInitialized = writable(!!initialEchoData);
 export const echoItems = writable([], () => {
     //if they don't have echo permissions, or they've already initialized, don't try and initialize anymore
     if (!Booker.echo.view || get(echoInitialized)) {
@@ -32,6 +33,11 @@ echoSearch.subscribe(search => {
         page(`/echo` + (search ? `?search=${encodeURIComponent(search)}` : ''));
     }
 })
+
+if (initialEchoData) {
+	setEchoData(initialEchoData);
+}
+
 export const echoSearchResults = derived([echoItems, echoSearch], ([list, search]) => {
     //be extra sure we make sure we don't mess with the original data
     list = JSON.parse(JSON.stringify(list));

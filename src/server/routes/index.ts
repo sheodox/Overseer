@@ -8,6 +8,9 @@ import {users} from "../db/users";
 import {safeAsyncRoute} from "../util/error-handler";
 import {prisma} from "../db/prisma";
 import {vapidMetadataKeys} from "../util/create-notifications";
+import { getEchoData } from './echo';
+import { getVoterData } from './voter';
+import { getEventsData } from './events';
 
 const router = Router();
 
@@ -69,6 +72,13 @@ function entry(app?: string) {
                 }
             });
 
+			const userId = req.user.id,
+				canView = {
+					echo: await echoBooker.check(userId, 'view'),
+					voter: await voterBooker.check(userId, 'view'),
+					events: await eventsBooker.check(userId, 'view'),
+				};
+
             res.render('index', {
                 manifest,
                 ...social,
@@ -79,6 +89,11 @@ function entry(app?: string) {
                     links,
                     settings
                 }),
+				initialData: serializeJavascript({
+					echo: canView.echo && await getEchoData(),
+					voter: canView.voter && await getVoterData(),
+					events: canView.events && await getEventsData(req.user.id),
+				}),
                 serverMetadata: serializeJavascript({
                     pushVapidPublicKey: publicKey?.value
                 }),

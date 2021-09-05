@@ -106,7 +106,12 @@ async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]
     return maskedEvents;
 }
 
-module.exports = function(io: Server) {
+export async function getEventsData(userId: string) {
+	const eventData = await events.list();
+	return maskEvent(eventData, userId);
+}
+
+export const initEvents = function(io: Server) {
     const eventsHarbinger = new Harbinger('events');
 
     io.on('connection', async socket => {

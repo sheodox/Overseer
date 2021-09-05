@@ -15,18 +15,18 @@ import {errorHandler} from "./util/error-handler";
 import connectRedis from 'connect-redis';
 import {router as authRouter} from './routes/auth';
 import {router as notificationRouter} from './routes/notifications';
+import {router as echoRouter} from './routes/echo';
+import {router as voterRouter} from './routes/voter';
+import {initEvents} from './routes/events';
 
 const port = 4000,
     redisClient = createRedisClient({
         host: 'redis'
     }),
     logger = require('morgan'),
-    echoRouter = require('./routes/echo'),
     settings = require('./routes/settings'),
-    voter = require('./routes/voter'),
     userRouter = require('./routes/user'),
     admin = require('./routes/admin'),
-    events = require('./routes/events'),
     images = require('./routes/images'),
     bodySizeLimit = '15mb';
 
@@ -84,10 +84,10 @@ server.on('listening', () => {
 });
 
 app.use(echoRouter);
-app.use(voter(io));
+app.use(voterRouter);
 settings(io);
 app.use(admin(io));
-events(io);
+initEvents(io);
 app.use(images);
 userRouter(io);
 app.use(notificationRouter);

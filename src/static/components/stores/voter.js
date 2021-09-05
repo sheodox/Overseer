@@ -7,7 +7,8 @@ import {activeRouteParams} from "./routing";
 import {uploadImage} from "./app";
 const voterEnvoy = new Envoy(socket, 'voter');
 
-export const voterInitialized = writable(false);
+const initialVoterData = __INITIAL_STATE__.voter;
+export const voterInitialized = writable(!!initialVoterData);
 
 let untouchedVoterData;
 export const voterRaces = writable([], () => {
@@ -21,6 +22,11 @@ export const voterRaces = writable([], () => {
         setVoterData(races);
     });
 });
+
+if (initialVoterData) {
+	untouchedVoterData = initialVoterData;
+	setVoterData(initialVoterData);
+}
 
 voterEnvoy.on({
     diff: (changes) => {
