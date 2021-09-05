@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build:prod": "npm run build:server:prod && npm run build:static:prod",
-    "build:static:prod": "webpack --mode production",
-    "build:static:dev": "webpack --mode development --watch",
-    "build:server:prod": "tsc",
-    "build:server:dev": "tsc --watch",
+    "build:prod": "npm run build-server:prod && npm run build-static:prod",
+    "build-static:prod": "webpack --mode production",
+    "build-static:dev": "webpack --mode development --watch",
+    "build-server:prod": "tsc",
+    "build-server:dev": "tsc --watch",
     "dev": "nodemon --ignore public/ --inspect=0.0.0.0 src/server/app.js"
   },
   "dependencies": {
