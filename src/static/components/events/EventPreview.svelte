@@ -1,6 +1,7 @@
 <style>
     .event {
         color: white;
+		max-width: 90vw;
     }
     .card {
         border-radius: 3px;
