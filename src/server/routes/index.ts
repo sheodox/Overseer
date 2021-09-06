@@ -105,6 +105,7 @@ function entry(app?: string) {
                 ...social,
                 user: serializeJavascript(false),
                 serverMetadata: serializeJavascript({}),
+				initialData: serializeJavascript({}),
                 permissions
             });
         }
