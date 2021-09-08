@@ -24,7 +24,7 @@ export const echoItems = writable([], () => {
     });
 });
 export const echoDiskUsage = writable(null)
-export const echoDownloadToken = writable('');
+export const echoDownloadToken = writable(__INITIAL_STATE__.echoDownloadToken || '');
 export const echoOnline = writable(false);
 export const echoTagCloud = writable([]);
 export const echoSearch = writable(get(activeQueryParams).search);

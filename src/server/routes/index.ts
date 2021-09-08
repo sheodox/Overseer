@@ -8,7 +8,7 @@ import {users} from "../db/users";
 import {safeAsyncRoute} from "../util/error-handler";
 import {prisma} from "../db/prisma";
 import {vapidMetadataKeys} from "../util/create-notifications";
-import { getEchoData } from './echo';
+import { createEchoDownloadToken, getEchoData } from './echo';
 import { getVoterData } from './voter';
 import { getEventsData } from './events';
 
@@ -91,6 +91,8 @@ function entry(app?: string) {
                 }),
 				initialData: serializeJavascript({
 					echo: canView.echo && await getEchoData(),
+					// not checking booker here, it's checked by createEchoDownloadToken
+					echoDownloadToken: await createEchoDownloadToken(req.user.id),
 					voter: canView.voter && await getVoterData(),
 					events: canView.events && await getEventsData(req.user.id),
 				}),

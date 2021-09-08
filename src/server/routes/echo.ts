@@ -122,6 +122,16 @@ async function getNewestEchoData() {
     };
 }
 
+export async function createEchoDownloadToken(userId: string) {
+	// if they're able to download things, give them a download token!
+	if (await echoBooker.check(userId, 'download')) {
+		const downloadToken = createIntegrationToken(
+			`Echo download token for user ${userId}`,
+			['echo-download']
+		);
+		return downloadToken
+	}
+}
 export async function getEchoData() {
 	if (!lastData) {
 		lastData = await getNewestEchoData();
@@ -155,15 +165,10 @@ io.on('connection', (socket: Socket) => {
         }),
         init: checkPermission('view', async done => {
             done(await getEchoData());
-
-            // if they're able to download things, give them a download token!
-            if (await echoBooker.check(userId, 'download')) {
-                const downloadToken = createIntegrationToken(
-                    `Download token for user ${userId}`,
-                    ['echo-download']
-                );
-                echoEnvoy.emit('downloadToken', downloadToken);
-            }
+			const downloadToken = await createEchoDownloadToken(userId);
+			if (downloadToken) {
+				echoEnvoy.emit('downloadToken', downloadToken);
+			}
         }),
         update: checkPermission('update', async (id, updatedData) => {
             await echo.update(id, updatedData);
