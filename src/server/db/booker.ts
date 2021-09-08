@@ -89,6 +89,9 @@ export class Booker {
     }
     // check if the user has permissions to do this action
     async check(userId: string, action: string) {
+		if (!userId) {
+			return false;
+		}
         const cachedPermissions = this.userPermissionsCache.get(userId);
         if (cachedPermissions) {
             return cachedPermissions[action];
