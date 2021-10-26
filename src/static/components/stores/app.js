@@ -1,4 +1,4 @@
-import {writable, get} from 'svelte/store';
+import {writable, get, readable} from 'svelte/store';
 import {createAutoExpireToast, createProgressToast, updateToast} from "sheodox-ui";
 import {post} from "axios";
 import {bytes as formatBytes} from "../../../shared/formatters";
@@ -17,9 +17,21 @@ export const pushSubscribed = writable(true, set => {
             return sw.pushManager.getSubscription();
         })
         .then(pushSubscription => {
-            set(!!pushSubscription);
+			appEnvoy.emit('ensurePushSubscription', pushSubscription);
+			set(!!pushSubscription);
+
+			if (pushSubscription) {
+				const subscription = JSON.parse(JSON.stringify(pushSubscription));
+				storePushEndpoint(subscription);
+			}
         })
 });
+
+//ensure we know what the last known subscription was, so if we need to update the subscription endpoint /was/
+//so it can be replaced if the serviceworker gets a pushsubscriptionchange event
+export function storePushEndpoint(subscription) {
+	localStorage.setItem('overseer-push-endpoint', subscription.endpoint);
+}
 
 export let settings = writable(window.user?.settings);
 
@@ -105,3 +117,4 @@ export function requestUser(userId) {
 export function scrollPageToTop() {
     window.scrollTo(0, 0);
 }
+

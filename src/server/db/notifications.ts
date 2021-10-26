@@ -85,5 +85,54 @@ class Notifications {
             }
         })
     }
+	// if the browser decides to replace a subscription, this endpoint should update the last known subscription
+	// with the new subscription details, so that device can keep getting push notifications
+	async replacePushSubscription(oldEndpoint: string, subscription: PushSubscriptionJSON) {
+		if (typeof oldEndpoint !== 'string' || !validatePushSubscription(subscription)) {
+			return;
+		}
+
+		const existingSub = await prisma.userPushSubscription.findMany({
+			where: {
+				subscription: {
+					path: ['endpoint'],
+					equals: oldEndpoint
+				}
+			}
+		});
+
+		if (existingSub.length) {
+			// replace the subscription with the new one so we know who this user is still
+			await prisma.userPushSubscription.update({
+				where: {id: existingSub[0].id},
+				data: { subscription: subscription as any }
+			});
+		}
+	}
+	// ensure that the subscription provided is saved for the user, so if the browser says they're subscribed
+	// they should still get notifications
+	async ensurePushSubscription(userId: string, subscription: PushSubscriptionJSON) {
+		if (!validatePushSubscription(subscription)) {
+			return;
+		}
+
+		const existingSub = await prisma.userPushSubscription.findMany({
+			where: {
+				subscription: {
+					path: ['endpoint'],
+					equals: subscription.endpoint
+				}
+			}
+		})
+
+		if (!existingSub.length) {
+			await prisma.userPushSubscription.create({
+				data: {
+					userId,
+					subscription: subscription as any
+				}
+			});
+		}
+	}
 }
 export const notifications = new Notifications()

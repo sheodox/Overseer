@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv-expand')(require('dotenv').config());
 import {app, io, server} from "./server";
 import {NextFunction, Request, Response} from 'express';
 import passport from 'passport';
@@ -17,6 +17,7 @@ import {router as authRouter} from './routes/auth';
 import {router as notificationRouter} from './routes/notifications';
 import {router as echoRouter} from './routes/echo';
 import {router as voterRouter} from './routes/voter';
+import {router as userRouter} from './routes/user';
 import {initEvents} from './routes/events';
 
 const port = 4000,
@@ -25,7 +26,6 @@ const port = 4000,
     }),
     logger = require('morgan'),
     settings = require('./routes/settings'),
-    userRouter = require('./routes/user'),
     admin = require('./routes/admin'),
     images = require('./routes/images'),
     bodySizeLimit = '15mb';
@@ -89,9 +89,9 @@ settings(io);
 app.use(admin(io));
 initEvents(io);
 app.use(images);
-userRouter(io);
 app.use(notificationRouter);
 app.use(require('./routes/index'));
+app.use('/user', userRouter);
 
 app.use((req, res, next) => next({status: 404}))
 app.use(errorHandler(false));

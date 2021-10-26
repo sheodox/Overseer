@@ -5,7 +5,7 @@
 
 <script>
     import {Icon} from 'sheodox-ui';
-    import {pushSubscribed} from "../stores/app";
+    import {pushSubscribed, storePushEndpoint} from "../stores/app";
     import {notificationOps} from "../stores/notifications";
 
     async function pushSubscribe() {
@@ -13,7 +13,9 @@
             push = await sw.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: window.serverMetadata.pushVapidPublicKey
-            })
+            });
+
+		storePushEndpoint(pushSubscription);
 
         notificationOps.registerPushSubscription(JSON.parse(JSON.stringify(push)));
         $pushSubscribed = true;

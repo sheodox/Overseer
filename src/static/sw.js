@@ -39,3 +39,19 @@ self.addEventListener('notificationclick', event => {
     }());
 
 })
+
+self.addEventListener("pushsubscriptionchange", event => {
+	event.waitUntil(
+		fetch('/user/replace-push-subscription', {
+			method: "post",
+			headers: {
+				"Content-type": "application/json"
+			},
+			body: JSON.stringify({
+				oldEndpoint: event.oldSubscription ? event.oldSubscription.endpoint : localStorage.getItem('overseer-push-endpoint'),
+				newSubscription: event.newSubscription
+			})
+		})
+	);
+}, false);
+
