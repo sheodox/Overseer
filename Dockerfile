@@ -2,7 +2,13 @@ FROM node:14 AS dev
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=development
+COPY package*.json ./
+# need to install depenencies so different distros other than ubuntu can be used on the host machine 
+RUN npm install
+COPY prisma prisma
+RUN npx prisma generate
 CMD npm run dev
+
 
 FROM dev AS prod
 COPY package*.json ./

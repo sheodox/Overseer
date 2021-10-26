@@ -7,9 +7,9 @@ services:
       - 9222:9222 #nodejs inspect port
       - 9229:9229 #nodejs inspect port
     volumes:
-      - type: bind
-        source: .
-        target: /usr/src/app
+      - ./public:/usr/src/app/public
+      - ./src:/usr/src/app/src
+      - .env:/usr/src/app/.env
     logging:
       options:
         max-size: "1m"
