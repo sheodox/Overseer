@@ -17,11 +17,11 @@ export const pushSubscribed = writable(true, set => {
             return sw.pushManager.getSubscription();
         })
         .then(pushSubscription => {
-			appEnvoy.emit('ensurePushSubscription', pushSubscription);
 			set(!!pushSubscription);
 
 			if (pushSubscription) {
 				const subscription = JSON.parse(JSON.stringify(pushSubscription));
+				appEnvoy.emit('ensurePushSubscription', subscription);
 				storePushEndpoint(subscription);
 			}
         })

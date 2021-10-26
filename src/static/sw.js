@@ -49,7 +49,7 @@ self.addEventListener("pushsubscriptionchange", event => {
 			},
 			body: JSON.stringify({
 				oldEndpoint: event.oldSubscription ? event.oldSubscription.endpoint : localStorage.getItem('overseer-push-endpoint'),
-				newSubscription: event.newSubscription
+				newSubscription: JSON.parse(JSON.stringify(event.newSubscription))
 			})
 		})
 	);
