@@ -83,12 +83,17 @@ class Users {
         })
     }
 
-    /**
-     * Gets all user information
-     * @returns {Promise<void>}
-     */
     async getAllUsers() {
-        return await prisma.user.findMany()
+        return await prisma.user.findMany({
+			include: {
+				pushSubscriptions: {
+					select: {
+						id: true,
+						createdAt: true
+					}
+				}
+			}
+		})
     }
 
     /**
