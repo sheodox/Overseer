@@ -48,7 +48,7 @@
 		<table>
 			<thead>
 				<tr>
-					<td>Created At</td>
+					<th>Created At</th>
 				</tr>
 			</thead>
 			<tbody>
