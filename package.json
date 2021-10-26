@@ -16,7 +16,7 @@
     "@types/connect-redis": "0.0.16",
     "@types/sharp": "^0.27.1",
     "ajv": "^7.2.3",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "body-parser": "^1.18.3",
     "connect-redis": "^5.1.0",
     "cookie-parser": "^1.4.3",
