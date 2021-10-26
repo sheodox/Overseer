@@ -27,6 +27,11 @@ export const pushSubscribed = writable(true, set => {
         })
 });
 
+pushSubscribed.subscribe(subscribed => {
+	console.log('Push subscribed?', subscribed);
+});
+
+
 //ensure we know what the last known subscription was, so if we need to update the subscription endpoint /was/
 //so it can be replaced if the serviceworker gets a pushsubscriptionchange event
 export function storePushEndpoint(subscription) {
