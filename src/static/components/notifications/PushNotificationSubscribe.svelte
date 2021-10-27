@@ -15,7 +15,7 @@
                 applicationServerKey: window.serverMetadata.pushVapidPublicKey
             });
 
-		storePushEndpoint(pushSubscription);
+		storePushEndpoint(push);
 
         notificationOps.registerPushSubscription(JSON.parse(JSON.stringify(push)));
         $pushSubscribed = true;
