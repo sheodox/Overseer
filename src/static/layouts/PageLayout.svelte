@@ -5,7 +5,7 @@
 	}
 </style>
 
-<div class="page-layout f-column f-1 p-1">
+<div class="page-layout f-column p-1">
 	<div class="f-row justify-content-between align-items-baseline">
 		<h1>{title}</h1>
 		<slot name="beside-title" />
