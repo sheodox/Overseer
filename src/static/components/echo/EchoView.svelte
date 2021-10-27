@@ -87,10 +87,10 @@
 				Download (<FileSize {echoItem} />)
 			</span>
 		</EchoDownloadLink>
-		<div class="f-row f-wrap">
-			<EchoImages mode="view" size="medium" {echoItem} />
-		</div>
 	</PageLayout>
+	<div class="f-row f-wrap">
+		<EchoImages mode="view" size="medium" {echoItem} />
+	</div>
 {/if}
 
 {#if showDeleteConfirm}
@@ -146,4 +146,3 @@
 		page("/echo");
 	}
 </script>
-
