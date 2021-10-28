@@ -2,7 +2,7 @@ import {writable, derived, get} from "svelte/store";
 import {createAutoExpireToast} from 'sheodox-ui';
 import {Envoy} from "../../../shared/envoy";
 import {socket} from "../../socket";
-const notificationsEnvoy = new Envoy(socket, 'notifications');
+const notificationsEnvoy = new Envoy(socket, 'notifications', true);
 
 export const notificationsInitialized = writable(false);
 export const notifications = writable([], set => {
@@ -10,10 +10,7 @@ export const notifications = writable([], set => {
         return;
     }
 
-    notificationsEnvoy.emit('init', data => {
-        set(data);
-        notificationsInitialized.set(true);
-    })
+    notificationsEnvoy.emit('init');
 })
 export const unreadNotificationCount = derived(notifications, notifications => {
     return notifications.reduce((count, notification) => {
@@ -22,6 +19,10 @@ export const unreadNotificationCount = derived(notifications, notifications => {
 })
 
 notificationsEnvoy.on({
+	init: data => {
+		notifications.set(data)
+        notificationsInitialized.set(true);
+    },
     notification: data => {
         notifications.update(notifications => {
             createAutoExpireToast(data);

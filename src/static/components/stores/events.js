@@ -3,7 +3,7 @@ import {socket} from "../../socket";
 import page from 'page';
 import {Envoy} from "../../../shared/envoy";
 import {activeRouteParams} from "./routing";
-const eventsEnvoy = new Envoy(socket, 'events');
+const eventsEnvoy = new Envoy(socket, 'events', true);
 
 const initialEventsData = __INITIAL_STATE__.events;
 export const eventsInitialized = writable(!!initialEventsData);
@@ -17,7 +17,7 @@ export const events = writable(initialEventsData ? parseEventsData(initialEvents
     }
 });
 eventsEnvoy.on({
-    refresh: data => {
+    init: data => {
 		data = parseEventsData(data);
         events.set(data);
         eventsInitialized.set(true);

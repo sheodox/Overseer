@@ -88,8 +88,8 @@ io.on('connection', async socket => {
 	};
 
 	voterEnvoy.on({
-		init: checkPermission('view', async (done) => {
-			done(await getVoterData());
+		init: checkPermission('view', async () => {
+			voterEnvoy.emit('init', await getVoterData());
 		}),
 		newRace: checkPermission('add_race', async (name: string, done) => {
 			const raceData = await voter.addRace(name, userId);

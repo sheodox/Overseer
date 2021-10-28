@@ -163,8 +163,8 @@ io.on('connection', (socket: Socket) => {
                 broadcast();
             });
         }),
-        init: checkPermission('view', async done => {
-            done(await getEchoData());
+        init: checkPermission('view', async () => {
+            echoEnvoy.emit('init', await getEchoData());
 			const downloadToken = await createEchoDownloadToken(userId);
 			if (downloadToken) {
 				echoEnvoy.emit('downloadToken', downloadToken);

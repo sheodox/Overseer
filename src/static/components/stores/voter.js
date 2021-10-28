@@ -5,7 +5,7 @@ import {socket} from "../../socket";
 import {Envoy} from "../../../shared/envoy";
 import {activeRouteParams} from "./routing";
 import {uploadImage} from "./app";
-const voterEnvoy = new Envoy(socket, 'voter');
+const voterEnvoy = new Envoy(socket, 'voter', true);
 
 const initialVoterData = __INITIAL_STATE__.voter;
 export const voterInitialized = writable(!!initialVoterData);
@@ -17,11 +17,9 @@ export const voterRaces = writable([], () => {
         return;
     }
 
-    voterEnvoy.emit('init', races => {
-        untouchedVoterData = races;
-        setVoterData(races);
-    });
+	voterEnvoy.emit('init')
 });
+
 
 if (initialVoterData) {
 	untouchedVoterData = initialVoterData;
@@ -29,6 +27,10 @@ if (initialVoterData) {
 }
 
 voterEnvoy.on({
+	init: races => {
+		untouchedVoterData = races;
+		setVoterData(races);
+	},
     diff: (changes) => {
         if (get(voterInitialized)) {
             for (const change of changes) {

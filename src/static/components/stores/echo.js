@@ -8,7 +8,7 @@ import page from 'page';
 import {activeQueryParams, activeRoute} from "./routing";
 import {uploadImage} from "./app";
 import {applyChange} from "deep-diff";
-const echoEnvoy = new Envoy(socket, 'echo');
+const echoEnvoy = new Envoy(socket, 'echo', true);
 
 const initialEchoData = __INITIAL_STATE__.echo;
 let untouchedEchoData = initialEchoData;
@@ -19,9 +19,7 @@ export const echoItems = writable([], () => {
         return;
     }
 
-    echoEnvoy.emit('init', data => {
-        setEchoData(data);
-    });
+    echoEnvoy.emit('init');
 });
 export const echoDiskUsage = writable(null)
 export const echoDownloadToken = writable(__INITIAL_STATE__.echoDownloadToken || '');
@@ -85,6 +83,9 @@ function setEchoData(data) {
 }
 
 echoEnvoy.on({
+	init:  data => {
+        setEchoData(data);
+    },
     diff: (changes) => {
         if (get(echoInitialized)) {
             for (const change of changes) {

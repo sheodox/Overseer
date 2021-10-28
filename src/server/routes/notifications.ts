@@ -38,7 +38,7 @@ io.on('connection', socket => {
 
     notificationsEnvoy.on({
         init: checkPermission('notifications', async done => {
-            done(
+            notificationsEnvoy.emit('init',
                 await notifications.getNotifications(userId)
             )
         }),

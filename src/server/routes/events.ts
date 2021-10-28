@@ -125,7 +125,7 @@ export const initEvents = function(io: Server) {
         async function broadcast() {
             const eventData = await events.list()
 
-            eventsHarbinger.filteredBroadcast('refresh', async userId => {
+            eventsHarbinger.filteredBroadcast('init', async userId => {
                 if (await eventsBooker.check(userId, 'view')) {
                     return maskEvent(eventData, userId);
                 }
@@ -146,7 +146,7 @@ export const initEvents = function(io: Server) {
 
         eventsEnvoy.on({
             init: checkPermission('view', async () => {
-                eventsEnvoy.emit('refresh',
+                eventsEnvoy.emit('init',
                     await maskEvent(await events.list(), userId)
                 );
             }),
