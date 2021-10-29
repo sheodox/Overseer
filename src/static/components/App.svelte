@@ -11,6 +11,13 @@
         z-index: 100;
         top: 0;
     }
+	#connection-error {
+		width: 100%;
+		background: var(--shdx-red-500);
+		color: white;
+		text-align: center;
+		padding: var(--shdx-spacing-1);
+	}
 </style>
 
 <Header
@@ -22,6 +29,9 @@
     <SVG svgId="logo" slot="logo" />
     <HeaderNav slot="nav" />
 </Header>
+{#if !$socketConnected}
+	<div id="connection-error">Connection to server lost.</div>
+{/if}
 <main class="f-column justify-content-start align-items-center">
     <Toasts />
     {#if window.user}
@@ -47,7 +57,7 @@
 
 <script>
     import {Toasts, Icon, Header, Footer} from 'sheodox-ui';
-    import {pageName} from "./stores/app";
+    import {pageName, socketConnected} from "./stores/app";
     import SVG from './SVG.svelte';
     import Routing from "./Routing.svelte";
     import LoginRequired from "./LoginRequired.svelte";

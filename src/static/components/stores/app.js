@@ -31,6 +31,11 @@ pushSubscribed.subscribe(subscribed => {
 	console.log('Push subscribed?', subscribed);
 });
 
+export const socketConnected = writable(true);
+
+socket.on('connect', () => socketConnected.set(true));
+socket.on('disconnect', () => socketConnected.set(false));
+
 
 //ensure we know what the last known subscription was, so if we need to update the subscription endpoint /was/
 //so it can be replaced if the serviceworker gets a pushsubscriptionchange event
