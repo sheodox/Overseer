@@ -1,67 +1,71 @@
 <style>
-    main {
-        flex: 1;
-    }
+	main {
+		flex: 1;
+	}
 </style>
+
 <Header appName="Overseer" pageName="Admin">
-    <SVG svgId="logo" slot="logo" />
+	<SVG svgId="logo" slot="logo" />
 </Header>
 <main class="page-content">
-    <div class="f-row justify-content-center">
-        <TabList {tabs} bind:selectedTab />
-    </div>
-    <Tab tabId="assignments" {selectedTab}>
-        <div class="f-column align-items-center">
-            <h1>Assignments</h1>
-            <Assignments />
-        </div>
-    </Tab>
-    <Tab tabId="roles" {selectedTab}>
-        <div class="f-column align-items-center">
-            <h1>Roles</h1>
-            <Roles />
-        </div>
-    </Tab>
-    <Tab tabId="integrations" {selectedTab}>
-        <div class="f-column align-items-center">
-            <h1>Integrations</h1>
-            <Integrations />
-        </div>
-    </Tab>
-    <Tab tabId="announcements" {selectedTab}>
-        <div class="f-column align-items-center">
-            <h1>Announcements</h1>
-            <CreateAnnouncement />
-        </div>
-    </Tab>
+	<div class="f-row justify-content-center">
+		<TabList {tabs} bind:selectedTab />
+	</div>
+	<Tab tabId="assignments" {selectedTab}>
+		<div class="f-column align-items-center">
+			<h1>Assignments</h1>
+			<Assignments />
+		</div>
+	</Tab>
+	<Tab tabId="roles" {selectedTab}>
+		<div class="f-column align-items-center">
+			<h1>Roles</h1>
+			<Roles />
+		</div>
+	</Tab>
+	<Tab tabId="integrations" {selectedTab}>
+		<div class="f-column align-items-center">
+			<h1>Integrations</h1>
+			<Integrations />
+		</div>
+	</Tab>
+	<Tab tabId="announcements" {selectedTab}>
+		<div class="f-column align-items-center">
+			<h1>Announcements</h1>
+			<CreateAnnouncement />
+		</div>
+	</Tab>
 </main>
-<Footer>
-
-</Footer>
+<Footer />
 
 <script>
-    import {Header, Tab, TabList, Footer} from 'sheodox-ui';
-    import SVG from "../components/SVG.svelte";
-    import Integrations from "./Integrations.svelte";
-    import Roles from "./Roles.svelte";
-    import Assignments from "./Assignments.svelte";
-    import {pageName} from "../components/stores/app";
-    import CreateAnnouncement from "./CreateAnnouncement.svelte";
+	import { Header, Tab, TabList, Footer } from 'sheodox-ui';
+	import SVG from '../components/SVG.svelte';
+	import Integrations from './Integrations.svelte';
+	import Roles from './Roles.svelte';
+	import Assignments from './Assignments.svelte';
+	import { pageName } from '../components/stores/app';
+	import CreateAnnouncement from './CreateAnnouncement.svelte';
 
-    $: $pageName = 'Admin';
+	$: $pageName = 'Admin';
 
-    const tabs = [{
-        id: 'assignments',
-        title: 'Assignments'
-    }, {
-        id: 'roles',
-        title: 'Roles'
-    }, {
-        id: 'integrations',
-        title: 'Integrations'
-    }, {
-        id: 'announcements',
-        title: 'Announcements'
-    }]
-    let selectedTab;
+	const tabs = [
+		{
+			id: 'assignments',
+			title: 'Assignments',
+		},
+		{
+			id: 'roles',
+			title: 'Roles',
+		},
+		{
+			id: 'integrations',
+			title: 'Integrations',
+		},
+		{
+			id: 'announcements',
+			title: 'Announcements',
+		},
+	];
+	let selectedTab;
 </script>

@@ -16,8 +16,8 @@
 	}
 </style>
 
-<PageLayout title={name || "New Event"}>
-	{#if mode === "create" || $eventFromRoute}
+<PageLayout title={name || 'New Event'}>
+	{#if mode === 'create' || $eventFromRoute}
 		<form on:submit|preventDefault={submit}>
 			<TextInput bind:value={name} id="event-name">Event Name</TextInput>
 
@@ -53,7 +53,7 @@
 			<small><Icon icon="info-circle" /> Details can use markdown!</small>
 
 			<div class="f-row justify-content-end">
-				{#if mode === "edit"}
+				{#if mode === 'edit'}
 					<Link href="/events/{$eventFromRoute.id}">
 						<span class="button">
 							<Icon icon="chevron-left" />
@@ -61,7 +61,7 @@
 						</span>
 					</Link>
 				{/if}
-				<button class="primary">{mode === "create" ? "Create" : "Update"} Event</button>
+				<button class="primary">{mode === 'create' ? 'Create' : 'Update'} Event</button>
 			</div>
 		</form>
 	{:else}
@@ -70,19 +70,19 @@
 </PageLayout>
 
 <script>
-	import { createAutoExpireToast, Icon, TextInput } from "sheodox-ui";
-	import DateTimeInput from "./DateTimeInput.svelte";
-	import { eventFromRoute, eventOps } from "../stores/events";
-	import PageSpinner from "../PageSpinner.svelte";
-	import Link from "../Link.svelte";
-	import PageLayout from "../../layouts/PageLayout.svelte";
+	import { createAutoExpireToast, Icon, TextInput } from 'sheodox-ui';
+	import DateTimeInput from './DateTimeInput.svelte';
+	import { eventFromRoute, eventOps } from '../stores/events';
+	import PageSpinner from '../PageSpinner.svelte';
+	import Link from '../Link.svelte';
+	import PageLayout from '../../layouts/PageLayout.svelte';
 
 	export let mode; // create | edit
 	let name,
 		startDate,
 		endDate,
 		notes,
-		attendanceType = "real";
+		attendanceType = 'real';
 
 	$: initializeData($eventFromRoute);
 
@@ -101,21 +101,21 @@
 
 	function validationToast(message) {
 		createAutoExpireToast({
-			variant: "error",
-			title: "Error",
+			variant: 'error',
+			title: 'Error',
 			message,
 		});
 	}
 
 	function submit() {
 		if (!name) {
-			return validationToast("Enter a name!");
+			return validationToast('Enter a name!');
 		}
 		if (!startDate) {
-			return validationToast("Enter a start date and time!");
+			return validationToast('Enter a start date and time!');
 		}
 		if (!endDate) {
-			return validationToast("Enter an end date and time!");
+			return validationToast('Enter an end date and time!');
 		}
 
 		const eventData = {
@@ -126,7 +126,7 @@
 			endDate: endDate.getTime(),
 		};
 
-		if (mode === "create") {
+		if (mode === 'create') {
 			eventOps.createEvent(eventData);
 		} else {
 			eventOps.updateEvent($eventFromRoute.id, eventData);

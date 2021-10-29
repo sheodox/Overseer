@@ -68,28 +68,28 @@
 					</div>
 
 					{#if window.Booker.events.organize}
-					<div class="f-row justify-content-end shdx-font-size-3">
-						<MenuButton>
-							<span slot="trigger">
-								Event Options
-								<Icon icon="chevron-down" />
-							</span>
-							<ul slot="menu">
-								<li>
-									<button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
-										<Icon icon="edit" />
-										Edit
-									</button>
-								</li>
-								<li>
-									<button on:click={() => (showDeleteConfirm = true)}>
-										<Icon icon="trash" />
-										Delete
-									</button>
-								</li>
-							</ul>
-						</MenuButton>
-					</div>
+						<div class="f-row justify-content-end shdx-font-size-3">
+							<MenuButton>
+								<span slot="trigger">
+									Event Options
+									<Icon icon="chevron-down" />
+								</span>
+								<ul slot="menu">
+									<li>
+										<button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
+											<Icon icon="edit" />
+											Edit
+										</button>
+									</li>
+									<li>
+										<button on:click={() => (showDeleteConfirm = true)}>
+											<Icon icon="trash" />
+											Delete
+										</button>
+									</li>
+								</ul>
+							</MenuButton>
+						</div>
 					{/if}
 				</div>
 				<div class="f-row f-wrap justify-content-between m-5">
@@ -126,30 +126,30 @@
 {/if}
 
 <script>
-	import { MenuButton, Icon, Modal } from "sheodox-ui";
-	import { pageName } from "../stores/app";
-	import PageSpinner from "../PageSpinner.svelte";
-	import { eventFromRoute, eventOps, eventsInitialized } from "../stores/events";
-	import page from "page";
-	import Link from "../Link.svelte";
-	import RSVP from "./RSVP.svelte";
-	import RSVPSurvey from "./RSVPSurvey.svelte";
-	import AttendanceTypeBadge from "./AttendanceTypeBadge.svelte";
-	import Attendees from "./Attendance.svelte";
-	import EventTimes from "./EventTimes.svelte";
-	import RSVPNotes from "./RSVPNotes.svelte";
-	import EventNotificationReminder from "./EventNotificationReminder.svelte";
+	import { MenuButton, Icon, Modal } from 'sheodox-ui';
+	import { pageName } from '../stores/app';
+	import PageSpinner from '../PageSpinner.svelte';
+	import { eventFromRoute, eventOps, eventsInitialized } from '../stores/events';
+	import page from 'page';
+	import Link from '../Link.svelte';
+	import RSVP from './RSVP.svelte';
+	import RSVPSurvey from './RSVPSurvey.svelte';
+	import AttendanceTypeBadge from './AttendanceTypeBadge.svelte';
+	import Attendees from './Attendance.svelte';
+	import EventTimes from './EventTimes.svelte';
+	import RSVPNotes from './RSVPNotes.svelte';
+	import EventNotificationReminder from './EventNotificationReminder.svelte';
 
 	let pendingStatus,
 		showDeleteConfirm = false,
 		showSurvey = false;
 
-	$: pendingStatusName = { going: "Going", "not-going": "Not Going", maybe: "Maybe" }[pendingStatus];
+	$: pendingStatusName = { going: 'Going', 'not-going': 'Not Going', maybe: 'Maybe' }[pendingStatus];
 	$: userRsvp = $eventFromRoute?.userRsvp;
 	$: isMultipleDays = $eventFromRoute?.eventDays.length > 1;
-	$: userGoing = userRsvp?.status === "going";
+	$: userGoing = userRsvp?.status === 'going';
 
-	$: $pageName = $eventFromRoute?.name ?? "Events";
+	$: $pageName = $eventFromRoute?.name ?? 'Events';
 
 	function rsvpPrompt(e) {
 		pendingStatus = e.detail;
@@ -160,4 +160,3 @@
 		eventOps.deleteEvent($eventFromRoute.id);
 	}
 </script>
-

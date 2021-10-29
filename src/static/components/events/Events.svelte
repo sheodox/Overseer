@@ -49,15 +49,14 @@
 </PageLayout>
 
 <script>
-	import { Icon } from "sheodox-ui";
-	import Link from "../Link.svelte";
-	import { eventsInitialized, events, ongoingEvents, upcomingEvents, pastEvents } from "../stores/events";
-	import EventPreview from "./EventPreview.svelte";
-	import PageSpinner from "../PageSpinner.svelte";
-	import { pageName } from "../stores/app";
-	import EventNotificationReminder from "./EventNotificationReminder.svelte";
-	import PageLayout from "../../layouts/PageLayout.svelte";
+	import { Icon } from 'sheodox-ui';
+	import Link from '../Link.svelte';
+	import { eventsInitialized, events, ongoingEvents, upcomingEvents, pastEvents } from '../stores/events';
+	import EventPreview from './EventPreview.svelte';
+	import PageSpinner from '../PageSpinner.svelte';
+	import { pageName } from '../stores/app';
+	import EventNotificationReminder from './EventNotificationReminder.svelte';
+	import PageLayout from '../../layouts/PageLayout.svelte';
 
-	pageName.set("Events");
+	pageName.set('Events');
 </script>
-

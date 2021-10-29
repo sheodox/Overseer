@@ -46,16 +46,16 @@
 </Link>
 
 <script>
-	import { Icon } from "sheodox-ui";
-	import Link from "../Link.svelte";
-	import UserBubble from "../UserBubble.svelte";
-	import EventTimes from "./EventTimes.svelte";
-	import RSVPStatus from "./RSVPStatus.svelte";
+	import { Icon } from 'sheodox-ui';
+	import Link from '../Link.svelte';
+	import UserBubble from '../UserBubble.svelte';
+	import EventTimes from './EventTimes.svelte';
+	import RSVPStatus from './RSVPStatus.svelte';
 
 	export let event;
 
 	$: start = event.startDate.toLocaleString();
 	$: end = event.endDate.toLocaleString();
-	$: attendees = event.rsvps.filter(({ status }) => status === "going").map(({ userId }) => userId);
+	$: attendees = event.rsvps.filter(({ status }) => status === 'going').map(({ userId }) => userId);
 	$: numAttendees = attendees.length;
 </script>

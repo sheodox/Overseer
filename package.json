@@ -8,7 +8,9 @@
     "build-static:dev": "webpack --mode development --watch",
     "build-server:prod": "tsc",
     "build-server:dev": "tsc --watch",
-    "dev": "nodemon --ignore public/ --inspect=0.0.0.0 src/server/app.js"
+    "dev": "nodemon --ignore public/ --inspect=0.0.0.0 src/server/app.js",
+    "style:write": "prettier --write .",
+    "style:check": "prettier --check ."
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.2",
@@ -73,6 +75,8 @@
     "copy-webpack-plugin": "^5.1.2",
     "file-loader": "^5.0.2",
     "nodemon": "^2.0.7",
+    "prettier": "2.4.1",
+    "prettier-plugin-svelte": "^2.4.0",
     "prisma": "^3.3.0",
     "sass": "^1.32.8",
     "webpack-bundle-analyzer": "^4.4.0"

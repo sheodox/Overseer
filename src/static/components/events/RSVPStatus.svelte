@@ -1,16 +1,16 @@
 {#if status === 'going'}
-    <Icon icon="calendar-check" />
-    Going
+	<Icon icon="calendar-check" />
+	Going
 {:else if status === 'not-going'}
-    <Icon icon="calendar-times" />
-    Not Going
+	<Icon icon="calendar-times" />
+	Not Going
 {:else if status === 'maybe'}
-    <Icon icon="question" />
-    Maybe
+	<Icon icon="question" />
+	Maybe
 {/if}
 
 <script>
-    import {Icon} from 'sheodox-ui';
+	import { Icon } from 'sheodox-ui';
 
-    export let status;
+	export let status;
 </script>

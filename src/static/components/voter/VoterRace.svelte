@@ -63,11 +63,7 @@
 				</ul>
 			</MenuButton>
 		</div>
-		<div
-			class="f-column"
-			on:mouseenter={() => ($sortLocked = true)}
-			on:mouseleave={() => ($sortLocked = false)}
-		>
+		<div class="f-column" on:mouseenter={() => ($sortLocked = true)} on:mouseleave={() => ($sortLocked = false)}>
 			{#if window.Booker.voter.add_candidate}
 				<form on:submit|preventDefault={addCandidate} class="align-self-center" id="new-candidate-form">
 					<div class="align-self-center">
@@ -118,21 +114,21 @@
 {/if}
 
 <script>
-	import { MenuButton, Icon, Modal, TextInput } from "sheodox-ui";
-	import { writable, derived } from "svelte/store";
+	import { MenuButton, Icon, Modal, TextInput } from 'sheodox-ui';
+	import { writable, derived } from 'svelte/store';
 	import {
 		createRankedCandidateStore,
 		getRaceMaxVotes,
 		voterInitialized,
 		voterOps,
 		voterSelectedRace,
-	} from "../stores/voter";
-	import PageSpinner from "../PageSpinner.svelte";
-	import Candidate from "./Candidate.svelte";
-	import { activeRouteParams } from "../stores/routing";
-	import Link from "../Link.svelte";
-	import PromptModal from "../PromptModal.svelte";
-	import PageLayout from "../../layouts/PageLayout.svelte";
+	} from '../stores/voter';
+	import PageSpinner from '../PageSpinner.svelte';
+	import Candidate from './Candidate.svelte';
+	import { activeRouteParams } from '../stores/routing';
+	import Link from '../Link.svelte';
+	import PromptModal from '../PromptModal.svelte';
+	import PageLayout from '../../layouts/PageLayout.svelte';
 
 	const candidatesViewingDetails = writable([]),
 		isViewingDetails = derived(candidatesViewingDetails, (candidates) => {
@@ -163,7 +159,7 @@
 			})
 		);
 
-	let newCandidateName = "",
+	let newCandidateName = '',
 		showRaceRename = false,
 		showRaceDelete = false;
 
@@ -172,7 +168,7 @@
 
 	function addCandidate() {
 		voterOps.candidate.new(raceId, newCandidateName);
-		newCandidateName = "";
+		newCandidateName = '';
 	}
 
 	function resetVotes() {
@@ -188,4 +184,3 @@
 		voterOps.race.delete(raceId);
 	}
 </script>
-

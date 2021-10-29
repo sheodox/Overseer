@@ -1,46 +1,43 @@
 <style>
-    .panel {
-        max-width: 95vw;
-        overflow: auto;
-    }
+	.panel {
+		max-width: 95vw;
+		overflow: auto;
+	}
 </style>
 
 <div class="panel">
-    <table>
-        <thead>
-            <tr>
-                <th>User</th>
+	<table>
+		<thead>
+			<tr>
+				<th>User</th>
 				<th>Push Subs</th>
-                {#each $bookers as booker}
-                    <th>{booker.moduleName}</th>
-                {/each}
-            </tr>
-        </thead>
-        <tbody>
-            {#each $users as user}
-                <tr>
-                    <td>
-                        <UserBubble {user}>
-                            <em>Active {new Date(user.lastActiveAt).toLocaleDateString()}</em>
-                        </UserBubble>
-                    </td>
+				{#each $bookers as booker}
+					<th>{booker.moduleName}</th>
+				{/each}
+			</tr>
+		</thead>
+		<tbody>
+			{#each $users as user}
+				<tr>
+					<td>
+						<UserBubble {user}>
+							<em>Active {new Date(user.lastActiveAt).toLocaleDateString()}</em>
+						</UserBubble>
+					</td>
 					<td class="text-align-right">
 						<button on:click={() => showSubscriptions(user)} disabled={!user.pushSubscriptions.length}>
 							{user.pushSubscriptions.length}
 						</button>
 					</td>
-                    {#each $bookers as booker}
-                        <td>
-                            <AssignmentRoles
-                                {booker}
-                                {user}
-                            />
-                        </td>
-                    {/each}
-                </tr>
-            {/each}
-        </tbody>
-    </table>
+					{#each $bookers as booker}
+						<td>
+							<AssignmentRoles {booker} {user} />
+						</td>
+					{/each}
+				</tr>
+			{/each}
+		</tbody>
+	</table>
 </div>
 
 {#if showSubscriptionModal}
@@ -58,20 +55,21 @@
 					</tr>
 				{/each}
 			</tbody>
-	</Modal>
+		</table></Modal
+	>
 {/if}
 
 <script>
-    import {users, bookers, adminEnvoy} from "./admin-common";
-	import {Modal} from 'sheodox-ui';
-    import AssignmentRoles from "./AssignmentRoles.svelte";
-    import UserBubble from "../components/UserBubble.svelte";
+	import { users, bookers, adminEnvoy } from './admin-common';
+	import { Modal } from 'sheodox-ui';
+	import AssignmentRoles from './AssignmentRoles.svelte';
+	import UserBubble from '../components/UserBubble.svelte';
 
 	let showSubscriptionModal = false,
 		userSubscriptionsShowing;
 
 	function showSubscriptions(user) {
-		userSubscriptionsShowing = user
+		userSubscriptionsShowing = user;
 		showSubscriptionModal = true;
 	}
 </script>

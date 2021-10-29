@@ -36,11 +36,7 @@
 					<ul slot="menu">
 						{#if window.Booker.echo.update}
 							<li>
-								<a
-									class="button"
-									href={echoItem.editPath}
-									on:click|preventDefault={() => page(echoItem.editPath)}
-								>
+								<a class="button" href={echoItem.editPath} on:click|preventDefault={() => page(echoItem.editPath)}>
 									<Icon icon="edit" />
 									Edit
 								</a>
@@ -109,17 +105,17 @@
 {/if}
 
 <script>
-	import page from "page";
-	import { Icon, MenuButton, Modal } from "sheodox-ui";
-	import { pageName, scrollPageToTop } from "../stores/app";
-	import { activeRouteParams } from "../stores/routing";
-	import { echoInitialized, echoItems, echoOps } from "../stores/echo";
-	import FileSize from "./FileSize.svelte";
-	import UserBubble from "../UserBubble.svelte";
-	import Link from "../Link.svelte";
-	import EchoDownloadLink from "./EchoDownloadLink.svelte";
-	import EchoImages from "./EchoImages.svelte";
-	import PageLayout from "../../layouts/PageLayout.svelte";
+	import page from 'page';
+	import { Icon, MenuButton, Modal } from 'sheodox-ui';
+	import { pageName, scrollPageToTop } from '../stores/app';
+	import { activeRouteParams } from '../stores/routing';
+	import { echoInitialized, echoItems, echoOps } from '../stores/echo';
+	import FileSize from './FileSize.svelte';
+	import UserBubble from '../UserBubble.svelte';
+	import Link from '../Link.svelte';
+	import EchoDownloadLink from './EchoDownloadLink.svelte';
+	import EchoImages from './EchoImages.svelte';
+	import PageLayout from '../../layouts/PageLayout.svelte';
 
 	const hasOptionPermission = window.Booker.echo.update || window.Booker.echo.delete;
 	let showDeleteConfirm = false;
@@ -132,7 +128,7 @@
 	$: pageName.set(echoItem?.name);
 
 	function processTags(tags) {
-		return (tags?.split(", ") || []).map((tag) => {
+		return (tags?.split(', ') || []).map((tag) => {
 			return {
 				text: tag,
 				path: `/echo?search=${encodeURIComponent(tag)}`,
@@ -143,6 +139,6 @@
 	function deleteItem() {
 		showDeleteConfirm = false;
 		echoOps.delete(echoItem.id);
-		page("/echo");
+		page('/echo');
 	}
 </script>

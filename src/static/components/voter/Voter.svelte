@@ -25,16 +25,16 @@
 {/if}
 
 <script>
-	import { Icon, Modal } from "sheodox-ui";
-	import { voterInitialized, voterOps, voterRaces } from "../stores/voter";
-	import PageSpinner from "../PageSpinner.svelte";
-	import RacePreview from "./RacePreview.svelte";
-	import { pageName } from "../stores/app";
-	import PromptModal from "../PromptModal.svelte";
-	import PageLayout from "../../layouts/PageLayout.svelte";
+	import { Icon, Modal } from 'sheodox-ui';
+	import { voterInitialized, voterOps, voterRaces } from '../stores/voter';
+	import PageSpinner from '../PageSpinner.svelte';
+	import RacePreview from './RacePreview.svelte';
+	import { pageName } from '../stores/app';
+	import PromptModal from '../PromptModal.svelte';
+	import PageLayout from '../../layouts/PageLayout.svelte';
 
 	let showAddRace = false;
-	pageName.set("Voter");
+	pageName.set('Voter');
 
 	function addRace(e) {
 		voterOps.race.new(e.detail);
