@@ -92,6 +92,10 @@ class Users {
 						createdAt: true
 					}
 				}
+			},
+			// order user names, otherwise in the role assignment in the admin app will have unsorted names
+			orderBy: {
+				displayName: 'asc'
 			}
 		})
     }
