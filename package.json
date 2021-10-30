@@ -10,7 +10,8 @@
     "build-server:dev": "tsc --watch",
     "dev": "nodemon --ignore public/ --inspect=0.0.0.0 src/server/app.js",
     "style:write": "prettier --write .",
-    "style:check": "prettier --check ."
+    "style:check": "prettier --check . --loglevel warn",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.2",
@@ -79,6 +80,7 @@
     "prettier-plugin-svelte": "^2.4.0",
     "prisma": "^3.3.0",
     "sass": "^1.32.8",
-    "webpack-bundle-analyzer": "^4.4.0"
+    "webpack-bundle-analyzer": "^4.4.0",
+    "husky": "^7.0.0"
   }
 }
