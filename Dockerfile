@@ -16,6 +16,7 @@ RUN npm install
 ENV NODE_ENV=production
 COPY . .
 RUN npx prisma generate
+RUN npm run build:prod
 
-# need to build in the CMD, because assets are bind mounted and served by nginx instead
-CMD npm run build:prod && npx prisma migrate deploy && node src/server/app.js
+# before starting, copy all of the newly built frontend assets to the folder nginx serves
+CMD cp -R ./public-dist/* ./public && npx prisma migrate deploy && node src/server/app.js
