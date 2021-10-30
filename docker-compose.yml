@@ -7,6 +7,8 @@ services:
       - postgres
       - redis
     restart: unless-stopped
+    volumes:
+      - .env:/usr/src/app/.env
   postgres:
     image: postgres:13-alpine
     environment:
