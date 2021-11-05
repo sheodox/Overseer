@@ -1,17 +1,17 @@
 import { Router } from 'express';
-import { imageStore } from '../db/image-store';
-import { echoBooker, voterBooker } from '../db/booker';
-import { safeAsyncRoute } from '../util/error-handler';
-import { appLogger } from '../util/logger';
+import { imageStore } from '../db/image-store.js';
+import { echoBooker, voterBooker } from '../db/booker.js';
+import { safeAsyncRoute } from '../util/error-handler.js';
+import { appLogger } from '../util/logger.js';
 
-const router = Router(),
-	//a mapping of a 'source' as stored in the image table to the booker for which it matches,
-	//this is used when serving images to check if the user actually has the permissions to
-	//view images for the page this image came from
-	bookersWithImages = {
-		echo: echoBooker,
-		voter: voterBooker,
-	};
+export const router = Router();
+//a mapping of a 'source' as stored in the image table to the booker for which it matches,
+//this is used when serving images to check if the user actually has the permissions to
+//view images for the page this image came from
+const bookersWithImages = {
+	echo: echoBooker,
+	voter: voterBooker,
+};
 
 router.get(
 	'/image/:id/:size',
@@ -48,5 +48,3 @@ router.get(
 		}
 	})
 );
-
-module.exports = router;

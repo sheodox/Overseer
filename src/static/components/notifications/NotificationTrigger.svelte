@@ -16,8 +16,9 @@
 	</NavDropdown>
 </li>
 
-<script>
-	import { Icon, NavDropdown } from 'sheodox-ui';
-	import { notifications, unreadNotificationCount } from '../stores/notifications';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import NavDropdown from 'sheodox-ui/NavDropdown.svelte';
+	import { unreadNotificationCount } from '../stores/notifications';
 	import NotificationTray from './NotificationTray.svelte';
 </script>

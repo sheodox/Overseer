@@ -1,9 +1,10 @@
 extends layout
 block content
-    div#app-root
-    script.
-        window.user = !{user};
-        window.serverMetadata = !{serverMetadata};
-        window.Booker = !{permissions};
-        window.__INITIAL_STATE__ = !{initialData};
-    script(src='/' + manifest['main.js'])
+	div#app-root
+	script.
+		window.__APP_BOOTSTRAP__ = !{appBootstrap}
+	if development
+		script(type="module", src="http://localhost:3000/@vite/client")
+		script(type="module", src="http://localhost:3000/src/static/main.ts")
+	else
+		script(src=`/${scriptEntryFile}`, type="module")

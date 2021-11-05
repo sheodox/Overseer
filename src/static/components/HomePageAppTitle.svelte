@@ -15,10 +15,10 @@
 	</Link>
 </div>
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import Link from './Link.svelte';
 
-	export let title;
-	export let href;
+	export let title: string;
+	export let href: string;
 </script>

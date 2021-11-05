@@ -1,12 +1,12 @@
-import { Booker } from '../db/booker';
-import { NotificationCreateData, notifications } from '../db/notifications';
-import { Harbinger, HarbingerFilterFunction } from './harbinger';
-import { ToastOptions } from '../types';
-import { prisma } from '../db/prisma';
+import { Booker } from '../db/booker.js';
+import { NotificationCreateData, notifications } from '../db/notifications.js';
+import { Harbinger, HarbingerFilterFunction } from './harbinger.js';
+import { ToastOptions } from '../types.js';
+import { prisma } from '../db/prisma.js';
 import push from 'web-push';
-import { appLogger } from './logger';
+import { appLogger } from './logger.js';
 import { UserSettings } from '@prisma/client';
-import { EditableSettings, users } from '../db/users';
+import { EditableSettings, users } from '../db/users.js';
 const notificationHarbinger = new Harbinger('notifications'),
 	toastHarbinger = new Harbinger('toasts'),
 	vapidContactEmail = process.env.PUSH_VAPID_CONTACT_EMAIL;

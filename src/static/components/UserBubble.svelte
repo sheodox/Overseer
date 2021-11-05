@@ -17,12 +17,12 @@
 <div class="user-bubble f-row">
 	{#if !matchingUser || matchingUser?.loading}
 		<div class="placeholder f-row justify-content-center align-items-center" class:minimal={mode === 'minimal'}>
-			<SpikeSpinner size="small" />
+			<SpikeSpinner size={SpikeSpinnerSizes.Small} />
 		</div>
 		{#if mode === 'full'}
 			Loading...
 		{/if}
-	{:else}
+	{:else if matchingUser.loading === false}
 		<img
 			src={matchingUser.profileImage}
 			alt={matchingUser.displayName}
@@ -38,13 +38,13 @@
 	{/if}
 </div>
 
-<script>
-	import { requestUser, userRegistry } from './stores/app';
-	import SpikeSpinner from './SpikeSpinner.svelte';
+<script lang="ts">
+	import { requestUser, userRegistry, UserRegistryUser } from './stores/app';
+	import SpikeSpinner, { SpikeSpinnerSizes } from './SpikeSpinner.svelte';
 
-	export let user;
-	export let userId;
-	export let mode = 'full'; //'full' | 'minimal'
+	export let user: UserRegistryUser = null;
+	export let userId: string = null;
+	export let mode: 'full' | 'minimal' = 'full';
 
 	$: matchingUser = user ?? $userRegistry[userId];
 	$: userId && requestUser(userId);

@@ -1,4 +1,4 @@
-<div class="panel">
+<div class="panel p-3">
 	<form on:submit|preventDefault={createAnnouncement} class="f-column">
 		<label>
 			Title
@@ -22,11 +22,11 @@
 	</form>
 </div>
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import { adminEnvoy } from './admin-common';
 
-	let title, message, href;
+	let title: string, message: string, href: string;
 	resetFields();
 
 	function resetFields() {

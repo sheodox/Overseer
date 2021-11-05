@@ -11,26 +11,25 @@
 			{/if}
 		{:else}
 			<div class="text-align-center">
-				<SpikeSpinner size="medium" />
+				<SpikeSpinner size={SpikeSpinnerSizes.Medium} />
 			</div>
 		{/if}
 	</div>
 {/if}
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
 	import { ongoingEvents, upcomingEvents, eventsInitialized, pastEvents } from '../stores/events';
 	import EventPreview from './EventPreview.svelte';
-	import SpikeSpinner from '../SpikeSpinner.svelte';
-	import Link from '../Link.svelte';
+	import SpikeSpinner, { SpikeSpinnerSizes } from '../SpikeSpinner.svelte';
 	import HomePageAppTitle from '../HomePageAppTitle.svelte';
+	import type { EventsData, MaskedEvent } from '../../../shared/types/events';
 
 	let eventTitle = 'Events',
-		mostRelevantEvent;
+		mostRelevantEvent: MaskedEvent;
 
 	$: findRelevantEvent($ongoingEvents, $upcomingEvents, $pastEvents);
 
-	function findRelevantEvent(ongoing, upcoming, past) {
+	function findRelevantEvent(ongoing: EventsData, upcoming: EventsData, past: EventsData) {
 		if (ongoing.length) {
 			mostRelevantEvent = ongoing[0];
 			eventTitle = 'Ongoing Event';

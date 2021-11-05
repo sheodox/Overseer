@@ -16,7 +16,7 @@
 
 <div class="bookers f-row f-wrap justify-content-center">
 	{#each $bookers as booker}
-		<div class="panel f-column">
+		<div class="panel f-column p-3 m-1">
 			<div class="f-row justify-content-between">
 				<h2>{booker.moduleName}</h2>
 				<button on:click={() => newRole(booker.moduleName)}>
@@ -64,12 +64,13 @@
 	{/each}
 </div>
 
-<script>
-	import { Icon, Checkbox } from 'sheodox-ui';
-	import { adminEnvoy, bookers, users } from './admin-common';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import Checkbox from 'sheodox-ui/Checkbox.svelte';
+	import { adminEnvoy, bookers } from './admin-common';
 	import RoleOptions from './RoleOptions.svelte';
 
-	function newRole(moduleName) {
+	function newRole(moduleName: string) {
 		const roleName = prompt(`What do you want to call the new role for ${moduleName}?`)?.trim();
 
 		if (roleName) {
@@ -77,7 +78,7 @@
 		}
 	}
 
-	function togglePermission(moduleName, roleId, action) {
+	function togglePermission(moduleName: string, roleId: string, action: string) {
 		adminEnvoy.emit('toggle-action', moduleName, roleId, action);
 	}
 </script>

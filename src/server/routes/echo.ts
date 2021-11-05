@@ -1,22 +1,23 @@
-import { echo } from '../db/echo';
-import { createSafeWebsocketHandler, Harbinger } from '../util/harbinger';
+import { echo } from '../db/echo.js';
+import { createSafeWebsocketHandler, Harbinger } from '../util/harbinger.js';
 import { Server, Socket } from 'socket.io';
-import { Envoy } from '../../shared/envoy';
-import { Echo as EchoItem } from '@prisma/client';
-import { echoBooker } from '../db/booker';
-import { AppRequest, ToastOptions } from '../types';
-import { tags as formatTags } from '../../shared/formatters';
-import { createIntegrationToken, verifyIntegrationToken } from '../util/integrations';
+import { Envoy } from '../../shared/envoy.js';
+import { echoBooker } from '../db/booker.js';
+import { AppRequest, ToastOptions } from '../types.js';
+import { tags as formatTags } from '../../shared/formatters.js';
+import { createIntegrationToken, verifyIntegrationToken } from '../util/integrations.js';
 import { validate as uuidValidate } from 'uuid';
 import MarkdownIt from 'markdown-it';
-import { echoIntegrationLogger, echoLogger } from '../util/logger';
-import { safeAsyncRoute } from '../util/error-handler';
+import { echoIntegrationLogger, echoLogger } from '../util/logger.js';
+import { safeAsyncRoute } from '../util/error-handler.js';
 import { Response, Router } from 'express';
-import { diff } from 'deep-diff';
-import { createNotificationsForPermittedUsers } from '../util/create-notifications';
-import { io } from '../server';
+import deepdiff from 'deep-diff';
+import { createNotificationsForPermittedUsers } from '../util/create-notifications.js';
+import { io } from '../server.js';
+import type { EchoData, EchoDiskUsage, EchoItemEditable, PreparedEchoItem } from '../../shared/types/echo';
 
-export const router = Router();
+export const router = Router(),
+	{ diff } = deepdiff;
 
 const md = new MarkdownIt(),
 	echoServerHost = process.env.ECHO_SERVER_HOST;
@@ -37,26 +38,7 @@ router.post(
 let echoOnline = false,
 	echoHarbinger = new Harbinger('echo'),
 	echoServerSocket: Socket,
-	diskUsage: {
-		total: number;
-		used: number;
-		free: number;
-	};
-
-interface PreparedEchoItem extends Omit<EchoItem, 'size'> {
-	//Echo stores this as a BigInt because an int in postgres is too small
-	//to handle files over about 2GB, but a regular number in JS is big enough,
-	//we have to convert it this otherwise JSON.stringify() will get mad
-	size: number;
-	//the url path to view this in Overseer
-	path: string;
-	//the url path to edit this in Overseer
-	editPath: string;
-	//a full URL for downloading this item from Echo (does not include the download token)
-	downloadUrl: string;
-	//markdown rendered notes
-	notesRendered: string;
-}
+	diskUsage: EchoDiskUsage;
 
 let lastData: any; // this is the resolved data of getEchoData
 getEchoData().then((data) => {
@@ -83,7 +65,7 @@ async function broadcast() {
 	});
 }
 
-async function getNewestEchoData() {
+async function getNewestEchoData(): Promise<EchoData> {
 	const allTags: { [tag: string]: number } = {},
 		items = await echo.list();
 
@@ -168,7 +150,7 @@ io.on('connection', (socket: Socket) => {
 			});
 			broadcast();
 		}),
-		updateFile: checkPermission('upload', async (id, data, done) => {
+		updateFile: checkPermission('upload', async (id: string, data: EchoItemEditable, done) => {
 			if (uuidValidate(id) && echoOnline) {
 				await echo.updateFile(id, data);
 				broadcast();
@@ -178,7 +160,7 @@ io.on('connection', (socket: Socket) => {
 				});
 			}
 		}),
-		deleteImage: checkPermission('remove_image', async (id) => {
+		deleteImage: checkPermission('remove_image', async (id: string) => {
 			await echo.deleteImage(id);
 			broadcast();
 		}),

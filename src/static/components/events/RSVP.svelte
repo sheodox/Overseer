@@ -1,6 +1,3 @@
-<style>
-</style>
-
 <MenuButton triggerClasses="primary">
 	<span slot="trigger" class="rsvp-button" class:warning={status === 'going' && showFixGoingWarning}>
 		{#if status}
@@ -27,17 +24,20 @@
 	</p>
 {/if}
 
-<script>
-	import { MenuButton, Icon } from 'sheodox-ui';
+<script lang="ts">
+	import MenuButton from 'sheodox-ui/MenuButton.svelte';
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import RSVPStatus from './RSVPStatus.svelte';
+	import type { RSVPStatus as RSVPStatusTypes } from '../../../shared/types/events';
+
 	const dispatch = createEventDispatcher(),
-		statusOptions = ['going', 'maybe', 'not-going'];
+		statusOptions = ['going', 'maybe', 'not-going'] as const;
 
-	export let status;
-	export let showFixGoingWarning;
+	export let status: RSVPStatusTypes;
+	export let showFixGoingWarning = false;
 
-	function rsvp(newStatus) {
+	function rsvp(newStatus: RSVPStatusTypes) {
 		dispatch('rsvp', newStatus);
 	}
 </script>

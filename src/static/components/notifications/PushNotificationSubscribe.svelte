@@ -3,16 +3,16 @@
 	Get Notifications
 </button>
 
-<script>
-	import { Icon } from 'sheodox-ui';
-	import { pushSubscribed, storePushEndpoint } from '../stores/app';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import { pushSubscribed, storePushEndpoint, appBootstrap } from '../stores/app';
 	import { notificationOps } from '../stores/notifications';
 
 	async function pushSubscribe() {
 		const sw = await navigator.serviceWorker.ready,
 			push = await sw.pushManager.subscribe({
 				userVisibleOnly: true,
-				applicationServerKey: window.serverMetadata.pushVapidPublicKey,
+				applicationServerKey: appBootstrap.serverMetadata.pushVapidPublicKey,
 			});
 
 		storePushEndpoint(push);

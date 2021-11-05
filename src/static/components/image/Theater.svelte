@@ -25,23 +25,32 @@
 	}
 	.other-images img {
 		max-width: 7rem;
+		border-radius: 5px;
 	}
 	.selected-image-container {
 		position: relative;
 	}
 	.prev {
 		left: 0;
-		cursor: w-resize;
 	}
 	.next {
 		right: 0;
-		cursor: e-resize;
 	}
-	.prev,
-	.next {
+	.nextprev {
 		position: absolute;
 		height: 100%;
 		width: 30vw;
+		font-size: var(--shdx-font-size-11);
+		color: transparent;
+		transition: color 0.2s, background 0.2s, opacity 0.2s;
+		margin: 0;
+	}
+	.nextprev:active {
+		opacity: 95% !important;
+	}
+	.nextprev:hover {
+		opacity: 75%;
+		color: white;
 	}
 </style>
 
@@ -54,8 +63,13 @@
     move vertically based on the selected image's height -->
 	<div class="f-column justify-content-between f-1">
 		<div class="selected-image-container f-row justify-content-center">
-			<button type="button" class="prev" on:click|stopPropagation|preventDefault={() => selectImageByOffset(-1)}>
+			<button
+				type="button"
+				class="nextprev prev"
+				on:click|stopPropagation|preventDefault={() => selectImageByOffset(-1)}
+			>
 				<span class="sr-only">View previous image</span>
+				<Icon icon="chevron-left" noPadding={true} />
 			</button>
 			<img
 				class="selected-image"
@@ -63,8 +77,13 @@
 				alt={selectedImage.alt || ''}
 				on:click={close}
 			/>
-			<button type="button" class="next" on:click|stopPropagation|preventDefault={() => selectImageByOffset(1)}>
+			<button
+				type="button"
+				class="nextprev next"
+				on:click|stopPropagation|preventDefault={() => selectImageByOffset(1)}
+			>
 				<span class="sr-only">View previous image</span>
+				<Icon icon="chevron-right" noPadding={true} />
 			</button>
 		</div>
 		<div class="other-images">
@@ -82,13 +101,15 @@
 	</div>
 </div>
 
-<script>
-	import { Icon } from 'sheodox-ui';
-	export let visible;
-	export let images;
-	export let selectedImage;
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import type { AlbumImage } from './Album.svelte';
 
-	function close(e) {
+	export let visible: boolean;
+	export let images: AlbumImage[];
+	export let selectedImage: AlbumImage;
+
+	function close(e: Event) {
 		//Albums/Theaters are in side of a link in Echo, need to not leak clicks or it'll try and follow the link when just looking at images
 		e.stopPropagation();
 		e.preventDefault();
@@ -96,12 +117,12 @@
 	}
 
 	//offset is -1/1, added to the index of the selected image to select the next/previous image
-	function selectImageByOffset(offset) {
+	function selectImageByOffset(offset: number) {
 		const newIndex = Math.max(0, Math.min(images.indexOf(selectedImage) + offset, images.length - 1));
 		selectedImage = images[newIndex];
 	}
 
-	function theaterKeyDown(e) {
+	function theaterKeyDown(e: KeyboardEvent) {
 		switch (e.key) {
 			case 'ArrowLeft':
 				selectImageByOffset(-1);
@@ -110,11 +131,11 @@
 				selectImageByOffset(1);
 				break;
 			case 'Escape':
-				close();
+				close(e);
 		}
 	}
 
-	function initialFocus(theaterElement) {
+	function initialFocus(theaterElement: HTMLElement) {
 		//focus the theater so arrow keys can select images
 		theaterElement.focus();
 	}

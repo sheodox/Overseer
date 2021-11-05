@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
-import { httpLogger } from '../util/logger';
-import { AppRequest } from '../types';
+import { httpLogger } from '../util/logger.js';
+import { AppRequest } from '../types.js';
 
 interface HttpError {
 	status: number;

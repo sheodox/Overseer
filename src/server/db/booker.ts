@@ -1,13 +1,14 @@
-import { prisma } from './prisma';
+import { BookerDump, BookerModuleName } from '../../shared/types/admin';
+import { prisma } from './prisma.js';
 
 type BookerPermissions = { [action: string]: boolean };
 
 export class Booker {
-	moduleName: string;
+	moduleName: BookerModuleName;
 	allowedActions: string[];
 	private userPermissionsCache = new Map<string, BookerPermissions>();
 
-	constructor(moduleName: string, allowedActions: string[]) {
+	constructor(moduleName: BookerModuleName, allowedActions: string[]) {
 		this.moduleName = moduleName;
 		this.allowedActions = allowedActions;
 	}
@@ -222,7 +223,7 @@ export class Booker {
 					name: 'asc',
 				},
 			}),
-		};
+		} as BookerDump;
 	}
 }
 

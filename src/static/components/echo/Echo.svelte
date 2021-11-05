@@ -19,7 +19,7 @@
 
 <PageLayout title="Echo">
 	<div slot="beside-title">
-		{#if $echoOnline && window.Booker.echo.upload}
+		{#if $echoOnline && booker.echo.upload}
 			<button on:click={() => page('/echo/upload')} class="primary">
 				<Icon icon="upload" />
 				New Upload
@@ -65,11 +65,11 @@
 			<TagCloud bind:tags={$echoSearch} />
 		{/if}
 		<div class="f-row justify-content-end view-modes">
-			<button class="small" on:click={() => (view = 'list')} aria-pressed={view === 'list'}>
+			<button class="small" on:click={() => (view = EchoViewLayout.List)} aria-pressed={view === EchoViewLayout.List}>
 				<Icon icon="list" noPadding={true} />
 				<span class="sr-only">View as a list</span>
 			</button>
-			<button class="small" on:click={() => (view = 'grid')} aria-pressed={view === 'grid'}>
+			<button class="small" on:click={() => (view = EchoViewLayout.Grid)} aria-pressed={view === EchoViewLayout.Grid}>
 				<Icon icon="th" noPadding={true} />
 				<span class="sr-only">View as a grid</span>
 			</button>
@@ -78,7 +78,9 @@
 </PageLayout>
 {#if $echoInitialized}
 	{#if numResults > 0}
-		<div class={view === 'grid' ? 'gap-3 f-row f-wrap justify-content-center' : 'page-content f-column gap-3'}>
+		<div
+			class={view === EchoViewLayout.Grid ? 'gap-3 f-row f-wrap justify-content-center' : 'page-content f-column gap-3'}
+		>
 			{#each $echoSearchResults as item}
 				<EchoItemPreview {item} variant={view} />
 			{/each}
@@ -91,11 +93,18 @@
 	{/if}
 {/if}
 
-<script>
+<script context="module" lang="ts">
+	export enum EchoViewLayout {
+		Grid,
+		List,
+	}
+</script>
+
+<script lang="ts">
 	import page from 'page';
-	import { Icon } from 'sheodox-ui';
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import { echoInitialized, echoOnline, echoSearch, echoSearchResults } from '../stores/echo';
-	import { pageName } from '../stores/app';
+	import { booker, pageName } from '../stores/app';
 	import EchoStatus from './EchoStatus.svelte';
 	import TagCloud from './TagCloud.svelte';
 	import { activeQueryParams } from '../stores/routing';
@@ -104,7 +113,7 @@
 	import PageLayout from '../../layouts/PageLayout.svelte';
 
 	let showTagCloud = false;
-	let view = 'grid';
+	let view = EchoViewLayout.Grid;
 
 	$: numResults = $echoSearchResults.length;
 

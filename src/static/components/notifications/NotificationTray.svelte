@@ -60,13 +60,14 @@
 	</ul>
 </div>
 
-<script>
-	import { Icon } from 'sheodox-ui';
-	import { notificationsInitialized, notifications, notificationOps } from '../stores/notifications';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import { notifications, notificationOps } from '../stores/notifications';
 	import { relativeDate } from '../../../shared/formatters';
+	import type { Notification } from '../../../shared/types/notifications';
 	import Link from '../Link.svelte';
 
-	function markRead(notification) {
+	function markRead(notification: Notification) {
 		if (!notification.read) {
 			notificationOps.markRead(notification.id);
 		}

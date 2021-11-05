@@ -22,7 +22,7 @@
 	</div>
 {/if}
 
-<script>
+<script lang="ts">
 	import { pushSubscribed } from '../stores/app';
 	import PushNotificationSubscribe from '../notifications/PushNotificationSubscribe.svelte';
 	import Link from '../Link.svelte';

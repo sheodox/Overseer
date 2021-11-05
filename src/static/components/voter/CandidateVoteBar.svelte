@@ -25,11 +25,13 @@
 	</div>
 {/if}
 
-<script>
+<script lang="ts">
 	import UserBubble from '../UserBubble.svelte';
-	export let direction;
-	export let voters;
-	export let raceMaxVotes;
+	import type { VoteDirection } from '../../../shared/types/voter';
+
+	export let direction: VoteDirection;
+	export let voters: string[];
+	export let raceMaxVotes: number;
 
 	$: votes = voters.length;
 	$: votePercent = (votes / raceMaxVotes) * 100;

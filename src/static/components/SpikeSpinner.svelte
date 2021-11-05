@@ -56,6 +56,14 @@
 	</div>
 </div>
 
-<script>
-	export let size = 'small';
+<script context="module" lang="ts">
+	export enum SpikeSpinnerSizes {
+		Small,
+		Medium,
+		Large,
+	}
+</script>
+
+<script lang="ts">
+	export let size: SpikeSpinnerSizes = SpikeSpinnerSizes.Small;
 </script>

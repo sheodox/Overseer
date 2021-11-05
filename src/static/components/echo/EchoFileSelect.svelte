@@ -37,8 +37,8 @@
 <div class:dragging>
 	<label class="button" class:disabled={!$echoOnline} title={!$echoOnline ? 'Echo is offline!' : ''}>
 		<Icon icon="upload" />
-		{mode === 'upload' ? 'Select a file' : '(Optional) Upload updated file'}
-		<input type="file" bind:files accept=".zip" disabled={!$echoOnline} required={mode === 'upload'} />
+		{mode === EchoUploadMode.Upload ? 'Select a file' : '(Optional) Upload updated file'}
+		<input type="file" bind:files accept=".zip" disabled={!$echoOnline} required={mode === EchoUploadMode.Upload} />
 	</label>
 	<span>
 		{#if file}
@@ -57,15 +57,16 @@
 	on:mouseleave={() => (dragging = false)}
 	on:dragexit={() => (dragging = false)} />
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import { bytes } from '../../../shared/formatters';
 	import { echoOnline } from '../stores/echo';
+	import { EchoUploadMode } from './EchoUpload.svelte';
 
-	export let mode; // 'upload' | 'edit', EchoUpload's "mode"
-	export let file;
-	let files = [],
+	export let mode: EchoUploadMode;
+	export let file: File;
+	let files: FileList,
 		dragging = false;
 
-	$: file = files[0];
+	$: file = files && files[0];
 </script>

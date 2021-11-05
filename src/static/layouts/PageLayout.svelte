@@ -13,6 +13,6 @@
 	<slot />
 </div>
 
-<script>
-	export let title;
+<script lang="ts">
+	export let title: string;
 </script>

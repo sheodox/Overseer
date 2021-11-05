@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { integrationsLogger } from './logger';
+import { integrationsLogger } from './logger.js';
 
 interface IntegrationJWT {
 	scopes: string[];

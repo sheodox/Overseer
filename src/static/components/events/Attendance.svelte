@@ -12,7 +12,7 @@
 		{/if}
 	</div>
 	{#if rsvps.length}
-		<div class="f-row f-wrap">
+		<div class="f-row f-wrap g-2">
 			<Attendees rsvps={going} title="Going" />
 			<Attendees rsvps={maybe} title="Maybe" />
 			<Attendees rsvps={notGoing} title="Not Going" />
@@ -28,25 +28,24 @@
 	</Modal>
 {/if}
 
-<script>
-	import { Modal } from 'sheodox-ui';
+<script lang="ts">
+	import Modal from 'sheodox-ui/Modal.svelte';
 	import Attendees from './Attendees.svelte';
 	import AttendeeDetails from './AttendeeDetails.svelte';
+	import type { MaskedEvent, MaskedRsvp, RSVPStatus } from '../../../shared/types/events';
 
-	export let event;
+	export let event: MaskedEvent;
 
 	let showDetails = false;
 
-	function byStatus(status) {
-		return (rsvp) => {
+	function byStatus(status: RSVPStatus) {
+		return (rsvp: MaskedRsvp) => {
 			return rsvp.status === status;
 		};
 	}
 
 	$: rsvps = event.rsvps;
-	$: days = event.attendeesByDay;
 	$: going = event.rsvps.filter(byStatus('going'));
 	$: notGoing = event.rsvps.filter(byStatus('not-going'));
 	$: maybe = event.rsvps.filter(byStatus('maybe'));
-	$: showDayBreakdown = days.length > 1 && going.length;
 </script>

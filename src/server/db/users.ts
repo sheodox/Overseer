@@ -1,8 +1,8 @@
-import { prisma } from './prisma';
+import { prisma } from './prisma.js';
 import { User, UserSettings } from '@prisma/client';
 import { Profile } from 'passport-google-oauth';
-import { ShortCache } from '../util/ShortCache';
-import { createNotificationForSuperUser } from '../util/create-notifications';
+import { ShortCache } from '../util/ShortCache.js';
+import { createNotificationForSuperUser } from '../util/create-notifications.js';
 import Ajv from 'ajv';
 
 export type MaskedUser = Pick<User, 'id' | 'displayName' | 'profileImage'>;

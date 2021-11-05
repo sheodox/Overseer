@@ -18,10 +18,12 @@
 		margin: 0;
 	}
 	.small .image {
-		--placeholder-width: 7rem;
+		--placeholder-width: 10rem;
+		border-radius: 10px;
 	}
 	.medium .image {
 		--placeholder-width: 34rem;
+		border-radius: 10px;
 	}
 	.image {
 		background: var(--shdx-panel-header-bg-dark);
@@ -45,7 +47,7 @@
 			<button type="button" class="view-theater-button" on:click={() => albumImageClick(image)}>
 				<img src={image.src ? image.src : `/image/${image.id}/${size}`} alt={image.alt || ''} class="image" />
 			</button>
-			{#if mode === 'edit'}
+			{#if mode === AlbumMode.Edit}
 				<button
 					type="button"
 					class="danger small delete-image"
@@ -58,7 +60,7 @@
 			{/if}
 		</div>
 	{:else}
-		{#if variant === 'cover'}
+		{#if variant === AlbumVariant.Cover}
 			<!-- cover images are expected to take up space, so we need something when we have no images -->
 			<div class="image placeholder text-align-center f-1 justify-content-center f-column">{placeholderText}</div>
 		{/if}
@@ -71,28 +73,51 @@
 	</div>
 {/if}
 
-<script>
+<script lang="ts" context="module">
+	export enum AlbumMode {
+		View = 'view',
+		Edit = 'edit',
+	}
+	export enum AlbumSize {
+		Small = 'small',
+		Medium = 'medium',
+		Large = 'large',
+	}
+	export enum AlbumVariant {
+		Cover = 'cover', // a single image covering its container
+		Strip = 'strip', // a strip of multiple images
+	}
+	export interface AlbumImage {
+		id: string;
+		src?: string;
+		file?: File;
+		alt?: string;
+		sourceId: string;
+	}
+</script>
+
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { Icon } from 'sheodox-ui';
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import Theater from './Theater.svelte';
 	const dispatch = createEventDispatcher();
 
-	export let mode = 'view';
-	export let size = 'small'; //ImageStore image size
-	export let variant = 'strip'; //cover (one image at a time) | strip (all images at once)
-	export let images;
+	export let mode: AlbumMode = AlbumMode.View;
+	export let size: AlbumSize = AlbumSize.Small; //ImageStore image size
+	export let variant: AlbumVariant = AlbumVariant.Strip; //cover (one image at a time) | strip (all images at once)
+	export let images: AlbumImage[];
 	export let placeholderText = '';
-	$: viewableImages = variant === 'cover' ? images.slice(0, 1) : images;
+	$: viewableImages = variant === AlbumVariant.Cover ? images.slice(0, 1) : images;
 
-	let selectedImage,
+	let selectedImage: AlbumImage,
 		showTheater = false;
 
-	function albumImageClick(image) {
+	function albumImageClick(image: AlbumImage) {
 		selectedImage = image;
 		showTheater = true;
 	}
 
-	function deleteImage(image) {
+	function deleteImage(image: AlbumImage) {
 		dispatch('delete', image.sourceId);
 	}
 </script>

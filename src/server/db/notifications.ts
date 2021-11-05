@@ -1,8 +1,8 @@
 import { Notification } from '@prisma/client';
-import { prisma } from './prisma';
+import { prisma } from './prisma.js';
 import Ajv from 'ajv';
-import { pickProperties } from '../util/object-manipulation';
-import { appLogger } from '../util/logger';
+import { pickProperties } from '../util/object-manipulation.js';
+import { appLogger } from '../util/logger.js';
 const ajv = new Ajv(),
 	validatePushSubscription = ajv.compile({
 		type: 'object',

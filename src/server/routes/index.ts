@@ -1,18 +1,18 @@
 import { Router, Response } from 'express';
 import serializeJavascript from 'serialize-javascript';
-import { voterBooker, echoBooker, eventsBooker, appBooker } from '../db/booker';
-import { isReqSuperUser } from '../util/superuser';
-import { AppRequest } from '../types';
-import { getManifest } from '../util/route-common';
-import { users } from '../db/users';
-import { safeAsyncRoute } from '../util/error-handler';
-import { prisma } from '../db/prisma';
-import { vapidMetadataKeys } from '../util/create-notifications';
-import { createEchoDownloadToken, getEchoData } from './echo';
-import { getVoterData } from './voter';
-import { getEventsData } from './events';
+import { voterBooker, echoBooker, eventsBooker, appBooker } from '../db/booker.js';
+import { isReqSuperUser } from '../util/superuser.js';
+import { AppRequest } from '../types.js';
+import { getManifest } from '../util/route-common.js';
+import { users } from '../db/users.js';
+import { safeAsyncRoute } from '../util/error-handler.js';
+import { prisma } from '../db/prisma.js';
+import { vapidMetadataKeys } from '../util/create-notifications.js';
+import { createEchoDownloadToken, getEchoData } from './echo.js';
+import { getVoterData } from './voter.js';
+import { getEventsData } from './events.js';
 
-const router = Router();
+export const router = Router();
 
 const overseerApps = {
 	events: 'Events',
@@ -31,14 +31,13 @@ for (const app of Object.keys(overseerApps)) {
 function entry(app?: string) {
 	return safeAsyncRoute(async function entry(req: AppRequest, res: Response) {
 		const id = req.user ? req.user.id : null,
-			permissions = serializeJavascript({
+			permissions = {
 				voter: await voterBooker.getUserPermissions(id),
 				echo: await echoBooker.getUserPermissions(id),
 				events: await eventsBooker.getUserPermissions(id),
 				app: await appBooker.getUserPermissions(id),
-			}),
-			links = [{ href: '/auth/logout', text: 'Logout', icon: 'sign-out-alt' }],
-			manifest = await getManifest();
+			},
+			links = [{ href: '/auth/logout', text: 'Logout', icon: 'sign-out-alt' }];
 		let settings;
 
 		if (id) {
@@ -65,6 +64,17 @@ function entry(app?: string) {
 			description: 'Overseer is a LAN control center!',
 		};
 
+		const { cssImports, scriptEntryFile } = await getManifest('src/static/main.ts');
+
+		// locals that get set regardless of if you're logged in, these are
+		// build asset related generally
+		const commonLocals = {
+			development: process.env.NODE_ENV === 'development',
+			//scriptImports,
+			scriptEntryFile,
+			cssImports,
+		};
+
 		if (req.user) {
 			const publicKey = await prisma.appMetadata.findFirst({
 				where: {
@@ -80,38 +90,40 @@ function entry(app?: string) {
 				};
 
 			res.render('index', {
-				manifest,
+				...commonLocals,
 				...social,
-				user: serializeJavascript({
-					id: req.user.id,
-					displayName: req.user.displayName,
-					profileImage: req.user.profileImage,
-					links,
-					settings,
+				appBootstrap: serializeJavascript({
+					booker: permissions,
+					user: {
+						id: req.user.id,
+						displayName: req.user.displayName,
+						profileImage: req.user.profileImage,
+						links,
+						settings,
+					},
+					initialData: {
+						echo: canView.echo && (await getEchoData()),
+						// not checking booker here, it's checked by createEchoDownloadToken
+						echoDownloadToken: await createEchoDownloadToken(req.user.id),
+						voter: canView.voter && (await getVoterData()),
+						events: canView.events && (await getEventsData(req.user.id)),
+					},
+					serverMetadata: {
+						pushVapidPublicKey: publicKey?.value,
+					},
 				}),
-				initialData: serializeJavascript({
-					echo: canView.echo && (await getEchoData()),
-					// not checking booker here, it's checked by createEchoDownloadToken
-					echoDownloadToken: await createEchoDownloadToken(req.user.id),
-					voter: canView.voter && (await getVoterData()),
-					events: canView.events && (await getEventsData(req.user.id)),
-				}),
-				serverMetadata: serializeJavascript({
-					pushVapidPublicKey: publicKey?.value,
-				}),
-				permissions,
 			});
 		} else {
 			res.render('index', {
-				manifest,
+				...commonLocals,
 				...social,
-				user: serializeJavascript(false),
-				serverMetadata: serializeJavascript({}),
-				initialData: serializeJavascript({}),
-				permissions,
+				appBootstrap: serializeJavascript({
+					user: false,
+					serverMetadata: {},
+					initialData: {},
+					booker: permissions,
+				}),
 			});
 		}
 	});
 }
-
-module.exports = router;

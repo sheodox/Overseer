@@ -7,7 +7,7 @@
 <p>Sorry, you don't have access to anything yet.</p>
 <p>You'll need to ask the site administrator for permissions!</p>
 
-<script>
+<script lang="ts">
 	import { pageName } from './stores/app';
 
 	$pageName = 'No Access';

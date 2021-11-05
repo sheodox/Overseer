@@ -2,17 +2,17 @@
 	.echo-item {
 		max-width: 90vw;
 	}
-	.echo-item-details {
-		border-radius: 3px 0 0 3px;
+	.description {
+		border-radius: 3px;
 	}
 	p {
+		color: red;
 		margin: 0;
 		color: var(--shdx-text-color);
 	}
 	.download {
 		height: 100%;
 		background: var(--shdx-gray-600);
-		border-radius: 0 3px 3px 0;
 		display: grid;
 		place-content: center;
 	}
@@ -22,11 +22,11 @@
 </style>
 
 <div class="echo-item f-column">
-	{#if variant === 'grid'}
-		<EchoImages echoItem={item} mode="view" size="medium" variant="cover" />
+	{#if variant === EchoViewLayout.Grid}
+		<EchoImages echoItem={item} mode={AlbumMode.View} size={AlbumSize.Medium} variant={AlbumVariant.Cover} />
 	{/if}
 	<div class="f-row description">
-		<div class="echo-item-details p-4 f-column f-1 card clickable">
+		<div class="echo-item-details p-4 f-column f-1 card clickable" class:has-image={variant === EchoViewLayout.Grid}>
 			<Link href={item.path} noHoverStyles={true}>
 				<p class="shdx-font-size-5 mb-3">{item.name}</p>
 				<p>
@@ -47,14 +47,16 @@
 	</div>
 </div>
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import Link from '../Link.svelte';
 	import FileSize from './FileSize.svelte';
 	import EchoDownloadLink from './EchoDownloadLink.svelte';
 	import EchoImages from './EchoImages.svelte';
+	import { EchoViewLayout } from './Echo.svelte';
+	import { AlbumMode, AlbumSize, AlbumVariant } from '../image/Album.svelte';
+	import type { PreparedEchoItem } from '../../../shared/types/echo';
 
-	export let item;
-	//the 'variant' matches a view style on Echo.svelte, whether it's simple data in a list or has images
-	export let variant = 'list';
+	export let item: PreparedEchoItem;
+	export let variant: EchoViewLayout = EchoViewLayout.List;
 </script>

@@ -1,30 +1,9 @@
-import { Prisma, Candidate, Vote } from '@prisma/client';
+import { Vote } from '@prisma/client';
+import type { VoterData, MaskedRace, MaskedCandidate, Race } from '../../shared/types/voter';
 import MarkdownIt from 'markdown-it';
 const md = new MarkdownIt();
 
-type Race = Prisma.RaceGetPayload<{
-	include: {
-		candidates: true;
-		candidateImages: true;
-		votes: true;
-	};
-}>;
-
-interface MaskedCandidate extends Omit<Candidate, 'votes'> {
-	//markdown rendered notes, keep the original around for editing
-	notesRendered: string;
-	votedUp: string[];
-	votedDown: string[];
-	//the votes are only necessary in votedUp/votedDown, these big 'votes'
-	//arrays otherwise complicate and bloat the diffs sent over the socket
-	votes: undefined;
-}
-export interface MaskedRace extends Omit<Race, 'votes'> {
-	candidates: MaskedCandidate[];
-	votes: undefined;
-}
-
-export const maskVoterSessions = async (races: Race[]): Promise<MaskedRace[]> => {
+export const maskVoterSessions = async (races: Race[]): Promise<VoterData> => {
 	races = JSON.parse(JSON.stringify(races));
 	const maskedRaces: MaskedRace[] = [];
 

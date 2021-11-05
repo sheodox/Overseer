@@ -5,29 +5,31 @@
 </style>
 
 <p class="m-0">
-	{eventTime(event.startDate, event.endDate, event.eventDays.length)}
+	{eventTimeString}
 </p>
 
-<script>
+<script lang="ts">
 	import { onDestroy } from 'svelte';
-	export let event;
-	let now = Date.now();
+	import type { MaskedEvent } from '../../../shared/types/events';
 
-	const dateFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'short', timeStyle: 'short' }),
-		timeFormat = new Intl.DateTimeFormat('en-US', { timeStyle: 'short' });
+	const timeFormat = new Intl.DateTimeFormat('en-US', { timeStyle: 'short' });
 
-	$: prettyStartDate = event.startDate.toLocaleDateString();
-	$: startDay = prettyStartDate === new Date(now).toLocaleDateString() ? 'Today' : `On ${prettyStartDate}`;
+	export let event: MaskedEvent;
+	let eventTimeString = eventTime();
 
 	const interval = setInterval(() => {
-		now = Date.now();
+		eventTimeString = eventTime();
 	}, 1000 * 60);
 
 	onDestroy(() => {
 		clearInterval(interval);
 	});
 
-	function eventTime(start, end, numDays) {
+	function eventTime() {
+		const start = event.startDate,
+			end = event.endDate,
+			numDays = event.eventDays.length;
+
 		if (numDays === 1) {
 			return `${dateString(start)} from ${prettyTime(start)} to ${prettyTime(end)}`;
 		} else {
@@ -35,14 +37,14 @@
 		}
 	}
 
-	function dateString(date) {
+	function dateString(date: Date) {
 		if (isDateToday(date)) {
 			return 'today';
 		}
 		return `${getMonth(date)} ${date.getDate()}` + (isDateThisYear(date) ? '' : `, ${date.getFullYear()}`);
 	}
 
-	function getMonth(date) {
+	function getMonth(date: Date) {
 		return [
 			'January',
 			'February',
@@ -59,19 +61,19 @@
 		][date.getMonth()];
 	}
 
-	function isDateThisYear(date) {
+	function isDateThisYear(date: Date) {
 		return new Date().getFullYear() === date.getFullYear();
 	}
 
-	function isDateToday(date) {
+	function isDateToday(date: Date) {
 		return date.toLocaleDateString() === new Date().toLocaleDateString();
 	}
 
-	function prettyDate(date) {
+	function prettyDate(date: Date) {
 		return `${dateString(date)}, ${prettyTime(date)}`;
 	}
 
-	function prettyTime(date) {
+	function prettyTime(date: Date) {
 		//if the time is an exact hour just get rid of the minutes from the string
 		return timeFormat.format(date).replace(':00', '');
 	}

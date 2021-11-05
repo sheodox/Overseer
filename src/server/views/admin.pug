@@ -1,17 +1,24 @@
 doctype html
 html
-    head
-        title= "Admin - Overseer"
-        style.
-            #svg-source {
-                display: none;
-            }
-        meta(name='viewport',  content='width=device-width, initial-scale=1')
-        link(rel='icon', href='/favicon.ico')
-        link(href='//fonts.googleapis.com/css?family=Roboto', rel="stylesheet")
-        link(rel="stylesheet", href="/fontawesome-free/css/all.min.css")
-    body
-        svg#svg-source
-            include ../../static/svg/logo-favicon.svg
-        div#app-root
-        script(src=manifest['admin.js'])
+	head
+		title= "Admin - Overseer"
+		style.
+			#svg-source {
+				display: none;
+			}
+		meta(name='viewport',  content='width=device-width, initial-scale=1')
+		link(rel='icon', href='/favicon.ico')
+		link(href='//fonts.googleapis.com/css?family=Roboto', rel="stylesheet")
+		link(rel="stylesheet", href="/fontawesome-free/css/all.min.css")
+		if !development
+			each fileName in cssImports
+				link(rel="stylesheet", href=`/${fileName}`)
+	body
+		svg#svg-source
+			include ../../static/svg/logo-favicon.svg
+		div#app-root
+		if development
+			script(type="module", src="http://localhost:3000/@vite/client")
+			script(type="module", src="http://localhost:3000/src/static/admin/admin-main.ts")
+		else
+			script(src=`/${scriptEntryFile}`, type="module")

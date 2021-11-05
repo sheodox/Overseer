@@ -7,6 +7,6 @@
 	</a>
 </div>
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 </script>

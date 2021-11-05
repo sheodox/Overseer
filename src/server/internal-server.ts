@@ -4,11 +4,11 @@ This file runs on a port that's not exposed outside of the firewall.
 This can be used to expose things like metrics to prometheus.
  */
 import express from 'express';
-import { remoteTransport } from './util/logger';
-import { requestId } from './util/request-id';
-import { verifyIntegrationToken } from './util/integrations';
-import { errorHandler } from './util/error-handler';
-import { AppRequest } from './types';
+import { remoteTransport } from './util/logger.js';
+import { requestId } from './util/request-id.js';
+import { verifyIntegrationToken } from './util/integrations.js';
+import { errorHandler } from './util/error-handler.js';
+import { AppRequest } from './types.js';
 
 const app = express();
 app.use(requestId);

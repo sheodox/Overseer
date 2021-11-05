@@ -1,9 +1,9 @@
 {#if $activeRoute === 'echo' && echo.view}
 	<Echo />
 {:else if $activeRoute === 'echo/upload' && echo.view && echo.upload}
-	<EchoUpload mode="upload" />
+	<EchoUpload mode={EchoUploadMode.Upload} />
 {:else if $activeRoute === 'echo/edit' && echo.view && echo.update}
-	<EchoUpload mode="edit" />
+	<EchoUpload mode={EchoUploadMode.Edit} />
 {:else if $activeRoute === 'echo/view' && echo.view}
 	<EchoView />
 {:else if $activeRoute === 'voter' && voter.view}
@@ -13,9 +13,9 @@
 {:else if $activeRoute === 'events' && events.view}
 	<Events />
 {:else if $activeRoute === 'events/create' && events.view && events.organize}
-	<EventsEdit mode="create" />
+	<EventsEdit mode={EventsEditMode.Create} />
 {:else if $activeRoute === 'events/edit' && events.view && events.organize}
-	<EventsEdit mode="edit" />
+	<EventsEdit mode={EventsEditMode.Edit} />
 {:else if $activeRoute === 'events/view' && events.view}
 	<EventView />
 {:else if $activeRoute === 'settings'}
@@ -26,22 +26,23 @@
 	<HomePage />
 {/if}
 
-<script>
+<script lang="ts">
 	import { activeRoute } from './stores/routing';
+	import { booker } from './stores/app';
 	import Echo from './echo/Echo.svelte';
-	import EchoUpload from './echo/EchoUpload.svelte';
+	import EchoUpload, { EchoUploadMode } from './echo/EchoUpload.svelte';
 	import EchoView from './echo/EchoView.svelte';
 	import Voter from './voter/Voter.svelte';
 	import VoterRace from './voter/VoterRace.svelte';
 	import Events from './events/Events.svelte';
-	import EventsEdit from './events/EventsEdit.svelte';
+	import EventsEdit, { EventsEditMode } from './events/EventsEdit.svelte';
 	import NoAccess from './NoAccess.svelte';
 	import HomePage from './HomePage.svelte';
 	import EventView from './events/EventView.svelte';
 	import Settings from './settings/Settings.svelte';
 
 	//shortcuts to permissions!
-	const echo = window.Booker.echo,
-		voter = window.Booker.voter,
-		events = window.Booker.events;
+	const echo = booker.echo,
+		voter = booker.voter,
+		events = booker.events;
 </script>

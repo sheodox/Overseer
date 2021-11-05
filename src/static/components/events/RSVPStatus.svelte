@@ -9,8 +9,8 @@
 	Maybe
 {/if}
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 
-	export let status;
+	export let status: string = null;
 </script>

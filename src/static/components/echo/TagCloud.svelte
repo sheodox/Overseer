@@ -1,6 +1,4 @@
 <style>
-	div {
-	}
 	input {
 		display: none;
 	}
@@ -15,15 +13,15 @@
 	{/each}
 </div>
 
-<script>
+<script lang="ts">
 	import { echoTagCloud } from '../stores/echo';
 	import { tags as formatTags } from '../../../shared/formatters';
 
-	export let tags;
+	export let tags: string;
 
 	$: tagArray = formatTags(tags);
 
-	function toggleTag(tag) {
+	function toggleTag(tag: string) {
 		const existingTags = formatTags(tags);
 		if (existingTags.includes(tag)) {
 			tags = existingTags.filter((t) => t !== tag).join(', ');

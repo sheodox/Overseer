@@ -20,7 +20,7 @@
 			{#each $users as user}
 				<tr>
 					<td>
-						<UserBubble {user}>
+						<UserBubble user={{ loading: false, ...user }}>
 							<em>Active {new Date(user.lastActiveAt).toLocaleDateString()}</em>
 						</UserBubble>
 					</td>
@@ -59,16 +59,17 @@
 	>
 {/if}
 
-<script>
-	import { users, bookers, adminEnvoy } from './admin-common';
-	import { Modal } from 'sheodox-ui';
+<script lang="ts">
+	import { users, bookers } from './admin-common';
+	import type { UserDetailed } from './admin-common';
+	import Modal from 'sheodox-ui/Modal.svelte';
 	import AssignmentRoles from './AssignmentRoles.svelte';
 	import UserBubble from '../components/UserBubble.svelte';
 
 	let showSubscriptionModal = false,
-		userSubscriptionsShowing;
+		userSubscriptionsShowing: UserDetailed;
 
-	function showSubscriptions(user) {
+	function showSubscriptions(user: UserDetailed) {
 		userSubscriptionsShowing = user;
 		showSubscriptionModal = true;
 	}

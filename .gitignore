@@ -2,10 +2,10 @@
 node_modules
 .env
 public
+dist
 public-dist
 .dev-certs/
-src/server/**/*.js
-src/shared/**/*.js
+# TODO don't ignore sw.js
 
 config.json
 dist

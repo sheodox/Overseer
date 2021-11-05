@@ -1,4 +1,5 @@
 import type { Socket } from 'socket.io';
+import type { Socket as SocketClient } from 'socket.io-client';
 
 interface EnvoyBindings {
 	[eventName: string]: (...args: any) => any;
@@ -9,10 +10,10 @@ interface EnvoyBindings {
  */
 export class Envoy {
 	private readonly namespace: string;
-	private readonly socket: Socket;
+	private readonly socket: Socket | SocketClient;
 	bindings: [eventName: string, callback: any][];
 
-	constructor(socket: Socket, namespace: string, initOnReconnect = false) {
+	constructor(socket: Socket | SocketClient, namespace: string, initOnReconnect = false) {
 		this.namespace = namespace;
 		this.socket = socket;
 		//store event handler settings for removing listeners later
@@ -45,7 +46,7 @@ export class Envoy {
 	 * @param args
 	 * @private
 	 */
-	_send(socket: Socket, eventName: string, ...args: any) {
+	_send(socket: Socket | SocketClient, eventName: string, ...args: any) {
 		const event = this.namespace + ':' + eventName;
 		socket.emit(event, ...args);
 	}

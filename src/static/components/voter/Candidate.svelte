@@ -49,7 +49,7 @@
 
 <div class="candidate-container">
 	<div class="candidate f-row" class:deleted={candidate.deleted}>
-		{#if interactive && window.Booker.voter.vote}
+		{#if interactive && booker.voter.vote}
 			<button
 				on:click={voteUp}
 				class="vote-button upvote"
@@ -74,18 +74,8 @@
 		<div class="candidate-name-container f-column f-1">
 			<span class="fw-bold candidate-name">{candidate.name}</span>
 			<div class="vote-bars">
-				<CandidateVoteBar
-					direction="up"
-					{raceMaxVotes}
-					voters={candidate.votedUp}
-					candidateDeleted={candidate.deleted}
-				/>
-				<CandidateVoteBar
-					direction="down"
-					{raceMaxVotes}
-					voters={candidate.votedDown}
-					candidateDeleted={candidate.deleted}
-				/>
+				<CandidateVoteBar direction="up" {raceMaxVotes} voters={candidate.votedUp} />
+				<CandidateVoteBar direction="down" {raceMaxVotes} voters={candidate.votedDown} />
 			</div>
 		</div>
 		{#if interactive}
@@ -100,24 +90,26 @@
 	{/if}
 </div>
 
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { Icon } from 'sheodox-ui';
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import { voterOps } from '../stores/voter';
 	import CandidateVoteBar from './CandidateVoteBar.svelte';
 	import CandidateDetails from './CandidateDetails.svelte';
+	import { booker } from '../stores/app';
+	import { MaskedCandidate, CandidateImages } from '../../../shared/types/voter';
 	const dispatch = createEventDispatcher();
 
 	function toggleDetails() {
 		dispatch('details', candidate.id);
 	}
 
-	export let candidate;
-	export let candidateImages;
+	export let candidate: MaskedCandidate;
+	export let candidateImages: CandidateImages = [];
 	//if you can vote with this, we don't want that to happen on the the race dashboard
 	export let interactive = true;
-	export let raceMaxVotes;
-	export let showDetails;
+	export let raceMaxVotes: number;
+	export let showDetails = false;
 
 	$: votedUp = candidate.voted === 'up';
 	$: votedDown = candidate.voted === 'down';

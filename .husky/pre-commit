@@ -2,3 +2,5 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npm run style:check
+npm run lint-static:prod
+npm run lint-server:prod

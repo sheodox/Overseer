@@ -1,10 +1,10 @@
 <NavDropdown showOpenIcon={false}>
 	<span slot="button">
-		<UserBubble user={window.user} mode="minimal" />
+		<UserBubble {user} mode="minimal" />
 	</span>
 	<div slot="menu">
 		<ul>
-			{#if window.Booker.app.settings}
+			{#if booker.app.settings}
 				<li>
 					<Link href="/settings" classes="button">
 						<Icon icon="cog" />
@@ -24,10 +24,12 @@
 	</div>
 </NavDropdown>
 
-<script>
-	import { Icon, NavDropdown } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import NavDropdown from 'sheodox-ui/NavDropdown.svelte';
 	import UserBubble from './UserBubble.svelte';
 	import Link from './Link.svelte';
+	import { booker, user } from './stores/app';
 
-	const footerLinks = window.user?.links || [];
+	const footerLinks = user?.links || [];
 </script>

@@ -38,8 +38,12 @@
 </main>
 <Footer />
 
-<script>
-	import { Header, Tab, TabList, Footer } from 'sheodox-ui';
+<script lang="ts">
+	import Header from 'sheodox-ui/Header.svelte';
+	import Tab from 'sheodox-ui/Tab.svelte';
+	import TabList from 'sheodox-ui/TabList.svelte';
+	import Footer from 'sheodox-ui/Footer.svelte';
+
 	import SVG from '../components/SVG.svelte';
 	import Integrations from './Integrations.svelte';
 	import Roles from './Roles.svelte';
@@ -67,5 +71,5 @@
 			title: 'Announcements',
 		},
 	];
-	let selectedTab;
+	let selectedTab: string;
 </script>

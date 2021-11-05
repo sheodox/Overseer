@@ -8,6 +8,7 @@ services:
       - 9229:9229 #nodejs inspect port
     volumes:
       - ./public:/usr/src/app/public
+      - ./dist:/usr/src/app/dist
       - ./src:/usr/src/app/src
       - .env:/usr/src/app/.env
     logging:

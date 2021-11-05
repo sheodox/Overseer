@@ -29,12 +29,13 @@
 	</MenuButton>
 </div>
 
-<script>
+<script lang="ts">
 	import { MenuButton, Icon } from 'sheodox-ui';
+	import { BookerRole } from '../../shared/types/admin';
 	import { adminEnvoy } from './admin-common';
 
-	export let role;
-	export let moduleName;
+	export let role: BookerRole;
+	export let moduleName: string;
 
 	function rename() {
 		const newName = prompt('Enter a role name', role.name)?.trim();

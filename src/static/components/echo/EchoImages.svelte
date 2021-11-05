@@ -1,11 +1,13 @@
 <Album {images} {mode} {size} {variant} on:delete placeholderText={echoItem.name} />
 
-<script>
-	import Album from '../image/Album.svelte';
-	export let echoItem;
-	export let mode;
-	export let size;
-	export let variant;
+<script lang="ts">
+	import type { PreparedEchoItem } from '../../../shared/types/echo';
+	import Album, { AlbumMode, AlbumSize, AlbumVariant } from '../image/Album.svelte';
+
+	export let echoItem: PreparedEchoItem;
+	export let mode: AlbumMode;
+	export let size: AlbumSize;
+	export let variant: AlbumVariant;
 
 	$: images = echoItem.images.map((image) => {
 		return {

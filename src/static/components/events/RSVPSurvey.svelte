@@ -52,15 +52,16 @@
 	</div>
 </div>
 
-<script>
-	import { Checkbox } from 'sheodox-ui';
+<script lang="ts">
+	import Checkbox from 'sheodox-ui/Checkbox.svelte';
 	import { eventFromRoute, eventOps, getDayOfWeekName } from '../stores/events';
+	import { RSVPStatus, RSVPSurveyDay, EventDay } from '../../../shared/types/events';
 
-	export let pendingStatus;
-	export let visible;
+	export let pendingStatus: RSVPStatus = null;
+	export let visible: boolean;
 
 	const previousResponse = $eventFromRoute.userRsvp,
-		baseEventDays = JSON.parse(JSON.stringify($eventFromRoute.eventDays)).map((dayInfo) => {
+		baseEventDays: RSVPSurveyDay[] = JSON.parse(JSON.stringify($eventFromRoute.eventDays)).map((dayInfo: EventDay) => {
 			return {
 				...dayInfo,
 				going: false,
@@ -74,9 +75,8 @@
 	//if the event is one day only, we assume they're going the single day if they RSVP as going, so we don't show rsvp days
 	$: goingSomeDay = days.length === 1 || days.some((day) => day.going);
 	$: submittable = pendingStatus !== 'going' || goingSomeDay;
-	$: statusName = { going: 'Going', 'not-going': 'Not Going', maybe: 'Maybe' }[pendingStatus];
 
-	function mergeMissingDays(rsvpDays, baseEventDays) {
+	function mergeMissingDays(rsvpDays: RSVPSurveyDay[], baseEventDays: RSVPSurveyDay[]): RSVPSurveyDay[] {
 		if (!rsvpDays) {
 			return baseEventDays;
 		}
@@ -93,7 +93,7 @@
 		});
 	}
 
-	function getNotesPlaceholder(status, attendanceType) {
+	function getNotesPlaceholder(status: string, attendanceType: string) {
 		const generalAdvice = 'Anything you think the organizer should know.';
 		let placeholder = '';
 		if (status === 'going') {

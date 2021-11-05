@@ -34,7 +34,7 @@
 						<Icon icon="chevron-down" />
 					</span>
 					<ul slot="menu">
-						{#if window.Booker.echo.update}
+						{#if booker.echo.update}
 							<li>
 								<a class="button" href={echoItem.editPath} on:click|preventDefault={() => page(echoItem.editPath)}>
 									<Icon icon="edit" />
@@ -42,7 +42,7 @@
 								</a>
 							</li>
 						{/if}
-						{#if window.Booker.echo.delete}
+						{#if booker.echo.delete}
 							<li>
 								<button on:click={() => (showDeleteConfirm = true)}>
 									<Icon icon="trash" />
@@ -85,7 +85,7 @@
 		</EchoDownloadLink>
 	</PageLayout>
 	<div class="f-row f-wrap">
-		<EchoImages mode="view" size="medium" {echoItem} />
+		<EchoImages mode={AlbumMode.View} size={AlbumSize.Medium} variant={AlbumVariant.Strip} {echoItem} />
 	</div>
 {/if}
 
@@ -104,10 +104,12 @@
 	</Modal>
 {/if}
 
-<script>
+<script lang="ts">
 	import page from 'page';
-	import { Icon, MenuButton, Modal } from 'sheodox-ui';
-	import { pageName, scrollPageToTop } from '../stores/app';
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import MenuButton from 'sheodox-ui/MenuButton.svelte';
+	import Modal from 'sheodox-ui/Modal.svelte';
+	import { pageName, scrollPageToTop, booker } from '../stores/app';
 	import { activeRouteParams } from '../stores/routing';
 	import { echoInitialized, echoItems, echoOps } from '../stores/echo';
 	import FileSize from './FileSize.svelte';
@@ -116,8 +118,9 @@
 	import EchoDownloadLink from './EchoDownloadLink.svelte';
 	import EchoImages from './EchoImages.svelte';
 	import PageLayout from '../../layouts/PageLayout.svelte';
+	import { AlbumMode, AlbumSize, AlbumVariant } from '../image/Album.svelte';
 
-	const hasOptionPermission = window.Booker.echo.update || window.Booker.echo.delete;
+	const hasOptionPermission = booker.echo.update || booker.echo.delete;
 	let showDeleteConfirm = false;
 	scrollPageToTop();
 
@@ -127,7 +130,7 @@
 
 	$: pageName.set(echoItem?.name);
 
-	function processTags(tags) {
+	function processTags(tags: string) {
 		return (tags?.split(', ') || []).map((tag) => {
 			return {
 				text: tag,

@@ -8,11 +8,11 @@
 	<slot />
 </a>
 
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import page from 'page';
-	export let href;
-	export let noHoverStyles;
+	export let href: string;
+	export let noHoverStyles = false;
 	export let classes = '';
 	const dispatch = createEventDispatcher();
 

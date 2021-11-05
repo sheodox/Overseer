@@ -1,4 +1,4 @@
-{#if window.Booker.echo.download && !echoItem.uploading && $echoOnline}
+{#if booker.echo.download && !echoItem.uploading && $echoOnline}
 	<!-- [download] only works on same-origin URLs, which the echo server probably isn't,
      so to prevent unwanted unloading of the app (and terminating of the websocket) we need
      to tell it to open in a new tab. -->
@@ -11,8 +11,10 @@
 	</span>
 {/if}
 
-<script>
+<script lang="ts">
 	import { echoOnline, echoDownloadToken } from '../stores/echo';
+	import { booker } from '../stores/app';
+	import type { PreparedEchoItem } from '../../../shared/types/echo';
 
-	export let echoItem;
+	export let echoItem: PreparedEchoItem;
 </script>

@@ -1,14 +1,9 @@
-import { tags as formatTags } from '../../shared/formatters';
-import { prisma } from './prisma';
-import { Prisma } from '@prisma/client';
+import { tags as formatTags } from '../../shared/formatters.js';
+import { prisma } from './prisma.js';
 import Ajv from 'ajv';
-import { imageStore } from './image-store';
+import { imageStore } from './image-store.js';
+import type { EchoItemEditable, EchoServerData } from '../../shared/types/echo';
 const ajv = new Ajv();
-
-type EchoItem = Prisma.EchoGetPayload<{}>;
-
-type EditableEchoData = Pick<EchoItem, 'tags' | 'name' | 'notes'>;
-type EchoServerData = Pick<EchoItem, 'size'>;
 
 const validateUserEditableEchoData = ajv.compile({
 	type: 'object',
@@ -50,7 +45,7 @@ class Echo {
 			return 0;
 		});
 	}
-	async new(newData: EditableEchoData, userId: string) {
+	async new(newData: EchoItemEditable, userId: string) {
 		console.log('New echo item adding');
 		if (!validateUserEditableEchoData(newData)) {
 			throw new Error('Data validation error!');
@@ -102,7 +97,7 @@ class Echo {
 	 * Overwrite editable information about a game
 	 * @returns {Promise<*>}
 	 */
-	async update(id: string, data: Partial<EchoItem>) {
+	async update(id: string, data: Partial<EchoItemEditable>) {
 		if (!validateUserEditableEchoData(data)) {
 			throw new Error('Validation error!');
 		}
@@ -113,7 +108,7 @@ class Echo {
 		});
 	}
 
-	async updateFile(id: string, data: Partial<EchoItem>) {
+	async updateFile(id: string, data: Partial<EchoItemEditable>) {
 		if (!validateUserEditableEchoData(data)) {
 			throw new Error('Validation error!');
 		}

@@ -2,7 +2,7 @@
 	<use xlink:href="#{svgId}" />
 </svg>
 
-<script>
+<script lang="ts">
 	export let className = '';
-	export let svgId;
+	export let svgId: string;
 </script>

@@ -12,7 +12,7 @@
 	}
 </style>
 
-<div class="f-column panel">
+<div class="f-column panel p-3">
 	{#if token}
 		<label for="token-copy-input"> Token </label>
 		<div class="input-group">
@@ -45,19 +45,18 @@
 	{/if}
 </div>
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import { adminEnvoy } from './admin-common';
 
+	const availableScopes = ['echo', 'voter', 'logs'] as const;
 	let name = '',
 		token = '',
-		scopes = [],
-		tokenInput;
-
-	const availableScopes = ['echo', 'voter', 'logs'];
+		scopes: [] | typeof availableScopes[number] = [],
+		tokenInput: HTMLInputElement;
 
 	function generate() {
-		adminEnvoy.emit('generate-integration-token', name, scopes, (tkn) => {
+		adminEnvoy.emit('generate-integration-token', name, scopes, (tkn: string) => {
 			//if they didn't fill out everything they won't get a token back
 			if (tkn) {
 				token = tkn;

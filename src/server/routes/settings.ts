@@ -1,8 +1,6 @@
-import { Server } from 'socket.io';
-import { Envoy } from '../../shared/envoy';
+import { Envoy } from '../../shared/envoy.js';
+import { io } from '../server.js';
 
-module.exports = function (io: Server) {
-	io.on('connection', (socket) => {
-		const settingsEnvoy = new Envoy(socket, 'settings');
-	});
-};
+io.on('connection', (socket) => {
+	const settingsEnvoy = new Envoy(socket, 'settings');
+});

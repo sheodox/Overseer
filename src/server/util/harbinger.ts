@@ -1,9 +1,9 @@
-import { Envoy } from '../../shared/envoy';
+import { Envoy } from '../../shared/envoy.js';
 import { Server, Socket } from 'socket.io';
-import { Booker } from '../db/booker';
+import { Booker } from '../db/booker.js';
 import { Logger } from 'winston';
-import { ToastOptions } from '../types';
-import { io } from '../server';
+import { ToastOptions } from '../types.js';
+import { io } from '../server.js';
 
 export function createSafeWebsocketHandler(userId: string, booker: Booker, socket: Socket, logger: Logger) {
 	const toastEnvoy = new Envoy(socket, 'notifications');

@@ -31,14 +31,14 @@
 		<p>
 			<Icon icon="info-circle" />
 			You can use markdown in notes!
-			{#if window.Booker.voter.add_image}
+			{#if booker.voter.add_image}
 				Paste into notes to attach images.
 			{/if}
 		</p>
 
-		{#if window.Booker.voter.remove_image}
+		{#if booker.voter.remove_image}
 			<div class="images">
-				<CandidateImages mode="edit" {candidateImages} {candidate} on:delete={deleteImage} />
+				<CandidateImages mode={AlbumMode.Edit} {candidateImages} {candidate} on:delete={deleteImage} />
 			</div>
 		{/if}
 	</div>
@@ -51,14 +51,19 @@
 	</div>
 </Modal>
 
-<script>
-	import { Modal, Icon, createAutoExpireToast } from 'sheodox-ui';
+<script lang="ts">
+	import { createAutoExpireToast } from 'sheodox-ui';
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import Modal from 'sheodox-ui/Modal.svelte';
 	import { voterOps } from '../stores/voter';
+	import { booker } from '../stores/app';
 	import CandidateImages from './CandidateImages.svelte';
+	import { MaskedCandidate, CandidateImages as CandidateImagesType } from '../../../shared/types/voter';
+	import { AlbumMode } from '../image/Album.svelte';
 
-	export let candidate;
-	export let candidateImages;
-	export let visible;
+	export let candidate: MaskedCandidate;
+	export let candidateImages: CandidateImagesType;
+	export let visible: boolean;
 
 	let name = candidate.name;
 	let notes = candidate.notes;
@@ -68,9 +73,9 @@
 		visible = false;
 	}
 
-	function notesPaste(e) {
+	function notesPaste(e: ClipboardEvent) {
 		const file = e.clipboardData.files[0];
-		if (file && window.Booker.voter.add_image) {
+		if (file && booker.voter.add_image) {
 			e.preventDefault();
 			if (['image/png', 'image/jpeg'].includes(file.type)) {
 				voterOps.candidate.uploadImage(candidate.id, file);
@@ -78,13 +83,13 @@
 				createAutoExpireToast({
 					variant: 'error',
 					title: 'Upload Error',
-					messsage: 'Invalid file type!',
+					message: 'Invalid file type!',
 				});
 			}
 		}
 	}
 
-	function deleteImage(e) {
+	function deleteImage(e: CustomEvent<string>) {
 		if (confirm('Are you sure you want to delete this image?')) {
 			voterOps.candidate.deleteImage(e.detail);
 		}

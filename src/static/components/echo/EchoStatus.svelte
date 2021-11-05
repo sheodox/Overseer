@@ -13,8 +13,8 @@
 	</div>
 {/if}
 
-<script>
-	import { echoOnline, echoDiskUsage } from '../stores/echo';
+<script lang="ts">
+	import { echoDiskUsage } from '../stores/echo';
 	import { bytes } from '../../../shared/formatters';
-	import { Progress } from 'sheodox-ui';
+	import Progress from 'sheodox-ui/Progress.svelte';
 </script>

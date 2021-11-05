@@ -3,23 +3,26 @@
 		white-space: pre-line;
 	}
 	.details {
-		margin-bottom: 4rem;
+		max-width: 50rem;
+		margin-left: auto;
+		margin-right: auto;
+		border-radius: 5px;
 	}
 </style>
 
-<div class="details">
+<div class="details card p-3 mt-2 mb-5">
 	<div class="f-row justify-content-between">
 		<UserBubble userId={candidate.creatorId}>
 			<em>Created {new Date(candidate.createdAt).toLocaleDateString()}</em>
 		</UserBubble>
-		{#if !candidate.deleted && (window.Booker.voter.update_candidate || canDelete)}
+		{#if !candidate.deleted && (booker.voter.update_candidate || canDelete)}
 			<MenuButton>
 				<span slot="trigger">
 					Options
 					<Icon icon="chevron-down" />
 				</span>
 				<ul slot="menu">
-					{#if window.Booker.voter.update_candidate}
+					{#if booker.voter.update_candidate}
 						<li>
 							<button on:click={() => (showEdit = true)}>
 								<Icon icon="sticky-note" />
@@ -51,17 +54,20 @@
 	<EditCandidateModal {candidateImages} {candidate} bind:visible={showEdit} />
 {/if}
 
-<script>
-	import { MenuButton, Icon } from 'sheodox-ui';
+<script lang="ts">
+	import MenuButton from 'sheodox-ui/MenuButton.svelte';
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import UserBubble from '../UserBubble.svelte';
 	import { voterOps } from '../stores/voter';
 	import EditCandidateModal from './EditCandidateModal.svelte';
 	import CandidateImages from './CandidateImages.svelte';
+	import { booker } from '../stores/app';
+	import type { MaskedCandidate, CandidateImages as CandidateImagesType } from '../../../shared/types/voter';
 
-	export let candidate;
-	export let candidateImages;
+	export let candidate: MaskedCandidate;
+	export let candidateImages: CandidateImagesType;
 
-	const canDelete = window.Booker.voter.remove_candidate || candidate.created;
+	const canDelete = booker.voter.remove_candidate || candidate.created;
 	let showEdit = false;
 
 	function deleteCandidate() {

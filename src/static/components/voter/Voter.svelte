@@ -1,6 +1,6 @@
 <PageLayout title="Voter">
 	<div slot="beside-title">
-		{#if window.Booker.voter.add_race}
+		{#if booker.voter.add_race}
 			<button on:click={() => (showAddRace = true)} class="primary">
 				<Icon icon="plus" />
 				Add Race
@@ -24,9 +24,10 @@
 	<PromptModal bind:visible={showAddRace} label="Enter the name for a new race" title="Add Race" on:save={addRace} />
 {/if}
 
-<script>
-	import { Icon, Modal } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import { voterInitialized, voterOps, voterRaces } from '../stores/voter';
+	import { booker } from '../stores/app';
 	import PageSpinner from '../PageSpinner.svelte';
 	import RacePreview from './RacePreview.svelte';
 	import { pageName } from '../stores/app';
@@ -36,7 +37,7 @@
 	let showAddRace = false;
 	pageName.set('Voter');
 
-	function addRace(e) {
+	function addRace(e: CustomEvent<string>) {
 		voterOps.race.new(e.detail);
 		showAddRace = false;
 	}

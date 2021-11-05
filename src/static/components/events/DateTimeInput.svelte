@@ -19,14 +19,14 @@
 	</fieldset>
 </div>
 
-<script>
-	export let date;
-	export let label;
+<script lang="ts">
+	export let date: Date;
+	export let label: string;
 
 	let dateValue = getInitialDate(),
 		timeValue = getInitialTime();
 
-	function doubleDigitPadded(number) {
+	function doubleDigitPadded(number: number) {
 		return (number + '').padStart(2, '0');
 	}
 	function getInitialDate() {
@@ -45,11 +45,11 @@
 
 	$: date = parseDate(dateValue, timeValue);
 
-	function parseDate(dateString, timeString) {
+	function parseDate(dateString: string, timeString: string) {
 		const [years, months, days] = dateString.split('-'),
 			[hours, minutes] = timeString.split(':');
 
-		const possiblyInvalidDate = new Date(years, months - 1, days, hours, minutes);
+		const possiblyInvalidDate = new Date(+years, +months - 1, +days, +hours, +minutes);
 
 		return isNaN(possiblyInvalidDate.getTime()) ? null : possiblyInvalidDate;
 	}

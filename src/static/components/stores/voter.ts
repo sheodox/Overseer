@@ -1,19 +1,20 @@
-import { writable, derived, get } from 'svelte/store';
+import { writable, derived, get, Readable } from 'svelte/store';
 import page from 'page';
 import { applyChange } from 'deep-diff';
 import { socket } from '../../socket';
 import { Envoy } from '../../../shared/envoy';
 import { activeRouteParams } from './routing';
-import { uploadImage } from './app';
+import { appBootstrap, uploadImage, booker, user } from './app';
+import { MaskedRace, MaskedCandidate, VoterData } from '../../../shared/types/voter';
 const voterEnvoy = new Envoy(socket, 'voter', true);
 
-const initialVoterData = __INITIAL_STATE__.voter;
+const initialVoterData = appBootstrap.initialData.voter;
 export const voterInitialized = writable(!!initialVoterData);
 
-let untouchedVoterData;
+let untouchedVoterData: VoterData;
 export const voterRaces = writable([], () => {
 	//if they don't have voter permissions, or they've already initialized, don't try and initialize anymore
-	if (!Booker.voter.view || get(voterInitialized)) {
+	if (!booker.voter.view || get(voterInitialized)) {
 		return;
 	}
 
@@ -33,15 +34,15 @@ voterEnvoy.on({
 	diff: (changes) => {
 		if (get(voterInitialized)) {
 			for (const change of changes) {
-				applyChange(untouchedVoterData, change);
+				applyChange(untouchedVoterData, null, change);
 			}
 			setVoterData(untouchedVoterData);
 		}
 	},
 });
 
-function setVoterData(races) {
-	const userId = window.user.id;
+function setVoterData(races: VoterData) {
+	const userId = user.id;
 
 	voterRaces.set(
 		races.map((race) => {
@@ -49,7 +50,7 @@ function setVoterData(races) {
 				...race,
 				candidates: race.candidates.map((candidate) => {
 					const created = userId === candidate.creatorId;
-					let voted = false;
+					let voted: false | 'up' | 'down' = false;
 					if (candidate.votedUp.includes(userId)) {
 						voted = 'up';
 					} else if (candidate.votedDown.includes(userId)) {
@@ -66,52 +67,55 @@ function setVoterData(races) {
 	);
 	voterInitialized.set(true);
 }
-export const voterSelectedRace = derived([voterRaces, activeRouteParams], ([races, params]) => {
-	return races.find(({ id }) => id === params.raceId);
+export const voterSelectedRace = derived<any, MaskedRace>([voterRaces, activeRouteParams], ([races, params]) => {
+	return races.find(({ id }: { id: string }) => id === params.raceId);
 });
 
 export const voterOps = {
 	race: {
-		new: (name) => {
-			voterEnvoy.emit('newRace', name, (id) => {
+		new: (name: string) => {
+			voterEnvoy.emit('newRace', name, (id: string) => {
 				page(`/voter/${id}`);
 			});
 		},
-		delete: (raceId) => {
+		delete: (raceId: string) => {
 			voterEnvoy.emit('removeRace', raceId);
 			page(`/voter`);
 		},
-		resetVotes: (raceId) => {
+		resetVotes: (raceId: string) => {
 			voterEnvoy.emit('resetVotes', raceId);
 		},
-		rename: (raceId, name) => {
+		rename: (raceId: string, name: string) => {
 			voterEnvoy.emit('renameRace', raceId, name);
 		},
 	},
 	candidate: {
-		new: (raceId, name) => {
+		new: (raceId: string, name: string) => {
 			voterEnvoy.emit('newCandidate', raceId, name);
 		},
-		vote: (candidateId, direction) => {
+		vote: (candidateId: string, direction: string) => {
 			voterEnvoy.emit('vote', candidateId, direction);
 		},
-		delete: (candidateId) => {
+		delete: (candidateId: string) => {
 			voterEnvoy.emit('removeCandidate', candidateId);
 		},
-		update: (candidateId, name, notes) => {
+		update: (candidateId: string, name: string, notes: string) => {
 			voterEnvoy.emit('updateCandidate', candidateId, name, notes);
 		},
-		uploadImage(candidateId, file) {
+		uploadImage(candidateId: string, file: File) {
 			uploadImage('Voter Upload', file, `/voter/${candidateId}/upload`);
 		},
-		deleteImage: (id) => {
+		deleteImage: (id: string) => {
 			voterEnvoy.emit('removeImage', id);
 		},
 	},
 };
 
-export function createRankedCandidateStore(raceStore, lockStore) {
-	function findNewCandidates(newCandidates, oldCandidates) {
+export function createRankedCandidateStore(
+	raceStore: Readable<MaskedRace>,
+	lockStore: Readable<boolean>
+): Readable<MaskedCandidate[]> {
+	function findNewCandidates(newCandidates: MaskedCandidate[], oldCandidates: MaskedCandidate[]) {
 		return newCandidates.filter(({ id }) => {
 			return !oldCandidates.some((old) => old.id === id);
 		});
@@ -157,7 +161,7 @@ export function createRankedCandidateStore(raceStore, lockStore) {
 		});
 
 	return {
-		subscribe: (subscription) => {
+		subscribe: (subscription: any) => {
 			const rankingUnsubscribe = store.subscribe(subscription);
 			return () => {
 				rankingUnsubscribe();
@@ -168,11 +172,11 @@ export function createRankedCandidateStore(raceStore, lockStore) {
 	};
 }
 
-function weightedVotes(candidate) {
+function weightedVotes(candidate: MaskedCandidate) {
 	return candidate.votedUp.length - 1.1 * candidate.votedDown.length;
 }
 
-export function rankCandidates(race) {
+export function rankCandidates(race: { candidates: MaskedCandidate[] }) {
 	if (!race) {
 		return [];
 	}
@@ -181,7 +185,7 @@ export function rankCandidates(race) {
 	});
 }
 
-export function getRaceMaxVotes(race) {
+export function getRaceMaxVotes(race: MaskedRace) {
 	if (!race) {
 		return 1;
 	}

@@ -27,7 +27,7 @@
 		<div class="panel-body">
 			{#if candidateSlice.length}
 				<ol>
-					{#each candidateSlice as candidate, index}
+					{#each candidateSlice as candidate}
 						<li>
 							<Candidate interactive={false} {candidate} {raceMaxVotes} />
 						</li>
@@ -45,13 +45,13 @@
 	</div>
 </Link>
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
 	import Link from '../Link.svelte';
-	import { getRaceMaxVotes, rankCandidates, voterSelectedRace } from '../stores/voter';
+	import { getRaceMaxVotes, rankCandidates } from '../stores/voter';
 	import Candidate from './Candidate.svelte';
+	import type { MaskedRace } from '../../../shared/types/voter';
 
-	export let race;
+	export let race: MaskedRace;
 
 	const maxCandidates = 3;
 	$: candidateRanking = rankCandidates(race);

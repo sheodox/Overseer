@@ -1,6 +1,6 @@
-import { prisma } from './prisma';
-import { imageStore } from './image-store';
-import { name as validName, href as validHref } from '../util/validator';
+import { prisma } from './prisma.js';
+import { imageStore } from './image-store.js';
+import { name as validName, href as validHref } from '../util/validator.js';
 
 class Voter {
 	constructor() {}

@@ -12,42 +12,43 @@
 				</li>
 			{/if}
 		{/each}
-		{#if window.Booker.app.notifications}
+		{#if booker.app.notifications}
 			<NotificationTrigger />
 		{/if}
-		{#if window.user}
+		{#if user}
 			<HeaderUserDropdown />
 		{/if}
 	</ul>
 </nav>
 
-<script>
+<script lang="ts">
 	import { activeApp } from './stores/routing';
+	import { booker, user } from './stores/app';
 	import page from 'page';
 	import NotificationTrigger from './notifications/NotificationTrigger.svelte';
 	import HeaderUserDropdown from './HeaderUserDropdown.svelte';
 
 	const links = [
 		{
-			viewable: window.Booker.events.view,
+			viewable: booker.events.view,
 			path: '/events',
 			app: 'events',
 			text: 'Events',
 			icon: 'calendar-week',
 		},
 		{
-			viewable: window.Booker.echo.view,
+			viewable: booker.echo.view,
 			path: '/echo',
 			app: 'echo',
 			text: 'Echo',
 			icon: 'download',
 		},
 		{
-			viewable: window.Booker.voter.view,
+			viewable: booker.voter.view,
 			path: '/voter',
 			app: 'voter',
 			text: 'Voter',
 			icon: 'vote-yea',
 		},
-	];
+	] as const;
 </script>

@@ -12,15 +12,17 @@
 	{/if}
 </span>
 
-<script>
-	import { Icon } from 'sheodox-ui';
-	export let event;
-	export let showText;
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import type { MaskedEvent } from '../../../shared/types/events';
+
+	export let event: MaskedEvent;
+	export let showText = false;
 
 	const types = {
 		virtual: { icon: 'globe', text: 'Virtual' },
 		real: { icon: 'map-marked-alt', text: 'In Person' },
-	};
+	} as const;
 
-	$: matchingType = types[event.attendanceType];
+	$: matchingType = types[event.attendanceType as keyof typeof types];
 </script>

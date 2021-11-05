@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { notifications } from '../db/notifications';
-import { AppRequest } from '../types';
-import { Envoy } from '../../shared/envoy';
-import { createSafeWebsocketHandler, Harbinger } from '../util/harbinger';
-import { appBooker } from '../db/booker';
-import { appLogger } from '../util/logger';
-import { io } from '../server';
-import { sendToastToUser } from '../util/create-notifications';
+import { notifications } from '../db/notifications.js';
+import { AppRequest } from '../types.js';
+import { Envoy } from '../../shared/envoy.js';
+import { createSafeWebsocketHandler, Harbinger } from '../util/harbinger.js';
+import { appBooker } from '../db/booker.js';
+import { appLogger } from '../util/logger.js';
+import { io } from '../server.js';
+import { sendToastToUser } from '../util/create-notifications.js';
 
 export const router = Router();
 

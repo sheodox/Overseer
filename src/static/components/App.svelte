@@ -29,7 +29,7 @@
 {/if}
 <main class="f-column justify-content-start align-items-center">
 	<Toasts />
-	{#if window.user}
+	{#if user}
 		<Routing />
 	{:else}
 		<LoginRequired />
@@ -52,16 +52,19 @@
 	</div>
 </Footer>
 
-<script>
-	import { Toasts, Icon, Header, Footer } from 'sheodox-ui';
-	import { pageName, socketConnected } from './stores/app';
+<script lang="ts">
+	import Toasts from 'sheodox-ui/Toasts.svelte';
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import Header from 'sheodox-ui/Header.svelte';
+	import Footer from 'sheodox-ui/Footer.svelte';
+	import { socketConnected, user } from './stores/app';
 	import SVG from './SVG.svelte';
 	import Routing from './Routing.svelte';
 	import LoginRequired from './LoginRequired.svelte';
 	import HeaderNav from './HeaderNav.svelte';
 	import page from 'page';
 
-	const footerLinks = window.user?.links || [];
+	const footerLinks = user?.links || [];
 
 	function titleClick() {
 		page('/');

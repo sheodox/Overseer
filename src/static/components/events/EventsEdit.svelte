@@ -17,7 +17,7 @@
 </style>
 
 <PageLayout title={name || 'New Event'}>
-	{#if mode === 'create' || $eventFromRoute}
+	{#if mode === EventsEditMode.Create || $eventFromRoute}
 		<form on:submit|preventDefault={submit}>
 			<TextInput bind:value={name} id="event-name">Event Name</TextInput>
 
@@ -53,7 +53,7 @@
 			<small><Icon icon="info-circle" /> Details can use markdown!</small>
 
 			<div class="f-row justify-content-end">
-				{#if mode === 'edit'}
+				{#if mode === EventsEditMode.Edit}
 					<Link href="/events/{$eventFromRoute.id}">
 						<span class="button">
 							<Icon icon="chevron-left" />
@@ -61,7 +61,7 @@
 						</span>
 					</Link>
 				{/if}
-				<button class="primary">{mode === 'create' ? 'Create' : 'Update'} Event</button>
+				<button class="primary">{mode === EventsEditMode.Create ? 'Create' : 'Update'} Event</button>
 			</div>
 		</form>
 	{:else}
@@ -69,26 +69,36 @@
 	{/if}
 </PageLayout>
 
-<script>
-	import { createAutoExpireToast, Icon, TextInput } from 'sheodox-ui';
+<script context="module" lang="ts">
+	export enum EventsEditMode {
+		Create,
+		Edit,
+	}
+</script>
+
+<script lang="ts">
+	import { createAutoExpireToast } from 'sheodox-ui';
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import TextInput from 'sheodox-ui/TextInput.svelte';
 	import DateTimeInput from './DateTimeInput.svelte';
 	import { eventFromRoute, eventOps } from '../stores/events';
 	import PageSpinner from '../PageSpinner.svelte';
 	import Link from '../Link.svelte';
 	import PageLayout from '../../layouts/PageLayout.svelte';
+	import { MaskedEvent } from '../../../shared/types/events';
 
-	export let mode; // create | edit
-	let name,
-		startDate,
-		endDate,
-		notes,
+	export let mode: EventsEditMode;
+	let name: string,
+		startDate: Date,
+		endDate: Date,
+		notes: string,
 		attendanceType = 'real';
 
 	$: initializeData($eventFromRoute);
 
 	let dataInitialized = false;
 
-	function initializeData(event) {
+	function initializeData(event: MaskedEvent) {
 		if (!dataInitialized && event) {
 			dataInitialized = true;
 			name = event.name;
@@ -99,7 +109,7 @@
 		}
 	}
 
-	function validationToast(message) {
+	function validationToast(message: string) {
 		createAutoExpireToast({
 			variant: 'error',
 			title: 'Error',
@@ -122,11 +132,11 @@
 			name,
 			notes,
 			attendanceType,
-			startDate: startDate.getTime(),
-			endDate: endDate.getTime(),
+			startDate: startDate,
+			endDate: endDate,
 		};
 
-		if (mode === 'create') {
+		if (mode === EventsEditMode.Create) {
 			eventOps.createEvent(eventData);
 		} else {
 			eventOps.updateEvent($eventFromRoute.id, eventData);

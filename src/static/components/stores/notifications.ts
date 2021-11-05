@@ -2,11 +2,13 @@ import { writable, derived, get } from 'svelte/store';
 import { createAutoExpireToast } from 'sheodox-ui';
 import { Envoy } from '../../../shared/envoy';
 import { socket } from '../../socket';
+import { booker } from './app';
+
 const notificationsEnvoy = new Envoy(socket, 'notifications', true);
 
 export const notificationsInitialized = writable(false);
 export const notifications = writable([], (set) => {
-	if (!Booker.app.notifications || get(notificationsInitialized)) {
+	if (!booker.app.notifications || get(notificationsInitialized)) {
 		return;
 	}
 
@@ -48,13 +50,13 @@ notificationsEnvoy.on({
 });
 
 export const notificationOps = {
-	markRead: (id) => {
+	markRead: (id: string) => {
 		notificationsEnvoy.emit('markRead', id);
 	},
 	markAllRead: () => {
 		notificationsEnvoy.emit('markAllRead');
 	},
-	registerPushSubscription: (subscription) => {
+	registerPushSubscription: (subscription: any) => {
 		notificationsEnvoy.emit('registerPushSubscription', subscription);
 	},
 };

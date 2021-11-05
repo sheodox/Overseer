@@ -33,16 +33,15 @@
 		<p class="centered">Echo has nothing!</p>
 	{:else}
 		<div class="centered">
-			<SpikeSpinner size="medium" />
+			<SpikeSpinner size={SpikeSpinnerSizes.Medium} />
 		</div>
 	{/if}
 </div>
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
 	import Link from '../Link.svelte';
 	import { echoItems, echoInitialized } from '../stores/echo';
-	import SpikeSpinner from '../SpikeSpinner.svelte';
+	import SpikeSpinner, { SpikeSpinnerSizes } from '../SpikeSpinner.svelte';
 	import EchoItemPreview from './EchoItemPreview.svelte';
 	import HomePageAppTitle from '../HomePageAppTitle.svelte';
 

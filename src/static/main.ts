@@ -1,3 +1,6 @@
+/// <reference types="vite/client" />
+/// <reference types="svelte" />
+//import 'vite/modulepreload-polyfill';
 import { styles } from 'sheodox-ui';
 import './scss/style.scss';
 

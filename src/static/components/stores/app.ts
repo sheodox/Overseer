@@ -1,10 +1,16 @@
 import { writable, get, readable } from 'svelte/store';
 import { createAutoExpireToast, createProgressToast, updateToast } from 'sheodox-ui';
-import { post } from 'axios';
+import axios from 'axios';
 import { bytes as formatBytes } from '../../../shared/formatters';
 import { Envoy } from '../../../shared/envoy';
 import { socket } from '../../socket';
+import { AppBootstrap, User } from '../../../shared/types/app';
 const appEnvoy = new Envoy(socket, 'app');
+
+export const appBootstrap = (window as unknown as { __APP_BOOTSTRAP__: AppBootstrap }).__APP_BOOTSTRAP__;
+
+export const booker = appBootstrap?.booker;
+export const user = { loading: false, ...appBootstrap?.user };
 
 export const pageName = writable('');
 pageName.subscribe((page) => {
@@ -38,11 +44,11 @@ socket.on('disconnect', () => socketConnected.set(false));
 
 //ensure we know what the last known subscription was, so if we need to update the subscription endpoint /was/
 //so it can be replaced if the serviceworker gets a pushsubscriptionchange event
-export function storePushEndpoint(subscription) {
+export function storePushEndpoint(subscription: PushSubscription) {
 	localStorage.setItem('overseer-push-endpoint', subscription.endpoint);
 }
 
-export let settings = writable(window.user?.settings);
+export let settings = writable(appBootstrap?.user?.settings);
 
 let settingsSubscriptionInitialized = false;
 settings.subscribe((settings) => {
@@ -54,7 +60,7 @@ settings.subscribe((settings) => {
 	appEnvoy.emit('updateSettings', settings);
 });
 
-export function uploadImage(toastTitle, file, postPath) {
+export function uploadImage(toastTitle: string, file: File, postPath: string) {
 	const progressToastId = createProgressToast({
 		title: toastTitle,
 		message: '',
@@ -62,44 +68,47 @@ export function uploadImage(toastTitle, file, postPath) {
 		max: file.size,
 	});
 
-	const errorToast = (message) =>
+	const errorToast = (message: string) =>
 		createAutoExpireToast({
 			variant: 'error',
 			title: 'Upload Error',
 			message,
 		});
 
-	return post(postPath, file, {
-		headers: {
-			'Content-type': file.type,
-		},
-		onUploadProgress(e) {
-			if (e.loaded === e.total) {
+	return axios
+		.post(postPath, file, {
+			headers: {
+				'Content-type': file.type,
+			},
+			onUploadProgress(e: ProgressEvent) {
+				if (e.loaded === e.total) {
+					updateToast(progressToastId, {
+						message: 'Upload complete!',
+						value: e.loaded,
+						max: e.total,
+					});
+					return;
+				}
 				updateToast(progressToastId, {
-					message: 'Upload complete!',
 					value: e.loaded,
 					max: e.total,
+					message: `${formatBytes(e.loaded, 'mb')} mb / ${formatBytes(e.total, 'mb')} mb`,
 				});
-				return;
+			},
+		})
+		.catch((e: any) => {
+			if (e.response.statusCode === 413) {
+				errorToast('That image is too big!');
+			} else {
+				errorToast(e.response.statusText);
 			}
-			updateToast(progressToastId, {
-				value: e.loaded,
-				max: e.total,
-				message: `${formatBytes(e.loaded, 'mb')} mb / ${formatBytes(e.total, 'mb')} mb`,
-			});
-		},
-	}).catch((e) => {
-		if (e.response.statusCode === 413) {
-			errorToast('That image is too big!');
-		} else {
-			errorToast(e.response.statusText);
-		}
-	});
+		});
 }
 
-export const userRegistry = writable({});
+export type UserRegistryUser = { loading: true } | ({ loading: false } & User);
+export const userRegistry = writable<Record<string, UserRegistryUser>>({});
 
-export function requestUser(userId) {
+export function requestUser(userId: string) {
 	const user = get(userRegistry)[userId];
 
 	if (!user) {
@@ -110,7 +119,7 @@ export function requestUser(userId) {
 			return registry;
 		});
 
-		appEnvoy.emit('getUserMeta', userId, (meta) => {
+		appEnvoy.emit('getUserMeta', userId, (meta: User) => {
 			userRegistry.update((registry) => {
 				registry[userId] = {
 					loading: false,

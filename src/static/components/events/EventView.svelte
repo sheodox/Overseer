@@ -5,8 +5,8 @@
 	}
 	.details {
 		flex-basis: 30rem;
-		background: var(--shdx-gray-600);
 		padding: var(--shdx-spacing-6);
+		background: var(--shdx-gray-600);
 	}
 	h1 {
 		margin: 0;
@@ -15,6 +15,9 @@
 	.notes {
 		max-width: 40em;
 		line-height: 1.6;
+	}
+	.notes :global(p:last-child) {
+		margin-bottom: 0;
 	}
 	.event-metadata {
 		color: var(--shdx-gray-100);
@@ -43,31 +46,26 @@
 		<div class="f-row f-wrap justify-content-center align-items-start">
 			<div>
 				<div class="sub-panel details">
-					<div class="f-row f-wrap justify-content-between align-items-baseline">
-						<div class="f-row align-items-baseline">
-							<h1 class="f-1">{$eventFromRoute.name}</h1>
+					<h1>{$eventFromRoute.name}</h1>
+					<div class="event-metadata f-row f-wrap justify-content-between shdx-font-size-3 mb-6">
+						<div>
+							<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
+							<EventTimes event={$eventFromRoute} />
 						</div>
-						{#if window.Booker.events.rsvp}
+						{#if booker.events.rsvp}
 							<RSVP
-								highlight={pendingStatus}
 								status={userRsvp?.status}
 								showFixGoingWarning={userGoing && isMultipleDays && !userRsvp?.rsvpDays.length}
 								on:rsvp={rsvpPrompt}
 							/>
 						{/if}
 					</div>
-					<div class="event-metadata f-row f-wrap shdx-font-size-3 mb-6">
-						<div class="mr-4">
-							<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
-						</div>
-						<EventTimes event={$eventFromRoute} />
-					</div>
 
 					<div class="notes has-inline-links">
 						{@html $eventFromRoute.notesRendered}
 					</div>
 
-					{#if window.Booker.events.organize}
+					{#if booker.events.organize}
 						<div class="f-row justify-content-end shdx-font-size-3">
 							<MenuButton>
 								<span slot="trigger">
@@ -92,8 +90,8 @@
 						</div>
 					{/if}
 				</div>
-				<div class="f-row f-wrap justify-content-between m-5">
-					{#if window.Booker.events.organize}
+				<div class="f-row f-wrap justify-content-between mt-5">
+					{#if booker.events.organize}
 						<RSVPNotes rsvps={$eventFromRoute.rsvps} />
 					{/if}
 				</div>
@@ -125,9 +123,11 @@
 	</Modal>
 {/if}
 
-<script>
-	import { MenuButton, Icon, Modal } from 'sheodox-ui';
-	import { pageName } from '../stores/app';
+<script lang="ts">
+	import MenuButton from 'sheodox-ui/MenuButton.svelte';
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import Modal from 'sheodox-ui/Modal.svelte';
+	import { pageName, booker } from '../stores/app';
 	import PageSpinner from '../PageSpinner.svelte';
 	import { eventFromRoute, eventOps, eventsInitialized } from '../stores/events';
 	import page from 'page';
@@ -139,8 +139,9 @@
 	import EventTimes from './EventTimes.svelte';
 	import RSVPNotes from './RSVPNotes.svelte';
 	import EventNotificationReminder from './EventNotificationReminder.svelte';
+	import type { RSVPStatus } from '../../../shared/types/events';
 
-	let pendingStatus,
+	let pendingStatus: RSVPStatus,
 		showDeleteConfirm = false,
 		showSurvey = false;
 
@@ -151,7 +152,7 @@
 
 	$: $pageName = $eventFromRoute?.name ?? 'Events';
 
-	function rsvpPrompt(e) {
+	function rsvpPrompt(e: CustomEvent<RSVPStatus>) {
 		pendingStatus = e.detail;
 		showSurvey = true;
 	}

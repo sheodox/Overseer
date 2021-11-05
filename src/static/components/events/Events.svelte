@@ -3,7 +3,7 @@
 
 <PageLayout title="Events">
 	<div slot="beside-title">
-		{#if window.Booker.events.organize}
+		{#if booker.events.organize}
 			<Link href="/events/create">
 				<span class="button primary">
 					<Icon icon="plus" />
@@ -21,7 +21,7 @@
 			<h2>Ongoing</h2>
 			<div class="f-column gap-3">
 				{#each $ongoingEvents as event}
-					<EventPreview {event} showRSVP={true} />
+					<EventPreview {event} />
 				{/each}
 			</div>
 		{/if}
@@ -29,7 +29,7 @@
 			<h2>Upcoming</h2>
 			<div class="f-column gap-3">
 				{#each $upcomingEvents as event}
-					<EventPreview {event} showRSVP={true} />
+					<EventPreview {event} />
 				{/each}
 			</div>
 		{/if}
@@ -48,13 +48,13 @@
 	{/if}
 </PageLayout>
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import Link from '../Link.svelte';
 	import { eventsInitialized, events, ongoingEvents, upcomingEvents, pastEvents } from '../stores/events';
 	import EventPreview from './EventPreview.svelte';
 	import PageSpinner from '../PageSpinner.svelte';
-	import { pageName } from '../stores/app';
+	import { pageName, booker } from '../stores/app';
 	import EventNotificationReminder from './EventNotificationReminder.svelte';
 	import PageLayout from '../../layouts/PageLayout.svelte';
 

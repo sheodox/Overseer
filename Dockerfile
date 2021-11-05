@@ -1,4 +1,4 @@
-FROM node:14 AS dev
+FROM node:16 AS dev
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=development
@@ -19,4 +19,4 @@ RUN npx prisma generate
 RUN npm run build:prod
 
 # before starting, copy all of the newly built frontend assets to the folder nginx serves
-CMD cp -R ./public-dist/* ./public && npx prisma migrate deploy && node src/server/app.js
+CMD cp -R ./public-dist/* ./public && npx prisma migrate deploy && node dist/server/app.js

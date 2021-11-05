@@ -48,7 +48,7 @@
 				<textarea id="echo-notes" bind:value={notes} on:paste={notesPaste} />
 				<p>
 					<Icon icon="info-circle" /> Notes can use markdown!
-					{#if window.Booker.echo.add_image}
+					{#if booker.echo.add_image}
 						You can add images by pasting them into the Notes box.
 					{/if}
 				</p>
@@ -61,8 +61,8 @@
 							</span>
 						</Link>
 					{/if}
-					<button disabled={!name || (mode === 'upload' && !file) || uploading} class="primary">
-						{#if mode === 'upload'}
+					<button disabled={!name || (mode === EchoUploadMode.Upload && !file) || uploading} class="primary">
+						{#if mode === EchoUploadMode.Upload}
 							<Icon icon="upload" />
 							Upload
 						{:else}
@@ -73,51 +73,72 @@
 				</div>
 				{#if imagesPendingUpload.length}
 					<div class="f-row justify-content-center f-wrap">
-						<Album mode="edit" images={imagesPendingUpload} size="small" on:delete={cancelPendingImage} />
+						<Album
+							mode={AlbumMode.Edit}
+							images={imagesPendingUpload}
+							size={AlbumSize.Small}
+							on:delete={cancelPendingImage}
+						/>
 					</div>
 				{/if}
-				{#if echoItem && window.Booker.echo.remove_image}
-					<EchoImages {echoItem} mode="edit" on:delete={deleteImage} />
+				{#if echoItem && booker.echo.remove_image}
+					<EchoImages
+						{echoItem}
+						mode={AlbumMode.Edit}
+						size={AlbumSize.Small}
+						variant={AlbumVariant.Strip}
+						on:delete={deleteImage}
+					/>
 				{/if}
 			</div>
 		</div>
 	</form>
 </div>
 
-<script>
-	import { createAutoExpireToast, Icon, TextInput } from 'sheodox-ui';
+<script context="module" lang="ts">
+	export enum EchoUploadMode {
+		Edit,
+		Upload,
+	}
+</script>
+
+<script lang="ts">
+	import { createAutoExpireToast } from 'sheodox-ui';
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import TextInput from 'sheodox-ui/TextInput.svelte';
 	import EchoFileSelect from './EchoFileSelect.svelte';
 	import { echoItems, echoOps } from '../stores/echo';
-	import { pageName } from '../stores/app';
+	import { pageName, booker } from '../stores/app';
 	import { activeRouteParams } from '../stores/routing';
 	import page from 'page';
 	import TagCloud from './TagCloud.svelte';
 	import EchoImages from './EchoImages.svelte';
 	import Link from '../Link.svelte';
-	import Album from '../image/Album.svelte';
+	import Album, { AlbumImage, AlbumMode, AlbumVariant, AlbumSize } from '../image/Album.svelte';
+	import { PreparedEchoItem } from '../../../shared/types/echo';
 
-	export let mode; //'edit' | 'upload'
+	export let mode: EchoUploadMode;
 
-	let name,
-		tags,
-		notes,
-		file,
+	let name: string,
+		tags: string,
+		notes: string,
+		file: File,
 		//used to disable the submit button and prevent double uploads
 		uploading = false,
 		//used to generate a unique 'key' for each image pending upload
 		pendingImageId = 0,
 		//`file` objects are attached here when attaching images when making a new upload
-		imagesPendingUpload = [];
+		imagesPendingUpload: (AlbumImage & Required<Pick<AlbumImage, 'file'>>)[] = [];
 
-	pageName.set(mode === 'upload' ? 'Upload' : 'Edit');
+	pageName.set(mode === EchoUploadMode.Upload ? 'Upload' : 'Edit');
 
 	$: suggestName(file?.name);
-	$: echoItem = mode === 'edit' ? findItem($echoItems) : null;
+	$: echoItem = mode === EchoUploadMode.Edit ? findItem($echoItems) : null;
 
 	let seededEditData = false;
 
-	function findItem() {
-		const item = $echoItems.find(({ id }) => id === $activeRouteParams.echoId);
+	function findItem(echoItems: PreparedEchoItem[]) {
+		const item = echoItems.find(({ id }) => id === $activeRouteParams.echoId);
 		if (!seededEditData && item) {
 			name = item.name;
 			tags = item.tags;
@@ -127,21 +148,21 @@
 		return item;
 	}
 
-	function suggestName(fileName) {
+	function suggestName(fileName: string) {
 		if (fileName && !name) {
 			name = fileName.replace(/\.zip$/, '');
 		}
 	}
 
-	function cancelPendingImage(e) {
+	function cancelPendingImage(e: CustomEvent<string>) {
 		if (confirm(`Are you sure you want to delete this image?`)) {
 			imagesPendingUpload = imagesPendingUpload.filter((image) => image.sourceId !== e.detail);
 		}
 	}
 
-	async function notesPaste(e) {
+	async function notesPaste(e: ClipboardEvent) {
 		const file = e.clipboardData.files[0];
-		if (file && window.Booker.echo.add_image) {
+		if (file && booker.echo.add_image) {
 			e.preventDefault();
 
 			if (['image/png', 'image/jpeg'].includes(file.type)) {
@@ -155,9 +176,9 @@
 							src: await file.arrayBuffer().then((buffer) => URL.createObjectURL(new Blob([buffer]))),
 							alt: 'pending image upload',
 							// if the image is deleted we'll get this back and know to remove it from the pending image array
-							sourceId: newImageId,
+							sourceId: '' + newImageId,
 							// album needs this for keys!
-							id: newImageId,
+							id: '' + newImageId,
 						},
 					];
 				} else {
@@ -173,7 +194,7 @@
 		}
 	}
 
-	function deleteImage(e) {
+	function deleteImage(e: CustomEvent<string>) {
 		if (confirm('Are you sure you want to delete this image?')) {
 			echoOps.deleteImage(e.detail);
 		}
@@ -186,9 +207,9 @@
 			echoItem.name = name;
 		}
 
-		const redirect = (id) => page(`/echo/${id}`);
+		const redirect = (id: string) => page(`/echo/${id}`);
 
-		if (mode === 'upload') {
+		if (mode === EchoUploadMode.Upload) {
 			const id = await echoOps.upload(
 				null,
 				{

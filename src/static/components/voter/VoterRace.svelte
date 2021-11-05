@@ -39,21 +39,21 @@
 							</button>
 						</li>
 					{/if}
-					{#if window.Booker.voter.reset_votes}
+					{#if booker.voter.reset_votes}
 						<li>
 							<button on:click={resetVotes}>
 								<Icon icon="redo-alt" /> Reset Votes
 							</button>
 						</li>
 					{/if}
-					{#if window.Booker.voter.rename_race}
+					{#if booker.voter.rename_race}
 						<li>
 							<button on:click={() => (showRaceRename = true)}>
 								<Icon icon="edit" /> Rename Race
 							</button>
 						</li>
 					{/if}
-					{#if window.Booker.voter.remove_race}
+					{#if booker.voter.remove_race}
 						<li>
 							<button on:click={() => (showRaceDelete = true)}>
 								<Icon icon="trash" /> Delete Race
@@ -64,7 +64,7 @@
 			</MenuButton>
 		</div>
 		<div class="f-column" on:mouseenter={() => ($sortLocked = true)} on:mouseleave={() => ($sortLocked = false)}>
-			{#if window.Booker.voter.add_candidate}
+			{#if booker.voter.add_candidate}
 				<form on:submit|preventDefault={addCandidate} class="align-self-center" id="new-candidate-form">
 					<div class="align-self-center">
 						<TextInput id="new-candidate" bind:value={newCandidateName}>New candidate</TextInput>
@@ -113,8 +113,11 @@
 	/>
 {/if}
 
-<script>
-	import { MenuButton, Icon, Modal, TextInput } from 'sheodox-ui';
+<script lang="ts">
+	import MenuButton from 'sheodox-ui/MenuButton.svelte';
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import Modal from 'sheodox-ui/Modal.svelte';
+	import TextInput from 'sheodox-ui/TextInput.svelte';
 	import { writable, derived } from 'svelte/store';
 	import {
 		createRankedCandidateStore,
@@ -123,6 +126,7 @@
 		voterOps,
 		voterSelectedRace,
 	} from '../stores/voter';
+	import { booker } from '../stores/app';
 	import PageSpinner from '../PageSpinner.svelte';
 	import Candidate from './Candidate.svelte';
 	import { activeRouteParams } from '../stores/routing';
@@ -130,12 +134,13 @@
 	import PromptModal from '../PromptModal.svelte';
 	import PageLayout from '../../layouts/PageLayout.svelte';
 
-	const candidatesViewingDetails = writable([]),
+	// a store of candidate IDs that are expanded
+	const candidatesViewingDetails = writable<string[]>([]),
 		isViewingDetails = derived(candidatesViewingDetails, (candidates) => {
 			return candidates.length;
 		});
 
-	function toggleViewingDetails(e) {
+	function toggleViewingDetails(e: CustomEvent<string>) {
 		candidatesViewingDetails.update((viewingCandidates) => {
 			return viewingCandidates.includes(e.detail)
 				? viewingCandidates.filter((id) => id !== e.detail)
@@ -155,7 +160,7 @@
 		candidates = createRankedCandidateStore(
 			voterSelectedRace,
 			derived([sortLocked, isViewingDetails], ([locked, viewing]) => {
-				return locked || viewing;
+				return locked || !!viewing;
 			})
 		);
 
@@ -175,7 +180,7 @@
 		voterOps.race.resetVotes(raceId);
 	}
 
-	function renameRace(e) {
+	function renameRace(e: CustomEvent<string>) {
 		voterOps.race.rename(raceId, e.detail);
 	}
 

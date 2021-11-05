@@ -1,33 +1,33 @@
-require('dotenv-expand')(require('dotenv').config());
-import { app, io, server } from './server';
+import './env.js';
+import { app, io, server } from './server.js';
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import favicon from 'serve-favicon';
-import { prisma } from './db/prisma';
+import { prisma } from './db/prisma.js';
 import path from 'path';
 import expressSession from 'express-session';
 import { createClient as createRedisClient } from 'redis';
-import { requestId } from './util/request-id';
-import { appLogger } from './util/logger';
-import { errorHandler } from './util/error-handler';
+import { requestId } from './util/request-id.js';
+import { appLogger } from './util/logger.js';
+import { errorHandler } from './util/error-handler.js';
 import connectRedis from 'connect-redis';
-import { router as authRouter } from './routes/auth';
-import { router as notificationRouter } from './routes/notifications';
-import { router as echoRouter } from './routes/echo';
-import { router as voterRouter } from './routes/voter';
-import { router as userRouter } from './routes/user';
-import { initEvents } from './routes/events';
+import { router as authRouter } from './routes/auth.js';
+import { router as notificationRouter } from './routes/notifications.js';
+import { router as echoRouter } from './routes/echo.js';
+import { router as voterRouter } from './routes/voter.js';
+import { router as userRouter } from './routes/user.js';
+import { router as adminRouter } from './routes/admin.js';
+import { router as imagesRouter } from './routes/images.js';
+import { router as indexRouter } from './routes/index.js';
+import { initEvents } from './routes/events.js';
+import './routes/settings.js';
 
 const port = 4000,
 	redisClient = createRedisClient({
 		host: 'redis',
 	}),
-	logger = require('morgan'),
-	settings = require('./routes/settings'),
-	admin = require('./routes/admin'),
-	images = require('./routes/images'),
 	bodySizeLimit = '15mb';
 
 app.use(requestId);
@@ -46,8 +46,6 @@ app.use(
 app.use(bodyParser.json({ limit: bodySizeLimit }));
 app.use(bodyParser.urlencoded({ limit: bodySizeLimit, extended: true, parameterLimit: 50000 }));
 app.use(favicon('./public/assets/favicon.png'));
-
-app.use(logger('dev'));
 
 app.disable('x-powered-by');
 app.use(cookieParser());
@@ -73,7 +71,7 @@ app.use(passport.session());
 
 app.use('/auth', authRouter);
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.resolve('src/server/views'));
 app.set('view engine', 'pug');
 
 server.listen(port);
@@ -89,12 +87,11 @@ server.on('listening', () => {
 
 app.use(echoRouter);
 app.use(voterRouter);
-settings(io);
-app.use(admin(io));
+app.use(adminRouter);
 initEvents(io);
-app.use(images);
+app.use(imagesRouter);
 app.use(notificationRouter);
-app.use(require('./routes/index'));
+app.use(indexRouter);
 app.use('/user', userRouter);
 
 app.use((req, res, next) => next({ status: 404 }));
@@ -113,4 +110,4 @@ process.on('uncaughtException', async (error) => {
 	process.exit(1);
 });
 
-import './internal-server';
+import './internal-server.js';

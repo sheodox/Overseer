@@ -1,46 +1,30 @@
 import Ajv from 'ajv';
 import { Event, Rsvp, RsvpDay } from '@prisma/client';
-import { prisma } from './prisma';
-import { name as validName } from '../util/validator';
-import { createNotificationForUser } from '../util/create-notifications';
-import { eventsBooker } from './booker';
+import { prisma } from './prisma.js';
+import { name as validName } from '../util/validator.js';
+import { createNotificationForUser } from '../util/create-notifications.js';
+import { eventsBooker } from './booker.js';
+import type { RSVPStatus, RSVPSurvey, EventDay, EventEditable, EventList } from '../../shared/types/events';
+
+export const RSVP_STATUSES = ['going', 'not-going', 'maybe'] as const;
 const ajv = new Ajv(),
-	rsvpStatuses = ['going', 'not-going', 'maybe'] as const,
 	validateEventEditable = ajv.compile({
 		type: 'object',
 		properties: {
 			name: { type: 'string' },
 			attendanceType: { enum: ['real', 'virtual'] },
 			notes: { type: 'string' },
-			startDate: { type: 'number' },
-			endDate: { type: 'number' },
+			startDate: { type: 'string' },
+			endDate: { type: 'string' },
 		},
 		additionalProperties: false,
 	}),
 	validateRSPVStatus = ajv.compile({
-		enum: rsvpStatuses,
+		enum: RSVP_STATUSES,
 	}),
 	HOUR_MS = 1000 * 60 * 60,
 	DAY_MS = HOUR_MS * 24,
 	UPCOMING_REMINDER_CHECK_MS = 1000 * 60;
-
-export type RSVPStatus = typeof rsvpStatuses[number];
-type EventEditable = Pick<Event, 'name' | 'notes' | 'attendanceType' | 'startDate' | 'endDate'>;
-export interface EventDay {
-	date: string; //date.toLocaleDateString()
-	dayOfWeek: number; //date.getDay()
-}
-interface RSVPSurveyDay {
-	date: string; // should be a date from an EventDay, given back
-	going: boolean;
-	stayingOvernight: boolean;
-}
-interface RSVPSurvey {
-	notes: string;
-	days?: RSVPSurveyDay[];
-}
-
-export type EventList = (Event & { rsvps: (Rsvp & { rsvpDays: RsvpDay[] })[] })[];
 
 function createRSVPDayValidator(eventDays: EventDay[]) {
 	return ajv.compile({
@@ -203,6 +187,13 @@ class Events {
 
 		if (!validName(data.name)) {
 			return { error: 'Invalid name.' };
+		}
+
+		const startDate = new Date(data.startDate).getTime(),
+			endDate = new Date(data.endDate).getTime();
+
+		if (isNaN(startDate) || isNaN(endDate)) {
+			return { error: 'Invalid dates!' };
 		}
 
 		if (data.startDate > data.endDate) {

@@ -1,10 +1,10 @@
-import { AppRequest } from '../types';
+import { AppRequest } from '../types.js';
 import { Router, Response, NextFunction } from 'express';
 import { OAuth2Strategy } from 'passport-google-oauth';
 import { User } from '@prisma/client';
 import passport from 'passport';
-import { users } from '../db/users';
-import { authLogger } from '../util/logger';
+import { users } from '../db/users.js';
+import { authLogger } from '../util/logger.js';
 
 export const router = Router();
 

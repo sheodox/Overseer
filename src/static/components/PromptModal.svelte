@@ -9,6 +9,7 @@
 <Modal bind:visible {title}>
 	<form on:submit|preventDefault={save}>
 		<div class="modal-body">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label>
 				{label}
 				<br />
@@ -29,21 +30,22 @@
 	</form>
 </Modal>
 
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { Modal, Icon } from 'sheodox-ui';
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import Modal from 'sheodox-ui/Modal.svelte';
 	const dispatch = createEventDispatcher();
 
 	export let initialValue = '';
-	export let visible;
-	export let label;
-	export let title;
+	export let visible: boolean;
+	export let label: string;
+	export let title: string;
 	export let type = 'text';
-	export let hint;
+	export let hint: string = '';
 
 	let value = initialValue;
 
-	function focus(e) {
+	function focus(e: HTMLInputElement | HTMLTextAreaElement) {
 		e.focus();
 	}
 

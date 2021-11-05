@@ -1,6 +1,5 @@
 import sharp, { ResizeOptions } from 'sharp';
-import { prisma } from './prisma';
-import { Prisma } from '@prisma/client';
+import { prisma } from './prisma.js';
 
 const VALID_MIMES = ['image/jpeg', 'image/png'],
 	//get a matching height at a 16:9 aspect ratio for the given width

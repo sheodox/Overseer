@@ -45,17 +45,16 @@
 	</div>
 </Link>
 
-<script>
-	import { Icon } from 'sheodox-ui';
+<script lang="ts">
+	import Icon from 'sheodox-ui/Icon.svelte';
 	import Link from '../Link.svelte';
 	import UserBubble from '../UserBubble.svelte';
 	import EventTimes from './EventTimes.svelte';
 	import RSVPStatus from './RSVPStatus.svelte';
+	import type { MaskedEvent } from '../../../shared/types/events';
 
-	export let event;
+	export let event: MaskedEvent;
 
-	$: start = event.startDate.toLocaleString();
-	$: end = event.endDate.toLocaleString();
 	$: attendees = event.rsvps.filter(({ status }) => status === 'going').map(({ userId }) => userId);
 	$: numAttendees = attendees.length;
 </script>

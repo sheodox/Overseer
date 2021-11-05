@@ -11,25 +11,27 @@
 	<h2>Notifications</h2>
 	<Checkbox id="push-notifications" bind:checked={$settings.pushNotifications}>Send Push Notifications</Checkbox>
 
-	<div class="sub-panel">
-		<h3>Push Permissions</h3>
+	<div class="sub-panel mx-0 p-4">
+		<h3 class="mt-0">Push Permissions</h3>
 		{#if $pushSubscribed}
 			<p>You're set up to get push notifications on this device!</p>
 		{:else}
 			<p><em>You're not set up to get push notifications on this device.</em></p>
 			<PushNotificationSubscribe />
-			<p><Icon icon="info-circle" />This must be set up on every device you want to get push notifications.</p>
+			<p class="mb-0">
+				<Icon icon="info-circle" />This must be set up on every device you want to get push notifications.
+			</p>
 		{/if}
 	</div>
 
 	<h2>Desired Notifications</h2>
 	<div class="f-column">
-		{#if window.Booker.events.view}
+		{#if booker.events.view}
 			<Checkbox id="notify-new-events" bind:checked={$settings.notifyNewEvents}>New Events</Checkbox>
 
 			<Checkbox id="notify-event-reminders" bind:checked={$settings.notifyEventReminders}>Event Reminders</Checkbox>
 		{/if}
-		{#if window.Booker.echo.view}
+		{#if booker.echo.view}
 			<Checkbox id="notify-echo-uploads" bind:checked={$settings.notifyEchoUploads}>Echo Uploads</Checkbox>
 		{/if}
 		<Checkbox id="notify-site-announcements" bind:checked={$settings.notifySiteAnnouncements}>
@@ -38,9 +40,10 @@
 	</div>
 </div>
 
-<script>
-	import { Checkbox, Icon } from 'sheodox-ui';
-	import { settings, pushSubscribed, pageName } from '../stores/app';
+<script lang="ts">
+	import Checkbox from 'sheodox-ui/Checkbox.svelte';
+	import Icon from 'sheodox-ui/Icon.svelte';
+	import { settings, pushSubscribed, pageName, booker } from '../stores/app';
 	import PushNotificationSubscribe from '../notifications/PushNotificationSubscribe.svelte';
 
 	$pageName = 'Settings';

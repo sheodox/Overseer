@@ -9,9 +9,9 @@
 	}
 </style>
 
-{#if rsvps.length}
+{#if hasNotes}
 	<div>
-		<h2>Notes for the organizer</h2>
+		<h2 class="pt-3 pl-3 pb-1 m-0">Notes for the organizer</h2>
 		<div class="f-row f-wrap">
 			{#each rsvps as rsvp}
 				{#if rsvp.notes}
@@ -34,10 +34,11 @@
 	</div>
 {/if}
 
-<script>
+<script lang="ts">
 	import UserBubble from '../UserBubble.svelte';
 	import RSVPStatus from './RSVPStatus.svelte';
+	import type { MaskedRsvp } from '../../../shared/types/events';
 
-	export let rsvps;
+	export let rsvps: MaskedRsvp[];
 	$: hasNotes = rsvps.some(({ notes }) => !!notes);
 </script>

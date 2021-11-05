@@ -1,15 +1,13 @@
-<style>
-</style>
-
 {#if echoItem.uploading}
-	<SpikeSpinner size="small" /> Uploading
+	<SpikeSpinner size={SpikeSpinnerSizes.Small} /> Uploading
 {:else}
 	{bytes(echoItem.size, 'gb')}GB
 {/if}
 
-<script>
-	import SpikeSpinner from '../SpikeSpinner.svelte';
+<script lang="ts">
+	import SpikeSpinner, { SpikeSpinnerSizes } from '../SpikeSpinner.svelte';
 	import { bytes } from '../../../shared/formatters';
+	import type { PreparedEchoItem } from '../../../shared/types/echo';
 
-	export let echoItem;
+	export let echoItem: PreparedEchoItem;
 </script>

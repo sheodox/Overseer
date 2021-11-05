@@ -1,18 +1,20 @@
-import { createSafeWebsocketHandler, Harbinger } from '../util/harbinger';
-import { voterBooker } from '../db/booker';
-import { voter } from '../db/voter';
-import { AppRequest, ToastOptions } from '../types';
+import { createSafeWebsocketHandler, Harbinger } from '../util/harbinger.js';
+import { voterBooker } from '../db/booker.js';
+import { voter } from '../db/voter.js';
+import { AppRequest, ToastOptions } from '../types.js';
 import { Router, Response } from 'express';
-import { MaskedRace, maskVoterSessions } from '../util/maskVoterSessions';
-import { users } from '../db/users';
-import { safeAsyncRoute } from '../util/error-handler';
-import { voterLogger } from '../util/logger';
-import { diff } from 'deep-diff';
-import { Envoy } from '../../shared/envoy';
-import { broadcastToast, sendToastToUser } from '../util/create-notifications';
-import { io } from '../server';
+import { maskVoterSessions } from '../util/maskVoterSessions.js';
+import { users } from '../db/users.js';
+import { safeAsyncRoute } from '../util/error-handler.js';
+import { voterLogger } from '../util/logger.js';
+import deepdiff from 'deep-diff';
+import { Envoy } from '../../shared/envoy.js';
+import { broadcastToast, sendToastToUser } from '../util/create-notifications.js';
+import { io } from '../server.js';
+import type { MaskedRace } from '../../shared/types/voter';
 
-export const router = Router();
+export const router = Router(),
+	{ diff } = deepdiff;
 
 //cache what the races used to be, so we can get a diff of minimal changes to broadcast to
 //users for easy and efficient updates
