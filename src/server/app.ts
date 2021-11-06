@@ -45,7 +45,7 @@ app.use(
 );
 app.use(bodyParser.json({ limit: bodySizeLimit }));
 app.use(bodyParser.urlencoded({ limit: bodySizeLimit, extended: true, parameterLimit: 50000 }));
-app.use(favicon('./public/assets/favicon.png'));
+app.use(favicon('./public/favicon.png'));
 
 app.disable('x-powered-by');
 app.use(cookieParser());

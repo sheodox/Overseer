@@ -8,6 +8,10 @@ fi
 
 deploy_target=$1
 
+# run the prebuild steps so the shared 'public' directory exists for sure, and 
+# the folder is created with host system permissions and ownership
+./static-prebuild.sh
+
 if [[ $deploy_target == "dev" ]]; then
   docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 elif [[ $deploy_target  == "prod" ]]; then

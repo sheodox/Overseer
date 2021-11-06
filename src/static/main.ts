@@ -3,6 +3,7 @@
 //import 'vite/modulepreload-polyfill';
 import { styles } from 'sheodox-ui';
 import './scss/style.scss';
+//import '../../node_modules/fontawesome-free/css/all.min.css';
 
 import './components/stores/routing';
 import App from './components/App.svelte';

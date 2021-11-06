@@ -6,17 +6,18 @@ let cachedManifest: any;
 async function loadManifest() {
 	const manifestPath = path.join(process.cwd(), 'public/manifest.json');
 
-	if (process.env.NODE_ENV === 'production') {
-		if (!cachedManifest) {
-			cachedManifest = JSON.parse((await fs.readFile(manifestPath)).toString());
-		}
-		return cachedManifest;
+	if (!cachedManifest) {
+		cachedManifest = JSON.parse((await fs.readFile(manifestPath)).toString());
 	}
-	//reload every time for development
-	return JSON.parse((await fs.readFile(manifestPath)).toString());
+	return cachedManifest;
 }
 
 export async function getManifest(entryPath: string) {
+	// only the production build uses the manifest, in development files are served by vite
+	if (process.env.NODE_ENV === 'development') {
+		return {};
+	}
+
 	const manifest = await loadManifest();
 
 	const entry = manifest[entryPath],

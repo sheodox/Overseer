@@ -6,7 +6,7 @@ async function notify(event) {
 	const payload = event.data.json();
 	await self.registration.showNotification(`Overseer - ${payload.title}`, {
 		body: payload.message,
-		icon: '/assets/favicon.png',
+		icon: '/favicon.png',
 		vibrate: [100],
 		timestamp: new Date(payload.createdAt).getTime(),
 		data: payload,
