@@ -1,4 +1,4 @@
-<style>
+<style lang="scss">
 	.view-theater-button {
 		cursor: zoom-in;
 		padding: 0;
@@ -6,24 +6,30 @@
 	.image-container {
 		position: relative;
 	}
-	.strip .image-container {
-		margin: 0.5rem;
+	.strip {
+		.image-container {
+			margin: 0.5rem;
+		}
+		img {
+			width: var(--placeholder-width);
+			border-radius: 10px;
+		}
+	}
+	.cover {
+		.view-theater-button {
+			margin: 0;
+		}
 	}
 	button.delete-image {
 		position: absolute;
 		top: 0.2rem;
 		right: 0.2rem;
 	}
-	.cover .view-theater-button {
-		margin: 0;
-	}
 	.small .image {
 		--placeholder-width: 10rem;
-		border-radius: 10px;
 	}
 	.medium .image {
 		--placeholder-width: 34rem;
-		border-radius: 10px;
 	}
 	.image {
 		background: var(--shdx-panel-header-bg-dark);
@@ -35,9 +41,6 @@
 	.image.placeholder {
 		width: var(--placeholder-width);
 		height: calc(var(--placeholder-width) * (9 / 16));
-	}
-	.strip img {
-		width: var(--placeholder-width);
 	}
 </style>
 

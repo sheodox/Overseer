@@ -1,9 +1,6 @@
-<style>
+<style lang="scss">
 	.echo-item {
 		max-width: 90vw;
-	}
-	.description {
-		border-radius: 3px;
 	}
 	p {
 		color: red;
@@ -19,9 +16,37 @@
 	.download.unavailable {
 		color: var(--shdx-gray-900);
 	}
+
+	$corner-radius: 5px;
+	.list {
+		.echo-item-details {
+			border-radius: $corner-radius 0 0 $corner-radius;
+		}
+		.download {
+			border-radius: 0 $corner-radius $corner-radius 0;
+		}
+	}
+	.grid {
+		border-radius: $corner-radius $corner-radius 0 0;
+		overflow: hidden;
+
+		.echo-item-details {
+			border-radius: 0 0 0 $corner-radius;
+		}
+		.download {
+			border-radius: 0 0 $corner-radius 0;
+		}
+		// remove a bit of padding between everything
+		:global(.image-container) {
+			line-height: 0;
+			:global(*) {
+				line-height: 0;
+			}
+		}
+	}
 </style>
 
-<div class="echo-item f-column">
+<div class="echo-item f-column {variant}">
 	{#if variant === EchoViewLayout.Grid}
 		<EchoImages echoItem={item} mode={AlbumMode.View} size={AlbumSize.Medium} variant={AlbumVariant.Cover} />
 	{/if}

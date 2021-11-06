@@ -2,9 +2,6 @@
 	.offline-message {
 		margin: 0.5rem;
 	}
-	.input-group {
-		margin: 0.5rem;
-	}
 	.input-group input {
 		font-size: 0.9rem;
 	}
@@ -41,7 +38,7 @@
 		</div>
 
 		<div class="f-row align-items-center">
-			<div class="input-group f-1">
+			<div class="input-group f-1 my-2">
 				<label for="echo-search">
 					<Icon icon="search" noPadding={true} />
 					<span class="sr-only"> Search </span>
@@ -95,8 +92,8 @@
 
 <script context="module" lang="ts">
 	export enum EchoViewLayout {
-		Grid,
-		List,
+		Grid = 'grid',
+		List = 'list',
 	}
 </script>
 

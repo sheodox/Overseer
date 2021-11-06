@@ -31,9 +31,9 @@
 <div class="page-content">
 	<form on:submit|preventDefault={submit}>
 		<h1>{echoItem ? echoItem.name : 'Echo Upload'}</h1>
-		<EchoFileSelect bind:file {mode} />
 		<div class="details">
 			<div class="column f-1">
+				<EchoFileSelect bind:file {mode} />
 				<div class="field">
 					<TextInput bind:value={name} id="echo-name">Name</TextInput>
 				</div>
