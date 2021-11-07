@@ -1,4 +1,4 @@
-<style>
+<style lang="scss">
 	.candidate-container {
 		margin-bottom: 0.5rem;
 	}
@@ -45,6 +45,12 @@
 	.deleted {
 		filter: grayscale(1);
 	}
+	.details-toggle :global(i) {
+		transition: transform 0.2s;
+	}
+	.details-toggle[aria-expanded='true'] :global(i) {
+		transform: rotateX(180deg);
+	}
 </style>
 
 <div class="candidate-container">
@@ -79,8 +85,8 @@
 			</div>
 		</div>
 		{#if interactive}
-			<button on:click={toggleDetails} aria-expanded={showDetails}>
-				<Icon icon="chevron-{showDetails ? 'up' : 'down'}" />
+			<button on:click={toggleDetails} aria-expanded={showDetails} class="details-toggle">
+				<Icon icon="chevron-down" noPadding={true} />
 				<span class="sr-only">Toggle Showing Details</span>
 			</button>
 		{/if}
