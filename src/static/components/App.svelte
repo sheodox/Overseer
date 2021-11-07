@@ -29,7 +29,7 @@
 {/if}
 <main class="f-column justify-content-start align-items-center">
 	<Toasts />
-	{#if user}
+	{#if user.id}
 		<Routing />
 	{:else}
 		<LoginRequired />

@@ -15,7 +15,7 @@
 		{#if booker.app.notifications}
 			<NotificationTrigger />
 		{/if}
-		{#if user}
+		{#if user.id}
 			<HeaderUserDropdown />
 		{/if}
 	</ul>

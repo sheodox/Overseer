@@ -57,6 +57,7 @@ const RedisStore = connectRedis(expressSession),
 		secret: process.env.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: false,
+		name: 'overseer-sid',
 		cookie: {
 			secure: false,
 			expires: new Date(253402300000000),
