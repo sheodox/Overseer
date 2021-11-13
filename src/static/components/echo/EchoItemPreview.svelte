@@ -1,7 +1,4 @@
 <style lang="scss">
-	.echo-item {
-		max-width: 90vw;
-	}
 	p {
 		color: red;
 		margin: 0;
@@ -19,6 +16,7 @@
 
 	$corner-radius: 5px;
 	.list {
+		width: 100%;
 		.echo-item-details {
 			border-radius: $corner-radius 0 0 $corner-radius;
 		}

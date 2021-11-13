@@ -4,7 +4,7 @@
 	}
 </style>
 
-<a class={classes} {href} on:click|preventDefault={follow} class:no-hover-styles={noHoverStyles}>
+<a class={classes} {href} on:click|preventDefault={follow} class:no-hover-styles={noHoverStyles} style={styles}>
 	<slot />
 </a>
 
@@ -14,6 +14,8 @@
 	export let href: string;
 	export let noHoverStyles = false;
 	export let classes = '';
+	export let styles = '';
+
 	const dispatch = createEventDispatcher();
 
 	function follow() {

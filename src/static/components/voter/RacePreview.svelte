@@ -4,7 +4,7 @@
 	}
 	.preview {
 		width: 35rem;
-		max-width: 95vw;
+		max-width: 100%;
 		border-radius: 3px;
 	}
 	ol {
@@ -17,7 +17,7 @@
 	}
 </style>
 
-<Link href={raceHref}>
+<Link href={raceHref} styles="width: 100%">
 	<div class="preview card clickable px-3">
 		<div class="f-row justify-content-between align-items-center">
 			<h2>

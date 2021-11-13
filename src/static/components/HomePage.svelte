@@ -1,35 +1,32 @@
 <style>
-	.app-preview {
-		margin: 1rem;
-		max-width: 85vw;
-	}
 	.home {
 		display: grid;
 		grid-auto-flow: column;
 		grid-auto-columns: 1fr;
 	}
-	@media (max-width: 1300px) {
+	@media (max-width: 1200px) {
 		.home {
+			width: 100vw;
 			display: flex;
 			flex-direction: column;
 		}
 	}
 </style>
 
-<div class="home">
+<div class="home p-4 gap-4">
 	{#if booker.events.view && $upcomingEvents.length > 0}
 		<div class="app-preview">
 			<EventsAppPreview />
 		</div>
 	{/if}
-	{#if booker.echo.view}
-		<div class="app-preview">
-			<RecentUploads />
-		</div>
-	{/if}
 	{#if booker.voter.view}
 		<div class="app-preview">
 			<VoterPreview />
+		</div>
+	{/if}
+	{#if booker.echo.view}
+		<div class="app-preview">
+			<RecentUploads />
 		</div>
 	{/if}
 </div>

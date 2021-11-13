@@ -16,8 +16,8 @@
 
 <PageLayout title="Echo">
 	<div slot="beside-title">
-		{#if $echoOnline && booker.echo.upload}
-			<button on:click={() => page('/echo/upload')} class="primary">
+		{#if booker.echo.upload}
+			<button on:click={() => page('/echo/upload')} class="primary" disabled={!$echoOnline}>
 				<Icon icon="upload" />
 				New Upload
 			</button>
