@@ -17,10 +17,11 @@ import type {
 	RSVPStatus,
 	RsvpStatusCounts,
 } from '../../shared/types/events';
+import { deserialize, serialize } from 'onaji';
 const md = new MarkdownIt();
 
 function cloneObject<T>(obj: T): T {
-	return JSON.parse(JSON.stringify(obj));
+	return deserialize<T>(serialize(obj));
 }
 
 function maskRsvp(rsvp: Rsvp & { rsvpDays: RsvpDay[] }) {
@@ -47,10 +48,6 @@ async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]
 		userCanOrganize = await eventsBooker.check(userId, 'organize');
 
 	for (const event of list) {
-		//cloning the object turns Date objects into strings, turn them back!
-		event.startDate = new Date(event.startDate);
-		event.endDate = new Date(event.endDate);
-
 		const rsvps: MaskedRsvp[] = [],
 			eventDays = getEventDays(event),
 			attendeesByDay = eventDays.map((day) => {

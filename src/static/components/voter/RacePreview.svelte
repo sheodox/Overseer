@@ -3,7 +3,6 @@
 		margin: 0.5rem;
 	}
 	.preview {
-		width: 35rem;
 		max-width: 100%;
 		border-radius: 3px;
 	}

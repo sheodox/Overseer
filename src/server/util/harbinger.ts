@@ -1,4 +1,6 @@
+import { serialize } from 'onaji';
 import { Envoy } from '../../shared/envoy.js';
+
 import { Server, Socket } from 'socket.io';
 import { Booker } from '../db/booker.js';
 import { Logger } from 'winston';
@@ -82,7 +84,11 @@ export class Harbinger {
 
 			//by not returning any data, we skip this user (they don't have view permissions or something)
 			if (sendableData) {
-				socket.emit(eventName, sendableData);
+				socket.emit(
+					eventName,
+					// `null` is an object to JS, don't serialize that
+					sendableData && typeof sendableData === 'object' ? serialize(sendableData) : sendableData
+				);
 			}
 		}
 	}

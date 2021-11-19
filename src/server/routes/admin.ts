@@ -14,6 +14,7 @@ import { io } from '../server.js';
 import { createNotificationsForPermittedUsers } from '../util/create-notifications.js';
 import type { BookerModuleName, BookerDump } from '../../shared/types/admin';
 import serializeJavascript from 'serialize-javascript';
+import { serialize } from 'onaji';
 
 export const router = Router();
 export const BOOKERS = {
@@ -118,10 +119,13 @@ async function dump(socket: Socket) {
 		}
 	}
 
-	socket.emit('admin:refresh', {
-		users: await users.getAllUsers(),
-		bookers: bookerDumps,
-	});
+	socket.emit(
+		'admin:refresh',
+		serialize({
+			users: await users.getAllUsers(),
+			bookers: bookerDumps,
+		})
+	);
 }
 
 io.on('connection', (socket) => {

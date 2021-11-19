@@ -53,7 +53,7 @@
 			<Link href={item.path} noHoverStyles={true}>
 				<p class="shdx-font-size-5 mb-3">{item.name}</p>
 				<p>
-					<FileSize echoItem={item} /> - Updated {new Date(item.updatedAt).toLocaleDateString()}
+					<FileSize echoItem={item} /> - Updated {item.updatedAt.toLocaleDateString()}
 				</p>
 			</Link>
 		</div>

@@ -50,7 +50,7 @@
 	$: recentUploads = $echoItems
 		?.slice()
 		.sort((a, b) => {
-			return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+			return b.updatedAt.getTime() - a.updatedAt.getTime();
 		})
 		.slice(0, maxRecentUploads);
 	$: hiddenUploads = $echoItems.length - recentUploads.length;

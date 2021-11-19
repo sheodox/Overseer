@@ -13,7 +13,7 @@
 <div class="details card p-3 mt-2 mb-5">
 	<div class="f-row justify-content-between">
 		<UserBubble userId={candidate.creatorId}>
-			<em>Created {new Date(candidate.createdAt).toLocaleDateString()}</em>
+			<em>Created {candidate.createdAt.toLocaleDateString()}</em>
 		</UserBubble>
 		{#if !candidate.deleted && (booker.voter.update_candidate || canDelete)}
 			<MenuButton>

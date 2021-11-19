@@ -21,7 +21,7 @@
 				<tr>
 					<td>
 						<UserBubble user={{ loading: false, ...user }}>
-							<em>Active {new Date(user.lastActiveAt).toLocaleDateString()}</em>
+							<em>Active {user.lastActiveAt.toLocaleDateString()}</em>
 						</UserBubble>
 					</td>
 					<td class="text-align-right">
@@ -51,7 +51,7 @@
 			<tbody>
 				{#each userSubscriptionsShowing.pushSubscriptions as sub}
 					<tr>
-						<td>{new Date(sub.createdAt).toLocaleString()}</td>
+						<td>{sub.createdAt.toLocaleString()}</td>
 					</tr>
 				{/each}
 			</tbody>

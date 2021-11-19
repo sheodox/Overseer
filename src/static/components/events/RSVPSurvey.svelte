@@ -56,12 +56,13 @@
 	import Checkbox from 'sheodox-ui/Checkbox.svelte';
 	import { eventFromRoute, eventOps, getDayOfWeekName } from '../stores/events';
 	import { RSVPStatus, RSVPSurveyDay, EventDay } from '../../../shared/types/events';
+	import { serialize, deserialize } from 'onaji';
 
 	export let pendingStatus: RSVPStatus = null;
 	export let visible: boolean;
 
 	const previousResponse = $eventFromRoute.userRsvp,
-		baseEventDays: RSVPSurveyDay[] = JSON.parse(JSON.stringify($eventFromRoute.eventDays)).map((dayInfo: EventDay) => {
+		baseEventDays: RSVPSurveyDay[] = deserialize(serialize($eventFromRoute.eventDays)).map((dayInfo: EventDay) => {
 			return {
 				...dayInfo,
 				going: false,

@@ -14,8 +14,9 @@ const ajv = new Ajv(),
 			name: { type: 'string' },
 			attendanceType: { enum: ['real', 'virtual'] },
 			notes: { type: 'string' },
-			startDate: { type: 'string' },
-			endDate: { type: 'string' },
+			// these are Date objects and json schema doesn't validate those
+			startDate: {},
+			endDate: {},
 		},
 		additionalProperties: false,
 	}),
@@ -181,7 +182,7 @@ class Events {
 	}
 
 	validateEventData(data: EventEditable) {
-		if (!validateEventEditable(data)) {
+		if (!validateEventEditable(data) || ![data.startDate, data.endDate].every((date) => date instanceof Date)) {
 			return { error: 'Invalid data!' };
 		}
 
@@ -189,8 +190,8 @@ class Events {
 			return { error: 'Invalid name.' };
 		}
 
-		const startDate = new Date(data.startDate).getTime(),
-			endDate = new Date(data.endDate).getTime();
+		const startDate = data.startDate.getTime(),
+			endDate = data.endDate.getTime();
 
 		if (isNaN(startDate) || isNaN(endDate)) {
 			return { error: 'Invalid dates!' };
@@ -207,9 +208,6 @@ class Events {
 		if (validationErrors) {
 			return validationErrors;
 		}
-
-		data.startDate = new Date(data.startDate);
-		data.endDate = new Date(data.endDate);
 
 		const startTime = data.startDate.getTime();
 
@@ -238,9 +236,6 @@ class Events {
 		if (validationErrors) {
 			return validationErrors;
 		}
-
-		data.startDate = new Date(data.startDate);
-		data.endDate = new Date(data.endDate);
 
 		const currentEvent = await prisma.event.findUnique({ where: { id: eventId } }),
 			existingDays = getEventDays(currentEvent),

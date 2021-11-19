@@ -1,4 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
+import { serialize, deserialize } from 'onaji';
 import { Envoy } from '../../../shared/envoy';
 import axios from 'axios';
 import { bytes, tags as formatTags } from '../../../shared/formatters';
@@ -41,7 +42,7 @@ if (initialEchoData) {
 
 export const echoSearchResults = derived([echoItems, echoSearch], ([list, search]) => {
 	//be extra sure we make sure we don't mess with the original data
-	list = JSON.parse(JSON.stringify(list));
+	list = deserialize(serialize(list));
 
 	if (search) {
 		const terms = formatTags(search),

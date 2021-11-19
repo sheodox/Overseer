@@ -7,8 +7,8 @@ export interface User {
 	oauthId: string;
 	displayName: string;
 	profileImage: string;
-	createdAt: string;
-	lastActiveAt: string;
+	createdAt: Date;
+	lastActiveAt: Date;
 	settings?: UserSettings;
 	links: {
 		href: string;

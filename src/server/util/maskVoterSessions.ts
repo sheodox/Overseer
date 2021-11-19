@@ -1,10 +1,11 @@
+import { serialize, deserialize } from 'onaji';
 import { Vote } from '@prisma/client';
 import type { VoterData, MaskedRace, MaskedCandidate, Race } from '../../shared/types/voter';
 import MarkdownIt from 'markdown-it';
 const md = new MarkdownIt();
 
 export const maskVoterSessions = async (races: Race[]): Promise<VoterData> => {
-	races = JSON.parse(JSON.stringify(races));
+	races = deserialize(serialize(races));
 	const maskedRaces: MaskedRace[] = [];
 
 	function getUserFromVote(vote: Vote) {

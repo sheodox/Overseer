@@ -30,8 +30,6 @@ function parseEventsData(data: EventsData) {
 	const userId = user.id;
 
 	return data.map((event) => {
-		event.startDate = new Date(event.startDate);
-		event.endDate = new Date(event.endDate);
 		event.userRsvp = event.rsvps.find((rsvp) => rsvp.userId === userId) ?? null;
 		return event;
 	});

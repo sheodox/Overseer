@@ -13,7 +13,7 @@
 	}
 </style>
 
-<div class="home p-4 gap-4">
+<div class="home p-4 gap-6">
 	{#if booker.events.view && $upcomingEvents.length > 0}
 		<div class="app-preview">
 			<EventsAppPreview />

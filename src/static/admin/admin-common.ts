@@ -18,10 +18,10 @@ export const bookers = writable<BookerDump[]>([]);
 export const users = writable<UserDetailed[]>([]);
 
 adminEnvoy.on({
-	refresh: (bookerDump) => {
-		console.log(bookerDump);
-		bookers.set(bookerDump.bookers);
-		users.set(bookerDump.users);
+	refresh: (adminDump) => {
+		console.log(adminDump);
+		bookers.set(adminDump.bookers);
+		users.set(adminDump.users);
 	},
 });
 

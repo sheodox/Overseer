@@ -36,6 +36,7 @@
     "jsonwebtoken": "^8.5.1",
     "markdown-it": "^12.0.4",
     "morgan": "^1.9.0",
+    "onaji": "0.0.6",
     "page": "^1.11.6",
     "passport": "^0.4.0",
     "passport-google-oauth": "^2.0.0",

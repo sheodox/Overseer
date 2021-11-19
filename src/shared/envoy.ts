@@ -1,3 +1,4 @@
+import { serialize, deserialize, isOnajiSerialized } from 'onaji';
 import type { Socket } from 'socket.io';
 import type { Socket as SocketClient } from 'socket.io-client';
 
@@ -30,8 +31,17 @@ export class Envoy {
 	on(bindings: EnvoyBindings) {
 		for (let rawName in bindings) {
 			if (bindings.hasOwnProperty(rawName)) {
+				// wrap the function in a deserializing function
 				const eventName = this.namespace + ':' + rawName,
-					fn = bindings[rawName];
+					fn = (...args: any[]) => {
+						args = args.map((arg) => {
+							if (isOnajiSerialized(arg)) {
+								return deserialize(arg);
+							}
+							return arg;
+						});
+						return bindings[rawName](...args);
+					};
 				// @ts-ignore -- it doesn't like this line, todo fix this
 				this.socket.on(eventName, fn);
 				this.bindings.push([eventName, fn]);
@@ -51,6 +61,15 @@ export class Envoy {
 		socket.emit(event, ...args);
 	}
 	emit(eventName: string, ...args: any) {
+		//serialize any objects with onaji so Date objects and stuff can be
+		//deserialized on the other end without any specific parsing
+		args = args.map((arg: any) => {
+			// prevent serializing of null, in JS it has a typeof 'object'
+			if (arg && typeof arg === 'object') {
+				return serialize(arg);
+			}
+			return arg;
+		});
 		this._send(this.socket, eventName, ...args);
 	}
 	destroy() {
