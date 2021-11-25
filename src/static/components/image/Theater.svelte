@@ -69,7 +69,7 @@
 				on:click|stopPropagation|preventDefault={() => selectImageByOffset(-1)}
 			>
 				<span class="sr-only">View previous image</span>
-				<Icon icon="chevron-left" noPadding={true} />
+				<Icon icon="chevron-left" variant="icon-only" />
 			</button>
 			<img
 				class="selected-image"
@@ -83,7 +83,7 @@
 				on:click|stopPropagation|preventDefault={() => selectImageByOffset(1)}
 			>
 				<span class="sr-only">View previous image</span>
-				<Icon icon="chevron-right" noPadding={true} />
+				<Icon icon="chevron-right" variant="icon-only" />
 			</button>
 		</div>
 		<div class="other-images">

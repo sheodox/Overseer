@@ -57,7 +57,7 @@
 					title="Delete image"
 					on:click={() => deleteImage(image)}
 				>
-					<Icon icon="trash" noPadding={true} />
+					<Icon icon="trash" variant="icon-only" />
 					<span class="sr-only">Delete image</span>
 				</button>
 			{/if}

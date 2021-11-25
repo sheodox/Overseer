@@ -63,7 +63,7 @@
 				aria-pressed={votedUp}
 				disabled={candidate.deleted}
 			>
-				<Icon icon={votedUp ? 'plus-circle' : 'plus'} noPadding={true} />
+				<Icon icon={votedUp ? 'plus-circle' : 'plus'} variant="icon-only" />
 				<span class="sr-only">Vote up</span>
 			</button>
 			<button
@@ -73,7 +73,7 @@
 				aria-pressed={votedDown}
 				disabled={candidate.deleted}
 			>
-				<Icon icon={votedDown ? 'minus-circle' : 'minus'} noPadding={true} />
+				<Icon icon={votedDown ? 'minus-circle' : 'minus'} variant="icon-only" />
 				<span class="sr-only">Vote down</span>
 			</button>
 		{/if}
@@ -86,7 +86,7 @@
 		</div>
 		{#if interactive}
 			<button on:click={toggleDetails} aria-expanded={showDetails} class="details-toggle">
-				<Icon icon="chevron-down" noPadding={true} />
+				<Icon icon="chevron-down" variant="icon-only" />
 				<span class="sr-only">Toggle Showing Details</span>
 			</button>
 		{/if}

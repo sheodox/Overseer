@@ -1,33 +1,34 @@
 <style>
 	.sub-panel {
-		margin: 1rem 0.5rem;
-		padding: 1rem;
-	}
-	.details {
-		flex-basis: 30rem;
-		padding: var(--shdx-spacing-6);
-		background: var(--shdx-gray-600);
+		margin: 0;
+		padding: 0;
 	}
 	h1 {
 		margin: 0;
 		font-size: var(--shdx-font-size-9);
 	}
 	.notes {
-		max-width: 40em;
 		line-height: 1.6;
 	}
 	.notes :global(p:last-child) {
 		margin-bottom: 0;
 	}
+	#event-view {
+		width: 100%;
+		max-width: 65rem;
+	}
+	.collapsing-row {
+		display: flex;
+	}
 	.event-metadata {
 		color: var(--shdx-gray-100);
 	}
 	@media (max-width: 800px) {
+		.collapsing-row {
+			flex-direction: column;
+		}
 		h1 {
 			font-size: var(--shdx-font-size-6);
-		}
-		.details {
-			padding: var(--shdx-spacing-5);
 		}
 	}
 </style>
@@ -38,68 +39,74 @@
 	<p>Couldn't find an event for this ID, did it get deleted?</p>
 	<p><Link href="/events">Back to the events list.</Link></p>
 {:else}
-	<div class="page-content">
+	<div id="event-view" class="px-2">
 		<div class="f-row justify-content-center">
 			<EventNotificationReminder />
 		</div>
 
-		<div class="f-row f-wrap justify-content-center align-items-start">
-			<div>
-				<div class="sub-panel details">
-					<h1>{$eventFromRoute.name}</h1>
-					<div class="event-metadata f-row f-wrap justify-content-between shdx-font-size-3 mb-6">
-						<div>
-							<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
-							<EventTimes event={$eventFromRoute} />
-						</div>
-						{#if booker.events.rsvp}
-							<RSVP
-								status={userRsvp?.status}
-								showFixGoingWarning={userGoing && isMultipleDays && !userRsvp?.rsvpDays.length}
-								on:rsvp={rsvpPrompt}
-							/>
-						{/if}
+		<div class="collapsing-row gap-5 mt-4">
+			<div class="sub-panel f-1">
+				<h1>{$eventFromRoute.name}</h1>
+				<div class="event-metadata f-row f-wrap justify-content-between">
+					<div>
+						<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
+						<EventTimes event={$eventFromRoute} />
 					</div>
-
-					<div class="notes has-inline-links">
-						{@html $eventFromRoute.notesRendered}
-					</div>
-
-					{#if booker.events.organize}
-						<div class="f-row justify-content-end shdx-font-size-3">
-							<MenuButton>
-								<span slot="trigger">
-									Event Options
-									<Icon icon="chevron-down" />
-								</span>
-								<ul slot="menu">
-									<li>
-										<button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
-											<Icon icon="edit" />
-											Edit
-										</button>
-									</li>
-									<li>
-										<button on:click={() => (showDeleteConfirm = true)}>
-											<Icon icon="trash" />
-											Delete
-										</button>
-									</li>
-								</ul>
-							</MenuButton>
-						</div>
+					{#if booker.events.rsvp}
+						<RSVP
+							status={userRsvp?.status}
+							showFixGoingWarning={userGoing && isMultipleDays && !userRsvp?.rsvpDays.length}
+							on:rsvp={rsvpPrompt}
+						/>
 					{/if}
 				</div>
-				<div class="f-row f-wrap justify-content-between mt-5">
-					{#if booker.events.organize}
-						<RSVPNotes rsvps={$eventFromRoute.rsvps} />
-					{/if}
+
+				<div class="notes has-inline-links">
+					{@html $eventFromRoute.notesRendered}
 				</div>
-			</div>
-			<div class="sub-panel">
-				<Attendees event={$eventFromRoute} />
+
+				{#if booker.events.organize}
+					<div class="f-row justify-content-end shdx-font-size-3">
+						<MenuButton>
+							<span slot="trigger">
+								Event Options
+								<Icon icon="chevron-down" />
+							</span>
+							<ul slot="menu">
+								<li>
+									<button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
+										<Icon icon="edit" />
+										Edit
+									</button>
+								</li>
+								<li>
+									<button on:click={() => (showDeleteConfirm = true)}>
+										<Icon icon="trash" />
+										Delete
+									</button>
+								</li>
+							</ul>
+						</MenuButton>
+					</div>
+				{/if}
 			</div>
 		</div>
+
+		<div class="mb-2 mt-6">
+			<TabList bind:selectedTab {tabs} />
+		</div>
+		<Tab {selectedTab} tabId="rsvps">
+			<Attendance event={$eventFromRoute} />
+		</Tab>
+		<Tab {selectedTab} tabId="rsvps-day">
+			<AttendeeDetails event={$eventFromRoute} filter="day" />
+		</Tab>
+		<Tab {selectedTab} tabId="rsvps-overnight">
+			<AttendeeDetails event={$eventFromRoute} filter="overnight" />
+		</Tab>
+		<Tab {selectedTab} tabId="notes">
+			<RSVPNotes rsvps={$eventFromRoute.rsvps} />
+		</Tab>
 	</div>
 {/if}
 
@@ -124,9 +131,7 @@
 {/if}
 
 <script lang="ts">
-	import MenuButton from 'sheodox-ui/MenuButton.svelte';
-	import Icon from 'sheodox-ui/Icon.svelte';
-	import Modal from 'sheodox-ui/Modal.svelte';
+	import { MenuButton, Icon, Modal, Tab, TabList } from 'sheodox-ui';
 	import { pageName, booker } from '../stores/app';
 	import PageSpinner from '../PageSpinner.svelte';
 	import { eventFromRoute, eventOps, eventsInitialized } from '../stores/events';
@@ -135,20 +140,43 @@
 	import RSVP from './RSVP.svelte';
 	import RSVPSurvey from './RSVPSurvey.svelte';
 	import AttendanceTypeBadge from './AttendanceTypeBadge.svelte';
-	import Attendees from './Attendance.svelte';
+	import Attendance from './Attendance.svelte';
 	import EventTimes from './EventTimes.svelte';
 	import RSVPNotes from './RSVPNotes.svelte';
 	import EventNotificationReminder from './EventNotificationReminder.svelte';
+	import AttendeeDetails from './AttendeeDetails.svelte';
 	import type { RSVPStatus } from '../../../shared/types/events';
 
 	let pendingStatus: RSVPStatus,
 		showDeleteConfirm = false,
+		selectedTab: string,
 		showSurvey = false;
 
 	$: pendingStatusName = { going: 'Going', 'not-going': 'Not Going', maybe: 'Maybe' }[pendingStatus];
 	$: userRsvp = $eventFromRoute?.userRsvp;
 	$: isMultipleDays = $eventFromRoute?.eventDays.length > 1;
 	$: userGoing = userRsvp?.status === 'going';
+	$: numNotes = $eventFromRoute?.rsvps.reduce((sum, rsvp) => {
+		return sum + (!!rsvp.notes ? 1 : 0);
+	}, 0);
+	$: tabs = [
+		{
+			id: 'rsvps',
+			title: 'RSVPs',
+		},
+		booker.events.organize && {
+			id: 'notes',
+			title: `Notes (${numNotes})`,
+		},
+		isMultipleDays && {
+			id: 'rsvps-day',
+			title: 'RSVPs By Day',
+		},
+		isMultipleDays && {
+			id: 'rsvps-overnight',
+			title: 'Overnight Attendees',
+		},
+	].filter((tab) => !!tab);
 
 	$: $pageName = $eventFromRoute?.name ?? 'Events';
 

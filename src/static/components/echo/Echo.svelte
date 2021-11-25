@@ -40,7 +40,7 @@
 		<div class="f-row align-items-center">
 			<div class="input-group f-1 my-2">
 				<label for="echo-search">
-					<Icon icon="search" noPadding={true} />
+					<Icon icon="search" variant="icon-only" />
 					<span class="sr-only"> Search </span>
 				</label>
 				<input
@@ -50,7 +50,7 @@
 					class="f-1"
 				/>
 				<button on:click={() => ($echoSearch = '')}>
-					<Icon icon="times" noPadding={true} />
+					<Icon icon="times" variant="icon-only" />
 					<span class="sr-only"> Reset search </span>
 				</button>
 			</div>
@@ -63,11 +63,11 @@
 		{/if}
 		<div class="f-row justify-content-end view-modes">
 			<button class="small" on:click={() => (view = EchoViewLayout.List)} aria-pressed={view === EchoViewLayout.List}>
-				<Icon icon="list" noPadding={true} />
+				<Icon icon="list" variant="icon-only" />
 				<span class="sr-only">View as a list</span>
 			</button>
 			<button class="small" on:click={() => (view = EchoViewLayout.Grid)} aria-pressed={view === EchoViewLayout.Grid}>
-				<Icon icon="th" noPadding={true} />
+				<Icon icon="th" variant="icon-only" />
 				<span class="sr-only">View as a grid</span>
 			</button>
 		</div>
