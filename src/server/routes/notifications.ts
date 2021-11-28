@@ -15,7 +15,10 @@ export const router = Router();
 router.get('/n/:notificationId', async (req: AppRequest, res, next) => {
 	//mark the notification as read and go to wherever they were supposed to lead
 	const notification = await notifications.markRead(req.params.notificationId);
-	notificationHarbinger.broadcastToUser('markedRead', req.user.id, notification.id);
+
+	//get the userId from the notification, not req.user, as there's a very real chance that
+	//they aren't actually logged in, and if accessing req.user.id throws then they don't get redirected
+	notificationHarbinger.broadcastToUser('markedRead', notification.userId, notification.id);
 	res.redirect(notification.href || '/');
 });
 
