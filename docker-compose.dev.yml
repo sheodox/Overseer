@@ -30,6 +30,10 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
+    ports:
+      - 80:80
+      - 443:443
+      - 4001:4001
   postgres:
     # expose postgres in development so Prisma can be run from outside the container
     ports:

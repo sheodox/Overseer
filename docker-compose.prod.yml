@@ -8,6 +8,8 @@ services:
         source: ./public
         target: /usr/src/app/public
     restart: always
+    ports:
+      - 5041:4001
   nginx:
     restart: always
     volumes:
@@ -15,6 +17,8 @@ services:
         source: ./config/nginx/nginx.prod.conf
         target: /etc/nginx/nginx.conf
         read_only: true
+    ports:
+      - 5001:80
   postgres:
     restart: always
   redis:
