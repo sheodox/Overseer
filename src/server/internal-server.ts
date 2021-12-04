@@ -27,6 +27,11 @@ app.get('/logs', (req: AppRequest, res, next) => {
 	}
 });
 
+app.get('/', (req, res) => {
+	// respond to / with a success for health checks
+	res.send();
+});
+
 app.use((req, res, next) => {
 	next({ status: 404 });
 });
