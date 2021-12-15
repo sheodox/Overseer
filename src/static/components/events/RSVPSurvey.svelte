@@ -48,7 +48,7 @@
 		</label>
 	</div>
 	<div class="modal-footer">
-		<button disabled={!submittable} on:click={rsvp}>Confirm</button>
+		<button class="primary" disabled={!submittable} on:click={rsvp}>Confirm</button>
 	</div>
 </div>
 
