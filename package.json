@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "npm run style:check && npm run lint-static:prod && npm run lint-server:prod",
     "build:prod": "npm run build-static:prod && npm run build-server:prod",
     "build-static:prod": "./static-prebuild.sh && vite build",
     "build-static:dev": "./static-prebuild.sh && vite",
