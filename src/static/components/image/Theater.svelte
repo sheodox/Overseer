@@ -2,7 +2,7 @@
 	.theater {
 		background: rgba(0, 0, 0, 0.9);
 		position: fixed;
-		z-index: 100;
+		z-index: 1000000;
 		top: 0;
 		left: 0;
 		right: 0;
@@ -29,6 +29,7 @@
 	}
 	.selected-image-container {
 		position: relative;
+		margin: auto 0;
 	}
 	.prev {
 		left: 0;

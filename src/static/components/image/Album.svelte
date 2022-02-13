@@ -7,6 +7,7 @@
 		position: relative;
 	}
 	.strip {
+		--placeholder-max-width: 90%;
 		.image-container {
 			margin: 0.5rem;
 		}
@@ -16,6 +17,7 @@
 		}
 	}
 	.cover {
+		--placeholder-max-width: 90vw;
 		.view-theater-button {
 			margin: 0;
 		}
@@ -33,7 +35,6 @@
 	}
 	.image {
 		background: var(--shdx-panel-header-bg-dark);
-		--placeholder-max-width: 90vw;
 		max-width: var(--placeholder-max-width);
 		max-height: calc(var(--placeholder-max-width) * (9 / 16));
 		font-size: 1.5rem;
