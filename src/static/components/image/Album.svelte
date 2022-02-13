@@ -71,9 +71,11 @@
 </div>
 
 {#if showTheater}
-	<div on:click|stopPropagation|preventDefault>
-		<Theater {selectedImage} {images} bind:visible={showTheater} />
-	</div>
+	<Portal>
+		<div on:click|stopPropagation|preventDefault>
+			<Theater {selectedImage} {images} bind:visible={showTheater} />
+		</div>
+	</Portal>
 {/if}
 
 <script lang="ts" context="module">
@@ -101,7 +103,7 @@
 
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import Icon from 'sheodox-ui/Icon.svelte';
+	import { Icon, Portal } from 'sheodox-ui';
 	import Theater from './Theater.svelte';
 	const dispatch = createEventDispatcher();
 

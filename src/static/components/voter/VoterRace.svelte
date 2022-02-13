@@ -8,6 +8,9 @@
 		z-index: 99; /* below the theater */
 		background: var(--shdx-panel-bg);
 	}
+	.show-wizard {
+		border: 2px solid var(--shdx-pink-500);
+	}
 </style>
 
 {#if $voterSelectedRace}
@@ -63,7 +66,8 @@
 				</ul>
 			</MenuButton>
 		</div>
-		<div class="f-column" on:mouseenter={() => ($sortLocked = true)} on:mouseleave={() => ($sortLocked = false)}>
+
+		<div class="f-row justify-content-around align-items-center">
 			{#if booker.voter.add_candidate}
 				<form on:submit|preventDefault={addCandidate} class="align-self-center" id="new-candidate-form">
 					<div class="align-self-center">
@@ -71,7 +75,12 @@
 					</div>
 				</form>
 			{/if}
+			{#if booker.voter.vote}
+				<button class="show-wizard" on:click={() => (showVoteWizard = true)}>Help Me Vote!</button>
+			{/if}
+		</div>
 
+		<div class="f-column" on:mouseenter={() => ($sortLocked = true)} on:mouseleave={() => ($sortLocked = false)}>
 			{#each $candidates as candidate (candidate.id)}
 				<Candidate
 					{candidate}
@@ -113,6 +122,10 @@
 	/>
 {/if}
 
+{#if showVoteWizard}
+	<VoteWizard bind:visible={showVoteWizard} />
+{/if}
+
 <script lang="ts">
 	import MenuButton from 'sheodox-ui/MenuButton.svelte';
 	import Icon from 'sheodox-ui/Icon.svelte';
@@ -133,6 +146,7 @@
 	import Link from '../Link.svelte';
 	import PromptModal from '../PromptModal.svelte';
 	import PageLayout from '../../layouts/PageLayout.svelte';
+	import VoteWizard from './VoteWizard.svelte';
 
 	// a store of candidate IDs that are expanded
 	const candidatesViewingDetails = writable<string[]>([]),
@@ -166,7 +180,8 @@
 
 	let newCandidateName = '',
 		showRaceRename = false,
-		showRaceDelete = false;
+		showRaceDelete = false,
+		showVoteWizard = false;
 
 	$: raceId = $activeRouteParams.raceId;
 	$: raceMaxVotes = getRaceMaxVotes($voterSelectedRace);

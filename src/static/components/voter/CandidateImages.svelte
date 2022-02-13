@@ -1,11 +1,12 @@
-<Album {images} {mode} on:delete />
+<Album {images} {mode} {size} on:delete />
 
 <script lang="ts">
 	import { MaskedCandidate, CandidateImages } from '../../../shared/types/voter';
-	import Album, { AlbumMode } from '../image/Album.svelte';
+	import Album, { AlbumMode, AlbumSize } from '../image/Album.svelte';
 	export let candidateImages: CandidateImages;
 	export let candidate: MaskedCandidate;
 	export let mode: AlbumMode = AlbumMode.View;
+	export let size: AlbumSize = AlbumSize.Small;
 
 	$: images = candidateImages
 		//candidateImages are all images for this race, need to filter down to only images for this candidate
