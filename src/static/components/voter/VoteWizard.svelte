@@ -12,6 +12,7 @@
 	#wizard-candidate-container {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		width: 80rem;
 		max-width: 100vw;
 		margin: 0 auto;
@@ -37,6 +38,11 @@
 	}
 	.details {
 		overflow-y: scroll;
+		flex: 6;
+	}
+	.wizard-actions {
+		width: 40rem;
+		max-width: 100%;
 	}
 	.up,
 	.down {
@@ -47,29 +53,33 @@
 		}
 	}
 	button {
-		font-size: var(--shdx-font-size-6);
+		font-size: var(--shdx-font-size-5);
 		white-space: nowrap;
 		margin: 0;
-	}
-	@media (max-width: 500px) {
-		button {
-			font-size: var(--shdx-font-size-3);
-		}
 	}
 	.f-column,
 	.f-row {
 		gap: var(--shdx-spacing-2);
+	}
+
+	@media (max-width: 500px) {
+		button {
+			font-size: var(--shdx-font-size-3);
+		}
+		h1 {
+			font-size: var(--shdx-font-size-8) !important;
+		}
 	}
 </style>
 
 <div id="vote-wizard">
 	<div id="wizard-candidate-container" class="f-1 gap-5">
 		{#if candidate}
-			<div class="box f-5 details">
+			<div class="box details">
 				{#key candidate}
 					<div in:fly={{ y: 50 }}>
 						<h1 class="m-0 shdx-font-size-10">{candidate.name}</h1>
-						<div class="has-inline-links shdx-font-size-5">{@html candidate.notesRendered}</div>
+						<div class="has-inline-links shdx-font-size-4">{@html candidate.notesRendered}</div>
 						<div class="f-row f-wrap">
 							<CandidateImages
 								{candidate}
@@ -80,7 +90,7 @@
 					</div>
 				{/key}
 			</div>
-			<div class="box f-column f-1">
+			<div class="box f-column f-1 wizard-actions">
 				<div class="f-row f-1">
 					<button class="f-1" on:click={prev} disabled={!currentCandidateIndex}>
 						<Icon icon="chevron-left" />
