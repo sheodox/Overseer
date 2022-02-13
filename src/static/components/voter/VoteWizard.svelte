@@ -10,6 +10,8 @@
 		padding: 1rem;
 	}
 	#wizard-candidate-container {
+		display: flex;
+		flex-direction: column;
 		width: 80rem;
 		max-width: 100vw;
 		margin: 0 auto;
@@ -61,7 +63,7 @@
 </style>
 
 <div id="vote-wizard">
-	<div id="wizard-candidate-container" class="f-column f-1 gap-5">
+	<div id="wizard-candidate-container" class="f-1 gap-5">
 		{#if candidate}
 			<div class="box f-5 details">
 				{#key candidate}
@@ -78,26 +80,30 @@
 					</div>
 				{/key}
 			</div>
-			<div class="box f-row f-1">
-				<button class="f-1 down" on:click={down}>
-					<Icon icon="minus" variant="icon-only" />
-					<span class="sr-only">Vote down</span>
-				</button>
+			<div class="box f-column f-1">
+				<div class="f-row f-1">
+					<button class="f-1" on:click={prev} disabled={!currentCandidateIndex}>
+						<Icon icon="chevron-left" />
+						Back
+					</button>
+					<button class="f-1 down" on:click={down}>
+						<Icon icon="minus" variant="icon-only" />
+						<span class="sr-only">Vote down</span>
+					</button>
+					<button class="up f-1" on:click={up}>
+						<Icon icon="plus" variant="icon-only" />
+						<span class="sr-only">Vote up</span>
+					</button>
+					<button
+						class="f-1"
+						on:click={next}
+						disabled={currentCandidateIndex === $voterSelectedRace.candidates.length - 1}
+					>
+						Skip
+						<Icon icon="chevron-right" variant="append" />
+					</button>
+				</div>
 				<div class="f-1 f-column">
-					<div class="f-row f-1">
-						<button class="f-1" on:click={prev} disabled={!currentCandidateIndex}>
-							<Icon icon="chevron-left" />
-							Back
-						</button>
-						<button
-							class="f-1"
-							on:click={next}
-							disabled={currentCandidateIndex === $voterSelectedRace.candidates.length - 1}
-						>
-							Skip
-							<Icon icon="chevron-right" variant="append" />
-						</button>
-					</div>
 					<div>
 						<Progress value={currentCandidateIndex} max={totalCandidates} id="wizard-progress" />
 					</div>
@@ -106,10 +112,6 @@
 						Done
 					</button>
 				</div>
-				<button class="up f-1" on:click={up}>
-					<Icon icon="plus" variant="icon-only" />
-					<span class="sr-only">Vote up</span>
-				</button>
 			</div>
 		{:else}
 			<p>
