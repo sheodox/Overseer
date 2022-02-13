@@ -66,8 +66,8 @@
 			<div class="box f-5 details">
 				{#key candidate}
 					<div in:fly={{ y: 50 }}>
-						<h1 class="m-0">{candidate.name}</h1>
-						<div class="has-inline-links">{@html candidate.notesRendered}</div>
+						<h1 class="m-0 shdx-font-size-10">{candidate.name}</h1>
+						<div class="has-inline-links shdx-font-size-5">{@html candidate.notesRendered}</div>
 						<div class="f-row f-wrap">
 							<CandidateImages
 								{candidate}
