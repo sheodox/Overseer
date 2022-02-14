@@ -37,8 +37,9 @@
 		border: 2px solid var(--shdx-red-400);
 	}
 	.details {
-		overflow-y: scroll;
+		overflow-y: auto;
 		flex: 6;
+		width: 100%;
 	}
 	.wizard-actions {
 		width: 40rem;
