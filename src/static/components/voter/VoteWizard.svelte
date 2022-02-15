@@ -77,7 +77,7 @@
 	<div id="wizard-candidate-container" class="f-1 gap-5">
 		{#if candidate}
 			<div class="box details">
-				{#key candidate}
+				{#key candidate.id}
 					<div in:fly={{ y: 50 }}>
 						<h1 class="m-0 shdx-font-size-10">{candidate.name}</h1>
 						<div class="has-inline-links shdx-font-size-4">{@html candidate.notesRendered}</div>
