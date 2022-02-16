@@ -24,17 +24,15 @@
 		transform: translate(-50%, -50%);
 	}
 	.box {
-		background: var(--shdx-gray-500);
+		background: var(--shdx-gray-600);
 		border-radius: 1rem;
 		padding: 1rem;
 	}
 	.up {
 		color: var(--shdx-blue-400);
-		border: 2px solid var(--shdx-blue-400);
 	}
 	.down {
 		color: var(--shdx-red-400);
-		border: 2px solid var(--shdx-red-400);
 	}
 	.details {
 		overflow-y: auto;
@@ -47,10 +45,8 @@
 	}
 	.up,
 	.down {
-		background-color: var(--shdx-gray-300);
-
-		&:hover {
-			background-color: var(--shdx-gray-400);
+		&[aria-pressed='true'] {
+			border: 2px solid currentColor;
 		}
 	}
 	button {
@@ -97,11 +93,11 @@
 						<Icon icon="chevron-left" />
 						Back
 					</button>
-					<button class="f-1 down" on:click={down}>
+					<button class="f-1 down" on:click={down} aria-pressed={candidate.voted === 'down'}>
 						<Icon icon="minus" variant="icon-only" />
 						<span class="sr-only">Vote down</span>
 					</button>
-					<button class="up f-1" on:click={up}>
+					<button class="up f-1" on:click={up} aria-pressed={candidate.voted === 'up'}>
 						<Icon icon="plus" variant="icon-only" />
 						<span class="sr-only">Vote up</span>
 					</button>
@@ -140,14 +136,40 @@
 	import { AlbumSize } from '../image/Album.svelte';
 	import { voterSelectedRace, voterOps } from '../stores/voter';
 	import CandidateImages from './CandidateImages.svelte';
+	import { MaskedCandidate } from '../../../shared/types/voter';
 
 	export let visible: boolean;
 
-	$: candidate = $voterSelectedRace.candidates[currentCandidateIndex];
+	const candidates = shuffle($voterSelectedRace.candidates);
+	$: candidate = candidates[currentCandidateIndex];
 	$: canPrev = currentCandidateIndex > 0;
 	$: totalCandidates = $voterSelectedRace.candidates.length - 1;
 	$: canNext = currentCandidateIndex < totalCandidates;
 	let currentCandidateIndex = 0;
+
+	function shuffle(candidates: MaskedCandidate[]) {
+		const unvoted = candidates.filter((c) => !c.voted),
+			voted = candidates.filter((c) => !!c.voted);
+
+		// shuffle everything each time the wizard is opened, so people don't get accustomed to the order
+		// things were entered in, so they have to pay attention each time. sort the more actionable
+		// items first by puting the shuffled array of candidates that the user hasn't voted on before
+		// the ones that they have voted on. that way if they close and reopen the wizard they're greeted
+		// with the most actionable items right away.
+		return [...randomizeArray(unvoted), ...randomizeArray(voted)];
+	}
+
+	function randomizeArray<T>(arr: T[]): T[] {
+		const randomized: T[] = [];
+		// copy so we don't mutate the original array
+		arr = [...arr];
+
+		while (arr.length) {
+			const i = Math.floor(Math.random() * arr.length);
+			randomized.push(arr.splice(i, 1)[0]);
+		}
+		return randomized;
+	}
 
 	function done() {
 		visible = false;
