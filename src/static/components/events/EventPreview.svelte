@@ -24,7 +24,7 @@
 			</p>
 
 			<div class="f-row justify-content-between">
-				<div class="f-row mr-2 attendees-preview">
+				<div class="f-row gap-1 mr-2 attendees-preview">
 					<div title="{numAttendees} {numAttendees === 1 ? 'person' : 'people'} going" class="mr-2">
 						<Icon icon="user-friends" />
 						{numAttendees} <span class="sr-only">People Going</span>
