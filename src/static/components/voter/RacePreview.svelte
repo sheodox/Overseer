@@ -53,9 +53,9 @@
 	export let race: MaskedRace;
 
 	const maxCandidates = 3;
-	$: candidateRanking = rankCandidates(race);
+	$: candidateRanking = rankCandidates(race, []);
 	$: candidateSlice = candidateRanking.slice(0, maxCandidates);
 	$: extraCandidates = candidateRanking.length - maxCandidates;
-	$: raceMaxVotes = getRaceMaxVotes(race);
+	$: raceMaxVotes = getRaceMaxVotes(race.candidates);
 	$: raceHref = `/voter/${race.id}`;
 </script>

@@ -29,6 +29,12 @@
 				</span>
 				<ul slot="menu">
 					<li>
+						<button on:click={() => (showFilters = !showFilters)}>
+							<Icon icon="filter" />
+							{showFilters ? 'Hide Filters' : 'Show Filters'}
+						</button>
+					</li>
+					<li>
 						<button on:click={viewAllDetails}>
 							<Icon icon="eye" />
 							View All Details
@@ -67,6 +73,9 @@
 			</MenuButton>
 		</div>
 
+		{#if showFilters}
+			<div><VoterUserFilters {voters} /></div>
+		{/if}
 		<div class="f-row justify-content-around align-items-center">
 			{#if booker.voter.add_candidate}
 				<form on:submit|preventDefault={addCandidate} class="align-self-center" id="new-candidate-form">
@@ -80,6 +89,13 @@
 			{/if}
 		</div>
 
+		{#if hasFilteredOutVoters}
+			<p class="text-align-center">
+				Some voters are not being shown in this ranking. <button on:click={() => ($filteredOutVoters = [])}
+					>Reset</button
+				>
+			</p>
+		{/if}
 		<div class="f-column" on:mouseenter={() => ($sortLocked = true)} on:mouseleave={() => ($sortLocked = false)}>
 			{#each $candidates as candidate (candidate.id)}
 				<Candidate
@@ -134,6 +150,7 @@
 	import { writable, derived } from 'svelte/store';
 	import {
 		createRankedCandidateStore,
+		filteredOutVoters,
 		getRaceMaxVotes,
 		voterInitialized,
 		voterOps,
@@ -147,6 +164,7 @@
 	import PromptModal from '../PromptModal.svelte';
 	import PageLayout from '../../layouts/PageLayout.svelte';
 	import VoteWizard from './VoteWizard.svelte';
+	import VoterUserFilters from './VoterUserFilters.svelte';
 
 	// a store of candidate IDs that are expanded
 	const candidatesViewingDetails = writable<string[]>([]),
@@ -181,10 +199,23 @@
 	let newCandidateName = '',
 		showRaceRename = false,
 		showRaceDelete = false,
-		showVoteWizard = false;
+		showVoteWizard = false,
+		showFilters = false;
 
 	$: raceId = $activeRouteParams.raceId;
-	$: raceMaxVotes = getRaceMaxVotes($voterSelectedRace);
+	$: raceMaxVotes = getRaceMaxVotes($candidates);
+	$: voters = Array.from(
+		$voterSelectedRace.candidates.reduce((votes, candidate) => {
+			for (const voter of candidate.votedUp) {
+				votes.add(voter);
+			}
+			for (const voter of candidate.votedDown) {
+				votes.add(voter);
+			}
+			return votes;
+		}, new Set<string>())
+	);
+	$: hasFilteredOutVoters = voters.some((v) => $filteredOutVoters.includes(v));
 
 	function addCandidate() {
 		voterOps.candidate.new(raceId, newCandidateName);

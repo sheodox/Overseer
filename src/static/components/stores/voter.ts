@@ -111,6 +111,8 @@ export const voterOps = {
 	},
 };
 
+export const filteredOutVoters = writable<string[]>([]);
+
 export function createRankedCandidateStore(
 	raceStore: Readable<MaskedRace>,
 	lockStore: Readable<boolean>
@@ -149,14 +151,17 @@ export function createRankedCandidateStore(
 						...newCandidates,
 					];
 				} else {
-					return rankCandidates(raceUpdate);
+					return rankCandidates(raceUpdate, get(filteredOutVoters));
 				}
 			});
+		}),
+		filteredOutVotersUnsubscribe = filteredOutVoters.subscribe((voters) => {
+			store.set(rankCandidates(get(raceStore) || { candidates: [] }, voters));
 		}),
 		lockUnsubscribe = lockStore.subscribe((locked) => {
 			//when unlocked, immediately sort in case we deferred sorting until now
 			if (!locked) {
-				store.set(rankCandidates(get(raceStore) || { candidates: [] }));
+				store.set(rankCandidates(get(raceStore) || { candidates: [] }, get(filteredOutVoters)));
 			}
 		});
 
@@ -165,6 +170,7 @@ export function createRankedCandidateStore(
 			const rankingUnsubscribe = store.subscribe(subscription);
 			return () => {
 				rankingUnsubscribe();
+				filteredOutVotersUnsubscribe();
 				raceUnsubscribe();
 				lockUnsubscribe();
 			};
@@ -176,21 +182,27 @@ function weightedVotes(candidate: MaskedCandidate) {
 	return candidate.votedUp.length - 1.1 * candidate.votedDown.length;
 }
 
-export function rankCandidates(race: { candidates: MaskedCandidate[] }) {
+export function rankCandidates(race: { candidates: MaskedCandidate[] }, filteredOutVoters: string[]) {
 	if (!race) {
 		return [];
 	}
-	return race.candidates.slice().sort((a, b) => {
-		return weightedVotes(b) - weightedVotes(a);
-	});
+	const filterOut = (vote: string) => !filteredOutVoters.includes(vote);
+
+	return race.candidates
+		.slice()
+		.map((candidate) => {
+			const votedUp = candidate.votedUp.filter(filterOut),
+				votedDown = candidate.votedDown.filter(filterOut);
+			return { ...candidate, votedUp, votedDown };
+		})
+		.sort((a, b) => {
+			return weightedVotes(b) - weightedVotes(a);
+		});
 }
 
-export function getRaceMaxVotes(race: MaskedRace) {
-	if (!race) {
-		return 1;
-	}
+export function getRaceMaxVotes(candidates: MaskedCandidate[]) {
 	return Math.max(
-		...race.candidates.map((candidate) => {
+		...candidates.map((candidate) => {
 			return candidate.votedUp.length + candidate.votedDown.length;
 		})
 	);
