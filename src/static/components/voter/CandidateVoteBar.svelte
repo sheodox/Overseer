@@ -16,7 +16,7 @@
 
 {#if votePercent > 0}
 	<div class="f-row {direction}" style="width: {votePercent}%">
-		<div class="voters f-row">
+		<div class="voters f-row gap-1">
 			<span class="vote-count fw-bold">{votes}</span>
 			{#each voters as userId (userId)}
 				<UserBubble {userId} mode="minimal" />

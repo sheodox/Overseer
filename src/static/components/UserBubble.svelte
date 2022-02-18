@@ -2,6 +2,7 @@
 	img.minimal,
 	.placeholder.minimal {
 		--image-size: 1.3rem;
+		margin: 0;
 	}
 	img,
 	.placeholder {
