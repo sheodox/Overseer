@@ -80,8 +80,18 @@
 		<div class="candidate-name-container f-column f-1">
 			<span class="fw-bold candidate-name">{candidate.name}</span>
 			<div class="vote-bars">
-				<CandidateVoteBar direction="up" {raceMaxVotes} voters={candidate.votedUp} />
-				<CandidateVoteBar direction="down" {raceMaxVotes} voters={candidate.votedDown} />
+				<CandidateVoteBar
+					direction="up"
+					{raceMaxVotes}
+					voters={candidate.votedUp}
+					opposingVoters={candidate.votedDown}
+				/>
+				<CandidateVoteBar
+					direction="down"
+					{raceMaxVotes}
+					voters={candidate.votedDown}
+					opposingVoters={candidate.votedUp}
+				/>
 			</div>
 		</div>
 		{#if interactive}
