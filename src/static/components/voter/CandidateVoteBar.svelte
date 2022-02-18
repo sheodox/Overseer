@@ -1,9 +1,15 @@
 <style>
+	.up,
+	.down {
+		border: 2px solid transparent;
+	}
 	.up {
-		background: var(--shdx-accent-blue);
+		border-color: var(--shdx-accent-blue);
+		background-color: var(--shdx-blue-800);
 	}
 	.down {
-		background: var(--shdx-accent-red);
+		border-color: var(--shdx-accent-red);
+		background-color: var(--shdx-red-800);
 	}
 	.voters {
 		position: absolute;
