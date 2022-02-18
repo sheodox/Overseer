@@ -145,11 +145,14 @@ export function createRankedCandidateStore(
 							  };
 					});
 
-					return [
-						...oldCandidates,
-						//add any new candidates to the bottom
-						...newCandidates,
-					];
+					return filterVoters(
+						[
+							...oldCandidates,
+							//add any new candidates to the bottom
+							...newCandidates,
+						],
+						get(filteredOutVoters)
+					);
 				} else {
 					return rankCandidates(raceUpdate, get(filteredOutVoters));
 				}
@@ -182,22 +185,24 @@ function weightedVotes(candidate: MaskedCandidate) {
 	return candidate.votedUp.length - 1.1 * candidate.votedDown.length;
 }
 
+function filterVoters(candidates: MaskedCandidate[], filteredOutVoters: string[]) {
+	const filterOut = (vote: string) => !filteredOutVoters.includes(vote);
+
+	return candidates.slice().map((candidate) => {
+		const votedUp = candidate.votedUp.filter(filterOut),
+			votedDown = candidate.votedDown.filter(filterOut);
+		return { ...candidate, votedUp, votedDown };
+	});
+}
+
 export function rankCandidates(race: { candidates: MaskedCandidate[] }, filteredOutVoters: string[]) {
 	if (!race) {
 		return [];
 	}
-	const filterOut = (vote: string) => !filteredOutVoters.includes(vote);
 
-	return race.candidates
-		.slice()
-		.map((candidate) => {
-			const votedUp = candidate.votedUp.filter(filterOut),
-				votedDown = candidate.votedDown.filter(filterOut);
-			return { ...candidate, votedUp, votedDown };
-		})
-		.sort((a, b) => {
-			return weightedVotes(b) - weightedVotes(a);
-		});
+	return filterVoters(race.candidates, filteredOutVoters).sort((a, b) => {
+		return weightedVotes(b) - weightedVotes(a);
+	});
 }
 
 export function getRaceMaxVotes(candidates: MaskedCandidate[]) {
