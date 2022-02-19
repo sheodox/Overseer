@@ -62,13 +62,15 @@
 	export let visible: boolean;
 
 	const previousResponse = $eventFromRoute.userRsvp,
-		baseEventDays: RSVPSurveyDay[] = deserialize(serialize($eventFromRoute.eventDays)).map((dayInfo: EventDay) => {
-			return {
-				...dayInfo,
-				going: false,
-				stayingOvernight: false,
-			};
-		}),
+		baseEventDays: RSVPSurveyDay[] = deserialize<RSVPSurveyDay[]>(serialize($eventFromRoute.eventDays)).map(
+			(dayInfo: EventDay) => {
+				return {
+					...dayInfo,
+					going: false,
+					stayingOvernight: false,
+				};
+			}
+		),
 		days = mergeMissingDays(previousResponse?.rsvpDays, baseEventDays);
 
 	let notes = previousResponse?.notes ?? '';
