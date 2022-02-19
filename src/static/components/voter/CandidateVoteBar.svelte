@@ -31,6 +31,9 @@
 	}
 	.bar {
 		transition: width 0.2s;
+		/* don't let user bubbles overflow */
+		position: relative;
+		overflow: hidden;
 
 		&.no-votes {
 			border: none;
