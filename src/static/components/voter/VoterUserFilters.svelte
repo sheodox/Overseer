@@ -7,7 +7,7 @@
 
 <fieldset>
 	<legend class="mb-0 fw-bold">Ranking Between Users</legend>
-	<div class="f-row">
+	<div class="f-row f-wrap">
 		{#each voters as voter}
 			<button on:click={() => toggle(voter)} aria-pressed={!$filteredOutVoters.includes(voter)}>
 				<UserBubble userId={voter} mode="minimal" />
