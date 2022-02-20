@@ -9,7 +9,8 @@
 		background: var(--shdx-panel-bg);
 	}
 	.show-wizard {
-		border: 2px solid var(--shdx-pink-500);
+		border: 2px solid var(--shdx-pink-400);
+		color: var(--shdx-pink-400);
 	}
 </style>
 
