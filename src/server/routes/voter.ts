@@ -141,6 +141,10 @@ io.on('connection', async (socket) => {
 				broadcast();
 			}
 		},
+		unbanAll: checkPermission('ban_candidate', async (raceId) => {
+			await voter.unbanAll(raceId);
+			broadcast();
+		}),
 		removeRace: checkPermission('remove_race', async (raceId) => {
 			await voter.removeRace(raceId);
 			broadcast();

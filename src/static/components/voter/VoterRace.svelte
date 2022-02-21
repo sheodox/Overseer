@@ -70,6 +70,13 @@
 							</button>
 						</li>
 					{/if}
+					{#if booker.voter.ban_candidate}
+						<li>
+							<button on:click={unbanAll}>
+								<Icon icon="check" /> Unban All
+							</button>
+						</li>
+					{/if}
 				</ul>
 			</MenuButton>
 		</div>
@@ -234,5 +241,11 @@
 	function deleteRace() {
 		showRaceDelete = false;
 		voterOps.race.delete(raceId);
+	}
+
+	function unbanAll() {
+		if (confirm('Are you sure you want to unban all candidates in this race?')) {
+			voterOps.race.unbanAll($voterSelectedRace.id);
+		}
 	}
 </script>

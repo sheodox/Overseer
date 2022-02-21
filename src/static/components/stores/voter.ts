@@ -88,6 +88,9 @@ export const voterOps = {
 		rename: (raceId: string, name: string) => {
 			voterEnvoy.emit('renameRace', raceId, name);
 		},
+		unbanAll: (raceId: string) => {
+			voterEnvoy.emit('unbanAll', raceId);
+		},
 	},
 	candidate: {
 		new: (raceId: string, name: string) => {

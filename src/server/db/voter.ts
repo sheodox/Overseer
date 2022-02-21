@@ -58,6 +58,14 @@ class Voter {
 
 		await prisma.$transaction([deleteVotes, deleteCandidateImages, deleteCandidates, deleteRace]);
 	}
+	async unbanAll(raceId: string) {
+		await prisma.candidate.updateMany({
+			where: { raceId, banned: true },
+			data: {
+				banned: false,
+			},
+		});
+	}
 	async renameRace(raceId: string, name: string) {
 		if (validName(name)) {
 			return await prisma.race.update({
