@@ -207,6 +207,7 @@ export function rankCandidates(race: { candidates: MaskedCandidate[] }, filtered
 
 export function getRaceMaxVotes(candidates: MaskedCandidate[]) {
 	return Math.max(
+		1, // there at least should be one vote, without this it'll try and divide by zero when getting a percentage
 		...candidates.map((candidate) => {
 			return candidate.votedUp.length + candidate.votedDown.length;
 		})
