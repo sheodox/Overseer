@@ -102,6 +102,12 @@ export const voterOps = {
 		update: (candidateId: string, name: string, notes: string) => {
 			voterEnvoy.emit('updateCandidate', candidateId, name, notes);
 		},
+		ban: (candidateId: string) => {
+			voterEnvoy.emit('banCandidate', candidateId);
+		},
+		unban: (candidateId: string) => {
+			voterEnvoy.emit('unbanCandidate', candidateId);
+		},
 		uploadImage(candidateId: string, file: File) {
 			uploadImage('Voter Upload', file, `/voter/${candidateId}/upload`);
 		},
@@ -182,6 +188,11 @@ export function createRankedCandidateStore(
 }
 
 function weightedVotes(candidate: MaskedCandidate) {
+	// always show banned candidates beneath everything else, they're not even an option
+	if (candidate.banned) {
+		return -Infinity;
+	}
+
 	return candidate.votedUp.length - 1.1 * candidate.votedDown.length;
 }
 

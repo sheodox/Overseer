@@ -38,6 +38,23 @@
 							</button>
 						</li>
 					{/if}
+					{#if booker.voter.ban_candidate}
+						{#if candidate.banned}
+							<li>
+								<button on:click={unban}>
+									<Icon icon="check" />
+									Unban
+								</button>
+							</li>
+						{:else}
+							<li>
+								<button on:click={ban}>
+									<Icon icon="ban" />
+									Ban
+								</button>
+							</li>
+						{/if}
+					{/if}
 				</ul>
 			</MenuButton>
 		{/if}
@@ -72,5 +89,12 @@
 
 	function deleteCandidate() {
 		voterOps.candidate.delete(candidate.id);
+	}
+
+	function ban() {
+		voterOps.candidate.ban(candidate.id);
+	}
+	function unban() {
+		voterOps.candidate.unban(candidate.id);
 	}
 </script>

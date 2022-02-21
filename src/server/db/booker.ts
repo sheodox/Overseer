@@ -250,6 +250,7 @@ export const voterBooker = new Booker('voter', [
 	'add_candidate',
 	'add_image',
 	'remove_image',
+	'ban_candidate',
 ]);
 
 export const eventsBooker = new Booker('events', ['view', 'organize', 'rsvp']);

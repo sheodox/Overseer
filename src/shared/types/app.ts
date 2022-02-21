@@ -26,6 +26,7 @@ export interface BookerPermissions {
 		remove_race: boolean;
 		reset_votes: boolean;
 		update_candidate: boolean;
+		ban_candidate: boolean;
 		add_race: boolean;
 		add_candidate: boolean;
 		add_image: boolean;

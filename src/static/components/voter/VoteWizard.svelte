@@ -93,11 +93,16 @@
 						<Icon icon="chevron-left" />
 						Back
 					</button>
-					<button class="f-1 down" on:click={down} aria-pressed={candidate.voted === 'down'}>
+					<button
+						class="f-1 down"
+						on:click={down}
+						aria-pressed={candidate.voted === 'down'}
+						disabled={candidate.banned}
+					>
 						<Icon icon="minus" variant="icon-only" />
 						<span class="sr-only">Vote down</span>
 					</button>
-					<button class="up f-1" on:click={up} aria-pressed={candidate.voted === 'up'}>
+					<button class="up f-1" on:click={up} aria-pressed={candidate.voted === 'up'} disabled={candidate.banned}>
 						<Icon icon="plus" variant="icon-only" />
 						<span class="sr-only">Vote up</span>
 					</button>
@@ -143,13 +148,14 @@
 	const candidates = shuffle($voterSelectedRace.candidates);
 	$: candidate = candidates[currentCandidateIndex];
 	$: canPrev = currentCandidateIndex > 0;
-	$: totalCandidates = $voterSelectedRace.candidates.length - 1;
+	$: totalCandidates = candidates.length - 1;
 	$: canNext = currentCandidateIndex < totalCandidates;
 	let currentCandidateIndex = 0;
 
 	function shuffle(candidates: MaskedCandidate[]) {
-		const unvoted = candidates.filter((c) => !c.voted),
-			voted = candidates.filter((c) => !!c.voted);
+		const voteable = candidates.filter((c) => !c.banned),
+			unvoted = voteable.filter((c) => !c.voted),
+			voted = voteable.filter((c) => !!c.voted);
 
 		// shuffle everything each time the wizard is opened, so people don't get accustomed to the order
 		// things were entered in, so they have to pay attention each time. sort the more actionable

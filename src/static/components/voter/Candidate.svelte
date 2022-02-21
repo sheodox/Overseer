@@ -18,10 +18,10 @@
 	.vote-button.voted :global(i) {
 		filter: drop-shadow(0 0 0.5rem);
 	}
-	.upvote {
+	.upvote:enabled {
 		color: var(--shdx-blue-400);
 	}
-	.downvote {
+	.downvote:enabled {
 		color: var(--shdx-red-400);
 	}
 	.candidate-name {
@@ -51,6 +51,9 @@
 	.details-toggle[aria-expanded='true'] :global(i) {
 		transform: rotateX(180deg);
 	}
+	.banned-message {
+		font-style: italic;
+	}
 </style>
 
 <div class="candidate-container">
@@ -61,7 +64,7 @@
 				class="vote-button upvote"
 				class:voted={votedUp}
 				aria-pressed={votedUp}
-				disabled={candidate.deleted}
+				disabled={candidate.deleted || candidate.banned}
 			>
 				<Icon icon={votedUp ? 'plus-circle' : 'plus'} variant="icon-only" />
 				<span class="sr-only">Vote up</span>
@@ -71,7 +74,7 @@
 				class="vote-button downvote"
 				class:voted={votedDown}
 				aria-pressed={votedDown}
-				disabled={candidate.deleted}
+				disabled={candidate.deleted || candidate.banned}
 			>
 				<Icon icon={votedDown ? 'minus-circle' : 'minus'} variant="icon-only" />
 				<span class="sr-only">Vote down</span>
@@ -79,20 +82,24 @@
 		{/if}
 		<div class="candidate-name-container f-column f-1">
 			<span class="fw-bold candidate-name">{candidate.name}</span>
-			<div class="vote-bars">
-				<CandidateVoteBar
-					direction="up"
-					{raceMaxVotes}
-					voters={candidate.votedUp}
-					opposingVoters={candidate.votedDown}
-				/>
-				<CandidateVoteBar
-					direction="down"
-					{raceMaxVotes}
-					voters={candidate.votedDown}
-					opposingVoters={candidate.votedUp}
-				/>
-			</div>
+			{#if candidate.banned}
+				<p class="m-0 muted banned-message">This cannot be voted for currently.</p>
+			{:else}
+				<div class="vote-bars">
+					<CandidateVoteBar
+						direction="up"
+						{raceMaxVotes}
+						voters={candidate.votedUp}
+						opposingVoters={candidate.votedDown}
+					/>
+					<CandidateVoteBar
+						direction="down"
+						{raceMaxVotes}
+						voters={candidate.votedDown}
+						opposingVoters={candidate.votedUp}
+					/>
+				</div>
+			{/if}
 		</div>
 		{#if interactive}
 			<button on:click={toggleDetails} aria-expanded={showDetails} class="details-toggle">

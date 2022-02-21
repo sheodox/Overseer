@@ -157,6 +157,14 @@ io.on('connection', async (socket) => {
 			await voter.removeImage(imageId);
 			broadcast();
 		}),
+		banCandidate: checkPermission('ban_candidate', async (candidateId: string) => {
+			await voter.banCandidate(candidateId);
+			broadcast();
+		}),
+		unbanCandidate: checkPermission('ban_candidate', async (candidateId: string) => {
+			await voter.unbanCandidate(candidateId);
+			broadcast();
+		}),
 		updateCandidate: checkPermission('update_candidate', async (candidateId, name, notes) => {
 			if (await voterBooker.check(userId, 'update_candidate')) {
 				const result = await voter.updateCandidate(candidateId, name, notes);

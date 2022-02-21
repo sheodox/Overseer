@@ -112,6 +112,7 @@ model Candidate {
   images    CandidateImage[]
   race      Race             @relation(fields: [raceId], references: [id])
   createdAt DateTime         @default(now())
+  banned    Boolean          @default(false)
 
   @@unique([raceId, name])
   @@index([raceId])

@@ -109,9 +109,14 @@ class Voter {
 		}
 
 		// retrieve the raceId directly to make sure we actually get the race that matches this candidate
-		const race = await prisma.candidate.findUnique({
+		const candidate = await prisma.candidate.findUnique({
 			where: { id: candidateId },
 		});
+
+		if (candidate.banned) {
+			// can't vote for banned candidates
+			return;
+		}
 
 		await prisma.vote.upsert({
 			where: {
@@ -121,7 +126,7 @@ class Voter {
 				},
 			},
 			create: {
-				raceId: race.raceId,
+				raceId: candidate.raceId,
 				candidateId,
 				userId,
 				direction,
@@ -175,6 +180,27 @@ class Voter {
 			},
 		});
 		await imageStore.delete(candidateImage.imageId);
+	}
+	async banCandidate(candidateId: string) {
+		// clear any votes on the candidate, votes aren't allowed on banned candidates
+		await prisma.vote.deleteMany({
+			where: { candidateId },
+		});
+
+		await prisma.candidate.update({
+			where: { id: candidateId },
+			data: {
+				banned: true,
+			},
+		});
+	}
+	async unbanCandidate(candidateId: string) {
+		await prisma.candidate.update({
+			where: { id: candidateId },
+			data: {
+				banned: false,
+			},
+		});
 	}
 	async updateCandidate(candidateId: string, name: string, notes: string) {
 		name = Voter.cleanString(name);
