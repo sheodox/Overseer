@@ -22,7 +22,17 @@
 
 <Header appName="Overseer" on:titleclick={titleClick} titleClickPreventDefault={true} href="/">
 	<SVG svgId="logo" slot="logo" />
-	<HeaderNav slot="nav" />
+	<HeaderNav slot="headerCenter" />
+	<nav slot="headerEnd">
+		<ul>
+			{#if booker.app.notifications}
+				<NotificationTrigger />
+			{/if}
+			{#if user.id}
+				<HeaderUserDropdown />
+			{/if}
+		</ul>
+	</nav>
 </Header>
 {#if !$socketConnected}
 	<div id="connection-error">Connection to server lost.</div>
@@ -57,12 +67,14 @@
 	import Icon from 'sheodox-ui/Icon.svelte';
 	import Header from 'sheodox-ui/Header.svelte';
 	import Footer from 'sheodox-ui/Footer.svelte';
-	import { socketConnected, user } from './stores/app';
+	import { booker, socketConnected, user } from './stores/app';
 	import SVG from './SVG.svelte';
 	import Routing from './Routing.svelte';
 	import LoginRequired from './LoginRequired.svelte';
 	import HeaderNav from './HeaderNav.svelte';
 	import page from 'page';
+	import NotificationTrigger from './notifications/NotificationTrigger.svelte';
+	import HeaderUserDropdown from './HeaderUserDropdown.svelte';
 
 	const footerLinks = user?.links || [];
 

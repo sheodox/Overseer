@@ -43,7 +43,7 @@
 
 <div
 	class={`bar f-row ${direction} ${hasOpposingVoters ? 'has-opposing' : 'no-opposing'} ${
-		votePercent > 0 ? 'has-votes' : 'no-votes'
+		votePercent > 0 ? 'has-votes pl-1' : 'no-votes'
 	}`}
 	style="width: {votePercent}%"
 >

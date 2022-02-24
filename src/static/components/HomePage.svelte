@@ -1,34 +1,31 @@
 <style>
 	.home {
-		display: grid;
-		grid-auto-flow: column;
-		grid-auto-columns: 1fr;
+		width: 100%;
 	}
-	@media (max-width: 1200px) {
-		.home {
-			width: 100vw;
-			display: flex;
-			flex-direction: column;
-		}
+	.app-preview {
+		width: 30rem;
+		max-width: 100%;
 	}
 </style>
 
-<div class="home p-4 gap-6">
+<div class="home f-column p-4 gap-6 align-items-center">
 	{#if booker.events.view && $upcomingEvents.length > 0}
 		<div class="app-preview">
 			<EventsAppPreview />
 		</div>
 	{/if}
-	{#if booker.voter.view}
-		<div class="app-preview">
-			<VoterPreview />
-		</div>
-	{/if}
-	{#if booker.echo.view}
-		<div class="app-preview">
-			<RecentUploads />
-		</div>
-	{/if}
+	<div class="f-row f-wrap gap-6 justify-content-center">
+		{#if booker.voter.view}
+			<div class="app-preview">
+				<VoterPreview />
+			</div>
+		{/if}
+		{#if booker.echo.view}
+			<div class="app-preview">
+				<RecentUploads />
+			</div>
+		{/if}
+	</div>
 </div>
 
 <script lang="ts">

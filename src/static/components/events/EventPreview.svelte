@@ -3,7 +3,7 @@
 		color: white;
 	}
 	.card {
-		border-radius: 3px;
+		border-radius: 5px;
 	}
 	.attendees-preview {
 		overflow: hidden;

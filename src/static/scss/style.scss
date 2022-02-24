@@ -6,3 +6,11 @@ h5,
 h6 {
 	font-family: 'Kanit', sans-serif;
 }
+
+fieldset {
+	border-radius: 5px;
+	border-color: var(--shdx-gray-200);
+}
+.card.clickable {
+	border-width: 2px;
+}

@@ -12,12 +12,6 @@
 				</li>
 			{/if}
 		{/each}
-		{#if booker.app.notifications}
-			<NotificationTrigger />
-		{/if}
-		{#if user.id}
-			<HeaderUserDropdown />
-		{/if}
 	</ul>
 </nav>
 

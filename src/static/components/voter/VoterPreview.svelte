@@ -5,7 +5,7 @@
 </style>
 
 <div>
-	<HomePageAppTitle title="Voter - Preview" href="/voter" />
+	<HomePageAppTitle title="Voter" href="/voter" />
 
 	{#if races.length}
 		<div class="f-column gap-3">

@@ -81,9 +81,9 @@
 			</button>
 		{/if}
 		<div class="candidate-name-container f-column f-1">
-			<span class="fw-bold candidate-name">{candidate.name}</span>
+			<span class="fw-bold candidate-name pl-2">{candidate.name}</span>
 			{#if candidate.banned}
-				<p class="m-0 muted banned-message">This cannot be voted for currently.</p>
+				<p class="m-0 muted banned-message pl-2">This cannot be voted for currently.</p>
 			{:else}
 				<div class="vote-bars">
 					<CandidateVoteBar

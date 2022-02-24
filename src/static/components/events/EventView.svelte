@@ -5,7 +5,7 @@
 	}
 	h1 {
 		margin: 0;
-		font-size: var(--shdx-font-size-9);
+		font-size: var(--shdx-font-size-10);
 	}
 	.notes {
 		line-height: 1.6;
@@ -21,7 +21,8 @@
 		display: flex;
 	}
 	.event-metadata {
-		color: var(--shdx-gray-100);
+		border: 2px solid var(--shdx-gray-200);
+		border-radius: 5px;
 	}
 	@media (max-width: 800px) {
 		.collapsing-row {
@@ -47,10 +48,12 @@
 		<div class="collapsing-row gap-5 mt-4">
 			<div class="sub-panel f-1">
 				<h1>{$eventFromRoute.name}</h1>
-				<div class="event-metadata f-row f-wrap justify-content-between">
-					<div>
-						<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
-						<EventTimes event={$eventFromRoute} />
+				<div class="f-row f-wrap justify-content-between align-items-start gap-3">
+					<div class="event-metadata p-3">
+						<div>
+							<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
+							<EventTimes event={$eventFromRoute} />
+						</div>
 					</div>
 					{#if booker.events.rsvp}
 						<RSVP

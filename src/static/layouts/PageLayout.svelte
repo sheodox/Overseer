@@ -3,6 +3,9 @@
 		width: 100%;
 		max-width: 65rem;
 	}
+	h1 {
+		font-size: var(--shdx-font-size-10);
+	}
 	@media (max-width: 700px) {
 		h1 {
 			font-size: var(--shdx-font-size-7);
