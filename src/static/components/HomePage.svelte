@@ -1,5 +1,5 @@
 <style>
-	.home {
+	.w-100 {
 		width: 100%;
 	}
 	.app-preview {
@@ -8,13 +8,13 @@
 	}
 </style>
 
-<div class="home f-column p-4 gap-6 align-items-center">
+<div class="w-100 f-column p-4 gap-6 align-items-center">
 	{#if booker.events.view && $upcomingEvents.length > 0}
 		<div class="app-preview">
 			<EventsAppPreview />
 		</div>
 	{/if}
-	<div class="f-row f-wrap gap-6 justify-content-center">
+	<div class="w-100 f-row f-wrap gap-6 justify-content-center">
 		{#if booker.voter.view}
 			<div class="app-preview">
 				<VoterPreview />
