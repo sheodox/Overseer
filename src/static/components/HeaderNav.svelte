@@ -19,8 +19,6 @@
 	import { activeApp } from './stores/routing';
 	import { booker, user } from './stores/app';
 	import page from 'page';
-	import NotificationTrigger from './notifications/NotificationTrigger.svelte';
-	import HeaderUserDropdown from './HeaderUserDropdown.svelte';
 
 	const links = [
 		{
@@ -31,18 +29,18 @@
 			icon: 'calendar-week',
 		},
 		{
-			viewable: booker.echo.view,
-			path: '/echo',
-			app: 'echo',
-			text: 'Echo',
-			icon: 'download',
-		},
-		{
 			viewable: booker.voter.view,
 			path: '/voter',
 			app: 'voter',
 			text: 'Voter',
 			icon: 'vote-yea',
+		},
+		{
+			viewable: booker.echo.view,
+			path: '/echo',
+			app: 'echo',
+			text: 'Echo',
+			icon: 'download',
 		},
 	] as const;
 </script>
