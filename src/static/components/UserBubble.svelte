@@ -18,7 +18,7 @@
 <div class="user-bubble f-row">
 	{#if !matchingUser || matchingUser?.loading}
 		<div class="placeholder f-row justify-content-center align-items-center" class:minimal={mode === 'minimal'}>
-			<SpikeSpinner size={SpikeSpinnerSizes.Small} />
+			<SpikeSpinner size="small" />
 		</div>
 		{#if mode === 'full'}
 			Loading...
@@ -41,7 +41,7 @@
 
 <script lang="ts">
 	import { requestUser, userRegistry, UserRegistryUser } from './stores/app';
-	import SpikeSpinner, { SpikeSpinnerSizes } from './SpikeSpinner.svelte';
+	import SpikeSpinner from './SpikeSpinner.svelte';
 
 	export let user: UserRegistryUser = null;
 	export let userId: string = null;

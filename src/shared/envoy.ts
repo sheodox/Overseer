@@ -29,7 +29,7 @@ export class Envoy {
 		}
 	}
 	on(bindings: EnvoyBindings) {
-		for (let rawName in bindings) {
+		for (const rawName in bindings) {
 			if (bindings.hasOwnProperty(rawName)) {
 				// wrap the function in a deserializing function
 				const eventName = this.namespace + ':' + rawName,

@@ -26,11 +26,8 @@ const validateEchoServerData = ajv.compile({
 });
 
 class Echo {
-	constructor() {}
-
 	/**
 	 * Get a list of all games available.
-	 * @returns {Promise<void>}
 	 */
 	async list() {
 		return (await prisma.echo.findMany({ include: { images: true } })).sort((a, b) => {
@@ -46,7 +43,6 @@ class Echo {
 		});
 	}
 	async new(newData: EchoItemEditable, userId: string) {
-		console.log('New echo item adding');
 		if (!validateUserEditableEchoData(newData)) {
 			throw new Error('Data validation error!');
 		}
@@ -153,15 +149,16 @@ class Echo {
 		//before trying to generate an image make sure this echo item exists.
 		//we won't be able to make the echoImage because of the foreign key constraint
 		//but we'd still be generating images that are immediately orphaned
-		const echoItem = await prisma.echo.findUnique({
-				where: { id: echoId },
-				rejectOnNotFound: true,
-			}),
-			imageId = await imageStore.generate({
-				image,
-				mimeType,
-				source: 'echo',
-			});
+		await prisma.echo.findUnique({
+			where: { id: echoId },
+			rejectOnNotFound: true,
+		});
+
+		const imageId = await imageStore.generate({
+			image,
+			mimeType,
+			source: 'echo',
+		});
 
 		await prisma.echoImage.create({
 			data: {

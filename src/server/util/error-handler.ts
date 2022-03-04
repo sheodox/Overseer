@@ -26,6 +26,7 @@ const uninterestingStatusCodes = [401, 404];
  * @param internal - whether this is used on an non-public server. private servers treat any errors as a bigger deal
  */
 export const errorHandler =
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	(internal: boolean) => (error: Error | HttpError, req: AppRequest, res: Response, next: NextFunction) => {
 		const status = (error instanceof Error ? 500 : error.status) ?? 500,
 			message = getHttpStatusDescription(status),

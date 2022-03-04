@@ -6,7 +6,7 @@ import { prisma } from '../db/prisma.js';
 import push from 'web-push';
 import { appLogger } from './logger.js';
 import { UserSettings } from '@prisma/client';
-import { EditableSettings, users } from '../db/users.js';
+import { users } from '../db/users.js';
 const notificationHarbinger = new Harbinger('notifications'),
 	toastHarbinger = new Harbinger('toasts'),
 	vapidContactEmail = process.env.PUSH_VAPID_CONTACT_EMAIL;

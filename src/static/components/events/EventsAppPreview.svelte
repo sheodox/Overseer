@@ -11,7 +11,7 @@
 			{/if}
 		{:else}
 			<div class="text-align-center">
-				<SpikeSpinner size={SpikeSpinnerSizes.Medium} />
+				<SpikeSpinner size="medium" />
 			</div>
 		{/if}
 	</div>
@@ -20,7 +20,7 @@
 <script lang="ts">
 	import { ongoingEvents, upcomingEvents, eventsInitialized, pastEvents } from '../stores/events';
 	import EventPreview from './EventPreview.svelte';
-	import SpikeSpinner, { SpikeSpinnerSizes } from '../SpikeSpinner.svelte';
+	import SpikeSpinner from '../SpikeSpinner.svelte';
 	import HomePageAppTitle from '../HomePageAppTitle.svelte';
 	import type { EventsData, MaskedEvent } from '../../../shared/types/events';
 

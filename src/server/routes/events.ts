@@ -5,7 +5,6 @@ import { eventsLogger } from '../util/logger.js';
 import { events, getEventDays } from '../db/events.js';
 import { Rsvp, RsvpDay } from '@prisma/client';
 import MarkdownIt from 'markdown-it';
-import { users } from '../db/users.js';
 import { pickProperties } from '../util/object-manipulation.js';
 import { Envoy } from '../../shared/envoy.js';
 import { createNotificationsForPermittedUsers, sendToastToUser } from '../util/create-notifications.js';
@@ -118,9 +117,7 @@ export const initEvents = function (io: Server) {
 			});
 		}
 
-		const user = await users.getUser(userId),
-			displayName = user.displayName,
-			checkPermission = createSafeWebsocketHandler(userId, eventsBooker, socket, eventsLogger);
+		const checkPermission = createSafeWebsocketHandler(userId, eventsBooker, socket, eventsLogger);
 
 		const singleUserError = (message: string) => {
 			sendToastToUser(userId, {

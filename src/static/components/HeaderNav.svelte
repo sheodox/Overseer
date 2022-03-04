@@ -17,7 +17,7 @@
 
 <script lang="ts">
 	import { activeApp } from './stores/routing';
-	import { booker, user } from './stores/app';
+	import { booker } from './stores/app';
 	import page from 'page';
 
 	const links = [

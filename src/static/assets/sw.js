@@ -1,3 +1,5 @@
+/* eslint-env serviceworker */
+
 self.addEventListener('push', (event) => {
 	event.waitUntil(notify(event));
 });

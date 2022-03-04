@@ -1,7 +1,7 @@
 import { serialize } from 'onaji';
 import { Envoy } from '../../shared/envoy.js';
 
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { Booker } from '../db/booker.js';
 import { Logger } from 'winston';
 import { ToastOptions } from '../types.js';
@@ -55,10 +55,10 @@ export class Harbinger {
 	/**
 	 * Gets the socket's userId, or null if they're not logged in
 	 * @param socket
-	 * @returns {*}
 	 */
 	static getUserId(socket: Socket) {
 		try {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore - todo find if this works and how to get it to be typed right
 			return socket.request.session.passport.user.id;
 		} catch (e) {

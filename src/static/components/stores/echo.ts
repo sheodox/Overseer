@@ -50,7 +50,7 @@ export const echoSearchResults = derived([echoItems, echoSearch], ([list, search
 				//add the item name to the searchable data and format that array as tags so everything is normalized
 				const searchable = formatTags([...formatTags(item.tags || ''), item.name]);
 
-				let matches = terms.filter((term) => {
+				const matches = terms.filter((term) => {
 					return !!searchable.find((item) => {
 						return item.indexOf(term) >= 0;
 					});

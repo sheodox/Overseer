@@ -26,14 +26,14 @@
 		<p class="centered">There aren't any races!</p>
 	{:else}
 		<div class="centered">
-			<SpikeSpinner size={SpikeSpinnerSizes.Medium} />
+			<SpikeSpinner size="medium" />
 		</div>
 	{/if}
 </div>
 
 <script lang="ts">
 	import { voterRaces, voterInitialized } from '../stores/voter';
-	import SpikeSpinner, { SpikeSpinnerSizes } from '../SpikeSpinner.svelte';
+	import SpikeSpinner from '../SpikeSpinner.svelte';
 	import RacePreview from './RacePreview.svelte';
 	import HomePageAppTitle from '../HomePageAppTitle.svelte';
 

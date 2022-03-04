@@ -1,9 +1,9 @@
 import { echo } from '../db/echo.js';
 import { createSafeWebsocketHandler, Harbinger } from '../util/harbinger.js';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { Envoy } from '../../shared/envoy.js';
 import { echoBooker } from '../db/booker.js';
-import { AppRequest, ToastOptions } from '../types.js';
+import { AppRequest } from '../types.js';
 import { tags as formatTags } from '../../shared/formatters.js';
 import { createIntegrationToken, verifyIntegrationToken } from '../util/integrations.js';
 import { validate as uuidValidate } from 'uuid';
@@ -35,8 +35,8 @@ router.post(
 		}
 	})
 );
+const echoHarbinger = new Harbinger('echo');
 let echoOnline = false,
-	echoHarbinger = new Harbinger('echo'),
 	echoServerSocket: Socket,
 	diskUsage: EchoDiskUsage;
 

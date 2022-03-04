@@ -12,7 +12,7 @@ export const router = Router();
 
 //follow a notification redirect, and mark the notification as read automatically!
 //users can get here by clicking push notifications
-router.get('/n/:notificationId', async (req: AppRequest, res, next) => {
+router.get('/n/:notificationId', async (req: AppRequest, res) => {
 	//mark the notification as read and go to wherever they were supposed to lead
 	const notification = await notifications.markRead(req.params.notificationId);
 
@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
 	const checkPermission = createSafeWebsocketHandler(userId, appBooker, socket, appLogger);
 
 	notificationsEnvoy.on({
-		init: checkPermission('notifications', async (done) => {
+		init: checkPermission('notifications', async () => {
 			notificationsEnvoy.emit('init', await notifications.getNotifications(userId));
 		}),
 		markRead: checkPermission('notifications', async (id) => {

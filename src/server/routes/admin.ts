@@ -113,8 +113,8 @@ function bindAdminSocketListeners(socket: Socket) {
 async function dump(socket: Socket) {
 	const bookerDumps: BookerDump[] = [];
 
-	for (let i in BOOKERS) {
-		if (BOOKERS.hasOwnProperty(i)) {
+	for (const i in BOOKERS) {
+		if (Object.hasOwnProperty.call(BOOKERS, i)) {
 			bookerDumps.push(await BOOKERS[i as BookerModuleName].dump());
 		}
 	}

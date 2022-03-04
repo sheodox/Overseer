@@ -1,4 +1,4 @@
-import { writable, get, readable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { createAutoExpireToast, createProgressToast, updateToast } from 'sheodox-ui';
 import axios from 'axios';
 import { bytes as formatBytes } from '../../../shared/formatters';
@@ -48,7 +48,7 @@ export function storePushEndpoint(subscription: PushSubscription) {
 	localStorage.setItem('overseer-push-endpoint', subscription.endpoint);
 }
 
-export let settings = writable(appBootstrap?.user?.settings);
+export const settings = writable(appBootstrap?.user?.settings);
 
 let settingsSubscriptionInitialized = false;
 settings.subscribe((settings) => {

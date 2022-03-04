@@ -160,7 +160,7 @@
 	$: isMultipleDays = $eventFromRoute?.eventDays.length > 1;
 	$: userGoing = userRsvp?.status === 'going';
 	$: numNotes = $eventFromRoute?.rsvps.reduce((sum, rsvp) => {
-		return sum + (!!rsvp.notes ? 1 : 0);
+		return sum + (rsvp.notes ? 1 : 0);
 	}, 0);
 	$: tabs = [
 		{

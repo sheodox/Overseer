@@ -1,4 +1,4 @@
-import winston, { http } from 'winston';
+import winston from 'winston';
 import Transport from 'winston-transport';
 
 /*

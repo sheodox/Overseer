@@ -12,8 +12,6 @@ const VALID_MIMES = ['image/jpeg', 'image/png'],
 
 class ImageStore {
 	version = 1;
-	constructor() {}
-
 	async generate({ image, mimeType, source }: { image: Buffer; mimeType: string; source: string }) {
 		const startTime = Date.now();
 
@@ -55,7 +53,7 @@ class ImageStore {
 	}
 
 	async get(id: string, size: string) {
-		if (!MAX_RESOLUTION.hasOwnProperty(size)) {
+		if (!Object.hasOwnProperty.call(MAX_RESOLUTION, size)) {
 			throw new Error(`ImageStore: invalid size specified "${size}`);
 		}
 

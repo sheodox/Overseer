@@ -9,10 +9,10 @@
 </style>
 
 <div transition:fade class="f-column f-1 justify-content-center align-items-center">
-	<SpikeSpinner size={SpikeSpinnerSizes.Large} />
+	<SpikeSpinner size="large" />
 </div>
 
 <script lang="ts">
-	import SpikeSpinner, { SpikeSpinnerSizes } from './SpikeSpinner.svelte';
+	import SpikeSpinner from './SpikeSpinner.svelte';
 	import { fade } from 'svelte/transition';
 </script>

@@ -18,10 +18,10 @@ export const maskVoterSessions = async (races: Race[]): Promise<VoterData> => {
 		};
 	}
 
-	for (let race of races) {
+	for (const race of races) {
 		const maskedCandidates: MaskedCandidate[] = [];
 
-		for (let candidate of race.candidates) {
+		for (const candidate of race.candidates) {
 			const votedUp = race.votes.filter(candidateVotes(candidate.id, 'up')).map(getUserFromVote),
 				votedDown = race.votes.filter(candidateVotes(candidate.id, 'down')).map(getUserFromVote);
 

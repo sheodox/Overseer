@@ -1,10 +1,8 @@
 import { prisma } from './prisma.js';
 import { imageStore } from './image-store.js';
-import { name as validName, href as validHref } from '../util/validator.js';
+import { name as validName } from '../util/validator.js';
 
 class Voter {
-	constructor() {}
-
 	//trim and remove all unnecessary spaces
 	static cleanString(str: string) {
 		return String(str)

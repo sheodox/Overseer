@@ -1,5 +1,5 @@
 import Ajv from 'ajv';
-import { Event, Rsvp, RsvpDay } from '@prisma/client';
+import { Event } from '@prisma/client';
 import { prisma } from './prisma.js';
 import { name as validName } from '../util/validator.js';
 import { createNotificationForUser } from '../util/create-notifications.js';
@@ -164,8 +164,6 @@ notifyUpcoming();
 setInterval(notifyUpcoming, UPCOMING_REMINDER_CHECK_MS);
 
 class Events {
-	constructor() {}
-
 	async list(): Promise<EventList> {
 		return await prisma.event.findMany({
 			orderBy: {

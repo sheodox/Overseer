@@ -33,7 +33,7 @@
 		<p class="centered">Echo has nothing!</p>
 	{:else}
 		<div class="centered">
-			<SpikeSpinner size={SpikeSpinnerSizes.Medium} />
+			<SpikeSpinner size="medium" />
 		</div>
 	{/if}
 </div>
@@ -41,7 +41,7 @@
 <script lang="ts">
 	import Link from '../Link.svelte';
 	import { echoItems, echoInitialized } from '../stores/echo';
-	import SpikeSpinner, { SpikeSpinnerSizes } from '../SpikeSpinner.svelte';
+	import SpikeSpinner from '../SpikeSpinner.svelte';
 	import EchoItemPreview from './EchoItemPreview.svelte';
 	import HomePageAppTitle from '../HomePageAppTitle.svelte';
 

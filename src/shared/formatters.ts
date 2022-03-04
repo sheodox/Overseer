@@ -10,7 +10,7 @@ const ms = {
 };
 
 export const bytes = function (bytes: number, unit: 'gb' | 'mb') {
-	let units = {
+	const units = {
 		gb: 1073741824, //gibibytes
 		mb: 1048576, //mebibytes
 	};

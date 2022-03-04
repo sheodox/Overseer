@@ -41,7 +41,7 @@
 	export let label: string;
 	export let title: string;
 	export let type = 'text';
-	export let hint: string = '';
+	export let hint = '';
 
 	let value = initialValue;
 
