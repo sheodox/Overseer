@@ -197,11 +197,13 @@
 
 	function up() {
 		voterOps.candidate.vote(candidate.id, 'up');
+		candidate.voted = 'up';
 		next();
 	}
 
 	function down() {
 		voterOps.candidate.vote(candidate.id, 'down');
+		candidate.voted = 'down';
 		next();
 	}
 </script>
