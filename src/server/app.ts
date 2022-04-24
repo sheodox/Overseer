@@ -50,6 +50,10 @@ app.use(favicon('./public/favicon.png'));
 app.disable('x-powered-by');
 app.use(cookieParser());
 
+app.use('/health', (req, res) => {
+	res.send();
+});
+
 const RedisStore = connectRedis(expressSession),
 	sessionStore = new RedisStore({ client: redisClient }),
 	session = expressSession({
