@@ -26,7 +26,7 @@ export const echoItems = writable([], () => {
 	echoEnvoy.emit('init');
 });
 export const echoDiskUsage = writable(null);
-export const echoDownloadToken = writable('');
+export const echoDownloadToken = writable(appBootstrap.initialData.echoDownloadToken || '');
 export const echoOnline = writable(false);
 export const echoTagCloud = writable([]);
 export const echoSearch = writable(get(activeQueryParams).search);

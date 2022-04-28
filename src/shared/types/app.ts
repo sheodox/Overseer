@@ -68,6 +68,7 @@ export interface AppBootstrap {
 		echo: EchoData;
 		voter: VoterData;
 		events: EventsData;
+		echoDownloadToken?: string;
 	};
 	serverMetadata: {
 		pushVapidPublicKey: string;
