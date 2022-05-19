@@ -90,13 +90,12 @@ io.on('connection', async (socket) => {
 		init: checkPermission('view', async () => {
 			voterEnvoy.emit('init', await getVoterData());
 		}),
-		newRace: checkPermission('add_race', async (name: string, done) => {
+		newRace: checkPermission('add_race', async (name: string) => {
 			const raceData = await voter.addRace(name, userId);
 
 			if ('error' in raceData) {
 				singleUserError(raceData.error);
 			} else {
-				done(raceData.id);
 				broadcast();
 				notificationBroadcast({
 					variant: 'info',

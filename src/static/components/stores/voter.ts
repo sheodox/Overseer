@@ -74,9 +74,7 @@ export const voterSelectedRace = derived<any, MaskedRace>([voterRaces, activeRou
 export const voterOps = {
 	race: {
 		new: (name: string) => {
-			voterEnvoy.emit('newRace', name, (id: string) => {
-				page(`/voter/${id}`);
-			});
+			voterEnvoy.emit('newRace', name);
 		},
 		delete: (raceId: string) => {
 			voterEnvoy.emit('removeRace', raceId);
