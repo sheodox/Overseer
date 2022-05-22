@@ -7,8 +7,8 @@
 		transition: border-color 0.2s, background 0.2s;
 	}
 	.eventDay.going {
-		border-color: var(--shdx-accent-blue);
-		background: var(--shdx-accent-blue-dark);
+		border-color: var(--sx-accent-blue);
+		background: var(--sx-accent-blue-dark);
 	}
 	fieldset {
 		border: none;

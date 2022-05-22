@@ -1,7 +1,7 @@
 <style>
 	@media (max-width: 1000px) {
 		h1 {
-			font-size: var(--shdx-font-size-7);
+			font-size: var(--sx-font-size-7);
 		}
 	}
 </style>

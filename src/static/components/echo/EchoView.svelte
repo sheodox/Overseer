@@ -2,9 +2,6 @@
 	ul button {
 		width: 8rem;
 	}
-	.tag {
-		margin: 0.2rem;
-	}
 	.partially-hidden {
 		transition: max-width 0.6s;
 		overflow: hidden;
@@ -70,7 +67,7 @@
 		<div class="f-row justify-content-between">
 			<span class="has-inline-links">
 				{#each tags as tag}
-					<a href={tag.path} on:click|preventDefault={() => page(tag.path)} class="tag">{tag.text}</a>
+					<a href={tag.path} on:click|preventDefault={() => page(tag.path)} class="sx-badge-blue m-1">{tag.text}</a>
 				{/each}
 			</span>
 		</div>

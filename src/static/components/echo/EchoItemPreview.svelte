@@ -2,16 +2,16 @@
 	p {
 		color: red;
 		margin: 0;
-		color: var(--shdx-text-color);
+		color: var(--sx-text-color);
 	}
 	.download {
 		height: 100%;
-		background: var(--shdx-gray-600);
+		background: var(--sx-gray-600);
 		display: grid;
 		place-content: center;
 	}
 	.download.unavailable {
-		color: var(--shdx-gray-900);
+		color: var(--sx-gray-900);
 	}
 
 	$corner-radius: 5px;
@@ -51,19 +51,19 @@
 	<div class="f-row description">
 		<div class="echo-item-details p-4 f-column f-1 card clickable" class:has-image={variant === EchoViewLayout.Grid}>
 			<Link href={item.path} noHoverStyles={true}>
-				<p class="shdx-font-size-5 mb-3">{item.name}</p>
+				<p class="sx-font-size-5 mb-3">{item.name}</p>
 				<p>
 					<FileSize echoItem={item} /> - Updated {item.updatedAt.toLocaleDateString()}
 				</p>
 			</Link>
 		</div>
 		<EchoDownloadLink echoItem={item}>
-			<div class="download card clickable f-row p-5 shdx-font-size-5">
+			<div class="download card clickable f-row p-5 sx-font-size-5">
 				<Icon icon="download" />
 				<span class="sr-only">Download</span>
 			</div>
 
-			<div slot="unavailable" class="download unavailable card f-row p-5 shdx-font-size-5">
+			<div slot="unavailable" class="download unavailable card f-row p-5 sx-font-size-5">
 				<Icon icon="download" />
 			</div>
 		</EchoDownloadLink>

@@ -1,6 +1,6 @@
 <style>
 	.has-unread {
-		color: var(--shdx-accent-blue);
+		color: var(--sx-accent-blue);
 	}
 </style>
 

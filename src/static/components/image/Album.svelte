@@ -34,7 +34,7 @@
 		--placeholder-width: 34rem;
 	}
 	.image {
-		background: var(--shdx-panel-header-bg-dark);
+		background: var(--sx-panel-header-bg-dark);
 		max-width: var(--placeholder-max-width);
 		max-height: calc(var(--placeholder-max-width) * (9 / 16));
 		font-size: 1.5rem;

@@ -1,6 +1,6 @@
 <style lang="scss">
 	#vote-wizard {
-		background-color: var(--shdx-gray-800);
+		background-color: var(--sx-gray-800);
 		position: fixed;
 		top: 0;
 		bottom: 0;
@@ -24,15 +24,15 @@
 		transform: translate(-50%, -50%);
 	}
 	.box {
-		background: var(--shdx-gray-600);
+		background: var(--sx-gray-600);
 		border-radius: 1rem;
 		padding: 1rem;
 	}
 	.up {
-		color: var(--shdx-blue-400);
+		color: var(--sx-blue-400);
 	}
 	.down {
-		color: var(--shdx-red-400);
+		color: var(--sx-red-400);
 	}
 	.details {
 		overflow-y: auto;
@@ -50,21 +50,21 @@
 		}
 	}
 	button {
-		font-size: var(--shdx-font-size-5);
+		font-size: var(--sx-font-size-5);
 		white-space: nowrap;
 		margin: 0;
 	}
 	.f-column,
 	.f-row {
-		gap: var(--shdx-spacing-2);
+		gap: var(--sx-spacing-2);
 	}
 
 	@media (max-width: 500px) {
 		button {
-			font-size: var(--shdx-font-size-3);
+			font-size: var(--sx-font-size-3);
 		}
 		h1 {
-			font-size: var(--shdx-font-size-8) !important;
+			font-size: var(--sx-font-size-8) !important;
 		}
 	}
 </style>
@@ -75,8 +75,8 @@
 			<div class="box details">
 				{#key candidate.id}
 					<div in:fly={{ y: 50 }}>
-						<h1 class="m-0 shdx-font-size-10">{candidate.name}</h1>
-						<div class="has-inline-links shdx-font-size-4">{@html candidate.notesRendered}</div>
+						<h1 class="m-0 sx-font-size-10">{candidate.name}</h1>
+						<div class="has-inline-links sx-font-size-4">{@html candidate.notesRendered}</div>
 						<div class="f-row f-wrap">
 							<CandidateImages
 								{candidate}

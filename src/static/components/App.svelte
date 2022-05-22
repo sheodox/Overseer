@@ -13,10 +13,10 @@
 	}
 	#connection-error {
 		width: 100%;
-		background: var(--shdx-red-500);
+		background: var(--sx-red-500);
 		color: white;
 		text-align: center;
-		padding: var(--shdx-spacing-1);
+		padding: var(--sx-spacing-1);
 	}
 </style>
 

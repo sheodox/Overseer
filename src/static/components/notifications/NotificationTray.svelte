@@ -20,7 +20,7 @@
 		display: block;
 	}
 	.unread-indicator {
-		color: var(--shdx-accent-blue);
+		color: var(--sx-accent-blue);
 		font-size: 0.5rem;
 	}
 </style>

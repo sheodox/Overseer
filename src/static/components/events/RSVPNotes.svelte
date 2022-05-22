@@ -1,7 +1,7 @@
 <style>
 	.rsvp-notes {
 		max-width: 15rem;
-		background: var(--shdx-gray-600);
+		background: var(--sx-gray-600);
 	}
 	.notes {
 		overflow: auto;

@@ -5,7 +5,7 @@
 	}
 	h1 {
 		margin: 0;
-		font-size: var(--shdx-font-size-10);
+		font-size: var(--sx-font-size-10);
 	}
 	.notes {
 		line-height: 1.6;
@@ -21,7 +21,7 @@
 		display: flex;
 	}
 	.event-metadata {
-		border: 2px solid var(--shdx-gray-200);
+		border: 2px solid var(--sx-gray-200);
 		border-radius: 5px;
 	}
 	@media (max-width: 800px) {
@@ -29,7 +29,7 @@
 			flex-direction: column;
 		}
 		h1 {
-			font-size: var(--shdx-font-size-6);
+			font-size: var(--sx-font-size-6);
 		}
 	}
 </style>
@@ -69,7 +69,7 @@
 				</div>
 
 				{#if booker.events.organize}
-					<div class="f-row justify-content-end shdx-font-size-3">
+					<div class="f-row justify-content-end sx-font-size-3">
 						<MenuButton>
 							<span slot="trigger">
 								Event Options

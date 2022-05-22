@@ -19,10 +19,10 @@
 		filter: drop-shadow(0 0 0.5rem);
 	}
 	.upvote:enabled {
-		color: var(--shdx-blue-400);
+		color: var(--sx-blue-400);
 	}
 	.downvote:enabled {
-		color: var(--shdx-red-400);
+		color: var(--sx-red-400);
 	}
 	.candidate-name {
 		padding: 0.2rem;
@@ -30,7 +30,7 @@
 	}
 	.candidate-name-container {
 		position: relative;
-		background: var(--shdx-gray-600);
+		background: var(--sx-gray-600);
 		border-radius: 3px;
 		overflow: hidden;
 	}

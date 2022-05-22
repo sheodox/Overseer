@@ -11,7 +11,7 @@
 		width: var(--image-size);
 		border-radius: 50%;
 		margin-right: 0.2rem;
-		background: var(--shdx-bg);
+		background: var(--sx-bg);
 	}
 </style>
 

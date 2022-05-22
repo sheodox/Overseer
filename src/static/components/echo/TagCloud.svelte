@@ -2,6 +2,12 @@
 	input {
 		display: none;
 	}
+	[aria-pressed='true'] {
+		color: var(--sx-blue-500);
+	}
+	[aria-pressed='false'] {
+		color: var(--sx-gray-200);
+	}
 </style>
 
 <div class="f-row f-wrap">

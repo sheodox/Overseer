@@ -6,11 +6,11 @@
 		position: fixed;
 		top: 0.5rem;
 		z-index: 99; /* below the theater */
-		background: var(--shdx-panel-bg);
+		background: var(--sx-panel-bg);
 	}
 	.show-wizard {
-		border: 2px solid var(--shdx-pink-400);
-		color: var(--shdx-pink-400);
+		border: 2px solid var(--sx-pink-400);
+		color: var(--sx-pink-400);
 	}
 </style>
 

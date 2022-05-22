@@ -41,7 +41,7 @@
 		position: absolute;
 		height: 100%;
 		width: 30vw;
-		font-size: var(--shdx-font-size-11);
+		font-size: var(--sx-font-size-11);
 		color: transparent;
 		transition: color 0.2s, background 0.2s, opacity 0.2s;
 		margin: 0;

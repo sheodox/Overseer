@@ -18,7 +18,7 @@
 	</ul>
 </MenuButton>
 {#if showFixGoingWarning}
-	<p class="shdx-badge-red p-2">
+	<p class="sx-badge-red p-2">
 		You previously RSVP'd as going but the event is now held over multiple days. Please click "Going" again and select
 		the days you're planning to attend!
 	</p>

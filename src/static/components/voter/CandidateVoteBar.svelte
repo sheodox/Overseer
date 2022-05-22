@@ -4,8 +4,8 @@
 		border: 2px solid transparent;
 	}
 	.up {
-		border-color: var(--shdx-accent-blue);
-		background-color: var(--shdx-blue-800);
+		border-color: var(--sx-accent-blue);
+		background-color: var(--sx-blue-800);
 		&.has-opposing {
 			border-right-width: 0;
 		}
@@ -14,8 +14,8 @@
 		}
 	}
 	.down {
-		border-color: var(--shdx-accent-red);
-		background-color: var(--shdx-red-800);
+		border-color: var(--sx-accent-red);
+		background-color: var(--sx-red-800);
 		border-radius: 0 3px 3px 0;
 
 		&.has-opposing {

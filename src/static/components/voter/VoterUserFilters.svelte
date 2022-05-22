@@ -1,7 +1,7 @@
 <style>
 	fieldset {
 		border-radius: 5px;
-		border-color: var(--shdx-gray-300);
+		border-color: var(--sx-gray-300);
 	}
 </style>
 

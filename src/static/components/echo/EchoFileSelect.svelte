@@ -3,9 +3,9 @@
 		display: none;
 	}
 	label.disabled {
-		background: var(--shdx-bg) !important;
+		background: var(--sx-bg) !important;
 		cursor: default;
-		color: var(--shdx-muted);
+		color: var(--sx-muted);
 	}
 	.drop-message,
 	.dragging input {
