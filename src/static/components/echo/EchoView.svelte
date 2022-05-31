@@ -74,7 +74,7 @@
 		<div class="notes has-inline-links">
 			{@html echoItem.notesRendered}
 		</div>
-		<EchoDownloadLink {echoItem}>
+		<EchoDownloadLink {echoItem} linkClasses="button primary">
 			<span class="fw-bold">
 				<Icon icon="download" />
 				Download (<FileSize {echoItem} />)
