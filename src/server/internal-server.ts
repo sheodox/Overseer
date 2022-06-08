@@ -9,15 +9,15 @@ import { requestId } from './util/request-id.js';
 import { verifyIntegrationToken } from './util/integrations.js';
 import { errorHandler } from './util/error-handler.js';
 import { AppRequest } from './types.js';
+import { internalServer, internalServerApp } from './server.js';
 
-const app = express();
-app.use(requestId);
+internalServerApp.use(requestId);
 
 function getTokenFromRequest(req: AppRequest) {
 	return req.header('Authorization')?.replace('Bearer ', '');
 }
 
-app.get('/logs', (req: AppRequest, res, next) => {
+internalServerApp.get('/logs', (req: AppRequest, res, next) => {
 	const token = getTokenFromRequest(req);
 
 	if (verifyIntegrationToken(token, 'logs')) {
@@ -27,14 +27,14 @@ app.get('/logs', (req: AppRequest, res, next) => {
 	}
 });
 
-app.get('/', (req, res) => {
+internalServerApp.get('/', (req, res) => {
 	// respond to / with a success for health checks
 	res.send('ok');
 });
 
-app.use((req, res, next) => {
+internalServerApp.use((req, res, next) => {
 	next({ status: 404 });
 });
-app.use(errorHandler(true));
+internalServerApp.use(errorHandler(true));
 
-app.listen(4001);
+internalServer.listen(4001);

@@ -33,4 +33,4 @@ export interface EchoData {
 }
 
 export type EchoItemEditable = Pick<EchoItem, 'tags' | 'name' | 'notes'>;
-export type EchoServerData = Pick<EchoItem, 'size'>;
+export type EchoServerData = { size: number };

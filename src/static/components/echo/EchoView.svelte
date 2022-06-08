@@ -128,12 +128,14 @@
 	$: pageName.set(echoItem?.name);
 
 	function processTags(tags: string) {
-		return (tags?.split(', ') || []).map((tag) => {
-			return {
-				text: tag,
-				path: `/echo?search=${encodeURIComponent(tag)}`,
-			};
-		});
+		return (tags?.split(', ') || [])
+			.filter((t) => !!t)
+			.map((tag) => {
+				return {
+					text: tag,
+					path: `/echo?search=${encodeURIComponent(tag)}`,
+				};
+			});
 	}
 
 	function deleteItem() {

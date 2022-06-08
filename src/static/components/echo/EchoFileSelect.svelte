@@ -35,7 +35,7 @@
 	</div>
 {/if}
 <div class:dragging>
-	<label class="button" class:disabled={!$echoOnline} title={!$echoOnline ? 'Echo is offline!' : ''}>
+	<label class="button secondary" class:disabled={!$echoOnline} title={!$echoOnline ? 'Echo is offline!' : ''}>
 		<Icon icon="upload" />
 		{mode === EchoUploadMode.Upload ? 'Select a file' : '(Optional) Upload updated file'}
 		<input type="file" bind:files accept=".zip" disabled={!$echoOnline} required={mode === EchoUploadMode.Upload} />

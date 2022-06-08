@@ -6,15 +6,17 @@ import { echoBooker } from '../db/booker.js';
 import { AppRequest } from '../types.js';
 import { tags as formatTags } from '../../shared/formatters.js';
 import { createIntegrationToken, verifyIntegrationToken } from '../util/integrations.js';
-import { validate as uuidValidate } from 'uuid';
+import { v4 as uuid, validate as uuidValidate } from 'uuid';
 import MarkdownIt from 'markdown-it';
 import { echoIntegrationLogger, echoLogger } from '../util/logger.js';
 import { safeAsyncRoute } from '../util/error-handler.js';
 import { Response, Router } from 'express';
 import deepdiff from 'deep-diff';
 import { createNotificationsForPermittedUsers } from '../util/create-notifications.js';
-import { io } from '../server.js';
+import { internalServer, io, wss } from '../server.js';
 import type { EchoData, EchoDiskUsage, EchoItemEditable, PreparedEchoItem } from '../../shared/types/echo';
+import { IncomingMessage } from 'node:http';
+import { WebSocket } from 'ws';
 
 export const router = Router(),
 	{ diff } = deepdiff;
@@ -37,13 +39,26 @@ router.post(
 );
 const echoHarbinger = new Harbinger('echo');
 let echoOnline = false,
-	echoServerSocket: Socket,
+	echoServerSocket: WebSocket,
 	diskUsage: EchoDiskUsage;
 
 let lastData: any; // this is the resolved data of getEchoData
 getEchoData().then((data) => {
 	lastData = data;
 });
+
+const awaitingEchoResponse = new Map<string, (data: any) => void>();
+
+function sendToEcho(route: string, data: Record<string, any>, msgId = uuid(), done?: () => void) {
+	if (echoOnline) {
+		echoServerSocket.send(JSON.stringify({ route, data, msgId }));
+
+		if (done) {
+			awaitingEchoResponse.set(msgId, done);
+		}
+	}
+}
+
 /**
  * Emit data about all games to all connected authorized clients
  */
@@ -126,10 +141,7 @@ io.on('connection', (socket: Socket) => {
 
 	echoEnvoy.on({
 		delete: checkPermission('delete', async (id: string) => {
-			echoServerSocket.emit('delete', id, async () => {
-				await echo.delete(id);
-				broadcast();
-			});
+			sendToEcho('delete', { id });
 		}),
 		init: checkPermission('view', async () => {
 			echoEnvoy.emit('init', await getEchoData());
@@ -145,7 +157,7 @@ io.on('connection', (socket: Socket) => {
 		new: checkPermission('upload', async (data, done) => {
 			const item = await echo.new(data, userId);
 			//tell echo it can expect an upload with this ID, it will deny uploads for anything it's not expecting
-			echoServerSocket.emit('expect-upload', item.id, () => {
+			sendToEcho('expect-upload', { id: item.id }, null, () => {
 				done(item.id, `${echoServerHost}/upload/${item.id}`);
 			});
 			broadcast();
@@ -155,7 +167,7 @@ io.on('connection', (socket: Socket) => {
 				await echo.updateFile(id, data);
 				broadcast();
 				//tell echo it can expect an upload with this ID, it will deny uploads for anything it's not expecting
-				echoServerSocket.emit('expect-upload', id, () => {
+				sendToEcho('expect-upload', { id }, null, () => {
 					done(id, `${echoServerHost}/upload/${id}`);
 				});
 			}
@@ -167,88 +179,93 @@ io.on('connection', (socket: Socket) => {
 	});
 });
 
+interface EchoServerWSMessage {
+	route: string;
+	msgId: string;
+	data: Record<string, any>;
+}
+
 //connection to echo server
-const echoListener = (socket: Socket) => {
+const echoListener = (socket: WebSocket) => {
 	echoIntegrationLogger.info(`Echo server connection established`);
 	echoOnline = true;
 	broadcast();
 
-	function safeHandler(handler: (...args: any) => Promise<any>) {
-		return async (...args: any) => {
-			try {
-				await handler(...args);
-			} catch (error) {
-				echoIntegrationLogger.error('Echo server error!', {
-					error,
-				});
-			}
-		};
-	}
-
 	echoServerSocket = socket;
-	echoServerSocket.on('disconnect', () => {
+	echoServerSocket.on('close', () => {
 		echoOnline = false;
 		echoIntegrationLogger.info(`Echo server connection lost`);
 		broadcast();
 	});
 
-	echoServerSocket.on(
-		'verify-download-token',
-		safeHandler(async (token, id, done) => {
-			const allowed = token && verifyIntegrationToken(token, 'echo-download');
+	echoServerSocket.on('message', async (data) => {
+		try {
+			const msg = JSON.parse(data.toString()) as EchoServerWSMessage;
 
-			done({
-				allowed,
-				name: allowed ? (await echo.getItem(id))?.name : '',
-			});
-		})
-	);
+			if (awaitingEchoResponse.has(msg.msgId)) {
+				awaitingEchoResponse.get(msg.msgId)(msg.data);
+				awaitingEchoResponse.delete(msg.msgId);
+				return;
+			}
 
-	echoServerSocket.on(
-		'downloaded',
-		safeHandler(async (id) => {
-			await echo.downloaded(id);
-			broadcast();
-		})
-	);
+			if (msg.route === 'downloaded') {
+				const id = msg.data.id;
 
-	echoServerSocket.on(
-		'uploaded',
-		safeHandler(async (id, data) => {
-			//if it's a brand new game send a notification to everyone
-			const uploadedItem = await echo.uploadFinished(id, data);
+				await echo.downloaded(id);
+				broadcast();
+			} else if (msg.route === 'deleted') {
+				await echo.delete(msg.data.id);
+				broadcast();
+			} else if (msg.route === 'verify-download-token') {
+				const token = msg.data.token,
+					allowed = token && verifyIntegrationToken(token, 'echo-download');
 
-			createNotificationsForPermittedUsers(
-				echoBooker,
-				'view',
-				{
-					title: 'Echo',
-					message: `"${uploadedItem.name}" was uploaded.`,
-					href: `/echo/${uploadedItem.id}`,
-				},
-				'notifyEchoUploads'
-			);
-			broadcast();
-		})
-	);
+				sendToEcho(
+					'verify-download-token',
+					{
+						allowed,
+						name: allowed ? (await echo.getItem(msg.data.id))?.name : '',
+					},
+					msg.msgId
+				);
+			} else if (msg.route === 'uploaded') {
+				const { id, size } = msg.data as { id: string; size: number };
+				//if it's a brand new game send a notification to everyone
+				const uploadedItem = await echo.uploadFinished(id, {
+					size: size,
+				});
 
-	//on connection events make sure we're always up to date
-	echoServerSocket.on(
-		'refresh',
-		safeHandler(async (data) => {
-			diskUsage = data.diskUsage;
-			broadcast();
-		})
-	);
+				createNotificationsForPermittedUsers(
+					echoBooker,
+					'view',
+					{
+						title: 'Echo',
+						message: `"${uploadedItem.name}" was uploaded.`,
+						href: `/echo/${uploadedItem.id}`,
+					},
+					'notifyEchoUploads'
+				);
+				broadcast();
+			} else if (msg.route === 'disk-usage') {
+				diskUsage = msg.data as EchoDiskUsage;
+				broadcast();
+			} else {
+				echoLogger.warn(`No echo server handler found for "${msg.route}"!`);
+			}
+		} catch (error) {
+			echoLogger.error('Error handling Echo websocket message', { error, data: data.toString() });
+		}
+	});
 };
 
-io.of((name, query, next) => {
-	if (name === '/echo-server') {
-		//only allow clients with a valid signed JWT token to connect to this
-		next(null, verifyIntegrationToken(query.token, 'echo'));
+internalServer.on('upgrade', (req: IncomingMessage, socket, head) => {
+	const token = req.headers.authorization?.replace('Bearer ', '');
+
+	if (req.url === '/echo-server-ws' && verifyIntegrationToken(token, 'echo')) {
+		wss.handleUpgrade(req, socket, head, (ws) => {
+			echoListener(ws);
+		});
 	} else {
-		next(null, true);
+		socket.destroy();
 	}
-}).on('connection', (socket: Socket) => {
-	echoListener(socket);
 });
