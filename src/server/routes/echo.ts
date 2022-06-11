@@ -49,7 +49,10 @@ getEchoData().then((data) => {
 
 const awaitingEchoResponse = new Map<string, (data: any) => void>();
 
-function sendToEcho(route: string, data: Record<string, any>, msgId = uuid(), done?: () => void) {
+function sendToEcho(route: string, data: Record<string, any>, msgId?: string, done?: () => void) {
+	if (!msgId) {
+		msgId = uuid();
+	}
 	if (echoOnline) {
 		echoServerSocket.send(JSON.stringify({ route, data, msgId }));
 
