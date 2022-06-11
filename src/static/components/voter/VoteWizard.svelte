@@ -49,6 +49,12 @@
 			border: 2px solid currentColor;
 		}
 	}
+	.down[aria-pressed='true'] {
+		background: var(--sx-red-transparent);
+	}
+	.up[aria-pressed='true'] {
+		background: var(--sx-blue-transparent);
+	}
 	button {
 		font-size: var(--sx-font-size-5);
 		white-space: nowrap;
