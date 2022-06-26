@@ -18,6 +18,9 @@
 		text-align: center;
 		padding: var(--sx-spacing-1);
 	}
+	:root {
+		--sx-hue-gray: 204 !important;
+	}
 </style>
 
 <Header appName="Overseer" on:titleclick={titleClick} titleClickPreventDefault={true} href="/">
