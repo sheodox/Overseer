@@ -51,7 +51,7 @@
     "socket.io": "^4.0.0",
     "socket.io-client": "^4.0.0",
     "style-loader": "^2.0.0",
-    "svelte": "^3.44.0",
+    "svelte": "^3.49.0",
     "svelte-loader": "^3.0.0",
     "three": "^0.126.1",
     "ts-node": "^9.1.1",
