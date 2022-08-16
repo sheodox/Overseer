@@ -51,35 +51,39 @@
 				</MenuButton>
 			{/if}
 		</div>
-		<div class="f-row">
-			<div class:partially-hidden={hasBeenUpdated}>
-				<UserBubble userId={echoItem.initialUploaderId}>
-					<em>Added {echoItem.createdAt.toLocaleDateString()}</em>
-				</UserBubble>
+		<div class="f-row f-wrap justify-content-between">
+			<div class="f-row">
+				<div class:partially-hidden={hasBeenUpdated}>
+					<UserBubble userId={echoItem.initialUploaderId}>
+						<em>Added {echoItem.createdAt.toLocaleDateString()}</em>
+					</UserBubble>
+				</div>
+
+				{#if hasBeenUpdated}
+					<UserBubble userId={echoItem.lastUploaderId}>
+						<em>Updated {echoItem.updatedAt.toLocaleDateString()}</em>
+					</UserBubble>
+				{/if}
 			</div>
 
-			{#if hasBeenUpdated}
-				<UserBubble userId={echoItem.lastUploaderId}>
-					<em>Updated {echoItem.updatedAt.toLocaleDateString()}</em>
-				</UserBubble>
-			{/if}
+			<EchoDownloadLink {echoItem} linkClasses="button primary">
+				<span class="fw-bold">
+					<Icon icon="download" />
+					Download (<FileSize {echoItem} />)
+				</span>
+			</EchoDownloadLink>
 		</div>
+
 		<div class="f-row justify-content-between">
 			<span class="has-inline-links">
 				{#each tags as tag}
-					<a href={tag.path} on:click|preventDefault={() => page(tag.path)} class="sx-badge-blue m-1">{tag.text}</a>
+					<a href={tag.path} on:click|preventDefault={() => page(tag.path)} class="m-1">{tag.text}</a>
 				{/each}
 			</span>
 		</div>
 		<div class="notes has-inline-links">
 			{@html echoItem.notesRendered}
 		</div>
-		<EchoDownloadLink {echoItem} linkClasses="button primary">
-			<span class="fw-bold">
-				<Icon icon="download" />
-				Download (<FileSize {echoItem} />)
-			</span>
-		</EchoDownloadLink>
 	</PageLayout>
 	<div class="f-row f-wrap">
 		<EchoImages mode={AlbumMode.View} size={AlbumSize.Medium} variant={AlbumVariant.Strip} {echoItem} />
