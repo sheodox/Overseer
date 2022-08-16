@@ -3,7 +3,7 @@ import { serialize, deserialize } from 'onaji';
 import { Envoy } from '../../../shared/envoy';
 import axios from 'axios';
 import { bytes, tags as formatTags } from '../../../shared/formatters';
-import { createProgressToast, updateToast } from 'sheodox-ui';
+import { createAutoExpireToast, createProgressToast, updateToast } from 'sheodox-ui';
 import { socket } from '../../socket';
 import page from 'page';
 import { activeQueryParams, activeRoute } from './routing';
@@ -122,8 +122,7 @@ export const echoOps = {
 	upload(updatingId: string, metadata: EchoItemEditable, file: File): Promise<string> {
 		return new Promise((resolve) => {
 			const uploadFile = async (id: string, uploadUrl: string) => {
-				const formData = new FormData(),
-					startTime = Date.now(),
+				const startTime = Date.now(),
 					toastId = createProgressToast({
 						title: `Echo - ${metadata.name}`,
 						message: '',
@@ -131,40 +130,43 @@ export const echoOps = {
 						min: 0,
 						max: file.size,
 					});
-				formData.append('echo-item', file);
 
-				axios
-					.post(uploadUrl, formData, {
-						headers: {
-							'content-type': 'multipart/form-data',
-						},
-						onUploadProgress: (e: ProgressEvent) => {
-							const elapsedSeconds = (Date.now() - startTime) / 1000,
-								//calculate time till completion
-								percentDone = e.loaded / e.total,
-								bytesPerSecond = e.loaded / elapsedSeconds,
-								//remaining = percent left/percent per second
-								secondsTillDone = (1 - percentDone) / (percentDone / elapsedSeconds),
-								showMinutes = secondsTillDone > 60,
-								megabytesPerSecond = bytes(bytesPerSecond, 'mb'),
-								remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${
-									showMinutes ? 'm' : 's'
-								}`;
+				axios({
+					method: 'POST',
+					url: uploadUrl,
+					data: file,
+					onUploadProgress: (e: ProgressEvent) => {
+						const elapsedSeconds = (Date.now() - startTime) / 1000,
+							//calculate time till completion
+							percentDone = e.loaded / e.total,
+							bytesPerSecond = e.loaded / elapsedSeconds,
+							//remaining = percent left/percent per second
+							secondsTillDone = (1 - percentDone) / (percentDone / elapsedSeconds),
+							showMinutes = secondsTillDone > 60,
+							megabytesPerSecond = bytes(bytesPerSecond, 'mb'),
+							remaining = `${Math.floor(showMinutes ? secondsTillDone / 60 : secondsTillDone)}${
+								showMinutes ? 'm' : 's'
+							}`;
 
-							updateToast(toastId, {
-								value: e.loaded,
-								message:
-									e.loaded === e.total
-										? 'Upload complete!'
-										: `${bytes(e.loaded, 'gb')} / ${bytes(
-												e.total,
-												'gb'
-										  )} gb - ${megabytesPerSecond} mb/s (${remaining})`,
-							});
-						},
-					})
+						updateToast(toastId, {
+							value: e.loaded,
+							message:
+								e.loaded === e.total
+									? 'Upload complete!'
+									: `${bytes(e.loaded, 'gb')} / ${bytes(e.total, 'gb')} gb - ${megabytesPerSecond} mb/s (${remaining})`,
+						});
+					},
+				})
 					.then(() => {
 						// Banshee.play(beep, 0.4);
+					})
+					.catch((err) => {
+						createAutoExpireToast({
+							variant: 'error',
+							title: 'Upload Error',
+							message: 'There was a problem uploading the file',
+							technicalDetails: err,
+						});
 					});
 
 				resolve(id);

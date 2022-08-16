@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 /// <reference types="svelte" />
 //import 'vite/modulepreload-polyfill';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { styles } from 'sheodox-ui';
 import './scss/style.scss';
 //import '../../node_modules/fontawesome-free/css/all.min.css';
