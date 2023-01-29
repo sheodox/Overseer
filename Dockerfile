@@ -1,4 +1,4 @@
-FROM node:16 AS dev
+FROM node:18 AS dev
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=development
