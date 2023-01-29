@@ -59,18 +59,13 @@ class ImageStore {
 
 		//todo regenerate if the version is old
 
-		const image = (await prisma.image.findFirst({
+		const image = await prisma.image.findFirst({
 			where: { id },
 			select: {
 				[size]: true,
 				source: true,
 			},
-		})) as {
-			large?: Buffer;
-			medium?: Buffer;
-			small?: Buffer;
-			source: string;
-		};
+		});
 
 		return {
 			image: image[size as keyof typeof image],
