@@ -1,7 +1,4 @@
 <style>
-	#new-candidate-form {
-		margin: 1rem;
-	}
 	.detail-hide-prompt {
 		position: fixed;
 		top: 0.5rem;
@@ -82,11 +79,11 @@
 		</div>
 
 		{#if showFilters}
-			<div><VoterUserFilters {voters} /></div>
+			<div class="mb-2"><VoterUserFilters {voters} /></div>
 		{/if}
-		<div class="f-row justify-content-around align-items-center">
+		<div class="f-row justify-content-between align-items-center">
 			{#if booker.voter.add_candidate}
-				<form on:submit|preventDefault={addCandidate} class="align-self-center" id="new-candidate-form">
+				<form on:submit|preventDefault={addCandidate} class="align-self-center mb-2" id="new-candidate-form">
 					<div class="align-self-center">
 						<TextInput id="new-candidate" bind:value={newCandidateName}>New candidate</TextInput>
 					</div>

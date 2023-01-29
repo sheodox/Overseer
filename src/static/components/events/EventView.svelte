@@ -20,8 +20,8 @@
 	.collapsing-row {
 		display: flex;
 	}
-	.event-metadata {
-		border: 2px solid var(--sx-gray-200);
+	.detail-tabs {
+		background: var(--sx-gray-transparent);
 		border-radius: 5px;
 	}
 	@media (max-width: 800px) {
@@ -49,12 +49,10 @@
 			<div class="sub-panel f-1">
 				<h1>{$eventFromRoute.name}</h1>
 				<div class="f-row f-wrap justify-content-between align-items-start gap-3">
-					<div class="event-metadata p-3">
-						<div>
-							<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
-							<EventTimes event={$eventFromRoute} />
-						</div>
-					</div>
+					<Fieldset legend="Details">
+						<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
+						<EventTimes event={$eventFromRoute} />
+					</Fieldset>
 					{#if booker.events.rsvp}
 						<RSVP
 							status={userRsvp?.status}
@@ -95,21 +93,23 @@
 			</div>
 		</div>
 
-		<div class="mb-2 mt-6">
+		<div class="detail-tabs px-2 py-2">
 			<TabList bind:selectedTab {tabs} />
+			<Tab {selectedTab} tabId="rsvps">
+				<Attendance event={$eventFromRoute} />
+			</Tab>
+			<Tab {selectedTab} tabId="rsvps-day">
+				<AttendeeDetails event={$eventFromRoute} filter="day" />
+			</Tab>
+			<Tab {selectedTab} tabId="rsvps-overnight">
+				<AttendeeDetails event={$eventFromRoute} filter="overnight" />
+			</Tab>
 		</div>
-		<Tab {selectedTab} tabId="rsvps">
-			<Attendance event={$eventFromRoute} />
-		</Tab>
-		<Tab {selectedTab} tabId="rsvps-day">
-			<AttendeeDetails event={$eventFromRoute} filter="day" />
-		</Tab>
-		<Tab {selectedTab} tabId="rsvps-overnight">
-			<AttendeeDetails event={$eventFromRoute} filter="overnight" />
-		</Tab>
-		<Tab {selectedTab} tabId="notes">
+
+		{#if numNotes > 0}
+			<h2 class="mb-0">Notes ({numNotes})</h2>
 			<RSVPNotes rsvps={$eventFromRoute.rsvps} />
-		</Tab>
+		{/if}
 	</div>
 {/if}
 
@@ -134,7 +134,7 @@
 {/if}
 
 <script lang="ts">
-	import { MenuButton, Icon, Modal, Tab, TabList } from 'sheodox-ui';
+	import { MenuButton, Icon, Modal, Tab, TabList, Fieldset } from 'sheodox-ui';
 	import { pageName, booker } from '../stores/app';
 	import PageSpinner from '../PageSpinner.svelte';
 	import { eventFromRoute, eventOps, eventsInitialized } from '../stores/events';
@@ -166,10 +166,6 @@
 		{
 			id: 'rsvps',
 			title: 'RSVPs',
-		},
-		booker.events.organize && {
-			id: 'notes',
-			title: `Notes (${numNotes})`,
 		},
 		isMultipleDays && {
 			id: 'rsvps-day',

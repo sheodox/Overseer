@@ -80,7 +80,7 @@ export function uploadImage(toastTitle: string, file: File, postPath: string) {
 			headers: {
 				'Content-type': file.type,
 			},
-			onUploadProgress(e: ProgressEvent) {
+			onUploadProgress(e) {
 				if (e.loaded === e.total) {
 					updateToast(progressToastId, {
 						message: 'Upload complete!',

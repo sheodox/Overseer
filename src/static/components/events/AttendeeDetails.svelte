@@ -1,19 +1,17 @@
 {#if filter === 'day'}
-	<div class="f-row f-wrap gap-6">
+	<div class="f-row f-wrap gap-2">
 		{#each event.attendeesByDay as day}
-			<Attendees rsvps={day.attendees} showEmpty={true}>
-				{getDayOfWeekName(day.dayOfWeek)}
-				{day.date}
-			</Attendees>
+			<Attendees rsvps={day.attendees} showEmpty={true} title="{getDayOfWeekName(day.dayOfWeek)} {day.date}" />
 		{/each}
 	</div>
 {:else if filter === 'overnight'}
-	<div class="f-row f-wrap gap-6">
+	<div class="f-row f-wrap gap-2">
 		{#each event.attendeesByDay as day}
-			<Attendees rsvps={day.attendees.filter((rsvp) => rsvp.stayingOvernight)} showEmpty={true}>
-				{getDayOfWeekName(day.dayOfWeek)}
-				{day.date}
-			</Attendees>
+			<Attendees
+				rsvps={day.attendees.filter((rsvp) => rsvp.stayingOvernight)}
+				showEmpty={true}
+				title="{getDayOfWeekName(day.dayOfWeek)} {day.date}"
+			/>
 		{/each}
 	</div>
 {/if}

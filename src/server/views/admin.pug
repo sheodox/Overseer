@@ -17,7 +17,7 @@ html
 			include ../../static/assets/logo-favicon.svg
 		div#app-root
 		if development
-			script(type="module", src="http://localhost:3000/@vite/client")
-			script(type="module", src="http://localhost:3000/src/static/admin/admin-main.ts")
+			script(type="module", src="http://localhost:5173/@vite/client")
+			script(type="module", src="http://localhost:5173/src/static/admin/admin-main.ts")
 		else
 			script(src=`/${scriptEntryFile}`, type="module")

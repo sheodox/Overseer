@@ -1,12 +1,4 @@
-<style>
-	fieldset {
-		border-radius: 5px;
-		border-color: var(--sx-gray-300);
-	}
-</style>
-
-<fieldset>
-	<legend class="mb-0 fw-bold">Ranking Between Users</legend>
+<Fieldset legend="Ranking Between Users">
 	<div class="f-row f-wrap">
 		{#each voters as voter}
 			<button on:click={() => toggle(voter)} aria-pressed={!$filteredOutVoters.includes(voter)}>
@@ -16,9 +8,10 @@
 			<p>Nobody has voted yet!</p>
 		{/each}
 	</div>
-</fieldset>
+</Fieldset>
 
 <script lang="ts">
+	import { Fieldset } from 'sheodox-ui';
 	import UserBubble from '../UserBubble.svelte';
 	import { filteredOutVoters } from '../stores/voter';
 	export let voters: string[];

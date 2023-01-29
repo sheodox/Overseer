@@ -1,9 +1,9 @@
 /// <reference types="vite/client" />
 /// <reference types="svelte" />
 //import 'vite/modulepreload-polyfill';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { styles } from 'sheodox-ui';
+import 'sheodox-ui/style.scss';
 import './scss/style.scss';
+import 'vite/modulepreload-polyfill';
 //import '../../node_modules/fontawesome-free/css/all.min.css';
 
 import './components/stores/routing';

@@ -2,6 +2,7 @@
 	.sub-panel {
 		width: 30rem;
 		max-width: 90vw;
+		background: var(--sx-gray-transparent);
 	}
 	h1 {
 		margin: 0;
@@ -12,11 +13,11 @@
 	<div class="sub-panel">
 		<h1>Notifications</h1>
 		<p>Want to be notified of future events?</p>
-		<p>
-			You can pick what notifications you receive in the <Link href="/settings">settings</Link>.
+		<p class="has-inline-links">
+			You can pick what notifications you receive in <Link href="/settings">settings</Link>.
 		</p>
 		<div class="f-row justify-content-between">
-			<button on:click={dontPromptAgain}> No, Don't Ask Again </button>
+			<button on:click={dontPromptAgain} class="secondary"> No, Don't Ask Again </button>
 			<PushNotificationSubscribe />
 		</div>
 	</div>

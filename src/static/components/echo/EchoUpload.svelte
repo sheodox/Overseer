@@ -40,7 +40,10 @@
 				<div class="field">
 					<TextInput bind:value={tags} id="echo-tags">Tags</TextInput>
 				</div>
-				<TagCloud bind:tags />
+				<fieldset>
+					<legend>Tags</legend>
+					<TagCloud bind:tags />
+				</fieldset>
 			</div>
 			<div class="column f-2">
 				<label for="echo-notes">Notes</label>

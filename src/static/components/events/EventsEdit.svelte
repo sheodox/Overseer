@@ -5,12 +5,6 @@
 		font-size: 0.9rem;
 		resize: vertical;
 	}
-	form :global(fieldset) {
-		border: none;
-	}
-	form :global(legend) {
-		font-size: 1.2rem;
-	}
 	.field {
 		margin: 1rem;
 	}

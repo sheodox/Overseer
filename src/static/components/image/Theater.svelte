@@ -72,6 +72,7 @@
 				<span class="sr-only">View previous image</span>
 				<Icon icon="chevron-left" variant="icon-only" />
 			</button>
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<img
 				class="selected-image"
 				src={selectedImage.src ? selectedImage.src : `/image/${selectedImage.id}/large`}

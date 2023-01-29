@@ -45,6 +45,7 @@
 	}
 </style>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="f-row f-wrap justify-content-center {variant} {size}" on:click|stopPropagation|preventDefault>
 	{#each viewableImages as image (image.id)}
 		<div class="image-container">
@@ -73,6 +74,7 @@
 
 {#if showTheater}
 	<Portal>
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div on:click|stopPropagation|preventDefault>
 			<Theater {selectedImage} {images} bind:visible={showTheater} />
 		</div>

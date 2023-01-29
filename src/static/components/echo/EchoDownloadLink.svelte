@@ -7,6 +7,7 @@
 		target="_blank"
 		href={`${echoItem.downloadUrl}?token=${$echoDownloadToken}`}
 		class={linkClasses}
+		rel="noreferrer"
 	>
 		<slot />
 	</a>

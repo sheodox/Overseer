@@ -131,11 +131,10 @@ export const echoOps = {
 						max: file.size,
 					});
 
-				axios({
+				axios(uploadUrl, {
 					method: 'POST',
-					url: uploadUrl,
 					data: file,
-					onUploadProgress: (e: ProgressEvent) => {
+					onUploadProgress: (e) => {
 						const elapsedSeconds = (Date.now() - startTime) / 1000,
 							//calculate time till completion
 							percentDone = e.loaded / e.total,

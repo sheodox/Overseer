@@ -2,7 +2,7 @@
 	<MenuButton>
 		<span slot="trigger">
 			{role.name}
-			<Icon icon="chevron-down" slot="trigger" />
+			<Icon icon="chevron-down" />
 		</span>
 		<ul slot="menu">
 			<li>

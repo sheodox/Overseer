@@ -1,6 +1,6 @@
 <div class="mt-2">
 	{#if rsvps.length}
-		<div class="f-row f-wrap gap-6">
+		<div class="f-row f-wrap gap-2">
 			<Attendees rsvps={going} title="Going" />
 			<Attendees rsvps={maybe} title="Maybe" />
 			<Attendees rsvps={notGoing} title="Not Going" />

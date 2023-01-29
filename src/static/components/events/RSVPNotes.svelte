@@ -13,15 +13,17 @@
 	<div class="f-row f-wrap gap-3">
 		{#each rsvps as rsvp}
 			{#if rsvp.notes}
-				<div class="rsvp-notes p-3">
-					<div>
+				<div class="rsvp-notes card two-tone">
+					<div class="card-title sx-font-size-3">
 						<UserBubble userId={rsvp.userId}>
 							<span>
 								<RSVPStatus status={rsvp.status} />
 							</span>
 						</UserBubble>
 					</div>
-					<p class="notes">{rsvp.notes}</p>
+					<div class="card-body">
+						<p class="notes">{rsvp.notes}</p>
+					</div>
 				</div>
 			{/if}
 		{/each}

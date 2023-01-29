@@ -1,18 +1,14 @@
 <style>
-	.attendee-list {
-		max-width: 15rem;
-	}
 	.user {
 		margin: 0.2rem;
 	}
-	h3 {
-		margin: 0;
+	.no-rsvps {
+		color: var(--sx-gray-100);
 	}
 </style>
 
 {#if rsvps.length || showEmpty}
-	<div class="attendee-list sub-panel m-0 p-0">
-		<h3>{title}<slot /></h3>
+	<Fieldset legend={title}>
 		{#if rsvps.length}
 			<small>{rsvps.length} {rsvps.length === 1 ? 'person' : 'people'}</small>
 		{/if}
@@ -22,13 +18,14 @@
 					<UserBubble userId={rsvp.userId} />
 				</div>
 			{:else}
-				<p class="text-align-center muted"><em>No RSPVs.</em></p>
+				<p class="text-align-center no-rsvps"><em>No RSPVs.</em></p>
 			{/each}
 		</div>
-	</div>
+	</Fieldset>
 {/if}
 
 <script lang="ts">
+	import { Fieldset } from 'sheodox-ui';
 	import UserBubble from '../UserBubble.svelte';
 
 	export let title = '';

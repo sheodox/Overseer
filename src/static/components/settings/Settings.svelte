@@ -14,12 +14,24 @@
 	<div class="sub-panel mx-0 p-4">
 		<h3 class="mt-0">Push Permissions</h3>
 		{#if $pushSubscribed}
-			<p>You're set up to get push notifications on this device!</p>
+			<div class="f-row align-items-center gap-2">
+				<div class="sx-font-size-5">
+					<Icon icon="circle-check" />
+				</div>
+				<p>You're set up to get push notifications on this device!</p>
+			</div>
 		{:else}
-			<p><em>You're not set up to get push notifications on this device.</em></p>
+			<div class="f-row align-items-center gap-2">
+				<div class="sx-font-size-5">
+					<Icon icon="circle-xmark" />
+				</div>
+				<p>You're not set up to get push notifications on this device.</p>
+			</div>
 			<PushNotificationSubscribe />
-			<p class="mb-0">
-				<Icon icon="info-circle" />This must be set up on every device you want to get push notifications.
+			<p>
+				<small class="mb-0">
+					<Icon icon="info-circle" />This must be set up on every device you want to get push notifications.
+				</small>
 			</p>
 		{/if}
 	</div>

@@ -14,7 +14,7 @@
 	<div class="event">
 		<div class="card clickable p-4">
 			<div class="f-row justify-content-between align-items-baseline">
-				<span class="sx-font-size-5">
+				<span class="sx-font-size-7">
 					{event.name}
 				</span>
 			</div>

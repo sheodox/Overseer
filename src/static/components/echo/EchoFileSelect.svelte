@@ -55,7 +55,8 @@
 	on:dragover={() => (dragging = true)}
 	on:drop={() => (dragging = false)}
 	on:mouseleave={() => (dragging = false)}
-	on:dragexit={() => (dragging = false)} />
+	on:dragexit={() => (dragging = false)}
+/>
 
 <script lang="ts">
 	import Icon from 'sheodox-ui/Icon.svelte';

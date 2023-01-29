@@ -4,33 +4,20 @@
 		margin: 0;
 		color: var(--sx-text-color);
 	}
-	.download {
-		height: 100%;
-		background: var(--sx-gray-600);
-		display: grid;
-		place-content: center;
-	}
 	.download.unavailable {
 		color: var(--sx-gray-900);
+	}
+	.item-subtitle {
+		color: var(--sx-gray-75);
 	}
 
 	$corner-radius: 5px;
 	.list {
 		width: 100%;
-		.echo-item-details {
-			border-radius: $corner-radius 0 0 $corner-radius;
-		}
-		.download {
-			border-radius: 0 $corner-radius $corner-radius 0;
-		}
 	}
 	.grid {
-		border-radius: $corner-radius $corner-radius 0 0;
 		overflow: hidden;
 
-		.echo-item-details {
-			border-radius: 0 0 0 $corner-radius;
-		}
 		.download {
 			border-radius: 0 0 $corner-radius 0;
 		}
@@ -44,30 +31,37 @@
 	}
 </style>
 
-<div class="echo-item f-column {variant}">
+<div class="echo-item f-column {variant} card clickable" class:card-image={variant === EchoViewLayout.Grid}>
 	{#if variant === EchoViewLayout.Grid}
 		<EchoImages echoItem={item} mode={AlbumMode.View} size={AlbumSize.Medium} variant={AlbumVariant.Cover} />
 	{/if}
-	<div class="f-row description">
-		<div class="echo-item-details p-4 f-column f-1 card clickable" class:has-image={variant === EchoViewLayout.Grid}>
-			<Link href={item.path} noHoverStyles={true}>
-				<p class="sx-font-size-5 mb-3">{item.name}</p>
-				<p>
-					<FileSize echoItem={item} /> - Updated {item.updatedAt.toLocaleDateString()}
-				</p>
-			</Link>
-		</div>
-		<EchoDownloadLink echoItem={item}>
-			<div class="download card clickable f-row p-5 sx-font-size-5">
-				<Icon icon="download" />
-				<span class="sr-only">Download</span>
-			</div>
+	<Link href={item.path} noHoverStyles={true}>
+		<div class="f-row card-inset">
+			<div
+				class="echo-item-details p-4 f-row f-1 card clickable justify-content-between align-items-center"
+				class:has-image={variant === EchoViewLayout.Grid}
+			>
+				<div>
+					<div class="f-row justify-content-between align-items-top">
+						<p class="sx-font-size-5">{item.name}</p>
+					</div>
+					<p class="item-subtitle">
+						<strong><FileSize echoItem={item} /></strong> - Updated {item.updatedAt.toLocaleDateString()}
+					</p>
+				</div>
+				<EchoDownloadLink echoItem={item}>
+					<div class="button m-0 primary">
+						<Icon icon="download" variant="icon-only" />
+						<span class="sr-only">Download</span>
+					</div>
 
-			<div slot="unavailable" class="download unavailable card f-row p-5 sx-font-size-5">
-				<Icon icon="download" />
+					<div slot="unavailable" class="download unavailable">
+						<Icon icon="download" />
+					</div>
+				</EchoDownloadLink>
 			</div>
-		</EchoDownloadLink>
-	</div>
+		</div>
+	</Link>
 </div>
 
 <script lang="ts">
