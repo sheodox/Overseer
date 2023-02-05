@@ -32,6 +32,10 @@
 			font-size: var(--sx-font-size-6);
 		}
 	}
+	.rsvp-link {
+		width: 100%;
+		text-align: center;
+	}
 </style>
 
 {#if !$eventsInitialized}
@@ -49,16 +53,32 @@
 			<div class="sub-panel f-1">
 				<h1>{$eventFromRoute.name}</h1>
 				<div class="f-row f-wrap justify-content-between align-items-start gap-3">
-					<Fieldset legend="Details">
+					<Fieldset legend="Details" fieldsetClasses="f-column gap-1 pt-5">
 						<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
-						<EventTimes event={$eventFromRoute} />
+						<EventTimes startDate={$eventFromRoute.startDate} endDate={$eventFromRoute.endDate} />
 					</Fieldset>
 					{#if booker.events.rsvp}
-						<RSVP
-							status={userRsvp?.status}
-							showFixGoingWarning={userGoing && isMultipleDays && !userRsvp?.rsvpDays.length}
-							on:rsvp={rsvpPrompt}
-						/>
+						<div class="card">
+							<div class="card-title">RSVP</div>
+							<div class="card-body f-column gap-2">
+								{#if userRsvp?.status}
+									<div>
+										<RSVPStatusBadge status={userRsvp?.status} />
+									</div>
+								{:else}
+									You haven't RSVP'd yet.
+								{/if}
+								<Link href="/events/{$eventFromRoute.id}/rsvp">
+									<div class="button primary py-0 m-0 rsvp-link">
+										{#if userRsvp?.status}
+											<p>Update RSVP</p>
+										{:else}
+											<p>RSVP</p>
+										{/if}
+									</div>
+								</Link>
+							</div>
+						</div>
 					{/if}
 				</div>
 
@@ -98,11 +118,11 @@
 			<Tab {selectedTab} tabId="rsvps">
 				<Attendance event={$eventFromRoute} />
 			</Tab>
-			<Tab {selectedTab} tabId="rsvps-day">
-				<AttendeeDetails event={$eventFromRoute} filter="day" />
+			<Tab {selectedTab} tabId="rsvps-intervals">
+				<EventItineraryDetails event={$eventFromRoute} />
 			</Tab>
 			<Tab {selectedTab} tabId="rsvps-overnight">
-				<AttendeeDetails event={$eventFromRoute} filter="overnight" />
+				<AttendeeDetails event={$eventFromRoute} />
 			</Tab>
 		</div>
 
@@ -113,11 +133,6 @@
 	</div>
 {/if}
 
-{#if showSurvey}
-	<Modal bind:visible={showSurvey} title={pendingStatusName} on:closed={() => (pendingStatus = null)}>
-		<RSVPSurvey bind:pendingStatus bind:visible={showSurvey} />
-	</Modal>
-{/if}
 {#if showDeleteConfirm}
 	<Modal bind:visible={showDeleteConfirm} title="Delete Event">
 		<div class="modal-body">
@@ -139,26 +154,21 @@
 	import PageSpinner from '../PageSpinner.svelte';
 	import { eventFromRoute, eventOps, eventsInitialized } from '../stores/events';
 	import page from 'page';
+	import EventItineraryDetails from './EventItineraryDetails.svelte';
+	import RSVPStatusBadge from './RSVPStatus.svelte';
 	import Link from '../Link.svelte';
-	import RSVP from './RSVP.svelte';
-	import RSVPSurvey from './RSVPSurvey.svelte';
 	import AttendanceTypeBadge from './AttendanceTypeBadge.svelte';
 	import Attendance from './Attendance.svelte';
 	import EventTimes from './EventTimes.svelte';
 	import RSVPNotes from './RSVPNotes.svelte';
 	import EventNotificationReminder from './EventNotificationReminder.svelte';
 	import AttendeeDetails from './AttendeeDetails.svelte';
-	import type { RSVPStatus } from '../../../shared/types/events';
 
-	let pendingStatus: RSVPStatus,
-		showDeleteConfirm = false,
-		selectedTab: string,
-		showSurvey = false;
+	let showDeleteConfirm = false,
+		selectedTab: string;
 
-	$: pendingStatusName = { going: 'Going', 'not-going': 'Not Going', maybe: 'Maybe' }[pendingStatus];
 	$: userRsvp = $eventFromRoute?.userRsvp;
-	$: isMultipleDays = $eventFromRoute?.eventDays.length > 1;
-	$: userGoing = userRsvp?.status === 'going';
+	$: hasMultipleIntervals = $eventFromRoute?.eventIntervals.length > 1;
 	$: numNotes = $eventFromRoute?.rsvps.reduce((sum, rsvp) => {
 		return sum + (rsvp.notes ? 1 : 0);
 	}, 0);
@@ -167,22 +177,18 @@
 			id: 'rsvps',
 			title: 'RSVPs',
 		},
-		isMultipleDays && {
-			id: 'rsvps-day',
-			title: 'RSVPs By Day',
+		hasMultipleIntervals && {
+			id: 'rsvps-intervals',
+			title: 'Itinerary',
 		},
-		isMultipleDays && {
-			id: 'rsvps-overnight',
-			title: 'Overnight Attendees',
-		},
+		hasMultipleIntervals &&
+			$eventFromRoute.attendanceType === 'real' && {
+				id: 'rsvps-overnight',
+				title: 'Overnight Guests',
+			},
 	].filter((tab) => !!tab);
 
 	$: $pageName = $eventFromRoute?.name ?? 'Events';
-
-	function rsvpPrompt(e: CustomEvent<RSVPStatus>) {
-		pendingStatus = e.detail;
-		showSurvey = true;
-	}
 
 	function deleteEvent() {
 		eventOps.deleteEvent($eventFromRoute.id);

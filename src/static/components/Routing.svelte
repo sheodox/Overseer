@@ -16,6 +16,8 @@
 	<EventsEdit mode={EventsEditMode.Create} />
 {:else if $activeRoute === 'events/edit' && events.view && events.organize}
 	<EventsEdit mode={EventsEditMode.Edit} />
+{:else if $activeRoute === 'events/rsvp' && events.view && events.rsvp}
+	<RSVPSurvey />
 {:else if $activeRoute === 'events/view' && events.view}
 	<EventView />
 {:else if $activeRoute === 'settings'}
@@ -40,6 +42,7 @@
 	import HomePage from './HomePage.svelte';
 	import EventView from './events/EventView.svelte';
 	import Settings from './settings/Settings.svelte';
+	import RSVPSurvey from './events/RSVPSurvey.svelte';
 
 	//shortcuts to permissions!
 	const echo = booker.echo,

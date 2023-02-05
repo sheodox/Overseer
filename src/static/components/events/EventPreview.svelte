@@ -20,7 +20,7 @@
 			</div>
 
 			<p class="my-3">
-				<EventTimes {event} />
+				<EventTimes startDate={event.startDate} endDate={event.endDate} />
 			</p>
 
 			<div class="f-row justify-content-between">

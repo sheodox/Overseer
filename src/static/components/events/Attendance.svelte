@@ -1,12 +1,12 @@
 <div class="mt-2">
 	{#if rsvps.length}
 		<div class="f-row f-wrap gap-2">
-			<Attendees rsvps={going} title="Going" />
-			<Attendees rsvps={maybe} title="Maybe" />
-			<Attendees rsvps={notGoing} title="Not Going" />
+			<Attendees rsvps={going} title="Going" showEmpty {variant} />
+			<Attendees rsvps={maybe} title="Maybe" showEmpty {variant} />
+			<Attendees rsvps={notGoing} title="Not Going" showEmpty {variant} />
 		</div>
 	{:else}
-		<p><em>Nobody has responded yet.</em></p>
+		<p class="muted"><em>Nobody has responded yet.</em></p>
 	{/if}
 </div>
 
@@ -15,15 +15,19 @@
 	import type { MaskedEvent, MaskedRsvp, RSVPStatus } from '../../../shared/types/events';
 
 	export let event: MaskedEvent;
+	export let intervalId: string | null = null;
+	export let variant: 'full' | 'minimal' = 'full';
 
 	function byStatus(status: RSVPStatus) {
-		return (rsvp: MaskedRsvp) => {
+		return (rsvp: { status: string }) => {
 			return rsvp.status === status;
 		};
 	}
 
-	$: rsvps = event.rsvps;
-	$: going = event.rsvps.filter(byStatus('going'));
-	$: notGoing = event.rsvps.filter(byStatus('not-going'));
-	$: maybe = event.rsvps.filter(byStatus('maybe'));
+	$: intervalRspvs = event.eventIntervalRsvps.filter((i) => i.eventIntervalId === intervalId);
+	$: rsvps = intervalId ? intervalRspvs : event.rsvps;
+	// this this is needlessly complicated, because typescript thinks the types in `rsvps` are incompatible
+	$: going = intervalId ? intervalRspvs.filter(byStatus('going')) : event.rsvps.filter(byStatus('going'));
+	$: notGoing = intervalId ? intervalRspvs.filter(byStatus('not-going')) : event.rsvps.filter(byStatus('not-going'));
+	$: maybe = intervalId ? intervalRspvs.filter(byStatus('maybe')) : event.rsvps.filter(byStatus('maybe'));
 </script>

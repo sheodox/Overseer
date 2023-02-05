@@ -1,10 +1,4 @@
 <style>
-	.detail-hide-prompt {
-		position: fixed;
-		top: 0.5rem;
-		z-index: 99; /* below the theater */
-		background: var(--sx-panel-bg);
-	}
 	.show-wizard {
 		border: 2px solid var(--sx-pink-400);
 		color: var(--sx-pink-400);
@@ -12,13 +6,6 @@
 </style>
 
 {#if $voterSelectedRace}
-	{#if $isViewingDetails}
-		<button class="detail-hide-prompt" on:click={hideAllDetails}>
-			<Icon icon="eye-slash" />
-			Hide details to re-enable automatic ranking.
-		</button>
-	{/if}
-
 	<PageLayout title={$voterSelectedRace?.name}>
 		<div slot="beside-title">
 			<MenuButton>
@@ -88,6 +75,12 @@
 						<TextInput id="new-candidate" bind:value={newCandidateName}>New candidate</TextInput>
 					</div>
 				</form>
+			{/if}
+			{#if $isViewingDetails}
+				<button class="secondary" on:click={hideAllDetails}>
+					<Icon icon="eye-slash" />
+					Hide details to re-enable automatic ranking.
+				</button>
 			{/if}
 			{#if booker.voter.vote}
 				<button class="show-wizard" on:click={() => (showVoteWizard = true)}>Help Me Vote!</button>

@@ -4,7 +4,13 @@ import page from 'page';
 import { Envoy } from '../../../shared/envoy';
 import { activeRouteParams } from './routing';
 import { appBootstrap, booker, user } from './app';
-import type { EventEditable, EventsData, MaskedEvent, RSVPSurvey } from '../../../shared/types/events';
+import type {
+	EventEditable,
+	EventIntervalEditable,
+	EventsData,
+	MaskedEvent,
+	RSVPSurvey,
+} from '../../../shared/types/events';
 const eventsEnvoy = new Envoy(socket, 'events', true);
 
 const initialEventsData = appBootstrap.initialData.events;
@@ -31,6 +37,9 @@ function parseEventsData(data: EventsData) {
 
 	return data.map((event) => {
 		event.userRsvp = event.rsvps.find((rsvp) => rsvp.userId === userId) ?? null;
+		if (event.userRsvp) {
+			event.userRsvp.rsvpIntervals = event.eventIntervalRsvps.filter((rsvpInt) => rsvpInt.userId === userId);
+		}
 		return event;
 	});
 }
@@ -88,15 +97,15 @@ export function getDayOfWeekName(dayIndex: number) {
 }
 
 export const eventOps = {
-	createEvent: (data: EventEditable) => {
-		eventsEnvoy.emit('createEvent', data, (id: string) => {
+	createEvent: (data: EventEditable, intervals: EventIntervalEditable[]) => {
+		eventsEnvoy.emit('createEvent', data, intervals, (id: string) => {
 			if (id) {
 				page(`/events/${id}`);
 			}
 		});
 	},
-	updateEvent: (id: string, data: EventEditable) => {
-		eventsEnvoy.emit('updateEvent', id, data, (id: string) => {
+	updateEvent: (id: string, data: EventEditable, intervals: EventIntervalEditable[], clearRsvps: boolean) => {
+		eventsEnvoy.emit('updateEvent', id, data, intervals, clearRsvps, (id: string) => {
 			if (id) {
 				page(`/events/${id}`);
 			}

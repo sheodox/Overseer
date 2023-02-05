@@ -5,30 +5,38 @@
 </style>
 
 <p class="m-0">
-	{eventTimeString}
+	{eventTimeString}.
+	{#if showDuration}
+		Duration: {eventDuration} hour{eventDuration === 1 ? '' : 's'}.
+	{/if}
 </p>
 
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import type { MaskedEvent } from '../../../shared/types/events';
+	import { differenceInCalendarDays, differenceInHours } from 'date-fns';
 
 	const timeFormat = new Intl.DateTimeFormat('en-US', { timeStyle: 'short' });
 
-	export let event: MaskedEvent;
+	export let startDate: Date;
+	export let endDate: Date;
+	export let showDuration = false;
 	let eventTimeString = eventTime();
+
+	$: datesValid = startDate && endDate;
+	$: eventDuration = !datesValid ? 0 : differenceInHours(endDate, startDate);
 
 	const interval = setInterval(() => {
 		eventTimeString = eventTime();
-	}, 1000 * 60);
+	}, 100);
 
 	onDestroy(() => {
 		clearInterval(interval);
 	});
 
 	function eventTime() {
-		const start = event.startDate,
-			end = event.endDate,
-			numDays = event.eventDays.length;
+		const start = startDate,
+			end = endDate,
+			numDays = differenceInCalendarDays(start, end);
 
 		if (numDays === 1) {
 			return `${dateString(start)} from ${prettyTime(start)} to ${prettyTime(end)}`;

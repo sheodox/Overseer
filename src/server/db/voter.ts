@@ -1,6 +1,6 @@
 import { prisma } from './prisma.js';
 import { imageStore } from './image-store.js';
-import { name as validName } from '../util/validator.js';
+import { name as validName } from '../../shared/validator.js';
 
 class Voter {
 	//trim and remove all unnecessary spaces

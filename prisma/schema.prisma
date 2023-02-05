@@ -7,8 +7,7 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["filterJson"]
+  provider = "prisma-client-js"
 }
 
 model Echo {
@@ -49,11 +48,12 @@ model User {
   lastActiveAt      DateTime               @default(now())
   rsvps             Rsvp[]
   events            Event[]
-  rsvpDays          RsvpDay[]
   notifications     Notification[]
   pushSubscriptions UserPushSubscription[]
   settingsId        String?                @unique
   settings          UserSettings?          @relation(fields: [settingsId], references: [id])
+  eventInterval     EventInterval[]
+  rsvpInterval      RsvpInterval[]
 }
 
 model UserSettings {
@@ -66,6 +66,7 @@ model UserSettings {
   notifySiteAnnouncements Boolean @default(true)
 
   user User?
+
   @@unique([userId])
 }
 
@@ -168,47 +169,65 @@ model BookerAssignment {
 }
 
 model Event {
-  id              String    @id @default(uuid())
-  name            String
-  notes           String    @default("")
-  attendanceType  String
-  startDate       DateTime
-  endDate         DateTime
-  creatorId       String
-  creator         User      @relation(fields: [creatorId], references: [id])
-  createdAt       DateTime  @default(now())
-  rsvps           Rsvp[]
-  rsvpDays        RsvpDay[]
-  remindedOneDay  Boolean   @default(false)
-  remindedOneHour Boolean   @default(false)
+  id                 String          @id @default(uuid())
+  name               String
+  notes              String          @default("")
+  attendanceType     String
+  startDate          DateTime
+  endDate            DateTime
+  creatorId          String
+  creator            User            @relation(fields: [creatorId], references: [id])
+  createdAt          DateTime        @default(now())
+  rsvps              Rsvp[]
+  remindedOneDay     Boolean         @default(false)
+  remindedOneHour    Boolean         @default(false)
+  eventIntervals     EventInterval[]
+  eventIntervalRsvps RsvpInterval[]
+}
+
+model EventInterval {
+  id               String         @id @default(uuid())
+  eventId          String
+  event            Event          @relation(fields: [eventId], references: [id])
+  name             String
+  notes            String         @default("")
+  canStayOvernight Boolean
+  startDate        DateTime
+  endDate          DateTime
+  creatorId        String
+  creator          User           @relation(fields: [creatorId], references: [id])
+  createdAt        DateTime       @default(now())
+  rsvpInterval     RsvpInterval[]
 }
 
 model Rsvp {
-  id       String    @id @default(uuid())
-  status   String
-  notes    String    @default("")
-  userId   String
-  user     User      @relation(fields: [userId], references: [id])
-  eventId  String
-  event    Event     @relation(fields: [eventId], references: [id])
-  rsvpDays RsvpDay[]
+  id           String         @id @default(uuid())
+  status       String
+  notes        String         @default("")
+  userId       String
+  user         User           @relation(fields: [userId], references: [id])
+  eventId      String
+  event        Event          @relation(fields: [eventId], references: [id])
+  rsvpInterval RsvpInterval[]
 
   @@unique([eventId, userId])
 }
 
-model RsvpDay {
-  id               String  @id @default(uuid())
-  date             String
-  stayingOvernight Boolean
+model RsvpInterval {
+  id               String        @id @default(uuid())
+  notes            String        @default("")
+  stayingOvernight Boolean       @default(false)
+  status           String
   userId           String
-  user             User    @relation(fields: [userId], references: [id])
+  user             User          @relation(fields: [userId], references: [id])
   rsvpId           String
-  rsvp             Rsvp    @relation(fields: [rsvpId], references: [id])
+  rsvp             Rsvp          @relation(fields: [rsvpId], references: [id])
   eventId          String
-  event            Event   @relation(fields: [eventId], references: [id])
+  event            Event         @relation(fields: [eventId], references: [id])
+  eventIntervalId  String
+  eventInterval    EventInterval @relation(fields: [eventIntervalId], references: [id])
 
-  @@unique([eventId, userId, date])
-  @@index([eventId, date])
+  @@unique([eventId, userId, eventIntervalId])
 }
 
 model Notification {

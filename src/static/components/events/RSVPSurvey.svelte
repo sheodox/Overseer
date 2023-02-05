@@ -1,118 +1,134 @@
 <style>
-	.eventDay {
-		margin: 0.2rem;
-		padding: 0.5rem;
-		border: 1px solid transparent;
-		border-radius: 3px;
-		transition: border-color 0.2s, background 0.2s;
-	}
-	.eventDay.going {
-		border-color: var(--sx-accent-blue);
-		background: var(--sx-accent-blue-dark);
-	}
-	fieldset {
-		border: none;
+	.notes {
+		white-space: pre-line;
 	}
 	textarea {
-		width: 30rem;
-		height: 6rem;
-		max-width: 100%;
-		resize: vertical;
+		min-height: 5rem;
+		width: 100%;
 	}
 </style>
 
-<div class="modal-body">
-	{#if days.length > 1 && pendingStatus === 'going'}
-		<p>Which days are you attending?</p>
-		<div class="f-row f-wrap">
-			{#each days as day, index}
-				<div class="eventDay" class:going={day.going}>
-					<fieldset>
-						<legend><strong>{getDayOfWeekName(day.dayOfWeek)}</strong> {day.date}</legend>
-						<Checkbox bind:checked={day.going} id="day-{day.date}-going">Going</Checkbox>
-						{#if $eventFromRoute.attendanceType === 'real' && index !== days.length - 1 && day.going}
-							<Checkbox bind:checked={day.stayingOvernight} id="day-{day.date}-staying-overnight">
-								Staying overnight
-							</Checkbox>
-						{/if}
-					</fieldset>
+{#if $eventFromRoute}
+	<PageLayout title={$eventFromRoute.name}>
+		<div>
+			<div class="f-column gap-5">
+				<Fieldset legend="Are you attending this event?" fieldsetClasses="f-column">
+					<div class="sx-toggles align-self-start f-row">
+						{#each statuses as s}
+							{@const inputId = `event-status-${s.value}`}
+							<input bind:group={status} type="radio" id={inputId} value={s.value} />
+							<label for={inputId} class="sx-font-size-5">{s.text}</label>
+						{/each}
+					</div>
+				</Fieldset>
+				<label class="f-column"
+					><span>Notes to the organizer (optional)</span>
+					<textarea bind:value={notes} />
+				</label>
+			</div>
+			{#if status === 'going' || status === 'maybe'}
+				<h2 class="mb-0">Itinerary</h2>
+				<div class="f-column gap-5">
+					{#each rsvpIntervals as rsvp}
+						{@const interval = $eventFromRoute.eventIntervals.find((int) => int.id === rsvp.eventIntervalId)}
+						<Fieldset legend={interval.name} fieldsetClasses="f-column gap-3">
+							<p class="m-0 muted">
+								<EventTimes startDate={interval.startDate} endDate={interval.endDate} />
+							</p>
+							<p class="notes m-0">
+								{interval.notes}
+							</p>
+							<Fieldset legend="Are you attending this part?" fieldsetClasses="f-column gap-3">
+								<div class="sx-toggles align-self-start f-row">
+									{#each statuses as s}
+										{@const inputId = `event-${interval.id}-status-${s.value}`}
+										<input bind:group={rsvp.status} type="radio" id={inputId} value={s.value} />
+										<label for={inputId}>{s.text}</label>
+									{/each}
+								</div>
+								{#if interval.canStayOvernight && rsvp.status !== 'not-going'}
+									<Checkbox bind:checked={rsvp.stayingOvernight}>Staying overnight</Checkbox>
+								{/if}
+							</Fieldset>
+						</Fieldset>
+					{/each}
 				</div>
-			{/each}
+			{/if}
+			{#if goingToEventButNoIntervals}
+				<p class="sx-badge-red py-3">You are attending the event, but said no to everything on the itinerary.</p>
+			{/if}
+			{#if missingStatus}
+				<p class="sx-badge-red py-3">You haven't answered all of the questions.</p>
+			{/if}
+			<div class="f-row justify-content-end">
+				<Link href={eventPageUrl} classes="button secondary">Cancel</Link>
+				<button class="primary" on:click={submit} disabled={!surveyValid}>Submit RSVP</button>
+			</div>
 		</div>
-	{/if}
-	<div>
-		<label>
-			Notes for the organizer
-			<br />
-			<textarea bind:value={notes} placeholder={getNotesPlaceholder(pendingStatus, $eventFromRoute.attendanceType)} />
-		</label>
-	</div>
-	<div class="modal-footer">
-		<button class="primary" disabled={!submittable} on:click={rsvp}>Confirm</button>
-	</div>
-</div>
+	</PageLayout>
+{/if}
 
 <script lang="ts">
-	import Checkbox from 'sheodox-ui/Checkbox.svelte';
-	import { eventFromRoute, eventOps, getDayOfWeekName } from '../stores/events';
-	import { RSVPStatus, RSVPSurveyDay, EventDay } from '../../../shared/types/events';
-	import { serialize, deserialize } from 'onaji';
+	import { Fieldset, Checkbox } from 'sheodox-ui';
+	import { eventFromRoute, eventOps } from '../stores/events';
+	import PageLayout from '../../layouts/PageLayout.svelte';
+	import EventTimes from './EventTimes.svelte';
+	import Link from '../Link.svelte';
+	import page from 'page';
+	import type { EventInterval, MaskedEvent, RSVPInterval, RSVPIntervalEditable } from '../../../shared/types/events';
 
-	export let pendingStatus: RSVPStatus = null;
-	export let visible: boolean;
+	let rsvpIntervals: RSVPIntervalEditable[];
+	let status: string;
+	let notes: string;
 
-	const previousResponse = $eventFromRoute.userRsvp,
-		baseEventDays: RSVPSurveyDay[] = deserialize<RSVPSurveyDay[]>(serialize($eventFromRoute.eventDays)).map(
-			(dayInfo: EventDay) => {
-				return {
-					...dayInfo,
-					going: false,
-					stayingOvernight: false,
-				};
-			}
-		),
-		days = mergeMissingDays(previousResponse?.rsvpDays, baseEventDays);
+	$: initialize($eventFromRoute);
 
-	let notes = previousResponse?.notes ?? '';
+	$: eventPageUrl = `/events/${$eventFromRoute.id}`;
 
-	//if the event is one day only, we assume they're going the single day if they RSVP as going, so we don't show rsvp days
-	$: goingSomeDay = days.length === 1 || days.some((day) => day.going);
-	$: submittable = pendingStatus !== 'going' || goingSomeDay;
+	$: mightGoToEvent = status && (status === 'going' || status === 'maybe');
+	$: missingStatus = mightGoToEvent && rsvpIntervals.some((r) => !r.status);
+	$: isGoingToAnInterval = rsvpIntervals.some((r) => r.status === 'going' || r.status === 'maybe');
+	$: goingToEventButNoIntervals = mightGoToEvent && rsvpIntervals.every((r) => r.status === 'not-going');
+	$: surveyValid = status && (status === 'not-going' || isGoingToAnInterval);
 
-	function mergeMissingDays(rsvpDays: RSVPSurveyDay[], baseEventDays: RSVPSurveyDay[]): RSVPSurveyDay[] {
-		if (!rsvpDays) {
-			return baseEventDays;
+	let initialized = false;
+	function initialize(event: MaskedEvent) {
+		if (!initialized) {
+			initialized = true;
+			rsvpIntervals = seedIntervals(event.userRsvp?.rsvpIntervals ?? [], event.eventIntervals);
+			status = event.userRsvp?.status;
+			notes = event.userRsvp?.notes;
 		}
-		return baseEventDays.map((baseDay) => {
-			const existingRsvp = rsvpDays.find((day) => day.date === baseDay.date);
-			if (existingRsvp) {
-				return {
-					...baseDay,
-					...existingRsvp,
-					going: true,
-				};
-			}
-			return baseDay;
+	}
+
+	const statuses = [
+		{ value: 'going', text: 'Yes' },
+		{ value: 'maybe', text: 'Maybe' },
+		{ value: 'not-going', text: 'No' },
+	];
+
+	// merge existing RSVPs for each interval with the actual ones the event has, so they can RSVP to stuff they haven't yet
+	function seedIntervals(rsvps: RSVPIntervalEditable[], eventIntervals: EventInterval[]) {
+		return eventIntervals.map((int) => {
+			const existingRsvp = rsvps.find((r) => r.eventIntervalId === int.id);
+
+			return (
+				existingRsvp ?? {
+					eventIntervalId: int.id,
+					notes: '',
+					status: '',
+					stayingOvernight: false,
+				}
+			);
 		});
 	}
 
-	function getNotesPlaceholder(status: string, attendanceType: string) {
-		const generalAdvice = 'Anything you think the organizer should know.';
-		let placeholder = '';
-		if (status === 'going') {
-			placeholder =
-				attendanceType === 'virtual'
-					? `Times you're not available during the event, requests, etc.`
-					: 'Arrival times, special accommodations needed, food/games you plan to bring bring, etc.';
-		}
-		return `${placeholder} ${generalAdvice}`.trim();
-	}
-	function rsvp() {
-		eventOps.rsvp($eventFromRoute.id, pendingStatus, {
-			days,
+	function submit() {
+		eventOps.rsvp($eventFromRoute.id, status, {
+			intervals: rsvpIntervals,
 			notes,
 		});
-		pendingStatus = null;
-		visible = false;
+
+		page(eventPageUrl);
 	}
 </script>

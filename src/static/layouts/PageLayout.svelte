@@ -2,6 +2,7 @@
 	.page-layout {
 		width: 100%;
 		max-width: 65rem;
+		position: relative;
 	}
 	h1 {
 		font-size: var(--sx-font-size-10);

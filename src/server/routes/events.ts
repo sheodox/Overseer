@@ -2,20 +2,13 @@ import { Server } from 'socket.io';
 import { createSafeWebsocketHandler, Harbinger } from '../util/harbinger.js';
 import { eventsBooker } from '../db/booker.js';
 import { eventsLogger } from '../util/logger.js';
-import { events, getEventDays } from '../db/events.js';
-import { Rsvp, RsvpDay } from '@prisma/client';
+import { events } from '../db/events.js';
+import { Rsvp, RsvpInterval } from '@prisma/client';
 import MarkdownIt from 'markdown-it';
 import { pickProperties } from '../util/object-manipulation.js';
 import { Envoy } from '../../shared/envoy.js';
 import { createNotificationsForPermittedUsers, sendToastToUser } from '../util/create-notifications.js';
-import type {
-	MaskedRsvpDay,
-	MaskedEvent,
-	MaskedRsvp,
-	EventList,
-	RSVPStatus,
-	RsvpStatusCounts,
-} from '../../shared/types/events';
+import type { MaskedEvent, MaskedRsvp, EventList } from '../../shared/types/events';
 import { deserialize, serialize } from 'onaji';
 const md = new MarkdownIt();
 
@@ -23,19 +16,21 @@ function cloneObject<T>(obj: T): T {
 	return deserialize<T>(serialize(obj));
 }
 
-function maskRsvp(rsvp: Rsvp & { rsvpDays: RsvpDay[] }) {
-	const rsvpDays: MaskedRsvpDay[] = [];
-
-	for (const day of rsvp.rsvpDays) {
-		rsvpDays.push({
-			...pickProperties(day, ['date', 'stayingOvernight']),
-		});
-	}
-
+function maskRsvp(rsvp: Rsvp) {
 	return {
 		...pickProperties(rsvp, ['status', 'notes', 'userId']),
-		rsvpDays,
 	} as MaskedRsvp;
+}
+
+function identity<T>(item: T) {
+	return item;
+}
+
+function maskRsvpInterval(userId: string) {
+	return function (interval: RsvpInterval) {
+		// hide notes for non-organizers
+		return { ...interval, notes: interval.userId === userId ? interval.notes : '' };
+	};
 }
 
 async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]> {
@@ -47,14 +42,7 @@ async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]
 		userCanOrganize = await eventsBooker.check(userId, 'organize');
 
 	for (const event of list) {
-		const rsvps: MaskedRsvp[] = [],
-			eventDays = getEventDays(event),
-			attendeesByDay = eventDays.map((day) => {
-				return {
-					...day,
-					attendees: [],
-				};
-			});
+		const rsvps: MaskedRsvp[] = [];
 
 		for (const rsvp of event.rsvps) {
 			//users need to be able to see their own RSVP notes so they can change it after the fact
@@ -63,15 +51,6 @@ async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]
 				rsvp.notes = '';
 			}
 			rsvps.push(maskRsvp(rsvp));
-
-			for (const day of rsvp.rsvpDays) {
-				const eventDay = attendeesByDay.find(({ date }) => date === day.date);
-				if (eventDay) {
-					eventDay.attendees.push({
-						...pickProperties(day, ['stayingOvernight', 'userId']),
-					});
-				}
-			}
 		}
 
 		maskedEvents.push({
@@ -79,13 +58,9 @@ async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]
 			startDate: event.startDate,
 			endDate: event.endDate,
 			notesRendered: md.render(event.notes),
-			attendeesByDay,
-			eventDays,
+			eventIntervalRsvps: event.eventIntervalRsvps.map(userCanOrganize ? identity : maskRsvpInterval(userId)),
+			eventIntervals: event.eventIntervals,
 			rsvps,
-			rsvpStatusCounts: event.rsvps.reduce((counts, rsvp) => {
-				counts[rsvp.status as RSVPStatus] = (counts[rsvp.status as RSVPStatus] ?? 0) + 1;
-				return counts;
-			}, {} as RsvpStatusCounts),
 		});
 	}
 	return maskedEvents;
@@ -131,8 +106,8 @@ export const initEvents = function (io: Server) {
 			init: checkPermission('view', async () => {
 				eventsEnvoy.emit('init', await maskEvent(await events.list(), userId));
 			}),
-			createEvent: checkPermission('organize', async (data, done) => {
-				const event = await events.createEvent(userId, data);
+			createEvent: checkPermission('organize', async (data, intervals, done) => {
+				const event = await events.createEvent(userId, data, intervals);
 				if ('error' in event) {
 					return singleUserError(event.error);
 				}
@@ -151,17 +126,18 @@ export const initEvents = function (io: Server) {
 					'notifyNewEvents'
 				);
 			}),
-			updateEvent: checkPermission('organize', async (id, data, done) => {
-				const event = await events.updateEvent(id, data);
-				if ('error' in event) {
-					return singleUserError(event.error);
+			updateEvent: checkPermission('organize', async (id, data, intervals, clearRsvps, done) => {
+				const event = await events.updateEvent(userId, id, data, intervals, clearRsvps);
+				if (event && 'error' in event) {
+					return singleUserError(event.error as string);
 				}
 
-				done(event.id);
+				done();
 				broadcast();
 			}),
 			deleteEvent: checkPermission('organize', async (id) => {
 				await events.deleteEvent(id);
+				broadcast();
 			}),
 			rsvp: checkPermission('rsvp', async (eventId, status, rsvpSurvey) => {
 				const event = await events.rsvp(userId, eventId, status, rsvpSurvey);

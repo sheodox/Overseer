@@ -1,10 +1,15 @@
 import Ajv from 'ajv';
-import { Event } from '@prisma/client';
 import { prisma } from './prisma.js';
-import { name as validName } from '../util/validator.js';
+import { name as validName } from '../../shared/validator.js';
 import { createNotificationForUser } from '../util/create-notifications.js';
 import { eventsBooker } from './booker.js';
-import type { RSVPStatus, RSVPSurvey, EventDay, EventEditable, EventList } from '../../shared/types/events';
+import type {
+	RSVPStatus,
+	RSVPSurvey,
+	EventEditable,
+	EventList,
+	EventIntervalEditable,
+} from '../../shared/types/events';
 
 export const RSVP_STATUSES = ['going', 'not-going', 'maybe'] as const;
 const ajv = new Ajv(),
@@ -20,58 +25,38 @@ const ajv = new Ajv(),
 		},
 		additionalProperties: false,
 	}),
+	validateIntervals = ajv.compile({
+		type: 'array',
+		minItems: 1,
+		items: {
+			type: 'object',
+			properties: {
+				id: { type: 'string' },
+				name: { type: 'string' },
+				notes: { type: 'string' },
+				canStayOvernight: { type: 'boolean' },
+				// these are Date objects and json schema doesn't validate those
+				startDate: {},
+				endDate: {},
+			},
+		},
+		additionalProperties: false,
+	}),
+	getEditableIntervalProperties = (interval: EventIntervalEditable) => {
+		return {
+			name: interval.name,
+			notes: interval.notes,
+			canStayOvernight: interval.canStayOvernight,
+			startDate: interval.startDate,
+			endDate: interval.endDate,
+		};
+	},
 	validateRSPVStatus = ajv.compile({
 		enum: RSVP_STATUSES,
 	}),
 	HOUR_MS = 1000 * 60 * 60,
 	DAY_MS = HOUR_MS * 24,
 	UPCOMING_REMINDER_CHECK_MS = 1000 * 60;
-
-function createRSVPDayValidator(eventDays: EventDay[]) {
-	return ajv.compile({
-		type: 'array',
-		items: {
-			type: 'object',
-			properties: {
-				date: { enum: eventDays.map((day) => day.date) },
-				going: { type: 'boolean' },
-				stayingOvernight: { type: 'boolean' },
-			},
-		},
-	});
-}
-
-export function getEventDays(event: Pick<Event, 'startDate' | 'endDate'>) {
-	function getStartOfDay(date: Date) {
-		return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-	}
-
-	function toEventDay(date: Date) {
-		return {
-			date: date.toLocaleDateString(),
-			dayOfWeek: date.getDay(),
-		};
-	}
-
-	const days: EventDay[] = [toEventDay(getStartOfDay(event.startDate))],
-		endTime = getStartOfDay(event.endDate).getTime();
-
-	let dayDuringEvent = getStartOfDay(event.startDate).getTime() + DAY_MS;
-	while (dayDuringEvent <= endTime) {
-		days.push(toEventDay(getStartOfDay(new Date(dayDuringEvent))));
-		dayDuringEvent += DAY_MS;
-	}
-
-	return days;
-}
-
-function getMissingDays(oldDays: EventDay[], newDays: EventDay[]) {
-	return oldDays
-		.filter(({ date }) => {
-			return !newDays.some((newDay) => newDay.date === date);
-		})
-		.map(({ date }) => date);
-}
 
 async function notifyUpcoming() {
 	const upcomingEvents = await prisma.event.findMany({
@@ -172,16 +157,22 @@ class Events {
 			include: {
 				rsvps: {
 					include: {
-						rsvpDays: true,
+						rsvpInterval: true,
 					},
 				},
+				eventIntervals: {
+					orderBy: {
+						startDate: 'asc',
+					},
+				},
+				eventIntervalRsvps: true,
 			},
 		});
 	}
 
 	validateEventData(data: EventEditable) {
 		if (!validateEventEditable(data) || ![data.startDate, data.endDate].every((date) => date instanceof Date)) {
-			return { error: 'Invalid data!' };
+			return { error: 'Invalid event data!' };
 		}
 
 		if (!validName(data.name)) {
@@ -201,15 +192,51 @@ class Events {
 		return false;
 	}
 
-	async createEvent(userId: string, data: EventEditable) {
+	validateIntervals(intervals: EventIntervalEditable[]) {
+		if (
+			!validateIntervals(intervals) ||
+			!intervals
+				.map((int) => [int.endDate, int.startDate])
+				.flat()
+				.every((date) => date instanceof Date)
+		) {
+			console.log(validateIntervals.errors);
+			return { error: 'Invalid interval data!' };
+		}
+
+		if (intervals.some(({ name }) => !validName(name))) {
+			return { error: 'Invalid interval name.' };
+		}
+
+		for (const interval of intervals) {
+			const startDate = interval.startDate.getTime(),
+				endDate = interval.endDate.getTime();
+
+			if (Number.isNaN(startDate) || Number.isNaN(endDate)) {
+				return { error: 'Invalid interval dates!' };
+			}
+			if (startDate > endDate) {
+				return { error: 'Interval start dates must be before the end dates.' };
+			}
+		}
+
+		return false;
+	}
+
+	async createEvent(userId: string, data: EventEditable, intervals: EventIntervalEditable[]) {
 		const validationErrors = this.validateEventData(data);
 		if (validationErrors) {
 			return validationErrors;
 		}
 
+		const intervalValidationErrors = this.validateIntervals(intervals);
+		if (intervalValidationErrors) {
+			return intervalValidationErrors;
+		}
+
 		const startTime = data.startDate.getTime();
 
-		return await prisma.event.create({
+		const createdEvent = await prisma.event.create({
 			data: {
 				...data,
 				creatorId: userId,
@@ -220,42 +247,90 @@ class Events {
 				remindedOneHour: startTime - Date.now() < 2 * HOUR_MS,
 			},
 		});
+
+		await prisma.eventInterval.createMany({
+			data: intervals.map((int) => {
+				// intervals aren't validated for not including other props, be specific
+				return {
+					...getEditableIntervalProperties(int),
+					creatorId: userId,
+					eventId: createdEvent.id,
+				};
+			}),
+		});
+
+		return createdEvent;
 	}
 	async deleteEvent(eventId: string) {
-		const whereEventId = { where: { eventId } };
-		await prisma.$transaction([
-			prisma.rsvpDay.deleteMany(whereEventId),
-			prisma.rsvp.deleteMany(whereEventId),
-			prisma.event.deleteMany({ where: { id: eventId } }),
-		]);
+		await prisma.rsvpInterval.deleteMany({ where: { eventId } });
+		await prisma.rsvp.deleteMany({ where: { eventId } });
+		await prisma.eventInterval.deleteMany({ where: { eventId } });
+		await prisma.event.deleteMany({ where: { id: eventId } });
 	}
-	async updateEvent(eventId: string, data: EventEditable) {
+	async updateEvent(
+		userId: string,
+		eventId: string,
+		data: EventEditable,
+		intervals: EventIntervalEditable[],
+		clearRsvps: boolean
+	) {
 		const validationErrors = this.validateEventData(data);
 		if (validationErrors) {
 			return validationErrors;
 		}
 
-		const currentEvent = await prisma.event.findUnique({ where: { id: eventId } }),
-			existingDays = getEventDays(currentEvent),
-			newDays = getEventDays(data),
-			noLongerApplicableDays = getMissingDays(existingDays, newDays);
+		const intervalValidationErrors = this.validateIntervals(intervals);
+		if (intervalValidationErrors) {
+			return intervalValidationErrors;
+		}
 
-		await prisma.rsvpDay.deleteMany({
-			where: {
-				id: eventId,
-				date: {
-					in: noLongerApplicableDays,
-				},
-			},
-		});
+		if (clearRsvps) {
+			await prisma.rsvpInterval.deleteMany({ where: { eventId } });
+			await prisma.rsvp.deleteMany({ where: { eventId } });
+		}
 
-		return await prisma.event.update({
+		await prisma.event.update({
 			where: { id: eventId },
 			data,
 			select: {
 				id: true,
 			},
 		});
+
+		const existingIntervals = await prisma.eventInterval.findMany({
+				where: { eventId },
+				select: {
+					id: true,
+				},
+			}),
+			deletedIntervals = existingIntervals.filter((int) => !intervals.some((i) => i.id === int.id));
+
+		await Promise.all([
+			...intervals.map((int) => {
+				if (int.id) {
+					return prisma.eventInterval.update({
+						where: { id: int.id },
+						data: {
+							...getEditableIntervalProperties(int),
+							creatorId: userId,
+						},
+					});
+				}
+				return prisma.eventInterval.create({
+					data: {
+						...getEditableIntervalProperties(int),
+						creatorId: userId,
+						eventId: eventId,
+					},
+				});
+			}),
+			// delete any intervals that aren't in the update, they were deleted
+			...deletedIntervals.map(({ id }) => {
+				return prisma.eventInterval.delete({ where: { id } });
+			}),
+		]);
+
+		return {};
 	}
 	async rsvp(userId: string, eventId: string, status: RSVPStatus, rsvpSurvey: RSVPSurvey) {
 		if (!validateRSPVStatus(status)) {
@@ -267,22 +342,14 @@ class Events {
 			return { error: `Couldn't find that event!` };
 		}
 
-		//validate that all the days they're responding to are applicable for the days this event is held
-		const surveyDayValidator = createRSVPDayValidator(getEventDays(event)),
-			validSurveyDays = status !== 'going' || surveyDayValidator(rsvpSurvey.days);
-
-		if (!validSurveyDays) {
-			return { error: 'Invalid survey response!' };
-		}
-
 		const relevantRspvResponse = {
 			status,
 			notes: rsvpSurvey.notes,
 		};
 
 		//RSVPs are saved in two pieces, an RSVP which includes general information, like if they're going or not
-		//and any notes for the organizer. the second piece is one or more "RSVPDays" which are individual rows
-		//for each day during an event, showing which days they're going for a multiple day event
+		//and any notes for the organizer. the second piece is one or more "RSVPIntervals" which are individual rows
+		//for segments of time during an event, showing which times they're going for a multiple day event
 		const rsvp = await prisma.rsvp.upsert({
 			where: {
 				eventId_userId: { eventId, userId },
@@ -298,31 +365,26 @@ class Events {
 		//delete the record of all days where the user may have said they were going, so if
 		//they changed their mind after saying they're going they will not show up as going anywhere.
 		//if they're going these will be replaced anyway
-		await prisma.rsvpDay.deleteMany({
+		await prisma.rsvpInterval.deleteMany({
 			where: {
 				eventId,
 				userId,
 			},
 		});
 
-		if (status === 'going') {
-			//'rsvpSurvey.days' is validated, but not with 'additionalProperties: false'
-			//so we need to be careful not to use object spread when putting this into
-			//the database (front end builds these based on EventDays[], which has
-			//additional properties we don't care about here
-			const rsvpDayPromises = rsvpSurvey.days
-				.filter(({ going }) => going)
-				.map((rsvpDay) => {
-					return prisma.rsvpDay.create({
-						data: {
-							eventId,
-							userId,
-							rsvpId: rsvp.id,
-							date: rsvpDay.date,
-							stayingOvernight: rsvpDay.stayingOvernight,
-						},
-					});
+		if (status === 'going' || status === 'maybe') {
+			const rsvpDayPromises = rsvpSurvey.intervals.map((rsvpInterval) => {
+				return prisma.rsvpInterval.create({
+					data: {
+						eventId,
+						userId,
+						eventIntervalId: rsvpInterval.eventIntervalId,
+						rsvpId: rsvp.id,
+						status: rsvpInterval.status,
+						stayingOvernight: rsvpInterval.stayingOvernight,
+					},
 				});
+			});
 
 			await prisma.$transaction(rsvpDayPromises);
 		}

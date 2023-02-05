@@ -1,26 +1,24 @@
-{#if filter === 'day'}
-	<div class="f-row f-wrap gap-2">
-		{#each event.attendeesByDay as day}
-			<Attendees rsvps={day.attendees} showEmpty={true} title="{getDayOfWeekName(day.dayOfWeek)} {day.date}" />
-		{/each}
-	</div>
-{:else if filter === 'overnight'}
-	<div class="f-row f-wrap gap-2">
-		{#each event.attendeesByDay as day}
-			<Attendees
-				rsvps={day.attendees.filter((rsvp) => rsvp.stayingOvernight)}
-				showEmpty={true}
-				title="{getDayOfWeekName(day.dayOfWeek)} {day.date}"
-			/>
-		{/each}
-	</div>
-{/if}
+<div class="f-row f-wrap gap-2">
+	{#each stayingOvernightByInterval as item}
+		<Attendees rsvps={item.rsvps} showEmpty={true} title={item.interval.name} variant="minimal" />
+	{/each}
+</div>
 
 <script lang="ts">
-	import { getDayOfWeekName } from '../stores/events';
 	import Attendees from './Attendees.svelte';
 	import type { MaskedEvent } from '../../../shared/types/events';
 
 	export let event: MaskedEvent;
-	export let filter: 'day' | 'overnight';
+
+	$: rsvpsByInterval = event.eventIntervals.map((interval) => {
+		return {
+			interval,
+			rsvps: event.eventIntervalRsvps.filter((r) => r.eventIntervalId === interval.id),
+		};
+	});
+	$: stayingOvernightByInterval = rsvpsByInterval
+		.filter(({ interval }) => interval.canStayOvernight)
+		.map(({ interval, rsvps }) => {
+			return { interval, rsvps: rsvps.filter((r) => r.stayingOvernight) };
+		});
 </script>

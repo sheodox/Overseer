@@ -1,43 +1,52 @@
-import type { Event, Rsvp, RsvpDay } from '@prisma/client';
+import type { Event, EventInterval as PrismaEventInterval, Rsvp, RsvpInterval } from '@prisma/client';
 import type { RSVP_STATUSES } from '../../server/db/events';
 
-export type MaskedRsvpDay = Pick<RsvpDay, 'date' | 'stayingOvernight'>;
 export interface MaskedRsvp extends Pick<Rsvp, 'status' | 'notes' | 'userId'> {
-	rsvpDays: RSVPSurveyDay[];
+	rsvpIntervals: RsvpInterval[];
 	status: RSVPStatus;
 }
 export type RsvpStatusCounts = Record<RSVPStatus, number>;
-
-export type DayAttendee = Pick<RsvpDay, 'stayingOvernight' | 'userId'>;
 
 export interface MaskedEvent extends Omit<Event, 'startDate' | 'endDate' | 'remindedOneDay' | 'remindedOneHour'> {
 	startDate: Date;
 	endDate: Date;
 	notesRendered: string;
-	eventDays: EventDay[];
-	rsvpStatusCounts: RsvpStatusCounts;
-	attendeesByDay: (EventDay & { attendees: DayAttendee[] })[];
+	eventIntervals: EventInterval[];
+	eventIntervalRsvps: RsvpInterval[];
 	userRsvp?: MaskedRsvp;
 	rsvps: MaskedRsvp[];
 }
 
 export type RSVPStatus = typeof RSVP_STATUSES[number];
 export type EventEditable = Pick<Event, 'name' | 'notes' | 'attendanceType' | 'startDate' | 'endDate'>;
-export interface EventDay {
-	date: string; //date.toLocaleDateString()
-	dayOfWeek: number; //date.getDay()
-}
-export interface RSVPSurveyDay {
-	date: string; // should be a date from an EventDay, given back
-	dayOfWeek?: number;
-	going?: boolean;
-	stayingOvernight?: boolean;
-}
-export interface RSVPSurvey {
+export type EventInterval = PrismaEventInterval;
+
+export interface EventIntervalEditable {
+	id?: string; // only exists when editing an existing interval
+	name: string;
 	notes: string;
-	days?: RSVPSurveyDay[];
+	canStayOvernight: boolean;
+	startDate: Date;
+	endDate: Date;
 }
 
-export type EventList = (Event & { rsvps: (Rsvp & { rsvpDays: RsvpDay[] })[] })[];
+export interface RSVPIntervalEditable {
+	eventIntervalId: string;
+	notes: string;
+	stayingOvernight: boolean;
+	status: string;
+}
+export type RSVPInterval = RsvpInterval;
+
+export interface RSVPSurvey {
+	notes: string;
+	intervals?: RSVPIntervalEditable[];
+}
+
+export type EventList = (Event & {
+	eventIntervalRsvps: RsvpInterval[];
+	rsvps: Rsvp[];
+	eventIntervals: EventInterval[];
+})[];
 
 export type EventsData = MaskedEvent[];
