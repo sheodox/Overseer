@@ -4,7 +4,6 @@
 import 'sheodox-ui/style.scss';
 import './scss/style.scss';
 import 'vite/modulepreload-polyfill';
-//import '../../node_modules/fontawesome-free/css/all.min.css';
 
 import './components/stores/routing';
 import App from './components/App.svelte';
