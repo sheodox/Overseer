@@ -16,7 +16,7 @@
 					<div class="sx-toggles align-self-start f-row">
 						{#each statuses as s}
 							{@const inputId = `event-status-${s.value}`}
-							<input bind:group={status} type="radio" id={inputId} value={s.value} />
+							<input bind:group={status} type="radio" id={inputId} value={s.value} on:change={statusChange} />
 							<label for={inputId} class="sx-font-size-5">{s.text}</label>
 						{/each}
 					</div>
@@ -98,6 +98,15 @@
 			rsvpIntervals = seedIntervals(event.userRsvp?.rsvpIntervals ?? [], event.eventIntervals);
 			status = event.userRsvp?.status;
 			notes = event.userRsvp?.notes;
+		}
+	}
+
+	function statusChange() {
+		// if there's only a single interval, always set it to the new full event status, because
+		// if there's only one interval there's no way you can be "going" to the event, but "not going"
+		// to the only interval, it should match
+		if (rsvpIntervals.length === 1) {
+			rsvpIntervals[0].status = status;
 		}
 	}
 
