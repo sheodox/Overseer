@@ -5,26 +5,58 @@
 	.preview {
 		max-width: 100%;
 		border-radius: 5px;
+		overflow: hidden;
 	}
 	ol {
 		padding: 0;
+		margin: 0;
 		list-style: none;
+	}
+	.up {
+		background: var(--sx-blue-400);
+	}
+	.down {
+		background: var(--sx-red-400);
+	}
+	.count {
+		font-weight: bold;
+		height: var(--sx-spacing-2);
+	}
+	.bars {
+		border-radius: 5px;
+		overflow: hidden;
+		background: var(--sx-gray-500);
+	}
+	.card-title {
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+	.candidate-preview {
+		min-width: 10rem;
+		overflow: hidden;
 	}
 </style>
 
 <Link href={raceHref} styles="width: 100%">
-	<div class="preview card clickable px-4">
-		<div class="f-row justify-content-between align-items-center">
-			<h2 class="m-0 mt-3">
+	<div class="preview card clickable">
+		<div class="card-title">
+			<h2 class="m-0">
 				{race.name}
 			</h2>
 		</div>
-		<div class="panel-body">
+		<div class="card-body">
 			{#if candidateSlice.length}
-				<ol class="mt-1 mb-4">
+				<ol class="my-1 f-row gap-2">
 					{#each candidateSlice as candidate}
-						<li>
-							<Candidate interactive={false} {candidate} {raceMaxVotes} />
+						<li class="card candidate-preview">
+							<div class="card-title">{candidate.name}</div>
+							<div class="card-body">
+								<div class="f-row bars">
+									<div class="count up" style:width={100 * (candidate.votedUp.length / raceMaxVotes) + '%'} />
+									<div class="count down" style:width={100 * (candidate.votedDown.length / raceMaxVotes) + '%'} />
+								</div>
+							</div>
 						</li>
 					{/each}
 				</ol>
@@ -43,7 +75,7 @@
 
 	export let race: MaskedRace;
 
-	const maxCandidates = 3;
+	const maxCandidates = 5;
 	$: candidateRanking = rankCandidates(race, []);
 	$: candidateSlice = candidateRanking.slice(0, maxCandidates);
 	$: raceMaxVotes = getRaceMaxVotes(race.candidates);

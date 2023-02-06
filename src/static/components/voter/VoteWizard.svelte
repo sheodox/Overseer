@@ -95,7 +95,7 @@
 			</div>
 			<div class="box f-column f-1 wizard-actions">
 				<div class="f-row f-1">
-					<button class="f-1" on:click={prev} disabled={!currentCandidateIndex}>
+					<button class="f-1" on:click={prev} disabled={!currentCandidateIndex} use:ripple>
 						<Icon icon="chevron-left" />
 						Back
 					</button>
@@ -104,11 +104,18 @@
 						on:click={down}
 						aria-pressed={candidate.voted === 'down'}
 						disabled={candidate.banned}
+						use:ripple
 					>
 						<Icon icon="minus" variant="icon-only" />
 						<span class="sr-only">Vote down</span>
 					</button>
-					<button class="up f-1" on:click={up} aria-pressed={candidate.voted === 'up'} disabled={candidate.banned}>
+					<button
+						class="up f-1"
+						on:click={up}
+						aria-pressed={candidate.voted === 'up'}
+						disabled={candidate.banned}
+						use:ripple
+					>
 						<Icon icon="plus" variant="icon-only" />
 						<span class="sr-only">Vote up</span>
 					</button>
@@ -116,6 +123,7 @@
 						class="f-1"
 						on:click={next}
 						disabled={currentCandidateIndex === $voterSelectedRace.candidates.length - 1}
+						use:ripple
 					>
 						Skip
 						<Icon icon="chevron-right" variant="append" />
@@ -125,7 +133,7 @@
 					<div>
 						<Progress value={currentCandidateIndex} max={totalCandidates} id="wizard-progress" />
 					</div>
-					<button class="f-1" on:click={() => (visible = false)}>
+					<button class="f-1" on:click={() => (visible = false)} use:ripple>
 						<Icon icon="times" />
 						Done
 					</button>
@@ -135,7 +143,7 @@
 			<p>
 				Oh, looks like you're done.
 				<br />
-				<button on:click={() => (visible = false)}> Get me out of here! </button>
+				<button on:click={() => (visible = false)} use:ripple> Get me out of here! </button>
 			</p>
 		{/if}
 	</div>
@@ -143,7 +151,7 @@
 
 <script lang="ts">
 	import { fly } from 'svelte/transition';
-	import { Icon, Progress } from 'sheodox-ui';
+	import { Icon, Progress, ripple } from 'sheodox-ui';
 	import { AlbumSize } from '../image/Album.svelte';
 	import { voterSelectedRace, voterOps } from '../stores/voter';
 	import CandidateImages from './CandidateImages.svelte';

@@ -65,6 +65,7 @@
 				class:voted={votedUp}
 				aria-pressed={votedUp}
 				disabled={candidate.deleted || candidate.banned}
+				use:ripple
 			>
 				<Icon icon={votedUp ? 'plus-circle' : 'plus'} variant="icon-only" />
 				<span class="sr-only">Vote up</span>
@@ -75,6 +76,7 @@
 				class:voted={votedDown}
 				aria-pressed={votedDown}
 				disabled={candidate.deleted || candidate.banned}
+				use:ripple
 			>
 				<Icon icon={votedDown ? 'minus-circle' : 'minus'} variant="icon-only" />
 				<span class="sr-only">Vote down</span>
@@ -115,7 +117,7 @@
 
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import Icon from 'sheodox-ui/Icon.svelte';
+	import { Icon, ripple } from 'sheodox-ui';
 	import { voterOps } from '../stores/voter';
 	import CandidateVoteBar from './CandidateVoteBar.svelte';
 	import CandidateDetails from './CandidateDetails.svelte';

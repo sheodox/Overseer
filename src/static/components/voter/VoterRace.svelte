@@ -83,7 +83,7 @@
 				</button>
 			{/if}
 			{#if booker.voter.vote}
-				<button class="show-wizard" on:click={() => (showVoteWizard = true)}>Help Me Vote!</button>
+				<button class="show-wizard" on:click={() => (showVoteWizard = true)} use:ripple>Help Me Vote!</button>
 			{/if}
 		</div>
 
@@ -141,10 +141,7 @@
 {/if}
 
 <script lang="ts">
-	import MenuButton from 'sheodox-ui/MenuButton.svelte';
-	import Icon from 'sheodox-ui/Icon.svelte';
-	import Modal from 'sheodox-ui/Modal.svelte';
-	import TextInput from 'sheodox-ui/TextInput.svelte';
+	import { MenuButton, Icon, Modal, TextInput, ripple } from 'sheodox-ui';
 	import { writable, derived } from 'svelte/store';
 	import {
 		createRankedCandidateStore,
