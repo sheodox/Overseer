@@ -10,15 +10,15 @@
 	<form on:submit|preventDefault={save}>
 		<div class="modal-body">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label>
-				{label}
-				<br />
-				{#if type === 'text'}
-					<input bind:value use:focus />
-				{:else if type === 'textarea'}
+			{#if type === 'text'}
+				<TextInput autofocus bind:value>{label}</TextInput>
+			{:else if type === 'textarea'}
+				<label>
+					{label}
+					<br />
 					<textarea bind:value use:focus />
-				{/if}
-			</label>
+				</label>
+			{/if}
 			{#if hint}
 				<p><Icon icon="info-circle" /> {hint}</p>
 			{/if}
@@ -32,8 +32,7 @@
 
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import Icon from 'sheodox-ui/Icon.svelte';
-	import Modal from 'sheodox-ui/Modal.svelte';
+	import { Icon, Modal, TextInput } from 'sheodox-ui';
 	const dispatch = createEventDispatcher();
 
 	export let initialValue = '';
