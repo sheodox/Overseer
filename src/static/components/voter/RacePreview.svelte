@@ -1,4 +1,4 @@
-<style>
+<style lang="scss">
 	h2 {
 		margin: 0.5rem;
 	}
@@ -26,6 +26,10 @@
 		border-radius: 5px;
 		overflow: hidden;
 		background: var(--sx-gray-500);
+		filter: saturate(0.35);
+	}
+	.candidate-preview:hover .bars {
+		filter: saturate(1);
 	}
 	.card-title {
 		white-space: nowrap;
@@ -52,7 +56,7 @@
 						<li class="card candidate-preview">
 							<div class="card-title">{candidate.name}</div>
 							<div class="card-body">
-								<div class="f-row bars">
+								<div class="f-row bars justify-content-between">
 									<div class="count up" style:width={100 * (candidate.votedUp.length / raceMaxVotes) + '%'} />
 									<div class="count down" style:width={100 * (candidate.votedDown.length / raceMaxVotes) + '%'} />
 								</div>

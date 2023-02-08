@@ -1,17 +1,14 @@
-<style>
-	.sub-panel {
-		margin: 0;
-		padding: 0;
-	}
+<style lang="scss">
 	h1 {
 		margin: 0;
 		font-size: var(--sx-font-size-10);
 	}
 	.notes {
 		line-height: 1.6;
-	}
-	.notes :global(p:last-child) {
-		margin-bottom: 0;
+		border-radius: 3px;
+		:global(p) {
+			margin: 0;
+		}
 	}
 	#event-view {
 		width: 100%;
@@ -22,7 +19,7 @@
 	}
 	.detail-tabs {
 		background: var(--sx-gray-transparent);
-		border-radius: 5px;
+		border-radius: 3px;
 	}
 	@media (max-width: 800px) {
 		.collapsing-row {
@@ -35,6 +32,12 @@
 	.rsvp-link {
 		width: 100%;
 		text-align: center;
+	}
+	.rsvp-status {
+		border-radius: 1rem;
+	}
+	div :global(fieldset) {
+		margin: 0;
 	}
 </style>
 
@@ -50,82 +53,81 @@
 		</div>
 
 		<div class="collapsing-row gap-5 mt-4">
-			<div class="sub-panel f-1">
-				<h1>{$eventFromRoute.name}</h1>
-				<div class="f-row f-wrap justify-content-between align-items-start gap-3">
-					<Fieldset legend="Details" fieldsetClasses="f-column gap-1 pt-5">
-						<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
-						<EventTimes startDate={$eventFromRoute.startDate} endDate={$eventFromRoute.endDate} />
-					</Fieldset>
-					{#if booker.events.rsvp}
-						<div class="card">
-							<div class="card-title">RSVP</div>
-							<div class="card-body f-column gap-2">
-								{#if userRsvp?.status}
-									<div>
-										<RSVPStatusBadge status={userRsvp?.status} />
-									</div>
-								{:else}
-									You haven't RSVP'd yet.
-								{/if}
-								<Link href="/events/{$eventFromRoute.id}/rsvp">
-									<div class="button primary py-0 m-0 rsvp-link">
-										{#if userRsvp?.status}
-											<p>Update RSVP</p>
-										{:else}
-											<p>RSVP</p>
-										{/if}
-									</div>
-								</Link>
-							</div>
+			<div class="f-1 f-column gap-0">
+				<div class="f-row justify-content-between align-items-center">
+					<h1>{$eventFromRoute.name}</h1>
+					{#if booker.events.organize}
+						<div class="f-row justify-content-end sx-font-size-3">
+							<MenuButton>
+								<span slot="trigger">
+									<span class="sr-only">Event Options</span>
+									<Icon icon="ellipsis-v" variant="icon-only" />
+								</span>
+								<ul slot="menu">
+									<li>
+										<button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
+											<Icon icon="edit" />
+											Edit
+										</button>
+									</li>
+									<li>
+										<button on:click={() => (showDeleteConfirm = true)}>
+											<Icon icon="trash" />
+											Delete
+										</button>
+									</li>
+								</ul>
+							</MenuButton>
 						</div>
 					{/if}
 				</div>
 
-				<div class="notes has-inline-links">
-					{@html $eventFromRoute.notesRendered}
-				</div>
+				<Fieldset legend="Details" fieldsetClasses="f-column gap-1 pt-5 f-1">
+					<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
+					<EventTimes startDate={$eventFromRoute.startDate} endDate={$eventFromRoute.endDate} />
 
-				{#if booker.events.organize}
-					<div class="f-row justify-content-end sx-font-size-3">
-						<MenuButton>
-							<span slot="trigger">
-								Event Options
-								<Icon icon="chevron-down" />
-							</span>
-							<ul slot="menu">
-								<li>
-									<button on:click={() => page(`/events/${$eventFromRoute.id}/edit`)}>
-										<Icon icon="edit" />
-										Edit
-									</button>
-								</li>
-								<li>
-									<button on:click={() => (showDeleteConfirm = true)}>
-										<Icon icon="trash" />
-										Delete
-									</button>
-								</li>
-							</ul>
-						</MenuButton>
+					{#if booker.events.rsvp}
+						<div class="f-row justify-content-between align-items-center">
+							{#if userRsvp?.status}
+								<div class="rsvp-status">
+									<RSVPStatusBadge status={userRsvp?.status} />
+								</div>
+							{:else}
+								You haven't RSVP'd yet.
+							{/if}
+							<Link href="/events/{$eventFromRoute.id}/rsvp">
+								<div class="button primary py-0 m-0 rsvp-link">
+									{#if userRsvp?.status}
+										<p>Update RSVP</p>
+									{:else}
+										<p>RSVP</p>
+									{/if}
+								</div>
+							</Link>
+						</div>
+					{/if}
+				</Fieldset>
+
+				<Fieldset legend="Description">
+					<div class="notes has-inline-links my-2">
+						{@html $eventFromRoute.notesRendered}
 					</div>
-				{/if}
+				</Fieldset>
+
+				<div class="detail-tabs px-2 py-2" style="margin-top: 10px;">
+					<TabList bind:selectedTab {tabs} />
+					<Tab {selectedTab} tabId="rsvps">
+						<Attendance event={$eventFromRoute} />
+					</Tab>
+					<Tab {selectedTab} tabId="rsvps-intervals">
+						<EventItineraryDetails event={$eventFromRoute} />
+					</Tab>
+					<Tab {selectedTab} tabId="rsvps-overnight">
+						<AttendeeDetails event={$eventFromRoute} />
+					</Tab>
+				</div>
 			</div>
 		</div>
-
-		<div class="detail-tabs px-2 py-2">
-			<TabList bind:selectedTab {tabs} />
-			<Tab {selectedTab} tabId="rsvps">
-				<Attendance event={$eventFromRoute} />
-			</Tab>
-			<Tab {selectedTab} tabId="rsvps-intervals">
-				<EventItineraryDetails event={$eventFromRoute} />
-			</Tab>
-			<Tab {selectedTab} tabId="rsvps-overnight">
-				<AttendeeDetails event={$eventFromRoute} />
-			</Tab>
-		</div>
-
 		{#if numNotes > 0}
 			<h2 class="mb-0">Notes ({numNotes})</h2>
 			<RSVPNotes rsvps={$eventFromRoute.rsvps} />

@@ -1,6 +1,6 @@
 <div class="f-row f-wrap gap-2">
 	{#each stayingOvernightByInterval as item}
-		<Attendees rsvps={item.rsvps} showEmpty={true} title={item.interval.name} variant="minimal" />
+		<Attendees rsvps={item.rsvps} showEmpty={true} title={item.interval.name} />
 	{/each}
 </div>
 

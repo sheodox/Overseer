@@ -1,9 +1,9 @@
 <div class="mt-2">
 	{#if rsvps.length}
-		<div class="f-row f-wrap gap-2">
-			<Attendees rsvps={going} title="Going" showEmpty {variant} />
-			<Attendees rsvps={maybe} title="Maybe" showEmpty {variant} />
-			<Attendees rsvps={notGoing} title="Not Going" showEmpty {variant} />
+		<div class="f-row f-wrap gap-6">
+			<Attendees rsvps={going} title="Going" showEmpty />
+			<Attendees rsvps={maybe} title="Maybe" showEmpty />
+			<Attendees rsvps={notGoing} title="Not Going" showEmpty />
 		</div>
 	{:else}
 		<p class="muted"><em>Nobody has responded yet.</em></p>
@@ -16,7 +16,6 @@
 
 	export let event: MaskedEvent;
 	export let intervalId: string | null = null;
-	export let variant: 'full' | 'minimal' = 'full';
 
 	function byStatus(status: RSVPStatus) {
 		return (rsvp: { status: string }) => {

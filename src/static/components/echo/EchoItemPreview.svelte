@@ -38,7 +38,7 @@
 	<Link href={item.path} noHoverStyles={true}>
 		<div class="f-row card-inset">
 			<div
-				class="echo-item-details p-4 f-row f-1 card clickable justify-content-between align-items-center"
+				class="echo-item-details p-4 f-row f-1 clickable justify-content-between align-items-center"
 				class:has-image={variant === EchoViewLayout.Grid}
 			>
 				<div>
