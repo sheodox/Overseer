@@ -19,6 +19,9 @@
 	li :global(a) {
 		display: block;
 	}
+	li {
+		border-radius: 5px;
+	}
 	.unread-indicator {
 		color: var(--sx-accent-blue);
 		font-size: 0.5rem;
@@ -33,22 +36,22 @@
 	<ul>
 		{#each $notifications as notification}
 			<li>
-				<div class="f-row align-items-center">
-					{#if !notification.read}
-						<div class="unread-indicator">
-							<Icon icon="circle" />
-						</div>
-					{/if}
-					<Link href={notification.href} noHoverStyles={true} on:followed={() => markRead(notification)}>
-						<div class="f-column">
+				<Link href={notification.href} noHoverStyles={true} on:followed={() => markRead(notification)}>
+					<div class="f-row align-items-center">
+						{#if !notification.read}
+							<div class="unread-indicator">
+								<Icon icon="circle" />
+							</div>
+						{/if}
+						<div class="f-column f-1">
 							<p class="message">{notification.message}</p>
 							<div class="time muted f-row justify-content-between">
 								<span>{notification.title}</span>
 								<span>{relativeDate(notification.createdAt)} ago</span>
 							</div>
 						</div>
-					</Link>
-				</div>
+					</div>
+				</Link>
 			</li>
 		{:else}
 			<li>
