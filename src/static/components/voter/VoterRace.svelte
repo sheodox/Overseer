@@ -199,17 +199,19 @@
 
 	$: raceId = $activeRouteParams.raceId;
 	$: raceMaxVotes = getRaceMaxVotes($candidates);
-	$: voters = Array.from(
-		$voterSelectedRace.candidates.reduce((votes, candidate) => {
-			for (const voter of candidate.votedUp) {
-				votes.add(voter);
-			}
-			for (const voter of candidate.votedDown) {
-				votes.add(voter);
-			}
-			return votes;
-		}, new Set<string>())
-	);
+	$: voters = $voterSelectedRace
+		? Array.from(
+				$voterSelectedRace.candidates.reduce((votes, candidate) => {
+					for (const voter of candidate.votedUp) {
+						votes.add(voter);
+					}
+					for (const voter of candidate.votedDown) {
+						votes.add(voter);
+					}
+					return votes;
+				}, new Set<string>())
+		  )
+		: [];
 	$: hasFilteredOutVoters = voters.some((v) => $filteredOutVoters.includes(v));
 
 	function addCandidate() {
