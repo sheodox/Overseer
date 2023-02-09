@@ -1,30 +1,21 @@
 <style lang="scss">
+	.mode-minimal {
+		--image-size: 1.3rem;
+	}
+	.mode-full {
+		--image-size: 2.5rem;
+	}
 	img.minimal,
 	.placeholder.minimal {
-		--image-size: 1.3rem;
 		margin: 0;
 	}
 	img,
 	.placeholder {
-		--image-size: 2.5rem;
 		height: var(--image-size);
 		width: var(--image-size);
 		border-radius: 50%;
 		margin-right: 0.2rem;
 		background: var(--sx-bg);
-	}
-	.mode-minimal:hover {
-		background-color: var(--sx-gray-800);
-		border-radius: 10px;
-		.display-name {
-			padding-right: var(--sx-spacing-2);
-		}
-	}
-	.mode-minimal:not(:hover) {
-		.display-name {
-			display: none;
-			margin: 0;
-		}
 	}
 </style>
 
@@ -43,10 +34,12 @@
 			class:minimal={mode === 'minimal'}
 			title={matchingUser.displayName}
 		/>
-		<div class="f-column display-name ml-1">
-			<span>{matchingUser.displayName}</span>
-			<slot />
-		</div>
+		{#if mode === 'full'}
+			<div class="f-column display-name align-items-start">
+				<span>{matchingUser.displayName}</span>
+				<slot />
+			</div>
+		{/if}
 	{/if}
 </div>
 
