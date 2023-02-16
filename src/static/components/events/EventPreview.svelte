@@ -2,9 +2,6 @@
 	.event {
 		color: white;
 	}
-	.card {
-		border-radius: 5px;
-	}
 	.attendees-preview {
 		overflow: hidden;
 	}

@@ -61,15 +61,17 @@
 		{#if showTagCloud}
 			<TagCloud bind:tags={$echoSearch} />
 		{/if}
-		<div class="f-row justify-content-end view-modes">
-			<button class="small" on:click={() => (view = EchoViewLayout.List)} aria-pressed={view === EchoViewLayout.List}>
+		<div class="f-row justify-content-end view-modes sx-toggles align-self-end">
+			<input type="radio" bind:group={view} value={EchoViewLayout.List} id="view-as-list" />
+			<label for="view-as-list">
 				<Icon icon="list" variant="icon-only" />
 				<span class="sr-only">View as a list</span>
-			</button>
-			<button class="small" on:click={() => (view = EchoViewLayout.Grid)} aria-pressed={view === EchoViewLayout.Grid}>
+			</label>
+			<input type="radio" bind:group={view} value={EchoViewLayout.Grid} id="view-as-grid" />
+			<label for="view-as-grid">
 				<Icon icon="th" variant="icon-only" />
 				<span class="sr-only">View as a grid</span>
-			</button>
+			</label>
 		</div>
 	{/if}
 </PageLayout>

@@ -38,7 +38,7 @@
 			end = endDate,
 			numDays = differenceInCalendarDays(start, end);
 
-		if (numDays === 1) {
+		if (numDays === 0) {
 			return `${dateString(start)} from ${prettyTime(start)} to ${prettyTime(end)}`;
 		} else {
 			return `${prettyDate(start)} to ${prettyDate(end)}`;

@@ -102,12 +102,11 @@
 	}
 
 	function statusChange() {
-		// if there's only a single interval, always set it to the new full event status, because
-		// if there's only one interval there's no way you can be "going" to the event, but "not going"
-		// to the only interval, it should match
-		if (rsvpIntervals.length === 1) {
-			rsvpIntervals[0].status = status;
+		// default all unset RSVP statuses to the status they just set, so less clicking
+		for (let i = 0; i < rsvpIntervals.length; i++) {
+			rsvpIntervals[i].status ||= status;
 		}
+		rsvpIntervals = rsvpIntervals;
 	}
 
 	const statuses = [

@@ -5,9 +5,11 @@
 	}
 	.notes {
 		line-height: 1.6;
-		border-radius: 3px;
-		:global(p) {
-			margin: 0;
+		:global(p:last-of-type) {
+			margin-bottom: 0;
+		}
+		:global(p:first-of-type) {
+			margin-top: 0;
 		}
 	}
 	#event-view {
@@ -19,7 +21,7 @@
 	}
 	.detail-tabs {
 		background: var(--sx-gray-transparent);
-		border-radius: 3px;
+		border-radius: 10px;
 	}
 	@media (max-width: 800px) {
 		.collapsing-row {
@@ -47,13 +49,13 @@
 	<p>Couldn't find an event for this ID, did it get deleted?</p>
 	<p><Link href="/events">Back to the events list.</Link></p>
 {:else}
-	<div id="event-view" class="px-2">
+	<div id="event-view" class="px-2" style="--sx-arg-fieldset-legend-color: var(--sx-gray-100)">
 		<div class="f-row justify-content-center">
 			<EventNotificationReminder />
 		</div>
 
 		<div class="collapsing-row gap-5 mt-4">
-			<div class="f-1 f-column gap-0">
+			<div class="f-1 f-column gap-4">
 				<div class="f-row justify-content-between align-items-center">
 					<h1>{$eventFromRoute.name}</h1>
 					{#if booker.events.organize}
