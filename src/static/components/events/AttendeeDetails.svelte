@@ -1,7 +1,10 @@
 <div class="f-row f-wrap gap-2">
 	{#each stayingOvernightByInterval as item}
-		<Attendees rsvps={item.rsvps} showEmpty={true} title={item.interval.name} />
+		<Attendees rsvps={item.rsvps} />
 	{/each}
+	{#if numStayingOvernight === 0}
+		<p class="muted">No overnight guests.</p>
+	{/if}
 </div>
 
 <script lang="ts">
@@ -21,4 +24,8 @@
 		.map(({ interval, rsvps }) => {
 			return { interval, rsvps: rsvps.filter((r) => r.stayingOvernight) };
 		});
+
+	$: numStayingOvernight = stayingOvernightByInterval.reduce((total, r) => {
+		return total + r.rsvps.length;
+	}, 0);
 </script>

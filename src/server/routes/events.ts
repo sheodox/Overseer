@@ -63,7 +63,7 @@ async function maskEvent(list: EventList, userId: string): Promise<MaskedEvent[]
 			rsvps,
 		});
 	}
-	return maskedEvents;
+	return maskedEvents as MaskedEvent[];
 }
 
 export async function getEventsData(userId: string) {

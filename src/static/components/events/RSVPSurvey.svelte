@@ -75,10 +75,10 @@
 	import EventTimes from './EventTimes.svelte';
 	import Link from '../Link.svelte';
 	import page from 'page';
-	import type { EventInterval, MaskedEvent, RSVPInterval, RSVPIntervalEditable } from '../../../shared/types/events';
+	import type { EventInterval, MaskedEvent, RSVPIntervalEditable, RSVPStatus } from '../../../shared/types/events';
 
 	let rsvpIntervals: RSVPIntervalEditable[];
-	let status: string;
+	let status: RSVPStatus;
 	let notes: string;
 
 	$: initialize($eventFromRoute);
@@ -124,7 +124,7 @@
 				existingRsvp ?? {
 					eventIntervalId: int.id,
 					notes: '',
-					status: '',
+					status: null,
 					stayingOvernight: false,
 				}
 			);

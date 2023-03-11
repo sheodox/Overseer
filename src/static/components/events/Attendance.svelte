@@ -1,9 +1,12 @@
 <div class="mt-2">
 	{#if rsvps.length}
-		<div class="f-row f-wrap gap-6">
-			<Attendees rsvps={going} title="Going" showEmpty />
-			<Attendees rsvps={maybe} title="Maybe" showEmpty />
-			<Attendees rsvps={notGoing} title="Not Going" showEmpty />
+		<div class="f-row f-wrap gap-3">
+			<Attendees rsvps={going} />
+			<Attendees rsvps={maybe} />
+			<Attendees rsvps={notGoing} />
+		</div>
+		<div class="muted">
+			{count(rsvps)}
 		</div>
 	{:else}
 		<p class="muted"><em>Nobody has responded yet.</em></p>
@@ -12,7 +15,7 @@
 
 <script lang="ts">
 	import Attendees from './Attendees.svelte';
-	import type { MaskedEvent, MaskedRsvp, RSVPStatus } from '../../../shared/types/events';
+	import type { MaskedEvent, RSVPStatus } from '../../../shared/types/events';
 
 	export let event: MaskedEvent;
 	export let intervalId: string | null = null;
@@ -29,4 +32,18 @@
 	$: going = intervalId ? intervalRspvs.filter(byStatus('going')) : event.rsvps.filter(byStatus('going'));
 	$: notGoing = intervalId ? intervalRspvs.filter(byStatus('not-going')) : event.rsvps.filter(byStatus('not-going'));
 	$: maybe = intervalId ? intervalRspvs.filter(byStatus('maybe')) : event.rsvps.filter(byStatus('maybe'));
+
+	function count(rsvps: { status: RSVPStatus }[]) {
+		const summary: string[] = [],
+			going = rsvps.filter((r) => r.status === 'going').length,
+			maybe = rsvps.filter((r) => r.status === 'maybe').length;
+
+		if (going) {
+			summary.push(`${going} going`);
+		}
+		if (maybe) {
+			summary.push(`${maybe} maybe`);
+		}
+		return summary.join(', ');
+	}
 </script>

@@ -150,7 +150,7 @@ setInterval(notifyUpcoming, UPCOMING_REMINDER_CHECK_MS);
 
 class Events {
 	async list(): Promise<EventList> {
-		return await prisma.event.findMany({
+		return (await prisma.event.findMany({
 			orderBy: {
 				startDate: 'desc',
 			},
@@ -167,7 +167,7 @@ class Events {
 				},
 				eventIntervalRsvps: true,
 			},
-		});
+		})) as EventList;
 	}
 
 	validateEventData(data: EventEditable) {

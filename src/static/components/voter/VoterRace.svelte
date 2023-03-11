@@ -232,10 +232,4 @@
 		showRaceDelete = false;
 		voterOps.race.delete(raceId);
 	}
-
-	function unbanAll() {
-		if (confirm('Are you sure you want to unban all candidates in this race?')) {
-			voterOps.race.unbanAll($voterSelectedRace.id);
-		}
-	}
 </script>

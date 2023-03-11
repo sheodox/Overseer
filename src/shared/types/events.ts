@@ -1,6 +1,12 @@
-import type { Event, EventInterval as PrismaEventInterval, Rsvp, RsvpInterval } from '@prisma/client';
+import type {
+	Event,
+	EventInterval as PrismaEventInterval,
+	Rsvp,
+	RsvpInterval as PrismaRsvpInterval,
+} from '@prisma/client';
 import type { RSVP_STATUSES } from '../../server/db/events';
 
+export type RsvpInterval = Omit<PrismaRsvpInterval, 'status'> & { status: RSVPStatus };
 export interface MaskedRsvp extends Pick<Rsvp, 'status' | 'notes' | 'userId'> {
 	rsvpIntervals: RsvpInterval[];
 	status: RSVPStatus;
@@ -34,7 +40,7 @@ export interface RSVPIntervalEditable {
 	eventIntervalId: string;
 	notes: string;
 	stayingOvernight: boolean;
-	status: string;
+	status: RSVPStatus;
 }
 export type RSVPInterval = RsvpInterval;
 

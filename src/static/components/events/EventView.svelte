@@ -84,7 +84,7 @@
 					{/if}
 				</div>
 
-				<Fieldset legend="Details" fieldsetClasses="f-column gap-1 pt-5 f-1">
+				<Fieldset legend="Details" fieldsetClasses="f-column gap-1 p-3 pt-6 f-1" size="large">
 					<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
 					<EventTimes startDate={$eventFromRoute.startDate} endDate={$eventFromRoute.endDate} />
 
@@ -110,7 +110,7 @@
 					{/if}
 				</Fieldset>
 
-				<Fieldset legend="Description">
+				<Fieldset legend="Description" fieldsetClasses="p-3 pt-6" size="large">
 					<div class="notes has-inline-links my-2">
 						{@html $eventFromRoute.notesRendered}
 					</div>

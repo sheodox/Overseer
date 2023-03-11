@@ -1,7 +1,4 @@
-<style>
-</style>
-
-<span class="attendance-type" title={showText ? '' : matchingType.text}>
+<span class="attendance-type sx-font-size-6" title={showText ? '' : matchingType.text}>
 	<Icon icon={matchingType.icon} />
 	{#if showText}
 		{matchingType.text}
