@@ -4,9 +4,6 @@
 		flex-direction: column;
 		flex: 1;
 	}
-	.divider {
-		border-right: 1px solid var(--sx-gray-transparent-dark);
-	}
 </style>
 
 <div class="f-row f-wrap justify-content-between gap-6">
@@ -29,9 +26,6 @@
 				<EventPreview event={ongoingEvent} />
 			</div>
 		{/if}
-
-		<div class="divider" />
-
 		{#if pastEvent && (!upcomingEvent || !ongoingEvent)}
 			<div class="preview">
 				<HomePageAppTitle title="Past Event" href="/events" />

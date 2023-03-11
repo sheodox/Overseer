@@ -3,6 +3,7 @@
 		border-radius: 5px;
 		font-weight: bold;
 		padding: var(--sx-spacing-1) var(--sx-spacing-2);
+		white-space: nowrap;
 	}
 	.status.minimal {
 		border-radius: 50%;
@@ -36,6 +37,10 @@
 	{:else if status === 'maybe'}
 		<Icon icon="question" variant={iconVariant} />
 		<span class:sr-only={variant === 'minimal'}> Maybe </span>
+	{:else}
+		<div class="muted">
+			<span class:sr-only={variant === 'minimal'}> No RSVP Yet </span>
+		</div>
 	{/if}
 </div>
 

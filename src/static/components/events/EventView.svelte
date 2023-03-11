@@ -90,13 +90,9 @@
 
 					{#if booker.events.rsvp}
 						<div class="f-row justify-content-between align-items-center">
-							{#if userRsvp?.status}
-								<div class="rsvp-status">
-									<RSVPStatusBadge status={userRsvp?.status} />
-								</div>
-							{:else}
-								You haven't RSVP'd yet.
-							{/if}
+							<div class="rsvp-status">
+								<RSVPStatusBadge status={userRsvp?.status} />
+							</div>
 							<Link href="/events/{$eventFromRoute.id}/rsvp">
 								<div class="button primary py-0 m-0 rsvp-link">
 									{#if userRsvp?.status}
