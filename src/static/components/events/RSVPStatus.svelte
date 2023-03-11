@@ -12,6 +12,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		box-shadow: var(--sx-shadow-2);
 	}
 	.status-going {
 		background-color: var(--sx-green-400);
