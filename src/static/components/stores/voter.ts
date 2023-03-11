@@ -106,8 +106,14 @@ export const voterOps = {
 		ban: (candidateId: string) => {
 			voterEnvoy.emit('banCandidate', candidateId);
 		},
+		banMultiple: (candidateIds: string[]) => {
+			voterEnvoy.emit('banCandidateMultiple', candidateIds);
+		},
 		unban: (candidateId: string) => {
 			voterEnvoy.emit('unbanCandidate', candidateId);
+		},
+		unbanMultiple: (candidateIds: string[]) => {
+			voterEnvoy.emit('unbanCandidateMultiple', candidateIds);
 		},
 		uploadImage(candidateId: string, file: File) {
 			uploadImage('Voter Upload', file, `/voter/${candidateId}/upload`);

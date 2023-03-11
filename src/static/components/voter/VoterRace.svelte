@@ -56,9 +56,10 @@
 					{/if}
 					{#if booker.voter.ban_candidate}
 						<li>
-							<button on:click={unbanAll}>
-								<Icon icon="check" /> Unban All
-							</button>
+							<Link href="/voter/{$voterSelectedRace.id}/batch" classes="button">
+								<Icon icon="table-cells" />
+								Batch Operations
+							</Link>
 						</li>
 					{/if}
 				</ul>

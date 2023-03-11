@@ -200,6 +200,23 @@ class Voter {
 			},
 		});
 	}
+	async banCandidateMultiple(candidateIds: string[]) {
+		// clear any votes on the candidate, votes aren't allowed on banned candidates
+		await prisma.vote.deleteMany({
+			where: { candidateId: { in: candidateIds } },
+		});
+
+		await Promise.all(
+			candidateIds.map((candidateId) => {
+				return prisma.candidate.update({
+					where: { id: candidateId },
+					data: {
+						banned: true,
+					},
+				});
+			})
+		);
+	}
 	async unbanCandidate(candidateId: string) {
 		await prisma.candidate.update({
 			where: { id: candidateId },
@@ -207,6 +224,18 @@ class Voter {
 				banned: false,
 			},
 		});
+	}
+	async unbanCandidateMultiple(candidateIds: string[]) {
+		await Promise.all(
+			candidateIds.map((candidateId) => {
+				return prisma.candidate.update({
+					where: { id: candidateId },
+					data: {
+						banned: false,
+					},
+				});
+			})
+		);
 	}
 	async updateCandidate(candidateId: string, name: string, notes: string) {
 		name = Voter.cleanString(name);

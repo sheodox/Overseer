@@ -164,8 +164,16 @@ io.on('connection', async (socket) => {
 			await voter.banCandidate(candidateId);
 			broadcast();
 		}),
+		banCandidateMultiple: checkPermission('ban_candidate', async (candidateIds: string[]) => {
+			await voter.banCandidateMultiple(candidateIds);
+			broadcast();
+		}),
 		unbanCandidate: checkPermission('ban_candidate', async (candidateId: string) => {
 			await voter.unbanCandidate(candidateId);
+			broadcast();
+		}),
+		unbanCandidateMultiple: checkPermission('ban_candidate', async (candidateIds: string[]) => {
+			await voter.unbanCandidateMultiple(candidateIds);
 			broadcast();
 		}),
 		updateCandidate: checkPermission('update_candidate', async (candidateId, name, notes) => {

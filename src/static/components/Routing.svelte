@@ -10,6 +10,8 @@
 	<Voter />
 {:else if $activeRoute === 'voter/race' && voter.view}
 	<VoterRace />
+{:else if $activeRoute === 'voter/race/batch' && voter.ban_candidate}
+	<VoterRaceBatch />
 {:else if $activeRoute === 'events' && events.view}
 	<Events />
 {:else if $activeRoute === 'events/create' && events.view && events.organize}
@@ -36,6 +38,7 @@
 	import EchoView from './echo/EchoView.svelte';
 	import Voter from './voter/Voter.svelte';
 	import VoterRace from './voter/VoterRace.svelte';
+	import VoterRaceBatch from './voter/VoterRaceBatch.svelte';
 	import Events from './events/Events.svelte';
 	import EventsEdit, { EventsEditMode } from './events/EventsEdit.svelte';
 	import NoAccess from './NoAccess.svelte';
