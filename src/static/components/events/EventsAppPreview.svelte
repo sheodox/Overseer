@@ -4,9 +4,17 @@
 		flex-direction: column;
 		flex: 1;
 	}
+	.event-previews {
+		display: flex;
+	}
+	@media (max-width: 800px) {
+		.event-previews {
+			flex-direction: column;
+		}
+	}
 </style>
 
-<div class="f-row f-wrap justify-content-between gap-6">
+<div class="event-previews justify-content-between gap-6">
 	{#if $eventsInitialized}
 		{#if !upcomingEvent && !ongoingEvent}
 			<div class="preview">
