@@ -12,7 +12,7 @@
 	<PageLayout title={$eventFromRoute.name}>
 		<div>
 			<div class="f-column gap-5">
-				<Fieldset legend="Are you attending this event?" fieldsetClasses="f-column">
+				<Fieldset legend="Are you attending this event?" contentClasses="f-column">
 					<div class="sx-toggles align-self-start f-row">
 						{#each statuses as s}
 							{@const inputId = `event-status-${s.value}`}
@@ -31,14 +31,14 @@
 				<div class="f-column gap-5">
 					{#each rsvpIntervals as rsvp}
 						{@const interval = $eventFromRoute.eventIntervals.find((int) => int.id === rsvp.eventIntervalId)}
-						<Fieldset legend={interval.name} fieldsetClasses="f-column gap-3">
+						<Fieldset legend={interval.name} contentClasses="f-column gap-3">
 							<p class="m-0 muted">
 								<EventTimes startDate={interval.startDate} endDate={interval.endDate} />
 							</p>
 							<p class="notes m-0">
 								{interval.notes}
 							</p>
-							<Fieldset legend="Are you attending this part?" fieldsetClasses="f-column gap-3">
+							<Fieldset legend="Are you attending this part?" contentClasses="f-column gap-3">
 								<div class="sx-toggles align-self-start f-row">
 									{#each statuses as s}
 										{@const inputId = `event-${interval.id}-status-${s.value}`}
