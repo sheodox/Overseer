@@ -37,7 +37,6 @@
 	import VoterPreview from './voter/VoterPreview.svelte';
 	import { pageName, booker } from './stores/app';
 	import EventsAppPreview from './events/EventsAppPreview.svelte';
-	import { upcomingEvents } from './stores/events';
 
 	// clear old page names
 	$pageName = '';

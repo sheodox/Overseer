@@ -7,9 +7,9 @@
 	}
 </style>
 
-<div class="f-column gap-2 mt-2">
+<div class="f-column gap-4 mt-2">
 	{#each event.eventIntervals as interval}
-		<div class="interval p-2">
+		<div class="interval pt-4 pb-6">
 			<h2 class="my-0">{interval.name}</h2>
 			<div class="muted">
 				<EventTimes startDate={interval.startDate} endDate={interval.endDate} />

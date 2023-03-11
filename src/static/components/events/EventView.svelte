@@ -54,7 +54,7 @@
 			<EventNotificationReminder />
 		</div>
 
-		<div class="collapsing-row gap-5 mt-4">
+		<div class="collapsing-row gap-5 mt-4" style="--sx-arg-fieldset-padding: var(--sx-spacing-5);">
 			<div class="f-1 f-column gap-4">
 				<div class="f-row justify-content-between align-items-center">
 					<h1>{$eventFromRoute.name}</h1>
@@ -84,7 +84,7 @@
 					{/if}
 				</div>
 
-				<Fieldset legend="Details" fieldsetClasses="f-column gap-1 p-3 pt-6 f-1" size="large">
+				<Fieldset legend="Details" fieldsetClasses="f-column gap-1 f-1" size="large">
 					<AttendanceTypeBadge event={$eventFromRoute} showText={true} />
 					<EventTimes startDate={$eventFromRoute.startDate} endDate={$eventFromRoute.endDate} />
 
@@ -106,13 +106,13 @@
 					{/if}
 				</Fieldset>
 
-				<Fieldset legend="Description" fieldsetClasses="p-3 pt-6" size="large">
+				<Fieldset legend="Description" size="large">
 					<div class="notes has-inline-links my-2">
 						{@html $eventFromRoute.notesRendered}
 					</div>
 				</Fieldset>
 
-				<div class="detail-tabs px-2 py-2" style="margin-top: 10px;">
+				<div class="detail-tabs p-5" style="margin-top: 10px;">
 					<TabList bind:selectedTab {tabs} />
 					<Tab {selectedTab} tabId="rsvps">
 						<Attendance event={$eventFromRoute} />
