@@ -9,6 +9,10 @@
 	tr:nth-of-type(even) {
 		background-color: var(--sx-gray-transparent);
 	}
+	.upvotes,
+	.downvotes {
+		font-weight: 500;
+	}
 </style>
 
 {#if $voterSelectedRace}
@@ -35,6 +39,7 @@
 					</th>
 					<th>Name</th>
 					<th>Banned</th>
+					<th>Votes</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -52,6 +57,14 @@
 							{#if candidate.banned}
 								<Icon icon="ban" />
 								<span class="sr-only">Yes</span>
+							{/if}
+						</td>
+						<td>
+							{#if candidate.votedUp.length}
+								<span class="upvotes sx-badge-blue">{candidate.votedUp.length} up</span>
+							{/if}
+							{#if candidate.votedDown.length}
+								<span class="downvotes sx-badge-red">{candidate.votedDown.length} down</span>
 							{/if}
 						</td>
 					</tr>
