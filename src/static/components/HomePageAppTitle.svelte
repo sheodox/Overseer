@@ -6,17 +6,15 @@
 	}
 </style>
 
-<div class="f-row justify-content-between align-items-baseline">
+<div class="f-row justify-content-between align-items-baseline mb-2">
 	<Link {href}>
-		<h1 class="m-0">
+		<h1 class="m-0 mb-2">
 			{title}
-			<Icon icon="chevron-right" />
 		</h1>
 	</Link>
 </div>
 
 <script lang="ts">
-	import Icon from 'sheodox-ui/Icon.svelte';
 	import Link from './Link.svelte';
 
 	export let title: string;
