@@ -14,7 +14,7 @@
 	}
 </style>
 
-<div class="w-100 f-column p-4 gap-6 align-items-center">
+<div class="w-100 f-column p-6 gap-6 align-items-center">
 	{#if booker.events.view}
 		<div class="app-preview wider">
 			<EventsAppPreview />
