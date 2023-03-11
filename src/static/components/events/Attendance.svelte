@@ -6,7 +6,7 @@
 			<Attendees rsvps={notGoing} />
 		</div>
 		<div class="muted">
-			{count(rsvps)}
+			{count(going.length, maybe.length, notGoing.length)}
 		</div>
 	{:else}
 		<p class="muted"><em>Nobody has responded yet.</em></p>
@@ -33,16 +33,17 @@
 	$: notGoing = intervalId ? intervalRspvs.filter(byStatus('not-going')) : event.rsvps.filter(byStatus('not-going'));
 	$: maybe = intervalId ? intervalRspvs.filter(byStatus('maybe')) : event.rsvps.filter(byStatus('maybe'));
 
-	function count(rsvps: { status: RSVPStatus }[]) {
-		const summary: string[] = [],
-			going = rsvps.filter((r) => r.status === 'going').length,
-			maybe = rsvps.filter((r) => r.status === 'maybe').length;
+	function count(going: number, maybe: number, notGoing: number) {
+		const summary: string[] = [];
 
 		if (going) {
 			summary.push(`${going} going`);
 		}
 		if (maybe) {
 			summary.push(`${maybe} maybe`);
+		}
+		if (notGoing) {
+			summary.push(`${notGoing} not going`);
 		}
 		return summary.join(', ');
 	}
