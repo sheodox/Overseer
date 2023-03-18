@@ -64,6 +64,9 @@
 	.f-row {
 		gap: var(--sx-spacing-2);
 	}
+	button:not(:hover) .hotkey {
+		display: none;
+	}
 
 	@media (max-width: 500px) {
 		button {
@@ -98,6 +101,9 @@
 					<button class="f-1" on:click={prev} disabled={!currentCandidateIndex} use:ripple>
 						<Icon icon="chevron-left" />
 						Back
+						<div class="hotkey">
+							<span class="sx-font-size-2"> <kbd>Hotkey: Backspace<kbd /></kbd></span>
+						</div>
 					</button>
 					<button
 						class="f-1 down"
@@ -108,6 +114,9 @@
 					>
 						<Icon icon="minus" variant="icon-only" />
 						<span class="sr-only">Vote down</span>
+						<div class="hotkey">
+							<span class="sx-font-size-2"> <kbd>Hotkey: 1<kbd /></kbd></span>
+						</div>
 					</button>
 					<button
 						class="up f-1"
@@ -118,6 +127,9 @@
 					>
 						<Icon icon="plus" variant="icon-only" />
 						<span class="sr-only">Vote up</span>
+						<div class="hotkey">
+							<span class="sx-font-size-2"> <kbd>Hotkey: 2<kbd /></kbd></span>
+						</div>
 					</button>
 					<button
 						class="f-1"
@@ -127,6 +139,9 @@
 					>
 						Skip
 						<Icon icon="chevron-right" variant="append" />
+						<div class="hotkey">
+							<span class="sx-font-size-2"> <kbd>Hotkey: Space<kbd /></kbd></span>
+						</div>
 					</button>
 				</div>
 				<div class="f-1 f-column">
@@ -148,6 +163,8 @@
 		{/if}
 	</div>
 </div>
+
+<svelte:window on:keydown={keydown} />
 
 <script lang="ts">
 	import { fly } from 'svelte/transition';
@@ -219,5 +236,20 @@
 		voterOps.candidate.vote(candidate.id, 'down');
 		candidate.voted = 'down';
 		next();
+	}
+
+	function keydown(e: KeyboardEvent) {
+		if (e.key === '1') {
+			down();
+		} else if (e.key === '2') {
+			up();
+		} else if (e.key === ' ') {
+			next();
+		} else {
+			return;
+		}
+
+		e.preventDefault();
+		e.stopPropagation();
 	}
 </script>
