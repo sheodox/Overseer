@@ -1,22 +1,26 @@
 <style lang="scss">
+	$bar-radius: 8px;
+
 	.up,
 	.down {
-		border: 2px solid transparent;
+		border: 1px solid transparent;
+		&.no-opposing {
+			border-radius: #{$bar-radius};
+		}
 	}
 	.up {
 		border-color: var(--sx-accent-blue);
 		background-color: var(--sx-blue-800);
+		border-radius: #{$bar-radius} 0 0 #{$bar-radius};
+
 		&.has-opposing {
 			border-right-width: 0;
-		}
-		&.no-opposing {
-			border-radius: 0 3px 3px 0;
 		}
 	}
 	.down {
 		border-color: var(--sx-accent-red);
 		background-color: var(--sx-red-800);
-		border-radius: 0 3px 3px 0;
+		border-radius: 0 #{$bar-radius} #{$bar-radius} 0;
 
 		&.has-opposing {
 			border-left-width: 0;

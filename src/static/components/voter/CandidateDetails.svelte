@@ -2,15 +2,9 @@
 	.notes :global(p) {
 		white-space: pre-line;
 	}
-	.details {
-		max-width: 50rem;
-		margin-left: auto;
-		margin-right: auto;
-		border-radius: 5px;
-	}
 </style>
 
-<div class="details card p-3 mt-2 mb-5">
+<div class="details p-3 mt-2 mb-5">
 	<div class="f-row justify-content-between">
 		<UserBubble userId={candidate.creatorId}>
 			<em>Created {candidate.createdAt.toLocaleDateString()}</em>

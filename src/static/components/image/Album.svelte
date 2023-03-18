@@ -1,16 +1,13 @@
 <style lang="scss">
 	.view-theater-button {
 		cursor: zoom-in;
-		padding: 0;
+		border-radius: 10px;
 	}
 	.image-container {
 		position: relative;
 	}
 	.strip {
 		--placeholder-max-width: 90%;
-		.image-container {
-			margin: 0.5rem;
-		}
 		img {
 			width: var(--placeholder-width);
 			border-radius: 10px;

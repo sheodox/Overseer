@@ -19,20 +19,6 @@
 							{showFilters ? 'Hide Filters' : 'Show Filters'}
 						</button>
 					</li>
-					<li>
-						<button on:click={viewAllDetails}>
-							<Icon icon="eye" />
-							View All Details
-						</button>
-					</li>
-					{#if $isViewingDetails}
-						<li>
-							<button on:click={hideAllDetails}>
-								<Icon icon="eye-slash" />
-								Close All Details
-							</button>
-						</li>
-					{/if}
 					{#if booker.voter.reset_votes}
 						<li>
 							<button on:click={resetVotes}>
@@ -77,12 +63,6 @@
 					</div>
 				</form>
 			{/if}
-			{#if $isViewingDetails}
-				<button class="secondary" on:click={hideAllDetails}>
-					<Icon icon="eye-slash" />
-					Hide details to re-enable automatic ranking.
-				</button>
-			{/if}
 			{#if booker.voter.vote}
 				<button class="show-wizard" on:click={() => (showVoteWizard = true)} use:ripple>Help Me Vote!</button>
 			{/if}
@@ -97,13 +77,7 @@
 		{/if}
 		<div class="f-column" on:mouseenter={() => ($sortLocked = true)} on:mouseleave={() => ($sortLocked = false)}>
 			{#each $candidates as candidate (candidate.id)}
-				<Candidate
-					{candidate}
-					{raceMaxVotes}
-					candidateImages={$voterSelectedRace.candidateImages}
-					showDetails={$candidatesViewingDetails.includes(candidate.id)}
-					on:details={toggleViewingDetails}
-				/>
+				<Candidate {candidate} {raceMaxVotes} candidateImages={$voterSelectedRace.candidateImages} />
 			{:else}
 				<p class="text-align-center"><em>There aren't any candidates yet.</em></p>
 			{/each}
@@ -143,7 +117,7 @@
 
 <script lang="ts">
 	import { MenuButton, Icon, Modal, TextInput, ripple } from 'sheodox-ui';
-	import { writable, derived } from 'svelte/store';
+	import { writable } from 'svelte/store';
 	import {
 		createRankedCandidateStore,
 		filteredOutVoters,
@@ -162,35 +136,8 @@
 	import VoteWizard from './VoteWizard.svelte';
 	import VoterUserFilters from './VoterUserFilters.svelte';
 
-	// a store of candidate IDs that are expanded
-	const candidatesViewingDetails = writable<string[]>([]),
-		isViewingDetails = derived(candidatesViewingDetails, (candidates) => {
-			return candidates.length;
-		});
-
-	function toggleViewingDetails(e: CustomEvent<string>) {
-		candidatesViewingDetails.update((viewingCandidates) => {
-			return viewingCandidates.includes(e.detail)
-				? viewingCandidates.filter((id) => id !== e.detail)
-				: [...viewingCandidates, e.detail];
-		});
-	}
-
-	function viewAllDetails() {
-		candidatesViewingDetails.set($candidates.map((candidate) => candidate.id));
-	}
-
-	function hideAllDetails() {
-		$candidatesViewingDetails = [];
-	}
-
 	const sortLocked = writable(false),
-		candidates = createRankedCandidateStore(
-			voterSelectedRace,
-			derived([sortLocked, isViewingDetails], ([locked, viewing]) => {
-				return locked || !!viewing;
-			})
-		);
+		candidates = createRankedCandidateStore(voterSelectedRace, sortLocked);
 
 	let newCandidateName = '',
 		showRaceRename = false,

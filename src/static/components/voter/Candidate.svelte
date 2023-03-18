@@ -31,7 +31,6 @@
 	.candidate-name-container {
 		position: relative;
 		background: var(--sx-gray-600);
-		border-radius: 3px;
 		overflow: hidden;
 	}
 	.vote-bars {
@@ -44,12 +43,6 @@
 	}
 	.deleted {
 		filter: grayscale(1);
-	}
-	.details-toggle :global(i) {
-		transition: transform 0.2s;
-	}
-	.details-toggle[aria-expanded='true'] :global(i) {
-		transform: rotateX(180deg);
 	}
 	.banned-message {
 		font-style: italic;
@@ -104,20 +97,22 @@
 			{/if}
 		</div>
 		{#if interactive}
-			<button on:click={toggleDetails} aria-expanded={showDetails} class="details-toggle">
-				<Icon icon="chevron-down" variant="icon-only" />
-				<span class="sr-only">Toggle Showing Details</span>
+			<button on:click={() => (showDetails = true)} aria-expanded={showDetails}>
+				<Icon icon="info-circle" variant="icon-only" />
+				<span class="sr-only">Show Details</span>
 			</button>
 		{/if}
 	</div>
 	{#if showDetails}
-		<CandidateDetails {candidate} {candidateImages} />
+		<Modal bind:visible={showDetails} title={candidate.name} width="1000px">
+			<CandidateDetails {candidate} {candidateImages} />
+		</Modal>
 	{/if}
 </div>
 
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { Icon, ripple } from 'sheodox-ui';
+	import { Icon, Modal, ripple } from 'sheodox-ui';
 	import { voterOps } from '../stores/voter';
 	import CandidateVoteBar from './CandidateVoteBar.svelte';
 	import CandidateDetails from './CandidateDetails.svelte';
@@ -125,16 +120,13 @@
 	import { MaskedCandidate, CandidateImages } from '../../../shared/types/voter';
 	const dispatch = createEventDispatcher();
 
-	function toggleDetails() {
-		dispatch('details', candidate.id);
-	}
-
 	export let candidate: MaskedCandidate;
 	export let candidateImages: CandidateImages = [];
 	//if you can vote with this, we don't want that to happen on the the race dashboard
 	export let interactive = true;
 	export let raceMaxVotes: number;
-	export let showDetails = false;
+
+	let showDetails = false;
 
 	$: votedUp = candidate.voted === 'up';
 	$: votedDown = candidate.voted === 'down';
