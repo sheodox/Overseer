@@ -6,7 +6,12 @@
 		{#each links as link}
 			{#if link.viewable}
 				<li>
-					<a on:click|preventDefault={() => page(link.path)} class:active={link.app === $activeApp} href={link.path}>
+					<a
+						on:click|preventDefault={() => page(link.path)}
+						class:active={link.app === $activeApp}
+						href={link.path}
+						use:ripple
+					>
 						{link.text}
 					</a>
 				</li>
@@ -16,6 +21,7 @@
 </nav>
 
 <script lang="ts">
+	import { ripple } from 'sheodox-ui';
 	import { activeApp } from './stores/routing';
 	import { booker } from './stores/app';
 	import page from 'page';
