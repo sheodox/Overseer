@@ -245,6 +245,8 @@
 			up();
 		} else if (e.key === ' ') {
 			next();
+		} else if (e.key === 'Backspace') {
+			prev();
 		} else {
 			return;
 		}
